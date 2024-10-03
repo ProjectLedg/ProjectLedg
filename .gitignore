@@ -96,3 +96,7 @@
 /ProjectLedg.Server/obj/Debug/net8.0/staticwebassets.build.json
 >>>>>>> e2ce3962e646828a6c9de1fc037b2eeb5ff9a6c6
 /.vs/slnx.sqlite
+/ProjectLedg.Server/obj/Release/net8.0/ProjectLedg.Server.AssemblyInfo.cs
+/ProjectLedg.Server/obj/Release/net8.0/ProjectLedg.Server.AssemblyInfoInputs.cache
+/ProjectLedg.Server/obj/Release/net8.0/ProjectLedg.Server.csproj.AssemblyReference.cache
+/ProjectLedg.Server/obj/Release/net8.0/ProjectLedg.Server.GeneratedMSBuildEditorConfig.editorconfig
