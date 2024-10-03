@@ -4,3 +4,14 @@
 
 /ProjectLedg.Server/.env
 /.vs/ProjectLedg/FileContentIndex
+/.vs/ProjectLedge/v17
+/ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.AssemblyInfo.cs
+/ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.AssemblyInfoInputs.cache
+/ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.assets.cache
+/ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.csproj.AssemblyReference.cache
+/ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.GeneratedMSBuildEditorConfig.editorconfig
+/ProjectLedg.Server/obj/Debug/net8.0/spa.proxy.json
+/ProjectLedg.Server/obj/project.assets.json
+/ProjectLedg.Server/obj/project.nuget.cache
+/ProjectLedg.Server/obj/ProjectLedg.Server.csproj.nuget.dgspec.json
+/ProjectLedg.Server/obj/ProjectLedg.Server.csproj.nuget.g.props
