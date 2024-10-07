@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -53,7 +54,8 @@ const SignUpPage = () => {
         },
         withCredentials: true
       });
-      navigate('/company-create', { state: { user: response.data } });
+      Cookies.set('userToken', response.data.token, { expires: 1, path: '/' });
+      navigate('/company-create');
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred during signup. Please try again.");
     }

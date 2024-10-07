@@ -1,8 +1,9 @@
 import { useLocation } from 'react-router-dom'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Cookies from 'js-cookie'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const initialFields = [
@@ -13,11 +14,14 @@ const initialFields = [
 
 export default function CompanyCreatePage() {
   
-    const location = useLocation()
-    const email = location.state?.user
-  
+    
+    const [token, setToken] = useState('');
     const [formData, setFormData] = useState({})
 
+    useEffect(() => {
+      const userToken = Cookies.get('userToken');
+      setToken(userToken);
+    }, []);
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
@@ -25,6 +29,7 @@ export default function CompanyCreatePage() {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Form submitted:', formData)
+    console.log('Token:', token);
     // Here you would typically send the data to your backend
   }
 
@@ -33,7 +38,7 @@ export default function CompanyCreatePage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Sätt upp Företag</CardTitle>
-          <CardDescription>För in företags information {user}</CardDescription>
+          <CardDescription>För in företags information </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
