@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const initialFields = [
-  { id: 'firstName', label: 'First Name', type: 'text', placeholder: 'John' },
-  { id: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Doe' },
-  { id: 'companyName', label: 'Company Name', type: 'text', placeholder: 'Acme Inc.' },
+  { id: 'firstName', label: 'Förrnamn', type: 'text', placeholder: 'John' },
+  { id: 'lastName', label: 'Efternamn', type: 'text', placeholder: 'Doe' },
+  { id: 'companyName', label: 'Företagsnamn', type: 'text', placeholder: 'Acme Inc.' },
 ]
 
 export default function CompanyCreatePage() {
@@ -32,8 +32,8 @@ export default function CompanyCreatePage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-300 backdrop-blur-md p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Company Setup</CardTitle>
-          <CardDescription>Please provide your company details {email}</CardDescription>
+          <CardTitle className="text-2xl font-bold">Sätt upp Företag</CardTitle>
+          <CardDescription>För in företags information {email}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

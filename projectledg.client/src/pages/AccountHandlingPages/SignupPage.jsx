@@ -31,8 +31,8 @@ export default function SignUpPage() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-200">
       {/* Left side with logo and features */}
-      <div className="hidden bg-slate-300 lg:flex lg:w-1/2 p-8 lg:p-12 flex-col justify-between">
-        <div className='pt-40'>
+      <div className="hidden bg-slate-300 lg:flex lg:w-1/3 p-8 lg:p-12 flex-col justify-between">
+        <div className='pt-40 pl-11'>
           {/* Logo placeholder */}
           <div className="w-10 h-10 bg-gray-800 rounded-lg mb-8"></div>
           <div className="mb-8">
@@ -52,7 +52,7 @@ export default function SignUpPage() {
       </div>
       
       {/* Right side with sign-up form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-0 min-h-screen">
+      <div className="w-full lg:w-2/3 flex items-center justify-center p-4 lg:p-0 min-h-screen">
       <Card className="w-full max-w-md p-4 sm:p-8 lg:p-12">
         <div className="max-w-md mx-auto w-full">
           {/* Header with title and sign-in link */}
