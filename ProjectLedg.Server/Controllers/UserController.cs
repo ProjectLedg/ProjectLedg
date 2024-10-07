@@ -6,6 +6,8 @@ using ProjectLedg.Server.Model.DTOs.User;
 
 namespace ProjectLedg.Server.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
