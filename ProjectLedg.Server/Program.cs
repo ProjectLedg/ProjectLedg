@@ -88,7 +88,7 @@ namespace ProjectLedg.Server
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://localhost:5173", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
+                    builder.WithOrigins("http://localhost:5173", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
