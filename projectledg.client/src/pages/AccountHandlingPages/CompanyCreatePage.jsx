@@ -14,7 +14,7 @@ const initialFields = [
 export default function CompanyCreatePage() {
   
     const location = useLocation()
-    const email = location.state?.email
+    const email = location.state?.user
   
     const [formData, setFormData] = useState({})
 
@@ -33,7 +33,7 @@ export default function CompanyCreatePage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Sätt upp Företag</CardTitle>
-          <CardDescription>För in företags information {email}</CardDescription>
+          <CardDescription>För in företags information {user}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
