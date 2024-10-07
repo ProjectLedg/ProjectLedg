@@ -113,10 +113,10 @@ namespace ProjectLedg.Server.Services
             sb.Append("</div>");
 
             var headerHtml = @"
-                <div style='width: 100%; font-size: 12px; display: flex; justify-content: space-between;'>
-                    <div style='text-align: left;'>Samuel Hesser AB<br/>Org.nr: 559321-2961</div>
-                    <div style='text-align: right;'>Sida: [page]</div>
-                </div>";
+    <div style='width: 100%; font-size: 12px; display: flex; justify-content: space-between;'>
+        <div style='text-align: left;'>Samuel Hesser AB<br/>Org.nr: 559321-2961</div>
+        <div style='text-align: right;'>Sida: [page]</div>
+    </div>";
 
             // Save the header HTML as a temporary file
             string headerFilePath = Path.Combine(Path.GetTempPath(), "header.html");
