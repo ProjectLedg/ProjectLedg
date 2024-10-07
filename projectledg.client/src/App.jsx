@@ -1,5 +1,16 @@
-import { useEffect, useState } from 'react';
+
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPages/LandingPage';
+import LoginPage from './pages/AccountHandlingPages/LoginPage';
+import SignupPage from './pages/AccountHandlingPages/SignupPage';
+import CompanySelectPage  from './pages/AccountHandlingPages/CompanySelectPage'
+import CompanyCreatePage  from './pages/AccountHandlingPages/CompanyCreatePage'
+import ContactPage from './pages/LandingPages/ContactPage'
+import PricingPage from './pages/LandingPages/PricingPage'
+import FeaturePage from './pages/LandingPages/FeaturePage'
+import WhyPage from  './pages/LandingPages/WhyPage'
+import DashboardPage from './pages/DashboardPages/DashboardPage'
 
 function App() {
     return (
