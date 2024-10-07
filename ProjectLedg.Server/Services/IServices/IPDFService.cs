@@ -4,6 +4,6 @@ namespace ProjectLedg.Server.Services.IServices
 {
     public interface IPDFService
     {
-        byte[] GenerateYearlyPdf(IEnumerable<PDFYearDTO> pdf);
+        byte[] GenerateAnnualReportPdf();
     }
 }
