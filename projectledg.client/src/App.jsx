@@ -24,7 +24,7 @@ function App() {
                 <Route path="/feature" element={<FeaturePage/>}/>
                 <Route path="/pricing" element={<PricingPage/>}/>
                 <Route path="/contact" element={<ContactPage/>}/>
-                <Route path="/company-create" element={<CompanyCreatePage/>}/>             
+                <Route path="/company-create" element={<CompanyCreatePage/>}/>      
             </Routes>
         </Router>
     );    
