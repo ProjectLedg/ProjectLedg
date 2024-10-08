@@ -4,7 +4,6 @@
 
 /ProjectLedg.Server/.env
 /.vs/ProjectLedg/FileContentIndex
-<<<<<<< HEAD
 /.vs/ProjectEvaluation/projectledg.metadata.v7.bin
 /.vs/ProjectEvaluation/projectledg.projects.v7.bin
 /.vs/ProjectLedg/config/applicationhost.config
@@ -13,7 +12,6 @@
 /.vs/ProjectLedg/v17/.suo
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.assets.cache
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.GeneratedMSBuildEditorConfig.editorconfig
-=======
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.AssemblyInfo.cs
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.AssemblyInfoInputs.cache
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.assets.cache
@@ -48,7 +46,6 @@
 /ProjectLedg.Server/obj/ProjectLedg.Server.csproj.nuget.g.props
 /.vs/ProjectLedg/v17/.suo
 /.vs/ProjectLedg/v17/.wsuo
-*.json
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.AssemblyInfo.cs
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.AssemblyInfoInputs.cache
 /ProjectLedg.Server/obj/Debug/net8.0/ProjectLedg.Server.assets.cache
@@ -60,7 +57,6 @@
 /ProjectLedg.Server/obj/ProjectLedg.Server.csproj.nuget.dgspec.json
 /ProjectLedg.Server/obj/ProjectLedg.Server.csproj.nuget.g.props
 /ProjectLedg.Server/.env
-*.json
 /projectledg.client/obj/Debug/projectledg.client.esproj.FileListAbsolute.txt
 /ProjectLedg.Server/bin/Debug/net8.0/ProjectLedg.Server.deps.json
 /ProjectLedg.Server/bin/Debug/net8.0/ProjectLedg.Server.dll
@@ -490,12 +486,12 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
+ .vscode/*
+ !.vscode/settings.json
+ !.vscode/tasks.json
+ !.vscode/launch.json
+ !.vscode/extensions.json
+ *.code-workspace
 
 # Local History for Visual Studio Code
 .history/
