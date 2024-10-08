@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function Content() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col w-[80vw] h-full justify-center items-center my-24">
+    <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24">
       <h1 className="py-10 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Data till insikter på <span className="text-green-500">minuter</span>
       </h1>
