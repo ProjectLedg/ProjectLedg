@@ -1,4 +1,6 @@
-﻿namespace ProjectLedg.Server.Data.Models
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace ProjectLedg.Server.Data.Models
 {
     public class Invoice
     {
@@ -11,6 +13,7 @@
         public bool IsPaid { get; set; }
         public bool IsOutgoing { get; set; }
         public string ClientName { get; set; }
+        public string SenderName { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
     }

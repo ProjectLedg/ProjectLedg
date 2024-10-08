@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Cookies from 'js-cookie'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
@@ -30,7 +29,7 @@ export default function LoginPage() {
             });
 
             if (response.data.message === 'Login successful') {
-                Cookies.set('userToken', response.data.token, { expires: 1, path: '/' });
+
 
                 navigate('/company-select');
             }
@@ -51,6 +50,10 @@ export default function LoginPage() {
     const handleAppleSignIn = () => {
         console.log('Sign in with Apple')
         // Add your Apple sign-in logic here
+    }
+
+    const handleSignUpClick = () => {
+        navigate('/signup')
     }
 
     return (
@@ -142,7 +145,7 @@ export default function LoginPage() {
                         This site is protected by reCAPTCHA and the Google Privacy Policy.
                     </p>
                     <p className="text-sm text-gray-600">
-                        Don't have an account? <a href="#" className="text-blue-500 hover:underline">Sign up</a>
+                        Don't have an account? <a href="#" className="text-blue-500 hover:underline" onClick={handleSignUpClick}>Sign up</a>
                     </p>
                 </CardFooter>
             </Card>
