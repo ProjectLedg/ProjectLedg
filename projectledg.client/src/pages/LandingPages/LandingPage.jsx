@@ -6,8 +6,12 @@ export default function LandingPage() {
     return (
         <>
         <Navbar />
+        <div className='w-[100wv] flex flex-row justify-center'>
         <Content/>
+        </div>
+        
         </>
     );
 };
 
+    
