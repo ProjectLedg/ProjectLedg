@@ -18,6 +18,9 @@ using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
 using ProjectLedg.Server.Services;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace ProjectLedg.Server
 {
@@ -62,7 +65,7 @@ namespace ProjectLedg.Server
             }).AddEntityFrameworkStores<ProjectLedgContext>()
               .AddDefaultTokenProviders();
 
-            builder.Services.AddAuthentication(options =>
+            services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,6 +82,22 @@ namespace ProjectLedg.Server
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
                 };
             });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+                .AddCookie()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+                    options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedFirstName");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
+                });
 
             services.AddAuthorization();
 
@@ -139,7 +158,7 @@ namespace ProjectLedg.Server
             services.AddScoped<IEmailSender, EmailSender>();
             //JWT
             services.AddScoped<JwtRepository>();
-            services.AddScoped<AuthenticationService>();
+            services.AddScoped<ProjectLedg.Server.Services.AuthenticationService>();
             //PDF
             services.AddScoped<IPDFService, PDFService>();
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
