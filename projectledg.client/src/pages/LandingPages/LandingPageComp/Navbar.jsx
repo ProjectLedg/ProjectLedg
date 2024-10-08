@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control the dropdown menu
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev); // Toggle menu visibility
@@ -38,6 +40,7 @@ export default function Navbar() {
           <Button
             variant="solid"
             className="hidden md:inline-flex text-white text-lg font-normal bg-zinc-800 hover:text-zinc-200 transition-all duration-300 ease-in-out transform hover:scale-105"
+            onClick={() => navigate("/signup")}
           >
             Kom igång
           </Button>
@@ -67,7 +70,8 @@ export default function Navbar() {
             <Button
               variant="solid"
               className="w-full text-white bg-zinc-800 hover:bg-zinc-700 transition-all duration-300"
-              onClick={() => setIsMenuOpen(false)} // Close menu on button click
+              onClick={() => navigate("/signup")}
+              
             >
               Kom igång
             </Button>
