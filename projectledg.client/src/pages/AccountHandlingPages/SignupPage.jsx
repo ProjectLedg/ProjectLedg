@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import Cookies from 'js-cookie'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { Check } from "lucide-react"
+import { Check, Loader } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 const SignUpPage = () => {
   const [userDetails, setUserDetails] = useState({
@@ -19,7 +24,8 @@ const SignUpPage = () => {
   });
 
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,17 +38,21 @@ const SignUpPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     if (userDetails.email !== userDetails.emailConfirmed) {
       setError("Emails do not match.");
+      setIsLoading(false);
       return;
     }
     if (userDetails.password !== userDetails.passwordConfirmed) {
       setError("Passwords do not match.");
+      setIsLoading(false);
       return;
     }
     if(userDetails.password.length < 8 || userDetails.password.length > 20) {
       setError("Password must be at least 6 characters long.");
+      setIsLoading(false);
       return;
     }
 
@@ -54,10 +64,11 @@ const SignUpPage = () => {
         },
         withCredentials: true
       });
-      Cookies.set('userToken', response.data.token, { expires: 1, path: '/' });
-      navigate('/company-create');
+      setIsModalOpen(true);
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred during signup. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -180,7 +191,16 @@ const SignUpPage = () => {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <Button type="submit" className="w-full">Fortsätt</Button>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    Skapar konto...
+                  </>
+                ) : (
+                  'Fortsätt'
+                )}
+              </Button>
             </form>
             
             <p className="text-xs text-gray-500 mt-4">
@@ -189,6 +209,17 @@ const SignUpPage = () => {
           </div>
         </Card>     
       </div>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Email Verification Sent</DialogTitle>
+            <DialogDescription>
+              A email verification has been sent to your email. Please check your inbox and follow the instructions to complete your registration.
+            </DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import React, { useState,useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Cookies from 'js-cookie'
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const initialFields = [
@@ -14,14 +14,8 @@ const initialFields = [
 
 export default function CompanyCreatePage() {
   
-    
-    const [token, setToken] = useState('');
-    const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState({})
 
-    useEffect(() => {
-      const userToken = Cookies.get('userToken');
-      setToken(userToken);
-    }, []);
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
@@ -29,13 +23,13 @@ export default function CompanyCreatePage() {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Form submitted:', formData)
-    console.log('Token:', token);
+    
     // Here you would typically send the data to your backend
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-300 backdrop-blur-md p-4">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-md shadow-lg"> Wwd
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Sätt upp Företag</CardTitle>
           <CardDescription>För in företags information </CardDescription>
