@@ -145,6 +145,9 @@ namespace ProjectLedg.Server
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             //HTTPClient
             services.AddHttpClient();
+            //Company
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<ICompanyService, CompanyService>();
 
 
             var app = builder.Build();
