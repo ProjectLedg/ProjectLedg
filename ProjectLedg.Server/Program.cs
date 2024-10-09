@@ -80,7 +80,8 @@ namespace ProjectLedg.Server
                     ValidateLifetime = true,
                     ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
                     ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
                 };
             });
 
@@ -99,7 +100,7 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
-                    options.CallbackPath = "/google-response";
+             
                 });
 
             services.AddAuthorization();
@@ -110,7 +111,7 @@ namespace ProjectLedg.Server
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
+                    builder.WithOrigins("http://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();

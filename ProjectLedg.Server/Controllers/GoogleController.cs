@@ -29,7 +29,7 @@ namespace ProjectLedg.Server.Controllers
         [HttpGet("/login-google")]
         public IActionResult GoogleLogin()
         {
-            var redirectUri = Url.Action("GoogleResponse");
+            var redirectUri = Url.Action("googleresponse");
             var properties = new AuthenticationProperties
             {
                 RedirectUri = redirectUri
@@ -38,7 +38,7 @@ namespace ProjectLedg.Server.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        [HttpGet("/google-response")]
+        [HttpGet("/googleresponse")]
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
@@ -87,7 +87,9 @@ namespace ProjectLedg.Server.Controllers
             }
 
             //Associate the google login with the user
-            var loginInfo = new UserLoginInfo(GoogleDefaults.AuthenticationScheme, result.Principal.FindFirstValue(ClaimTypes.NameIdentifier), GoogleDefaults.AuthenticationScheme);
+            var loginInfo = new UserLoginInfo(GoogleDefaults.AuthenticationScheme, 
+                result.Principal.FindFirstValue(ClaimTypes.NameIdentifier), 
+                GoogleDefaults.AuthenticationScheme);
 
             var userLogins = await _userManager.GetLoginsAsync(user);
             if (!userLogins.Any(l => l.LoginProvider == loginInfo.LoginProvider && l.ProviderKey == loginInfo.ProviderKey))
@@ -105,7 +107,8 @@ namespace ProjectLedg.Server.Controllers
         private string GenerateJwtToken(IEnumerable<Claim> claims)
         {
             //var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_ISSUER")));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                Environment.GetEnvironmentVariable("JWT_SECRET"))); //Remember to use correct JWT name here 
             var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var tokenOptions = new JwtSecurityToken(
