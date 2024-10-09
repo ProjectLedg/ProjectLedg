@@ -32,6 +32,7 @@ namespace ProjectLedg.Server
             var services = builder.Services;
             Env.Load();
 
+         
             var mailKitSettingsSection = new MailKitSettings
             {
                 MailServer = Environment.GetEnvironmentVariable("MAILSERVER"),
@@ -97,6 +98,8 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedFirstName");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
+
+                    options.CallbackPath = "/google-response";
                 });
 
             services.AddAuthorization();
@@ -193,6 +196,9 @@ namespace ProjectLedg.Server
             app.MapFallbackToFile("/index.html");
 
             app.Run();
+
+           
+
         }
     }
 }

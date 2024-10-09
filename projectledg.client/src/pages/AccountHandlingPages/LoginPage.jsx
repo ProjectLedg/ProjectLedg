@@ -51,7 +51,7 @@ export default function LoginPage() {
     };
 
     const handleGoogleSignIn = () => {
-        console.log('Sign in with Google')
+        window.location.href = "https://localhost:7223/login-google";
         // Add your Google sign-in logic here
     }
 
