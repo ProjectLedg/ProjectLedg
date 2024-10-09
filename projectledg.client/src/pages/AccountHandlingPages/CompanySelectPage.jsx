@@ -1,23 +1,24 @@
 import {useRef, useEffect, useState} from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard  from './CompanySelectPageComponents/CompanyCard'
+import { useNavigate } from 'react-router-dom'
 
 
 export default function CompanySelectPage() {
     
-    // Replace with api call for users companies
+    // Temp test data replace with api call for users companies
     const companies = [
         { id: 1, companyName: 'ProjectLedge AB', orgNumber:"5512121212", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
         { id: 2, companyName: 'AddeBadde Bygg & VVS AB', orgNumber: "5500224466", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
         { id: 3, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
         { id: 4, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 5, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
+        { id: 5, companyName: 'You snooze you loose AB', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
     ]
 
     // Replace with imported json?
     const infoText = {
         sectionTitle: "Välj företag",
-        sectionDescription: "Logged in users can view full business profiles and can save contact details."
+        sectionDescription: ""
     }
 
     const scrollContainerRef = useRef(null);
@@ -26,6 +27,8 @@ export default function CompanySelectPage() {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const navigate = useNavigate();
+
 
 
 useEffect(() => {
@@ -73,16 +76,25 @@ const handleMouseMove = (e) => {
         scrollContainerRef.current.scrollLeft = scrollLeft - walk; 
 }
 
+const handleCompanySelect = (company) => {
+    console.log(company)
+    navigate(`/dashboard/company/${company.companyId}`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+}
+
+const handleCompanyAdd = () => {    
+    navigate('/company-create');
+}
+
  
-    return (
-        
-        <section className="bg-slate-300 min-h-screen flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg max-w-5xl w-full">
+    return ( 
+        <section className="bg-white min-h-screen flex items-center justify-center p-4 overflow-x-hidden	">
+            <div className=" bg-green-300 rounded-xl p-8 shadow-lg max-w-5xl w-full">
                 <h1 className="text-2xl font-bold text-center mb-2">{infoText.sectionTitle}</h1>
                 <p className="text-gray-600 text-center mb-8">
                     {infoText.sectionDescription}
                 </p>
                 <div className='relative'>
+                    {/* Left arrow button  */}
                     {showLeftArrow && (
                         <button
                             onClick={() => scroll('left')}
@@ -92,8 +104,7 @@ const handleMouseMove = (e) => {
                             <ChevronLeft size={24}/>
                         </button>
                     )}
-
-
+                    {/* Right arrow button */}
                     {showRightArrow && (
                         <button
                             onClick={() => scroll('right')}
@@ -106,7 +117,7 @@ const handleMouseMove = (e) => {
 
                     <div
                         ref={scrollContainerRef}
-                        className='flex overflow-x-auto space-x-4 pb-4 scrollbar-hide cursor-grab active:cursor-grabbing' 
+                        className='flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing' 
                         style={{
                             scrollbarWidth: "none",
                             msOverflowStyle: "none",
@@ -122,21 +133,23 @@ const handleMouseMove = (e) => {
                         {companies.map((company) => (
                             <CompanyCard
                                 key={company.id}
+                                companyId = {company.id}
                                 companyName={company.companyName}
                                 orgNumber={company.orgNumber}
                                 imageUrl={company.imageUrl}
+                                handleCompanySelect={handleCompanySelect}
                             />
                         ))}
-                        <button className='flex-shrink-0 w-48 bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-200 transition-colors duration-300'>
+                        <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-200 transition-colors duration-300'>
                             <PlusCircle size={48} className='text-gray-400 mb-2' />
                             <span className="sr-only">Lägg till nytt företag</span>
                         </button>
                     </div>
                     {showLeftArrow && (
-                        <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+                        <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-green-300 to-transparent pointer-events-none "></div>
                     )}
                     {showRightArrow && (
-                        <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                        <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-green-300 to-transparent pointer-events-none"></div>
                     )}
 
                 </div>
