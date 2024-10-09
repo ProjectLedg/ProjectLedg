@@ -31,12 +31,8 @@ export default function LoginPage() {
                 withCredentials: true
             });
 
-            if (response.data.message === 'Login successful') {
-                if (response.data.hasCompany === true) {
-                    navigate('/company-select');
-                } else if (response.data.hasCompany === false) {
-                    navigate('/company-create');
-                }
+            if (response.data.message === 'Login successful') {               
+                navigate('/company-select')
             }
             else {
                 alert('Login failed. Please check your credentials.');

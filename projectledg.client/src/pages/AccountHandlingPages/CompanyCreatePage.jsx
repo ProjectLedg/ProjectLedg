@@ -43,7 +43,7 @@ export default function CompanyCreatePage() {
     try {
       const response = await axiosConfig.post('/Company/create', formData)
       console.log('Form submitted successfully:', response.data)
-      Navigate('/dashboard')
+      Navigate('/company-select')
     } catch (err) {
       console.error('Error submitting form:', err)
       setError('An error occurred while submitting the form. Please try again.')
