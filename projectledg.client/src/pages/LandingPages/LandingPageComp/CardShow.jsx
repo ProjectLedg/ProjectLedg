@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { 
   BadgeDollarSign,
   BookCheck,
@@ -15,6 +15,7 @@ import {
  } from "lucide-react";
 
 import GridItem from "./GridItem.jsx";
+import EmptyGridItem from "./EmptyGridItem.jsx";
 
 const textIconMap = {
   "Vad är debet och kredit?": BadgeDollarSign,
@@ -41,19 +42,45 @@ const colors = [
   "bg-purple-200",
 ];
 
+const DISPLAY_DURATION = 4000; 
 
 export default function CardShow() {
-  function getOpacity(x, y) {
+  const [gridItems, setGridItems] = useState(
+    Array(16).fill({ text: "", icon: null, bgColor: "", opacity: 0, timer: 0 })
+  );
 
-    const centerX = 3.5; 
-    const centerY = 0.5; 
-    const distanceX = Math.abs(x - centerX);
-    const distanceY = Math.abs(y - centerY);
-    const maxDistance = 3; 
-    const opacity = distanceX + distanceY > maxDistance ? 0.5 : 1;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGridItems((prevItems) => {
+        const newItems = prevItems.map((item) => {
+          if (item.timer > 0) {
+            return { ...item, timer: item.timer - 500 };
+          }
+          return { text: "", icon: null, bgColor: "", opacity: 0, timer: 0 };
+        });
 
-    return opacity;
-  }
+        const emptyIndexes = newItems
+          .map((item, index) => (item.timer === 0 ? index : -1))
+          .filter((index) => index !== -1);
+        if (emptyIndexes.length > 0) {
+          const randomIndex = emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)];
+          const text = texts[Math.floor(Math.random() * texts.length)];
+          newItems[randomIndex] = {
+            text,
+            icon: textIconMap[text],
+            bgColor: colors[Math.floor(Math.random() * colors.length)],
+            opacity: 1,
+            timer: DISPLAY_DURATION,
+          };
+        }
+
+        return newItems;
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative w-full overflow-hidden bg-white">
       <div className="flex flex-col w-full justify-center items-center my-6">
@@ -64,29 +91,19 @@ export default function CardShow() {
       <div className="flex flex-col relative w-screen min-h-screen items-center">
         <div className="max-w-7xl py-12 flex flex-col justify-center w-screen items-center">
           <div className="grid grid-cols-4 md:grid-cols-8 gap-4 w-[100vw] md:w-[110VW]">
-            {Array(16)
-              .fill(null)
-              .map((_, index) => {
-                const x = index % 8;
-                const y = Math.floor(index / 8);
-                const opacity = getOpacity(x, y);
-
-               
-               // Randomly select a text
-                const text = texts[Math.floor(Math.random() * texts.length)];
-                const icon = textIconMap[text]; // Get the corresponding icon
-                const bgColor = colors[Math.floor(Math.random() * colors.length)];
-
-                return (
-                  <GridItem
-                    key={index}
-                    opacity={opacity}
-                    text={text}
-                    icon={icon}
-                    bgColor={bgColor}
-                  />
-                );
-              })}
+            {gridItems.map((item, index) =>
+              item.text ? (
+                <GridItem
+                  key={index}
+                  opacity={item.opacity}
+                  text={item.text}
+                  icon={item.icon}
+                  bgColor={item.bgColor}
+                />
+              ) : (
+                <EmptyGridItem key={index} />
+              )
+            )}
           </div>
         </div>
       </div>
