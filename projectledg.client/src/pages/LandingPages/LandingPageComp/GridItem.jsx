@@ -3,7 +3,7 @@ import React from "react";
 const GridItem = ({ opacity, text, icon: Icon, bgColor }) => {
   return (
     <div
-      className="relative bg-gray-100 rounded-lg shadow-lg shadow-black/30 aspect-square"
+      className="relative bg-white rounded-lg shadow-lg shadow-black/30 aspect-square"
       style={{ opacity }}
     >
       <div className="flex flex-col justify-around items-center pt-4 h-full">
