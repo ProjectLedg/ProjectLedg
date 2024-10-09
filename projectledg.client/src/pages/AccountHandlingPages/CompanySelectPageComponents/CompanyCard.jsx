@@ -1,8 +1,10 @@
 
-export default function CompanyCard({ companyName, orgNumber, imageUrl }) {
+export default function CompanyCard({ handleCompanySelect, companyId, companyName, orgNumber, imageUrl }) {
     
     return (
-        <article className="flex-shrink-0 w-48 bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 relative group">
+        <article 
+        onClick={() => handleCompanySelect({ companyId, companyName, orgNumber, imageUrl })} 
+        className="flex-shrink-0 w-48 bg-white rounded-lg p-4 shadow-md hover:shadow-lg hover:scale-105 transition-shadow transition-transform ease-in-out duration-150 relative group">
             <img 
                 src={imageUrl} 
                 alt={companyName} 
