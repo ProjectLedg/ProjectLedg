@@ -20,10 +20,10 @@ namespace ProjectLedg.Server.Controllers
         [HttpGet("generatepdf")]
         public IActionResult GenerateAnnualReportPdf()
         {
-            // Generate the PDF bytes using the service
+            //generate the PDF bytes using the service
             var pdf = _pdfService.GenerateAnnualReportPdf();
 
-            // Return the generated PDF as a file
+            //return the generated PDF as a file
             return File(pdf, "application/pdf", "AnnualReport.pdf");
         }
 
@@ -31,24 +31,24 @@ namespace ProjectLedg.Server.Controllers
         [HttpPost("generatepdf/{fileName}")]
         public async Task<IActionResult> GenerateAndSavePdf(string fileName)
         {
-            // Generate the PDF
+            //generate the PDF
             var pdfBytes = _pdfService.GenerateAnnualReportPdf();
 
-            // Define the directory path for saving the PDF
+            //define the directory path for saving the PDF
             var pdfDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pdfs");
             var pdfFileName = $"{fileName}.pdf";  // Use the provided fileName
             var filePath = Path.Combine(pdfDirectory, pdfFileName);
 
-            // Ensure the directory exists
+            //ensure the directory exists
             if (!Directory.Exists(pdfDirectory))
             {
                 Directory.CreateDirectory(pdfDirectory);
             }
 
-            // Save the PDF file
+            //save the PDF file
             await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
 
-            // Return the URL to the saved PDF
+            //return the URL to the saved PDF
             var pdfUrl = $"{Request.Scheme}://{Request.Host}/pdfs/{pdfFileName}";
             return Ok(new { pdfUrl });
         }
@@ -58,23 +58,36 @@ namespace ProjectLedg.Server.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
-            // Save the uploaded file temporarily
-            var filePath = Path.Combine(Path.GetTempPath(), file.FileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            try
             {
-                await file.CopyToAsync(stream);
+                //process the PDF and return the resulting Blob URL and JSON data
+                var result = await _pdfService.ProcessInvoiceAsync(file);
+
+                return Ok(result);
             }
-
-            // Extract invoice details from the uploaded PDF
-            var invoiceDetails = _pdfService.ExtractInvoiceDetails(filePath);
-
-            if (invoiceDetails == null)
+            catch (Exception ex)
             {
-                return BadRequest("Could not extract invoice details from the PDF.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
-            // return extracted files as JSOn
-            return Ok(invoiceDetails);
         }
+
+        [HttpPost("test-upload-pdf")]
+        public async Task<IActionResult> TestUploadPdf([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            try
+            {
+                //upload the file and return the blob URL
+                var result = await _pdfService.ProcessInvoiceAsync(file);
+                return Ok(new { message = "File uploaded successfully", blobUrl = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
     }
 }
