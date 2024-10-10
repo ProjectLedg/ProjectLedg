@@ -106,12 +106,12 @@ namespace ProjectLedg.Server.Controllers
             Response.Cookies.Append("JWTToken", token, new CookieOptions
             {
                 HttpOnly = true, // This ensures the cookie is not accessible via JavaScript
-                Secure = false, // Set to true if using HTTPS
+                Secure = true, // Set to true if using HTTPS
                 SameSite = SameSiteMode.Strict, // Adjust based on your security needs (Strict or Lax)
                 Expires = DateTime.UtcNow.AddHours(1) // Token expiry matches cookie expiry
             });
             //return Ok(new { token }); 
-            return Redirect("http://localhost:5173/company-select");
+            return Redirect("https://localhost:5173/company-select");
         }
         private string GenerateJwtToken(IEnumerable<Claim> claims)
         {
