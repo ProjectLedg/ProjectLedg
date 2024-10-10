@@ -5,6 +5,7 @@ using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Repositories.IRepositories;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 public class PDFRepository : IPDFRepository
@@ -15,45 +16,36 @@ public class PDFRepository : IPDFRepository
     public PDFRepository(ProjectLedgContext context, IConfiguration configuration)
     {
         _context = context;
-
-        // initialize the blob service client with the connection string and container name
-        string connectionString = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONNECTION");
-        string containerName = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONTAINERNAME");
-        _blobContainerClient = new BlobContainerClient(connectionString, containerName);
     }
 
     // ssave the invoice to the database and Azure Blob Storage
-    public async Task SaveInvoiceAsync(Invoice invoice, string pdfFilePath)
+
+    //MAIN ENDPOINT THE OTHER IS TEST
+    //public async Task SaveInvoiceAsync(Invoice invoice, string blobUrl)
+    //{
+    //    // Save the Blob URL as the PDF file path
+    //    invoice.InvoiceFilePath = blobUrl;
+
+    //    // Save the invoice details to the database
+    //    _context.Invoices.Add(invoice);
+    //    await _context.SaveChangesAsync();
+    //}
+
+    public async Task<Invoice> GetInvoiceByIdAsync(int id)
     {
-        // Save the file to Azure Blob Storage
-        string blobName = $"{invoice.InvoiceNumber}.pdf";
-        BlobClient blobClient = _blobContainerClient.GetBlobClient(blobName);
+        return await _context.Invoices.FindAsync(id);
+    }
+    //TEST ENDPOINT
+    public async Task SaveInvoiceAsync(Invoice invoice, string blobUrl)
+    {
+        // Store the Blob URL in the invoice
+        invoice.InvoiceFilePath = blobUrl;
 
-        // Upload the file to Blob Storage
-        using (FileStream uploadFileStream = File.OpenRead(pdfFilePath))
-        {
-            await blobClient.UploadAsync(uploadFileStream, true);
-        }
-
-        // SAVE the blob URL to the database as a string
-        invoice.InvoiceFile = blobClient.Uri.ToString();
-
+        // Save the invoice data to the database
         _context.Invoices.Add(invoice);
         await _context.SaveChangesAsync();
     }
 
-    // get the invoice from the database
-    public async Task<Invoice> GetInvoiceByIdAsync(int id)
-    {
-        var invoice = await _context.Invoices.FindAsync(id);
-        if (invoice != null)
-        {
-            // the invoice file is a blob URL
-            invoice.InvoiceFile = _blobContainerClient.Uri.ToString();
-        }
-
-        return invoice;
-    }
 
     private string GetBlobUrl(string invoiceNumber)
     {
