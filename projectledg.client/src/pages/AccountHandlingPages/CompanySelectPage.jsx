@@ -2,17 +2,19 @@ import {useRef, useEffect, useState} from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard  from './CompanySelectPageComponents/CompanyCard'
 import { useNavigate } from 'react-router-dom'
+import axiosConfig from '/axiosconfig'
 
-
-export default function CompanySelectPage() {
+export default function CompanySelectPage() {;
     
-    // Temp test data replace with api call for users companies
-    const companies = [
-        { id: 1, companyName: 'ProjectLedge AB', orgNumber:"5512121212", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 2, companyName: 'AddeBadde Bygg & VVS AB', orgNumber: "5500224466", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 3, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 4, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 5, companyName: 'You snooze you loose AB', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
+    // Images for the company placeholder icons (more can be added or changed later)
+    const companyIcons = [
+        "src/assets/company-icons/balance.png",
+        "src/assets/company-icons/bank.png",
+        "src/assets/company-icons/box.png",
+        "src/assets/company-icons/briefcase.png",
+        "src/assets/company-icons/calculator.png",
+        "src/assets/company-icons/city.png",
+        "src/assets/company-icons/company.png"
     ]
 
     // Replace with imported json?
@@ -22,6 +24,7 @@ export default function CompanySelectPage() {
     }
 
     const scrollContainerRef = useRef(null);
+    const [companies, setCompanies] = useState([]);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
@@ -30,8 +33,29 @@ export default function CompanySelectPage() {
     const navigate = useNavigate();
 
 
-
 useEffect(() => {
+    const getUserCompanies = async () => {
+        try {
+            const response = await axiosConfig.get("/Company/getUserCompanies");
+            setCompanies(response.  data);
+
+            // if there's no companies go to company create page
+            if (companies === null ) {
+                // navigate(`/company-create`)
+            }
+            // if there's only one company skip the select and go to dahsboard directly
+            else if (companies.length === 1){
+                // navigate(`dashboard/${companies[0].id}`)
+            }
+
+        } catch (error) {
+            console.error("An error occurred retrieving companies:", error);
+        }
+    };  
+    getUserCompanies();
+
+
+
     // Check if there is any scrollable overflow in the container, if not (0) then disable the arrow (otherwise it'll show even if there is nothing to scroll upon first render)
     const container = scrollContainerRef.current;
     if (container.scrollWidth - container.clientWidth === 0)
@@ -48,6 +72,7 @@ useEffect(() => {
 
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
+
 }, []);
 
 // Scrolls card carousel 200px in the arrow direction
@@ -78,7 +103,7 @@ const handleMouseMove = (e) => {
 
 const handleCompanySelect = (company) => {
     console.log(company)
-    navigate(`/dashboard/company/${company.companyId}`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    navigate(`/dashboard/${company.companyId}`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 }
 
 const handleCompanyAdd = () => {    
@@ -130,13 +155,14 @@ const handleCompanyAdd = () => {
                         onMouseLeave={handleMouseUp}
                         onMouseMove={handleMouseMove}
                     >
-                        {companies.map((company) => (
+
+                        {companies.map((company, i) => (
                             <CompanyCard
                                 key={company.id}
                                 companyId = {company.id}
                                 companyName={company.companyName}
                                 orgNumber={company.orgNumber}
-                                imageUrl={company.imageUrl}
+                                imageUrl={companyIcons[i]}
                                 handleCompanySelect={handleCompanySelect}
                             />
                         ))}

@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Company;
 using ProjectLedg.Server.Repositories;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
+using System.Security.Claims;
 
 namespace ProjectLedg.Server.Services
 {
@@ -58,6 +61,32 @@ namespace ProjectLedg.Server.Services
             {
                 throw new Exception($"{ex.Message}");
             }
+        }
+
+        [Authorize]
+        public async Task<IEnumerable<UsersCompaniesDTO>> GetCompaniesForUserAsync(ClaimsPrincipal claims)
+        {
+            string? userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Do better error handling
+            if (userId == null)
+                return null;
+
+            var companies = await _companyRepository.GetCompaniesForUserAsync(userId);
+
+            var companyDtoList = new List<UsersCompaniesDTO>();
+            foreach(Company company in companies)
+            {
+                var newDto = new UsersCompaniesDTO
+                {
+                    Id = company.Id,
+                    CompanyName = company.CompanyName,
+                    OrgNumber = company.OrgNumber,
+                };
+                companyDtoList.Add(newDto);
+            }
+
+            return companyDtoList;
         }
 
         public async Task<Company> GetCompanyByIdAsync(int id)
