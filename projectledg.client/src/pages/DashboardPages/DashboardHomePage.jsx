@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { HelpCircle } from 'lucide-react'
+import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ProfitabilityCard from './DashboardPageComp/ProfitabilityCard'
 
-const MetricCard = ({ title, value, change, changeType, chart }) => (
+const MetricCard = ({ title, value, change, changeType, chart, icon: Icon }) => (
   <Card className="overflow-hidden">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</CardTitle>
+      <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center">
+        {Icon && <Icon className="mr-2 h-4 w-4" />}
+        {title}
+      </CardTitle>
       <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
     </CardHeader>
     <CardContent>
@@ -134,6 +137,7 @@ export default function DashboardHomePage() {
           value={`${dashboardData.totalCash.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.totalCash.changePercentage}% MoM`}
           changeType={dashboardData.totalCash.changePercentage >= 0 ? 'positive' : 'negative'}
+          icon={Wallet}
           chart={
             <LineChart data={dashboardData.totalCash.history}>
               <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
@@ -148,6 +152,7 @@ export default function DashboardHomePage() {
           value={`${dashboardData.income.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.income.changePercentage}% MoM`}
           changeType={dashboardData.income.changePercentage >= 0 ? 'positive' : 'negative'}
+          icon={TrendingUp}
           chart={
             <BarChart data={dashboardData.income.history}>
               <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
@@ -166,6 +171,7 @@ export default function DashboardHomePage() {
           value={`${dashboardData.grossBurn.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.grossBurn.changePercentage}% MoM`}
           changeType={dashboardData.grossBurn.changePercentage <= 0 ? 'positive' : 'negative'}
+          icon={TrendingDown}
           chart={
             <BarChart data={dashboardData.grossBurn.history}>
               <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />

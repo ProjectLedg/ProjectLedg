@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { HelpCircle, TrendingUp, DollarSign } from 'lucide-react'
+import { HelpCircle, PieChart, DollarSign } from 'lucide-react'
 
 const ProfitabilityCard = ({ runway }) => {
   if (!runway) {
@@ -19,7 +19,7 @@ const ProfitabilityCard = ({ runway }) => {
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-          <TrendingUp className="mr-2 h-4 w-4" />
+          <PieChart className="mr-2 h-4 w-4" />
           Lönsamhet
         </CardTitle>
         <HelpCircle className="h-4 w-4 text-muted-foreground" />
