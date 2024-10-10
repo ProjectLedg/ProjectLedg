@@ -104,8 +104,8 @@ namespace ProjectLedg.Server.Controllers
                 // Create a cookie for the JWT token
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = true,
-                    Secure = true,
+                    HttpOnly = false, 
+                    Secure = true, 
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddHours(1)
                 };
@@ -118,9 +118,9 @@ namespace ProjectLedg.Server.Controllers
                 // Create a cookie for the JWT token
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    HttpOnly = false, 
+                    Secure = true, 
+                    SameSite = SameSiteMode.Strict, 
                     Expires = DateTime.Now.AddHours(1)
                 };
                 Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
