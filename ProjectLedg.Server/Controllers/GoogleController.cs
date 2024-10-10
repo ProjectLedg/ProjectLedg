@@ -106,7 +106,7 @@ namespace ProjectLedg.Server.Controllers
             Response.Cookies.Append("JWTToken", token, new CookieOptions
             {
                 HttpOnly = true, // This ensures the cookie is not accessible via JavaScript
-                Secure = true, // Set to true if using HTTPS
+                Secure = false, // Set to true if using HTTPS
                 SameSite = SameSiteMode.Strict, // Adjust based on your security needs (Strict or Lax)
                 Expires = DateTime.UtcNow.AddHours(1) // Token expiry matches cookie expiry
             });
