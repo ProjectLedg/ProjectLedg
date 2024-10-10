@@ -52,5 +52,29 @@ namespace ProjectLedg.Server.Controllers
             var pdfUrl = $"{Request.Scheme}://{Request.Host}/pdfs/{pdfFileName}";
             return Ok(new { pdfUrl });
         }
+        [HttpPost("upload-invoice")]
+        public async Task<IActionResult> UploadInvoice([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            // Save the uploaded file temporarily
+            var filePath = Path.Combine(Path.GetTempPath(), file.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Extract invoice details from the uploaded PDF
+            var invoiceDetails = _pdfService.ExtractInvoiceDetails(filePath);
+
+            if (invoiceDetails == null)
+            {
+                return BadRequest("Could not extract invoice details from the PDF.");
+            }
+
+            // return extracted files as JSOn
+            return Ok(invoiceDetails);
+        }
     }
 }
