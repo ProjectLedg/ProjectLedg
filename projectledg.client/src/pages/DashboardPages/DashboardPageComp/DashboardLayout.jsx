@@ -1,23 +1,29 @@
 import React from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { 
   Home, 
   Menu,
-  Search,
   MessageSquarePlus,
   UserPlus,
   Activity,
+  BookCheck,
+  Settings,
+  HelpCircle,
+  BookDown,
+  LogOut,
 } from 'lucide-react'
 
 const navItems = [
-  { icon: Home, label: 'Home', path: '/dashboard' },
-  { icon: Activity, label: 'Financial Reports', path: '/dashboard/financial-reports' }
-
-  
+  { icon: Home, label: 'Hem', path: '/dashboard', position: 'top' },
+  { icon: Activity, label: 'Finasiell rapport', path: '/dashboard/financial-reports', position: 'top' },
+  { icon: BookCheck, label: 'Bokför', path: '/dashboard/book', position: 'top' },
+  { icon: BookDown, label:'Årsredovisning', path:'/dashboard/financial-statement', position:'top'},
+  { icon: Settings, label: 'Inställningar', path: '/dashboard/settings', position: 'bottom' },
+  { icon: HelpCircle, label: 'Hjälp', path: '/', position: 'bottom' },
+  { icon: LogOut, label: 'Logga ut', path: '/', position: 'bottom'},
 ]
 
 const NavItem = ({ icon: Icon, label, path }) => (
@@ -28,17 +34,24 @@ const NavItem = ({ icon: Icon, label, path }) => (
 )
 
 const Sidebar = ({ className }) => (
-  <div className={cn("pb-12 bg-white/60 bg-opacity-80 w-60", className)}>
-    <div className="space-y-4 py-4">
+  <div className={cn("pb-12 bg-white/60 bg-opacity-80 w-60 flex flex-col h-full", className)}>
+    <div className="flex-grow space-y-4 py-4">
       <div className="px-3 py-2">
         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-          Menu
+          Meny
         </h2>
         <div className="space-y-1">
-          {navItems.map((item, index) => (
+          {navItems.filter(item => item.position === 'top').map((item, index) => (
             <NavItem key={index} {...item} />
           ))}
         </div>
+      </div>
+    </div>
+    <div className="mt-[30rem] px-3 py-2 border-t">
+      <div className="space-y-1">
+        {navItems.filter(item => item.position === 'bottom').map((item, index) => (
+          <NavItem key={index} {...item} />
+        ))}
       </div>
     </div>
   </div>
@@ -52,33 +65,23 @@ const MobileNav = ({ navItems }) => (
         <span className="sr-only">Open menu</span>
       </Button>
     </SheetTrigger>
-    <SheetContent side="left" className="w-60">
-      <Sidebar className="w-full" />
+    <SheetContent side="left" className="w-60 p-0">
+      <Sidebar className="w-full h-full" />
     </SheetContent>
   </Sheet>
 )
 
-export default function DashboardLayout() {
+export default function Component() {
   return (
     <div className="flex h-screen overflow-hidden shadow-lg bg-gradient-to-bl from-neutral-700/40 to-gray-200">
       <Sidebar className="hidden border-r md:block" />
-      <div className="flex  flex-col flex-1 overflow-hidden">
-        <header className="flex items-center justify-between mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] px-6 py-4 ">
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <header className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] py-4">
           <div className="flex items-center">
             <MobileNav navItems={navItems} />
-            
-            <h1 className="text-l pl-6 pr-6 font-bold">Your Company</h1> 
-            
+            <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1> 
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-8 md:w-[200px] lg:w-[250px] rounded-full"
-              />
-            </div>
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <Button variant="ghost" size="icon">
               <MessageSquarePlus className="h-5 w-5" />
               <span className="sr-only">Ask Digits</span>
@@ -89,9 +92,9 @@ export default function DashboardLayout() {
             </Button>
           </div>
         </header>
-        <div className="h-full overflow-y-auto rounded-[1.5rem] bg-white/60 bg-opacity-80 mt-10 bg-op mx-40 my-5 shadow-lg p-4 md:p-6 lg:p-8">
-            <Outlet />
-          </div>
+        <div className="h-full overflow-y-auto rounded-[1.5rem] bg-white/60 bg-opacity-80 mt-4 sm:mt-10 mx-4 sm:mx-6 md:mx-8 lg:mx-40 my-2 sm:my-5 shadow-lg p-4 md:p-6 lg:p-8">
+          <Outlet />
+        </div>
       </div>
     </div>
   )
