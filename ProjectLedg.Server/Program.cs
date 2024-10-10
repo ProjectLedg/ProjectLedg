@@ -166,6 +166,7 @@ namespace ProjectLedg.Server
             //PDF
             services.AddScoped<IPDFService, PDFService>();
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+            services.AddScoped<IPDFRepository, PDFRepository>();
             //HTTPClient
             services.AddHttpClient();
             //Company
