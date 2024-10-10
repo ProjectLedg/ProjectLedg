@@ -47,9 +47,17 @@ export default function LoginPage() {
     };
 
     const handleGoogleSignIn = () => {
-        window.location.href = "https://localhost:7223/login-google";
-        // Add your Google sign-in logic here
-    }
+        try {
+            //Redirect to backend endpoint for Google sign-in
+            window.location.href = "https://localhost:7223/login-google";
+        }
+        catch (error) {
+            console.error("Error during sign-in redirect:", error);
+            // alert("An error occured while redirecting to Google login. Please try again.")
+            alert("An error occured while redirecting to Google login. Please try again.")
+        }
+    };
+
 
     const handleSignUpClick = () => {
         navigate('/signup')
