@@ -8,7 +8,8 @@ export default function CompanyCard({ handleCompanySelect, companyId, companyNam
             <img 
                 src={imageUrl} 
                 alt={companyName} 
-                className="w-20 h-20 rounded-full mx-auto mb-2" 
+                className="w-20 h-20 rounded-full mx-auto mb-2 company-icons"
+                
                 draggable="false" // disables so users don't accidentally drag the image when click and dragging the cards
             />
             <h4 className="text-center text-gray-500 mb-2">{orgNumber}</h4>
