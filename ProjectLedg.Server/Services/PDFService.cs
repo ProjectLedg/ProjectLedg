@@ -164,7 +164,7 @@ namespace ProjectLedg.Server.Services
                 SenderName = "Östersunds kommun",
                 IsPaid = false, // assuming its unpaid
                 IsOutgoing = false, // assuming incoming invoice
-                InvoiceFile = File.ReadAllBytes(pdfFilePath) // reads the pdf file as a bytearay
+                InvoiceFile = pdfFilePath // reads the pdf file as a bytearay
             };
 
             return invoice;
