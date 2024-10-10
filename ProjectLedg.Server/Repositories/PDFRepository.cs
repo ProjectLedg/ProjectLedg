@@ -17,8 +17,8 @@ public class PDFRepository : IPDFRepository
         _context = context;
 
         // initialize the blob service client with the connection string and container name
-        string connectionString = configuration["AzureBlobStorage:ConnectionString"];
-        string containerName = configuration["AzureBlobStorage:ContainerName"];
+        string connectionString = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONNECTION");
+        string containerName = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONTAINERNAME");
         _blobContainerClient = new BlobContainerClient(connectionString, containerName);
     }
 
@@ -35,8 +35,8 @@ public class PDFRepository : IPDFRepository
             await blobClient.UploadAsync(uploadFileStream, true);
         }
 
-        // SAVE only the blob URL to the database
-        invoice.InvoiceFile = System.Text.Encoding.UTF8.GetBytes(blobClient.Uri.ToString());
+        // SAVE the blob URL to the database as a string
+        invoice.InvoiceFile = blobClient.Uri.ToString();
 
         _context.Invoices.Add(invoice);
         await _context.SaveChangesAsync();
@@ -49,7 +49,7 @@ public class PDFRepository : IPDFRepository
         if (invoice != null)
         {
             // the invoice file is a blob URL
-            invoice.InvoiceFile = System.Text.Encoding.UTF8.GetBytes(GetBlobUrl(invoice.InvoiceNumber));
+            invoice.InvoiceFile = _blobContainerClient.Uri.ToString();
         }
 
         return invoice;
