@@ -50,10 +50,41 @@ export default function LoginPage() {
         }
     };
 
-    const handleGoogleSignIn = () => {
-        window.location.href = "https://localhost:7223/login-google";
-        // Add your Google sign-in logic here
-    }
+    // const handleGoogleSignIn = () => {
+    //     try{
+    //         //Redirect to backend endpoint for Google sign-in
+    //         window.location.href = "https://localhost:7223/login-google";
+    //     }
+    //     catch(error){
+    //         console.error("Error during sign-in redirect:", error);
+    //         alert("An error occured while redirecting to Google login. Please try again.")
+    //     }
+
+    //     navigate('company-select');
+    // };
+    const handleGoogleSignIn = async () => {
+        try {
+            // Redirect to backend endpoint for Google sign-in
+            window.location.href = "https://localhost:7223/login-google";
+
+            // Listen for the backend response or success message
+            const response = await fetch("https://localhost:7223/login-google", {
+                method: "GET",
+                credentials: "include", // Send cookies (if necessary for your login flow)
+            });
+
+            const data = await response.json();
+
+            // After successful authentication, redirect to company-select page
+            if (data.status === "success") {
+                window.location.href = "/company-select";
+            }
+        } catch (error) {
+            console.error("Error during sign-in redirect:", error);
+            alert("An error occurred while redirecting to Google login. Please try again.");
+        }
+    };
+
 
     const handleSignUpClick = () => {
         navigate('/signup')
