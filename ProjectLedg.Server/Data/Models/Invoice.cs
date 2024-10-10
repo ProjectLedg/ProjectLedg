@@ -9,8 +9,8 @@ namespace ProjectLedg.Server.Data.Models
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
         public decimal TotalAmount { get; set; }
-        public string InvoiceFile { get; set; }
-        public string InvoiceFilePath { get; set; }
+        public string? InvoiceFile { get; set; }
+        public string? InvoiceFilePath { get; set; }
         public bool IsPaid { get; set; }
         public bool IsOutgoing { get; set; }
         public string ClientName { get; set; }
