@@ -31,7 +31,12 @@ export default function LoginPage() {
                 withCredentials: true
             });
 
-            navigate("/company-select")
+            if (response.data.message === 'Login successful') {               
+                navigate('/company-select')
+            }
+            else {
+                alert('Login failed. Please check your credentials.');
+            }
         }
         catch (err) {
             setError(err.response?.data?.message || "An error occured during login. Please try again.");
@@ -42,7 +47,7 @@ export default function LoginPage() {
     };
 
     const handleGoogleSignIn = () => {
-        console.log('Sign in with Google')
+        window.location.href = "https://localhost:7223/login-google";
         // Add your Google sign-in logic here
     }
 
