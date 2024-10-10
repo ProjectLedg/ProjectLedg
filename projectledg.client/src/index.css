@@ -1,2 +1,7 @@
 /* Main font */
 body{font-family: "Poppins";}
+
+
+.company-icons {
+    background: linear-gradient(90deg, #81FBB8, #28C76F);
+}
