@@ -12,14 +12,18 @@ import {
   BookCheck,
   Settings,
   HelpCircle,
+  BookDown,
+  LogOut,
 } from 'lucide-react'
 
 const navItems = [
   { icon: Home, label: 'Hem', path: '/dashboard', position: 'top' },
   { icon: Activity, label: 'Finasiell rapport', path: '/dashboard/financial-reports', position: 'top' },
   { icon: BookCheck, label: 'Bokför', path: '/dashboard/book', position: 'top' },
+  { icon: BookDown, label:'Årsredovisning', path:'/dashboard/financial-statement', position:'top'},
   { icon: Settings, label: 'Inställningar', path: '/dashboard/settings', position: 'bottom' },
-  { icon: HelpCircle, label: 'Hjälp', path: '/dashboard/help', position: 'bottom' },
+  { icon: HelpCircle, label: 'Hjälp', path: '/', position: 'bottom' },
+  { icon: LogOut, label: 'Logga ut', path: '/', position: 'bottom'},
 ]
 
 const NavItem = ({ icon: Icon, label, path }) => (
@@ -43,7 +47,7 @@ const Sidebar = ({ className }) => (
         </div>
       </div>
     </div>
-    <div className="mt-[35rem] px-3 py-2 border-t">
+    <div className="mt-[30rem] px-3 py-2 border-t">
       <div className="space-y-1">
         {navItems.filter(item => item.position === 'bottom').map((item, index) => (
           <NavItem key={index} {...item} />
@@ -72,12 +76,12 @@ export default function Component() {
     <div className="flex h-screen overflow-hidden shadow-lg bg-gradient-to-bl from-neutral-700/40 to-gray-200">
       <Sidebar className="hidden border-r md:block" />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <header className="flex items-center justify-between mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] px-6 py-4">
+        <header className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] py-4">
           <div className="flex items-center">
             <MobileNav navItems={navItems} />
-            <h1 className="text-l pl-6 pr-6 font-bold">Ditt företag här</h1> 
+            <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1> 
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <Button variant="ghost" size="icon">
               <MessageSquarePlus className="h-5 w-5" />
               <span className="sr-only">Ask Digits</span>
@@ -88,7 +92,7 @@ export default function Component() {
             </Button>
           </div>
         </header>
-        <div className="h-full overflow-y-auto rounded-[1.5rem] bg-white/60 bg-opacity-80 mt-10 bg-op mx-40 my-5 shadow-lg p-4 md:p-6 lg:p-8">
+        <div className="h-full overflow-y-auto rounded-[1.5rem] bg-white/60 bg-opacity-80 mt-4 sm:mt-10 mx-4 sm:mx-6 md:mx-8 lg:mx-40 my-2 sm:my-5 shadow-lg p-4 md:p-6 lg:p-8">
           <Outlet />
         </div>
       </div>

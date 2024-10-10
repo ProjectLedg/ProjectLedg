@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Edit2, HelpCircle } from 'lucide-react'
+import { HelpCircle } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
+import ProfitabilityCard from './DashboardPageComp/ProfitabilityCard'
 
 const MetricCard = ({ title, value, change, changeType, chart }) => (
   <Card className="overflow-hidden">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+      <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</CardTitle>
+      <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
     </CardHeader>
     <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
+      <div className="text-lg sm:text-2xl font-bold">{value}</div>
       <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
         changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
       }`}>
         {change}
       </div>
-      <div className="h-[80px] mt-4">
+      <div className="h-[60px] sm:h-[80px] mt-4">
         <ResponsiveContainer width="100%" height="100%">
           {chart}
         </ResponsiveContainer>
@@ -30,7 +30,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-2 border border-gray-300 rounded shadow">
-        <p className="text-sm">{`${label} : ${payload[0].value.toLocaleString()} SEK`}</p>
+        <p className="text-xs sm:text-sm">{`${label} : ${payload[0].value.toLocaleString()} kr`}</p>
       </div>
     );
   }
@@ -38,7 +38,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function DashboardHomePage() {
-  // Mock data for visual purposes
   const mockDashboardData = {
     currentMonth: "March 2021",
     totalCash: {
@@ -81,8 +80,8 @@ export default function DashboardHomePage() {
       ]
     },
     runway: {
-      status: "Profitable!",
-      percentage: 100,
+      status: "Väldigt bra!",
+      percentage: 80,
       months: 68
     }
   }
@@ -124,35 +123,34 @@ export default function DashboardHomePage() {
   */
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4 sm:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">{dashboardData.currentMonth}</h2>
-        
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{dashboardData.currentMonth}</h2>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
           title="Saldo" 
-          value={`${dashboardData.totalCash.currentValue.toLocaleString()} SEK`}
+          value={`${dashboardData.totalCash.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.totalCash.changePercentage}% MoM`}
           changeType={dashboardData.totalCash.changePercentage >= 0 ? 'positive' : 'negative'}
           chart={
             <LineChart data={dashboardData.totalCash.history}>
-              <XAxis dataKey="month" />
+              <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
-              <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} dot={true} />
+              <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} dot={false} />
             </LineChart>
           }
         />
         <MetricCard 
           title="Inkomst" 
-          value={`${dashboardData.income.currentValue.toLocaleString()} SEK`}
+          value={`${dashboardData.income.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.income.changePercentage}% MoM`}
           changeType={dashboardData.income.changePercentage >= 0 ? 'positive' : 'negative'}
           chart={
             <BarChart data={dashboardData.income.history}>
-              <XAxis dataKey="month" hide/>
+              <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="value">
@@ -165,12 +163,12 @@ export default function DashboardHomePage() {
         />
         <MetricCard 
           title="Gross Burn" 
-          value={`${dashboardData.grossBurn.currentValue.toLocaleString()} SEK`}
+          value={`${dashboardData.grossBurn.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.grossBurn.changePercentage}% MoM`}
           changeType={dashboardData.grossBurn.changePercentage <= 0 ? 'positive' : 'negative'}
           chart={
             <BarChart data={dashboardData.grossBurn.history}>
-              <XAxis dataKey="month" hide />
+              <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="value">
@@ -181,24 +179,7 @@ export default function DashboardHomePage() {
             </BarChart>
           }
         />
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Runway</CardTitle>
-            <HelpCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.runway.status}</div>
-            <div className="mt-4 flex items-center">
-              <div className="h-2 w-full rounded-full bg-green-200">
-                <div 
-                  className="h-2 rounded-full bg-green-500" 
-                  style={{ width: `${dashboardData.runway.percentage}%` }}
-                ></div>
-              </div>
-              <span className="ml-2 text-sm font-medium text-green-600">{dashboardData.runway.months}M</span>
-            </div>
-          </CardContent>
-        </Card>
+        {dashboardData.runway && <ProfitabilityCard runway={dashboardData.runway} />}
       </div>
     </div>
   )
