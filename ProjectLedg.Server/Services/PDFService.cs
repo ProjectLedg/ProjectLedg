@@ -3,6 +3,10 @@ using DinkToPdf;
 using ProjectLedg.Server.Services.IServices;
 using System.Text;
 using ProjectLedg.Server.Data.Models.DTOs.PDF;
+using iTextSharp.text.pdf.parser;
+using iTextSharp.text.pdf;
+using ProjectLedg.Server.Data.Models;
+using Path = System.IO.Path;
 
 namespace ProjectLedg.Server.Services
 {
@@ -145,5 +149,59 @@ namespace ProjectLedg.Server.Services
 
             return _converter.Convert(doc);
         }
+
+        public Invoice ExtractInvoiceDetails(string pdfFilePath)
+        {
+            string pdfText = ExtractTextFromPDF(pdfFilePath);
+
+            var invoice = new Invoice
+            {
+                InvoiceNumber = ExtractBetween(pdfText, "Fakturanr", "\n"),
+                InvoiceDate = TryParseDate(ExtractBetween(pdfText, "Fakturadatum", "\n")),
+                DueDate = TryParseDate(ExtractBetween(pdfText, "Förfallodatum", "\n")),
+                TotalAmount = decimal.Parse(ExtractBetween(pdfText, "Summa", "\n").Replace("kr", "").Trim()),
+                ClientName = ExtractBetween(pdfText, "Fastigheten Kullen", "\n"),
+                SenderName = "Östersunds kommun",
+                IsPaid = false, // assuming its unpaid
+                IsOutgoing = false, // assuming incoming invoice
+                InvoiceFile = File.ReadAllBytes(pdfFilePath) // reads the pdf file as a bytearay
+            };
+
+            return invoice;
+        }
+
+        private DateTime TryParseDate(string dateStr)
+        {
+            if (DateTime.TryParse(dateStr, out DateTime result))
+            {
+                return result;
+            }
+            else
+            {
+                
+                return DateTime.MinValue;
+            }
+        }
+
+        private string ExtractBetween(string text, string start, string end)
+        {
+            var startIndex = text.IndexOf(start) + start.Length;
+            var endIndex = text.IndexOf(end, startIndex);
+            return text.Substring(startIndex, endIndex - startIndex).Trim();
+        }
+
+        private string ExtractTextFromPDF(string pdfPath)
+        {
+            using (PdfReader reader = new PdfReader(pdfPath))
+            {
+                StringBuilder text = new StringBuilder();
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                }
+                return text.ToString();
+            }
+        }
     }
 }
+
