@@ -63,7 +63,7 @@ export default {
 				},
 			},
 			animation: {
-				'bg-fade': 'bg-fade 3s cubic-bezier(0.25, 1, 0.5, 1)',
+				'bg-fade': 'bg-fade 4s cubic-bezier(0.25, 1, 0.5, 1)',
 			},
     	}
     },
