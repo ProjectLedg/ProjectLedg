@@ -10,6 +10,7 @@ import PricingPage from './pages/LandingPages/PricingPage'
 import FeaturePage from './pages/LandingPages/FeaturePage'
 import WhyPage from  './pages/LandingPages/WhyPage'
 import DashboardPage from './pages/DashboardPages/DashboardPage'
+import PDFPage from './pages/PDF Page/PDFPage'
 
 function App() {
     return (
@@ -21,6 +22,7 @@ function App() {
                 <Route path="/company-select" element={<CompanySelectPage/>}/>
                 <Route path="/dashboard/*" element={<DashboardPage />} />
                 <Route path="/why" element={<WhyPage/>}/>
+                <Route path="/upload-pdf" element={<PDFPage/>}/>
                 <Route path="/feature" element={<FeaturePage/>}/>
                 <Route path="/pricing" element={<PricingPage/>}/>
                 <Route path="/contact" element={<ContactPage/>}/>
