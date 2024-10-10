@@ -7,15 +7,20 @@ using iTextSharp.text.pdf.parser;
 using iTextSharp.text.pdf;
 using ProjectLedg.Server.Data.Models;
 using Path = System.IO.Path;
+using ProjectLedg.Server.Repositories.IRepositories;
 
 namespace ProjectLedg.Server.Services
 {
     public class PDFService : IPDFService
     {
         private readonly IConverter _converter;
-        public PDFService(IConverter converter)
+        private readonly IBlobStorageService _blobStorageService;
+        private readonly IPDFRepository _pdfRepository;
+        public PDFService(IConverter converter, IBlobStorageService blobStorageService, IPDFRepository pdfRepository)
         {
             _converter = converter;
+            _blobStorageService = blobStorageService;
+            _pdfRepository = pdfRepository;
         }
 
         public byte[] GenerateAnnualReportPdf()
@@ -117,10 +122,10 @@ namespace ProjectLedg.Server.Services
             sb.Append("</div>");
 
             var headerHtml = @"
-    <div style='width: 100%; font-size: 12px; display: flex; justify-content: space-between;'>
-        <div style='text-align: left;'>Samuel Hesser AB<br/>Org.nr: 559321-2961</div>
-        <div style='text-align: right;'>Sida: [page]</div>
-    </div>";
+                <div style='width: 100%; font-size: 12px; display: flex; justify-content: space-between;'>
+                    <div style='text-align: left;'>Samuel Hesser AB<br/>Org.nr: 559321-2961</div>
+                    <div style='text-align: right;'>Sida: [page]</div>
+                </div>";
 
             // Save the header HTML as a temporary file
             string headerFilePath = Path.Combine(Path.GetTempPath(), "header.html");
@@ -150,58 +155,69 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
-        public Invoice ExtractInvoiceDetails(string pdfFilePath)
+        public async Task<string> ProcessInvoiceAsync(IFormFile file)
         {
-            string pdfText = ExtractTextFromPDF(pdfFilePath);
+            // Step 1: Upload the PDF to Azure Blob Storage and get the blob URL
+            var blobUrl = await _blobStorageService.UploadBlobAsync(file);
 
-            var invoice = new Invoice
+            // Step 2: Extract invoice details from the PDF
+            var invoiceDetails = ExtractInvoiceDetails(file);
+
+            if (invoiceDetails == null)
             {
-                InvoiceNumber = ExtractBetween(pdfText, "Fakturanr", "\n"),
-                InvoiceDate = TryParseDate(ExtractBetween(pdfText, "Fakturadatum", "\n")),
-                DueDate = TryParseDate(ExtractBetween(pdfText, "Förfallodatum", "\n")),
-                TotalAmount = decimal.Parse(ExtractBetween(pdfText, "Summa", "\n").Replace("kr", "").Trim()),
-                ClientName = ExtractBetween(pdfText, "Fastigheten Kullen", "\n"),
-                SenderName = "Östersunds kommun",
-                IsPaid = false, // assuming its unpaid
-                IsOutgoing = false, // assuming incoming invoice
-                InvoiceFile = pdfFilePath // reads the pdf file as a bytearay
+                throw new InvalidOperationException("Failed to extract invoice details from PDF.");
+            }
+
+            // Step 3: Save the extracted data and the blob URL to the database
+            await _pdfRepository.SaveInvoiceAsync(invoiceDetails, blobUrl);
+
+            return $"File uploaded successfully. Blob URL: {blobUrl}";
+        }
+
+        private Invoice ExtractInvoiceDetails(IFormFile file)
+        {
+            // Implement your PDF parsing logic here
+            var extractedData = new Invoice
+            {
+                InvoiceNumber = "123456", // Extract this from PDF content
+                InvoiceDate = DateTime.Now, // Extract this from PDF content
+                DueDate = DateTime.Now.AddDays(30), // Extract this from PDF content
+                TotalAmount = 500.00m, // Extract this from PDF content
+                ClientName = "Client Name", // Extract this from PDF content
+                SenderName = "Sender Name", // Extract this from PDF content
+                IsPaid = false,
+                IsOutgoing = false
             };
 
-            return invoice;
+            return extractedData;
         }
 
-        private DateTime TryParseDate(string dateStr)
+        public async Task<string> TestUploadPdfAsync(IFormFile file)
         {
-            if (DateTime.TryParse(dateStr, out DateTime result))
+            // Step 1: Upload the PDF to Azure Blob Storage (or Azurite for local)
+            var blobUrl = await _blobStorageService.UploadBlobAsync(file);
+
+            // Step 2: Create a dummy invoice record to store the PDF link
+            var invoice = new Invoice
             {
-                return result;
-            }
-            else
-            {
-                
-                return DateTime.MinValue;
-            }
+                InvoiceNumber = "TEST123", // For testing, use a dummy invoice number
+                InvoiceDate = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(30),
+                TotalAmount = 0, // No actual amount for test
+                InvoiceFilePath = blobUrl, // Store the Blob URL
+                ClientName = "Test Client",
+                SenderName = "Test Sender",
+                IsPaid = false,
+                IsOutgoing = false
+            };
+
+            // Step 3: Save the invoice record (with Blob URL) to the database
+            await _pdfRepository.SaveInvoiceAsync(invoice, blobUrl);
+
+            // Return the Blob URL for confirmation
+            return blobUrl;
         }
 
-        private string ExtractBetween(string text, string start, string end)
-        {
-            var startIndex = text.IndexOf(start) + start.Length;
-            var endIndex = text.IndexOf(end, startIndex);
-            return text.Substring(startIndex, endIndex - startIndex).Trim();
-        }
-
-        private string ExtractTextFromPDF(string pdfPath)
-        {
-            using (PdfReader reader = new PdfReader(pdfPath))
-            {
-                StringBuilder text = new StringBuilder();
-                for (int i = 1; i <= reader.NumberOfPages; i++)
-                {
-                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
-                }
-                return text.ToString();
-            }
-        }
     }
 }
 
