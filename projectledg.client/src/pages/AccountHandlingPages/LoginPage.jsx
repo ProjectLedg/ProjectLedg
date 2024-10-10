@@ -31,16 +31,7 @@ export default function LoginPage() {
                 withCredentials: true
             });
 
-            if (response.data.message === 'Login successful') {
-                if (response.data.hasCompany === true) {
-                    navigate('/company-select');
-                } else if (response.data.hasCompany === false) {
-                    navigate('/company-create');
-                }
-            }
-            else {
-                alert('Login failed. Please check your credentials.');
-            }
+            navigate("/company-select")
         }
         catch (err) {
             setError(err.response?.data?.message || "An error occured during login. Please try again.");
