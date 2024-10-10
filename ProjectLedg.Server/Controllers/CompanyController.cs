@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Company;
 using ProjectLedg.Server.Services.IServices;
+using System.Security.Claims;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -38,8 +40,6 @@ namespace ProjectLedg.Server.Controllers
             return CreatedAtAction(nameof(GetCompanyById), new { id = createdCompany.Id }, createdCompany);
         }
 
-
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCompanyById(int id)
         {
@@ -49,6 +49,17 @@ namespace ProjectLedg.Server.Controllers
                 return NotFound();
             }
             return Ok(company);
+        }
+
+        [Authorize]
+        [HttpGet("getUserCompanies")]
+        public async Task<IActionResult> GetCompaniesForUser()
+        {
+            ClaimsPrincipal claims = User;
+
+            var companies = await _companyService.GetCompaniesForUserAsync(claims);
+
+            return Ok(companies);
         }
 
     }

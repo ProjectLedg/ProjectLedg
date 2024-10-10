@@ -26,6 +26,14 @@ namespace ProjectLedg.Server.Repositories
             return await _context.Companies.ToListAsync();
         }
 
+        public async Task<IEnumerable<Company>> GetCompaniesForUserAsync(string userId)
+        {
+            return await _context.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(c => c.Companies)
+                .ToListAsync();
+        }
+
         public async Task<Company> GetCompanyByIdAsync(int id)
         {
             return await _context.Companies.FindAsync(id);
