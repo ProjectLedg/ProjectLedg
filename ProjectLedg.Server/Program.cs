@@ -51,6 +51,14 @@ namespace ProjectLedg.Server
                 options.Password = mailKitSettingsSection.Password;
             });
 
+            builder.Services.AddScoped<IBlobStorageService>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<Program>>();
+                var connectionString = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONNECTION");
+                var containerName = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONTAINER_NAME");
+                return new BlobStorageService(connectionString, containerName);
+            });
+
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
