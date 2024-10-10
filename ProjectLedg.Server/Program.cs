@@ -53,9 +53,16 @@ namespace ProjectLedg.Server
 
             builder.Services.AddScoped<IBlobStorageService>(provider =>
             {
-                var logger = provider.GetRequiredService<ILogger<Program>>();
-                var connectionString = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONNECTION");
-                var containerName = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONTAINER_NAME");
+                var connectionString = "UseDevelopmentStorage=true";//for the local emulator
+                var containerName = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONTAINER_NAME"); //fetching container name from env
+                //var connectionString = Environment.GetEnvironmentVariable("AZURE_BLOB_STORAGE_CONNECTION"); //for azure later
+
+
+                if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(containerName))
+                {
+                    throw new InvalidOperationException("Blob storage connection string or container name is not set.");
+                }
+
                 return new BlobStorageService(connectionString, containerName);
             });
 
@@ -143,22 +150,25 @@ namespace ProjectLedg.Server
 
                 // Apply Bearer authentication globally in Swagger UI
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
                 {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                    }
-                });
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+
+                // Register the SwaggerFileOperationFilter to support file uploads
+                c.OperationFilter<ProjectLedg.Server.Filters.SwaggerFileOperationFilter>();
             });
 
             //Service Registrations
