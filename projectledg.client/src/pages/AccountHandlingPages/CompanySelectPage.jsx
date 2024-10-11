@@ -37,15 +37,16 @@ useEffect(() => {
     const getUserCompanies = async () => {
         try {
             const response = await axiosConfig.get("/Company/getUserCompanies");
-            setCompanies(response.  data);
+            const companiesData = response.data;
+            setCompanies(response.data);
 
             // if there's no companies go to company create page
-            if (companies === null ) {
-                // navigate(`/company-create`)
+            if (companiesData.length === 0 ) {
+                navigate(`/company-create`)
             }
             // if there's only one company skip the select and go to dahsboard directly
-            else if (companies.length === 1){
-                // navigate(`dashboard/${companies[0].id}`)
+            else if (companiesData.length === 1){
+                navigate(`dashboard/${companiesData[0].id}`)
             }
 
         } catch (error) {
