@@ -31,7 +31,7 @@ export default function LoginPage() {
                 withCredentials: true
             });
 
-            if (response.data.message === 'Login successful') {               
+            if (response.data.message === 'Login successful') {
                 navigate('/company-select')
             }
             else {
@@ -73,7 +73,7 @@ export default function LoginPage() {
                         </svg>
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Logga in</h1>
-                    <p className="text-sm text-gray-600">Logga in med Google</p>
+                    {/* <p className="text-sm text-gray-600">Logga in med Google</p> */}
                 </CardHeader>
                 <CardContent className="space-y-4 px-4 sm:px-6">
                     <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
@@ -101,14 +101,14 @@ export default function LoginPage() {
                                     fill="#EA4335"
                                 ></path>
                             </svg>
-                            Google
+                            Fortsätt via Google
                         </Button>
                     </div>
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-gray-300"></span>
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
+                        <div className="relative flex justify-center text-xs">
                             <span className="bg-white px-2 text-gray-500">Eller fortsätt med Email</span>
                         </div>
                     </div>
