@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
@@ -92,6 +93,7 @@ export default function DashboardHomePage() {
   const [dashboardData, setDashboardData] = useState(mockDashboardData)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const {companyId} = useParams();
 
   // Commented out API call logic
   /*
@@ -125,8 +127,14 @@ export default function DashboardHomePage() {
   }
   */
 
+  useEffect(() => {
+    console.log("Fetching financial reports for Company ID:", companyId);
+    // Add backend api fetch here
+  }, [companyId])
+
   return (
     <div className="space-y-4 p-4 sm:p-6">
+      <h2>Financial Reports for Company {companyId}</h2>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{dashboardData.currentMonth}</h2>
       </div>
