@@ -87,17 +87,17 @@ namespace ProjectLedg.Server.Services
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var blobClient = _blobContainerClient.GetBlobClient(fileName);
 
-            // Upload the file to Azure Blob Storage (Azurite in your case)
+            //upload the file to Azure Blob Storage (Azurite in your case)
             using (var stream = file.OpenReadStream())
             {
-                await blobClient.UploadAsync(stream, overwrite: true);
+                await blobClient.UploadAsync(stream, true);
             }
 
             // instead of generating a SAS token, return the local URL to the blob
             // this URL will work locally with Azurite
             var blobUrl = $"{_blobServiceClient.Uri}/{_containerName}/{fileName}";
 
-            return blobUrl;  // return the URL to the uploaded blob
+            return blobUrl; 
         }
 
     }
