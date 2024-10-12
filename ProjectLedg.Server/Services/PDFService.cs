@@ -8,6 +8,7 @@ using iTextSharp.text.pdf;
 using ProjectLedg.Server.Data.Models;
 using Path = System.IO.Path;
 using ProjectLedg.Server.Repositories.IRepositories;
+using System.Text.RegularExpressions;
 
 namespace ProjectLedg.Server.Services
 {
@@ -155,69 +156,104 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
-        public async Task<string> ProcessInvoiceAsync(IFormFile file)
+        public async Task<object> ProcessInvoiceAsync(InvoiceUploadDTO dto)
         {
-            // Step 1: Upload the PDF to Azure Blob Storage and get the blob URL
-            var blobUrl = await _blobStorageService.UploadBlobAsync(file);
+            //Step 1: Upload the PDF to Azure Blob Storage
+            var blobUrl = await _blobStorageService.UploadBlobAsync(dto.InvoiceFile);
 
-            // Step 2: Extract invoice details from the PDF
-            var invoiceDetails = ExtractInvoiceDetails(file);
+            //Step 2: Extract text from the uploaded PDF file (extract the text first)
+            var extractedText = ExtractTextFromPdf(dto.InvoiceFile);
 
-            if (invoiceDetails == null)
+            //Step 3: Extract invoice details from the extracted text
+            var extractedData = ExtractInvoiceData(extractedText); // Pass the extracted text
+
+            //Step 4: Parse the extracted date strings into DateTime objects
+            DateTime.TryParse(extractedData.ContainsKey("InvoiceDate") ? extractedData["InvoiceDate"] : null, out DateTime invoiceDate);
+            DateTime.TryParse(extractedData.ContainsKey("DueDate") ? extractedData["DueDate"] : null, out DateTime dueDate);
+
+            //Step 5: Parse TotalAmount as decimal
+            decimal.TryParse(extractedData.ContainsKey("TotalAmount") ? extractedData["TotalAmount"].Replace(",", ".") : null, out decimal totalAmount);
+
+            //step 6: Save the invoice file details and blob URL in the database
+            var invoice = new Invoice
             {
-                throw new InvalidOperationException("Failed to extract invoice details from PDF.");
-            }
+                InvoiceNumber = extractedData.ContainsKey("InvoiceNumber") ? extractedData["InvoiceNumber"] : "Not found",
+                InvoiceDate = invoiceDate != DateTime.MinValue ? invoiceDate : DateTime.Now, // Default to current date if parsing fails
+                DueDate = dueDate != DateTime.MinValue ? dueDate : DateTime.Now, // Default to current date if parsing fails
+                TotalAmount = totalAmount != 0 ? totalAmount : 0, // Default to 0 if parsing fails
+                IsPaid = false, // You can add logic here if needed
+                IsOutgoing = false, // You can add logic here if needed
+                ClientName = extractedData.ContainsKey("ClientName") ? extractedData["ClientName"] : "Not found",
+                SenderName = extractedData.ContainsKey("SenderName") ? extractedData["SenderName"] : "Not found",
+                InvoiceFilePath = blobUrl  // Use Blob URL
+            };
 
-            // Step 3: Save the extracted data and the blob URL to the database
-            await _pdfRepository.SaveInvoiceAsync(invoiceDetails, blobUrl);
+            await _pdfRepository.SaveInvoiceAsync(invoice, blobUrl);
 
-            return $"File uploaded successfully. Blob URL: {blobUrl}";
+            //Step 7: Return the extracted Data and blob URL
+            return new
+            {
+                message = "File uploaded successfully",
+                blobUrl = blobUrl,
+                extractedData = extractedData
+            };
         }
 
-        private Invoice ExtractInvoiceDetails(IFormFile file)
+        private Dictionary<string, string> ExtractInvoiceData(string text)
         {
-            // Implement your PDF parsing logic here
-            var extractedData = new Invoice
-            {
-                InvoiceNumber = "123456", // Extract this from PDF content
-                InvoiceDate = DateTime.Now, // Extract this from PDF content
-                DueDate = DateTime.Now.AddDays(30), // Extract this from PDF content
-                TotalAmount = 500.00m, // Extract this from PDF content
-                ClientName = "Client Name", // Extract this from PDF content
-                SenderName = "Sender Name", // Extract this from PDF content
-                IsPaid = false,
-                IsOutgoing = false
-            };
+            var extractedData = new Dictionary<string, string>();
+
+            Console.WriteLine("Extracted text from the image:");
+            Console.WriteLine(text);
+
+            //Regex for Invoice Number (Fakturanr)
+            var invoiceNumberPattern = @"Fakturanr[\s:]*([0-9]+)";
+            var invoiceNumberMatch = Regex.Match(text, invoiceNumberPattern);
+            extractedData["InvoiceNumber"] = invoiceNumberMatch.Success ? invoiceNumberMatch.Groups[1].Value : "Not found";
+
+            //Regex for Invoice Date (Fakturadatum)
+            var invoiceDatePattern = @"Fakturadatum[\s:]*([0-9]{4}-[0-9]{2}-[0-9]{2})";
+            var invoiceDateMatch = Regex.Match(text, invoiceDatePattern);
+            extractedData["InvoiceDate"] = invoiceDateMatch.Success ? invoiceDateMatch.Groups[1].Value : "Not found";
+
+            //Regex for Due Date (Förfallodatum)
+            var dueDatePattern = @"Förfallodatum[\s:]*([0-9]{4}-[0-9]{2}-[0-9]{2})";
+            var dueDateMatch = Regex.Match(text, dueDatePattern);
+            extractedData["DueDate"] = dueDateMatch.Success ? dueDateMatch.Groups[1].Value : "Not found";
+
+            //Regex for Total Amount (Summa oss tillhanda senast)
+            var totalAmountPattern = @"Summa\oss\tillhanda\s(?:senast\s[0-9]{4}-[0-9]{2}-[0-9]{2}\s)?(\d{1,3}[,.]?\d{0,2})";
+            var totalAmountMatch = Regex.Match(text, totalAmountPattern);
+            extractedData["TotalAmount"] = totalAmountMatch.Success ? totalAmountMatch.Groups[1].Value.Replace(",", ".") : "Not found";
+
+            //regex for Client Name (c/o)
+            var clientNamePattern = @"c/o\s+([\w\s]+)";
+            var clientNameMatch = Regex.Match(text, clientNamePattern);
+            extractedData["ClientName"] = clientNameMatch.Success ? clientNameMatch.Groups[1].Value.Trim() : "Not found";
+
+            //regex for Sender Name (first line with "kommun" or "AB")
+            var senderNamePattern = @"(^[\w\s]+(?:kommun|AB))";
+            var senderNameMatch = Regex.Match(text, senderNamePattern, RegexOptions.Multiline);
+            extractedData["SenderName"] = senderNameMatch.Success ? senderNameMatch.Groups[0].Value.Trim() : "Not found";
 
             return extractedData;
         }
-
-        public async Task<string> TestUploadPdfAsync(IFormFile file)
+        private string ExtractTextFromPdf(IFormFile file)
         {
-            // Step 1: Upload the PDF to Azure Blob Storage (or Azurite for local)
-            var blobUrl = await _blobStorageService.UploadBlobAsync(file);
-
-            // Step 2: Create a dummy invoice record to store the PDF link
-            var invoice = new Invoice
+            using (var reader = new PdfReader(file.OpenReadStream()))
             {
-                InvoiceNumber = "TEST123", // For testing, use a dummy invoice number
-                InvoiceDate = DateTime.Now,
-                DueDate = DateTime.Now.AddDays(30),
-                TotalAmount = 0, // No actual amount for test
-                InvoiceFilePath = blobUrl, // Store the Blob URL
-                ClientName = "Test Client",
-                SenderName = "Test Sender",
-                IsPaid = false,
-                IsOutgoing = false
-            };
+                var text = new StringBuilder();
 
-            // Step 3: Save the invoice record (with Blob URL) to the database
-            await _pdfRepository.SaveInvoiceAsync(invoice, blobUrl);
+                //iterate through the pages of the PDF and extract text
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    var pageText = PdfTextExtractor.GetTextFromPage(reader, i);
+                    text.Append(pageText);
+                }
 
-            // Return the Blob URL for confirmation
-            return blobUrl;
+                return text.ToString();
+            }
         }
-
     }
 }
 

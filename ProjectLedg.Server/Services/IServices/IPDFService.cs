@@ -6,7 +6,6 @@ namespace ProjectLedg.Server.Services.IServices
     public interface IPDFService
     {
         byte[] GenerateAnnualReportPdf();
-        Task<string> ProcessInvoiceAsync(IFormFile file);
-        Task<string> TestUploadPdfAsync(IFormFile file);
+        Task<object> ProcessInvoiceAsync(InvoiceUploadDTO dto);
     }
 }
