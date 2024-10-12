@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectLedg.Server.Data.Models.DTOs.PDF;
 using ProjectLedg.Server.Services.IServices;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace ProjectLedg.Server.Controllers
             _pdfService = pdfService;
         }
 
-        // GET request to generate a simple annual report PDF and return the file for download
+        //GET request to generate a simple annual report PDF and return the file for download
         [HttpGet("generatepdf")]
         public IActionResult GenerateAnnualReportPdf()
         {
@@ -27,7 +28,7 @@ namespace ProjectLedg.Server.Controllers
             return File(pdf, "application/pdf", "AnnualReport.pdf");
         }
 
-        // POST request to generate the PDF and store it on the server
+        //POST request to generate the PDF and store it on the server
         [HttpPost("generatepdf/{fileName}")]
         public async Task<IActionResult> GenerateAndSavePdf(string fileName)
         {
@@ -53,15 +54,15 @@ namespace ProjectLedg.Server.Controllers
             return Ok(new { pdfUrl });
         }
         [HttpPost("upload-invoice")]
-        public async Task<IActionResult> UploadInvoice([FromForm] IFormFile file)
+        public async Task<IActionResult> UploadInvoice([FromForm] InvoiceUploadDTO dto)
         {
-            if (file == null || file.Length == 0)
+            if (dto == null || dto.InvoiceFile == null || dto.InvoiceFile.Length == 0)
                 return BadRequest("No file uploaded.");
 
             try
             {
                 //process the PDF and return the resulting Blob URL and JSON data
-                var result = await _pdfService.ProcessInvoiceAsync(file);
+                var result = await _pdfService.ProcessInvoiceAsync(dto);
 
                 return Ok(result);
             }
@@ -70,24 +71,5 @@ namespace ProjectLedg.Server.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-        [HttpPost("test-upload-pdf")]
-        public async Task<IActionResult> TestUploadPdf([FromForm] IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded.");
-
-            try
-            {
-                //upload the file and return the blob URL
-                var result = await _pdfService.ProcessInvoiceAsync(file);
-                return Ok(new { message = "File uploaded successfully", blobUrl = result });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
-            }
-        }
-
     }
 }
