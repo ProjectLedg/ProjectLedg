@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectLedg.Server.Data.Models
 {
@@ -9,7 +10,8 @@ namespace ProjectLedg.Server.Data.Models
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
         public decimal TotalAmount { get; set; }
-        public string? InvoiceFile { get; set; }
+        [NotMapped]
+        public IFormFile InvoiceFile { get; set; }
         public string? InvoiceFilePath { get; set; }
         public bool IsPaid { get; set; }
         public bool IsOutgoing { get; set; }
