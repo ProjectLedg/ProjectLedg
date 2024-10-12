@@ -168,7 +168,7 @@ namespace ProjectLedg.Server
     });
 
                 // Register the SwaggerFileOperationFilter to support file uploads
-                c.OperationFilter<ProjectLedg.Server.Filters.SwaggerFileOperationFilter>();
+                //c.OperationFilter<ProjectLedg.Server.Filters.SwaggerFileOperationFilter>();
             });
 
             //Service Registrations
@@ -190,6 +190,10 @@ namespace ProjectLedg.Server
             //Company
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<ICompanyService, CompanyService>();
+            //Image Scanning
+            services.AddSingleton<IImageScannerService>(provider =>
+                new ImageScannerService(Path.Combine(Directory.GetCurrentDirectory(), "Tesseract", "tessdata"))
+            );
 
 
             var app = builder.Build();
