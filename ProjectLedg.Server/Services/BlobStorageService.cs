@@ -97,7 +97,7 @@ namespace ProjectLedg.Server.Services
             // this URL will work locally with Azurite
             var blobUrl = $"{_blobServiceClient.Uri}/{_containerName}/{fileName}";
 
-            return blobUrl; 
+            return blobUrl;
         }
 
     }
