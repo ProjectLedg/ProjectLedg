@@ -162,46 +162,46 @@ namespace ProjectLedg.Server.Services
         {
             try
             {
-                // Save the image to a temporary location
+                //save the image to a temporary location
                 var tempImagePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.jpg");
 
-                // Save the image
+                //save the image
                 await using (var memoryStream = new MemoryStream())
                 {
                     await imageFile.CopyToAsync(memoryStream);
                     await File.WriteAllBytesAsync(tempImagePath, memoryStream.ToArray());
                 }
 
-                // Load the image using Tesseract Pix
+                //load the image using Tesseract Pix
                 using (var img = Pix.LoadFromFile(tempImagePath))
                 {
-                    // Get image dimensions
+                    //get image dimensions
                     int imageHeight = img.Height;
                     int imageWidth = img.Width;
 
-                    // Define regions for top and bottom halves
+                    //define regions for top and bottom halves
                     var topHalfRect = new Rectangle(0, 0, imageWidth, imageHeight / 2);
                     var bottomHalfRect = new Rectangle(0, imageHeight / 2, imageWidth, imageHeight / 2);
 
-                    // Clip the images into two halves for enhanced accuracy
+                    // clip the images into two halves for enhanced accuracy
                     using (var topHalf = CropImage(tempImagePath, topHalfRect))
                     using (var bottomHalf = CropImage(tempImagePath, bottomHalfRect))
                     {
-                        // Process both halves and extract the text
+                        //process both halves and extract the text
                         string topText = ExtractTextFromImage(topHalf);
                         string bottomText = ExtractTextFromImage(bottomHalf);
 
-                        // Combine the text from both halves
+                        //combine the text from both halves
                         var result = new
                         {
                             TopHalfText = topText,
                             BottomHalfText = bottomText
                         };
 
-                        // Clean up temp image we don't need to save it currently
+                        //clean up temp image we don't need to save it currently
                         File.Delete(tempImagePath);
 
-                        // Return combined image as JSON
+                        //return combined image as JSON
                         return JsonSerializer.Serialize(result);
                     }
                 }
@@ -213,7 +213,7 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        // Helper method to crop an image
+        //helper method to crop an image
         private Bitmap CropImage(string imagePath, Rectangle cropRect)
         {
             using (var srcImage = Image.FromFile(imagePath))
@@ -227,7 +227,7 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        // Helper method to extract text from an image
+        //helper method to extract text from an image
         private string ExtractTextFromImage(Bitmap image)
         {
             using (var engine = new TesseractEngine(_tesseractDataPath, "swe", EngineMode.Default))
@@ -247,7 +247,7 @@ namespace ProjectLedg.Server.Services
         {
             using (var ms = new MemoryStream())
             {
-                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);  // You can also use other formats like JPEG
+                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
                 ms.Seek(0, SeekOrigin.Begin);
                 return Pix.LoadFromMemory(ms.ToArray());
             }
