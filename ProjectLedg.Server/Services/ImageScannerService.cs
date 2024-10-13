@@ -25,33 +25,45 @@ namespace ProjectLedg.Server.Services
         {
             try
             {
-                //Saving the image to a temporary location
+                // Save the image to a temporary location
                 var tempImagePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.png");
 
-                //saving the image
+                // Save the image
                 await using (var memoryStream = new MemoryStream())
                 {
                     await imageFile.CopyToAsync(memoryStream);
                     await File.WriteAllBytesAsync(tempImagePath, memoryStream.ToArray());
                 }
 
-                //initializing the Tesseract instance
+                // Initialize the Tesseract instance
                 string extractedText = string.Empty;
-                using (var engine = new TesseractEngine(_tesseractDataPath, "swe", EngineMode.Default))
+                using (var img = Pix.LoadFromFile(tempImagePath))
                 {
-                    using (var img = Pix.LoadFromFile(tempImagePath))
+                    // Get image dimensions
+                    int imageHeight = img.Height;
+                    int imageWidth = img.Width;
+
+                    // Define regions for top and bottom halves
+                    var topHalfRect = new Rectangle(0, 0, imageWidth, imageHeight / 2);
+                    var bottomHalfRect = new Rectangle(0, imageHeight / 2, imageWidth, imageHeight / 2);
+
+                    // Clip the image into top and bottom halves
+                    using (var topHalf = CropImage(tempImagePath, topHalfRect))
+                    using (var bottomHalf = CropImage(tempImagePath, bottomHalfRect))
                     {
-                        using (var page = engine.Process(img))
-                        {
-                            extractedText = page.GetText();
-                        }
+                        // Extract text from both halves
+                        string topText = ExtractTextFromImage(topHalf);
+                        string bottomText = ExtractTextFromImage(bottomHalf);
+
+                        // Combine the text from both halves
+                        extractedText = $"{topText}\n{bottomText}";
                     }
                 }
 
-                //clean up the temp image
+                // Clean up the temp image
                 File.Delete(tempImagePath);
 
-                //extract relevant data using Regex
+                // Now that we have the full text from both halves, we can proceed with regex extraction
                 return ExtractInvoiceData(extractedText);
             }
             catch (Exception ex)
@@ -65,38 +77,37 @@ namespace ProjectLedg.Server.Services
         {
             var extractedData = new Dictionary<string, string>();
 
-            //Regex for Invoice Number (Fakturanr or InvoiceNumber)
+            // Regex for Invoice Number (Fakturanr or InvoiceNumber)
             var invoiceNumberPattern = @"(Fakturanr|Invoice\sNo)\s*[:\-]?\s*([0-9]+)";
             var invoiceNumberMatch = Regex.Match(text, invoiceNumberPattern);
             extractedData["InvoiceNumber"] = invoiceNumberMatch.Success ? invoiceNumberMatch.Groups[2].Value : "Not found";
 
-            //Regex for Invoice Date (Fakturadatum or Invoice Date)
-            var invoiceDatePattern = @"(Fakturadatum|Invoice\sDate)\s*[:-]?\s*(\d{4}[-/]\d{2}[-/]\d{2})";
+            // Regex for Invoice Date (Fakturadatum or Invoice Date)
+            var invoiceDatePattern = @"Fakturadatum\s*[:-]?\s*(\d{4}[-/]\d{2}[-/]\d{2})";
             var invoiceDateMatch = Regex.Match(text, invoiceDatePattern);
             extractedData["InvoiceDate"] = invoiceDateMatch.Success ? invoiceDateMatch.Groups[1].Value : "Not found";
 
-            //Regex for Due Date (Förfallodatum or Due Date)
+            // Regex for Due Date (Förfallodatum or Due Date)
             var dueDatePattern = @"(Förfallodatum|Due\sDate)\s*[:\-]?\s*([0-9]{4}[-/.][0-9]{2}[-/.][0-9]{2})";
             var dueDateMatch = Regex.Match(text, dueDatePattern);
             extractedData["DueDate"] = dueDateMatch.Success ? dueDateMatch.Groups[2].Value : "Not found";
 
-            //Regex for Total Amount (Belopp or Total Amount)
-            var totalAmountPattern = @"(Belopp|Total\sAmount|Summa)\s*[:\-]?\s*([0-9]+[,.][0-9]{2})";
+            // Regex for Total Amount (targeting specific keywords like Summa or Totalt followed by numbers)
+            var totalAmountPattern = @"(?:Summa|Totalt)\s*[:\-]?\s*([0-9]+[ ]?[0-9]{2})";  // Adjusted for amount like "477 00"
             var totalAmountMatch = Regex.Match(text, totalAmountPattern);
-            extractedData["TotalAmount"] = totalAmountMatch.Success ? totalAmountMatch.Groups[2].Value.Replace(",", ".") : "Not found";
+            extractedData["TotalAmount"] = totalAmountMatch.Success ? totalAmountMatch.Groups[1].Value.Replace(" ", ".") : "Not found";
 
-            //Regex for Client Name (Identifying common headers like Kund, Client, etc.)
-            var clientNamePattern = @"(?:c/o\s+)?[\p{L}\s]+\n";
-            string[] name = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-            var clientNameMatch = FindName(name);
-            extractedData["ClientName"] = clientNameMatch;
+            // Regex for Client Name (Capturing "c/o" and similar patterns)
+            var clientNamePattern = @"(?:c/o\s+)?([A-Öa-öa-ö\s]+)\n";
+            var clientNameMatch = Regex.Match(text, clientNamePattern);
+            extractedData["ClientName"] = clientNameMatch.Success ? clientNameMatch.Groups[1].Value.Trim() : "Not found";
 
-            //Regex for Sender Name (AB, kommun, etc.)
-            var senderNamePattern = @"([A-Öa-ö\s]+(?:AB|Inc|Ltd|kommun|Company))";
-            var senderNameMatch = Regex.Match(text, senderNamePattern, RegexOptions.Multiline);
+            // Regex for Sender Name (Capturing "AB", "kommun", etc.)
+            var senderNamePattern = @"([A-Öa-ö\s]+(?:AB|kommun|Ltd|Company|förvaltning))";
+            var senderNameMatch = Regex.Match(text, senderNamePattern);
             extractedData["SenderName"] = senderNameMatch.Success ? senderNameMatch.Groups[1].Value.Trim() : "Not found";
 
-            //Returning the extracted data
+            // Returning the extracted data
             return extractedData;
         }
 
@@ -105,22 +116,22 @@ namespace ProjectLedg.Server.Services
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i].Trim();
-                //Check for c/o in the Invoice
+                // Check for c/o in the Invoice
                 if (line.Contains("c/o", StringComparison.OrdinalIgnoreCase))
                 {
-                    //Trying to get the previous line before c/o
+                    // Trying to get the previous line before c/o
                     if (i > 0 && !IsHeader(lines[i - 1]))
                     {
                         return lines[i - 1].Trim();
                     }
-                    //If not; we'll try the next line
+                    // If not; we'll try the next line
                     if (i < lines.Length - 1 && !IsHeader(lines[i + 1]))
                     {
                         return lines[i + 1].Trim();
                     }
                 }
             }
-            //return strings which arent in the header array
+            // Return strings which aren't in the header array
             foreach (string line in lines)
             {
                 if (!IsHeader(line) && !string.IsNullOrWhiteSpace(line))
@@ -151,46 +162,46 @@ namespace ProjectLedg.Server.Services
         {
             try
             {
-                //save the image to a temporary location
+                // Save the image to a temporary location
                 var tempImagePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.jpg");
 
-                //save the image 
+                // Save the image
                 await using (var memoryStream = new MemoryStream())
                 {
                     await imageFile.CopyToAsync(memoryStream);
                     await File.WriteAllBytesAsync(tempImagePath, memoryStream.ToArray());
                 }
 
-                //load the image using Tesseract Pix
+                // Load the image using Tesseract Pix
                 using (var img = Pix.LoadFromFile(tempImagePath))
                 {
-                    //get the image dimensions
+                    // Get image dimensions
                     int imageHeight = img.Height;
                     int imageWidth = img.Width;
 
-                    //defining the regions 
+                    // Define regions for top and bottom halves
                     var topHalfRect = new Rectangle(0, 0, imageWidth, imageHeight / 2);
                     var bottomHalfRect = new Rectangle(0, imageHeight / 2, imageWidth, imageHeight / 2);
 
-                    //clip the images into two halves for enhanced accuracy
+                    // Clip the images into two halves for enhanced accuracy
                     using (var topHalf = CropImage(tempImagePath, topHalfRect))
                     using (var bottomHalf = CropImage(tempImagePath, bottomHalfRect))
                     {
-                        //processing both halves and extracting the text
+                        // Process both halves and extract the text
                         string topText = ExtractTextFromImage(topHalf);
                         string bottomText = ExtractTextFromImage(bottomHalf);
 
-                        //combine the text from both halves
+                        // Combine the text from both halves
                         var result = new
                         {
                             TopHalfText = topText,
                             BottomHalfText = bottomText
                         };
 
-                        //clean up temp image we dont need to save it currently
+                        // Clean up temp image we don't need to save it currently
                         File.Delete(tempImagePath);
 
-                        //return combined image as json
+                        // Return combined image as JSON
                         return JsonSerializer.Serialize(result);
                     }
                 }
@@ -202,7 +213,7 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        //´helper method to crop an image
+        // Helper method to crop an image
         private Bitmap CropImage(string imagePath, Rectangle cropRect)
         {
             using (var srcImage = Image.FromFile(imagePath))
@@ -216,7 +227,7 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        //helper method to extract text from an image
+        // Helper method to extract text from an image
         private string ExtractTextFromImage(Bitmap image)
         {
             using (var engine = new TesseractEngine(_tesseractDataPath, "swe", EngineMode.Default))
@@ -231,7 +242,7 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        //helper method to convert bitmap to pix
+        // Helper method to convert bitmap to pix
         private Pix ConvertBitmapToPix(Bitmap bitmap)
         {
             using (var ms = new MemoryStream())
