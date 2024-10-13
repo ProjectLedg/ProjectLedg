@@ -159,6 +159,12 @@ namespace ProjectLedg.Server
             //User
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+            //Transaction
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            //BasAccount
+            services.AddScoped<IBasAccountRepository, BasAccountRepository>();
+            services.AddScoped<IBasAccountService, BasAccountService>();
             //Email
             services.AddScoped<IEmailSender, EmailSender>();
             //JWT
