@@ -50,65 +50,58 @@ namespace ProjectLedg.Server.Repositories
                 .SelectMany(fy => fy.BasAccounts)
                 .Where(ba => ba.TotalAmount < 0) // All negative posts (expenses)
                 .SumAsync(ba => ba.TotalAmount);
-
-            // Refactor like this maybe?
-            //var test = await _context.Companies
-            //    .Single(c => c.Id == companyId).FiscalYears
-            //    .Single(fy => fy.Id == fiscalYear.Id).BasAccounts
-            //    .Where(ba => ba.TotalAmount < 0)
-            //    .SumAsync(ba => ba.TotalAmount);
         }
 
-        public async Task<List<MonthlyTotalDTO>> GetRevenueHistory(FiscalYear fiscalYear)
+        public async Task<List<MonthlyTotalDTO>> GetRevenueHistoryAsync(FiscalYear fiscalYear)
         {
             return await _context.FiscalYears
                 .Where(fy => fy.Id == fiscalYear.Id)
                 .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
                 .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
-                .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                .GroupBy(t =>  t.TransactionDate)
                 .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g => new MonthlyTotalDTO
                 {
-                    Month = g.Key.Month,
-                    Year = g.Key.Year,
+                    MonthName = g.Key.ToString("MMMM"), // Get the months name
+                    Date = g.Key,
                     Amount = g.Sum(t => t.Amount) // Summarize the values of the group (month)
 
                 })
                 .ToListAsync();
         }
 
-        public async Task<List<MonthlyTotalDTO>> GetProfifHistory(FiscalYear fiscalYear)
+        public async Task<List<MonthlyTotalDTO>> GetProfitHistoryAsync(FiscalYear fiscalYear)
         {
             return await _context.FiscalYears
                 .Where(fy => fy.Id == fiscalYear.Id)
                 .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
                 .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
                 .Where(t => t.Amount > 0) // Filter only positive transactions 
-                .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month }) 
+                .GroupBy(t => t.TransactionDate)
                 .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g => new MonthlyTotalDTO
                 {
-                    Month = g.Key.Month,
-                    Year = g.Key.Year,
+                    MonthName = g.Key.ToString("MMMM"), // Get the months name
+                    Date = g.Key,
                     Amount = g.Sum(t => t.Amount) // Summarize the values of the group (month)
 
                 })
                 .ToListAsync();
         }
 
-        public async Task<List<MonthlyTotalDTO>> GetExpensesHistory(FiscalYear fiscalYear)
+        public async Task<List<MonthlyTotalDTO>> GetExpensesHistoryAsync(FiscalYear fiscalYear)
         {
             return await _context.FiscalYears
                 .Where(fy => fy.Id == fiscalYear.Id)
                 .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
                 .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
                 .Where(t => t.Amount < 0) // Filter only negative transactions
-                .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month }) 
-                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month) 
+                .GroupBy(t => t.TransactionDate)
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g => new MonthlyTotalDTO
                 {
-                    Month = g.Key.Month,
-                    Year = g.Key.Year,
+                    MonthName = g.Key.ToString("MMMM"), // Get the months name
+                    Date = g.Key,
                     Amount = g.Sum(t => t.Amount) // Summarize the values of the group (month)
 
                 })
@@ -122,11 +115,6 @@ namespace ProjectLedg.Server.Repositories
                 .Where(c => c.Id == companyId)
                 .SelectMany(fy => fy.FiscalYears)
                 .SingleOrDefaultAsync(f => f.StartDate >= startDate && f.EndDate <= endDate);
-        }
-
-        public async Task<int> ValueChangeMonthOverMonth()
-        {
-            throw new NotImplementedException();
         }
     }
 }
