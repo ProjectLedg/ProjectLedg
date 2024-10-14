@@ -31,7 +31,7 @@ export default function LoginPage() {
                 withCredentials: true
             });
 
-            if (response.data.message === 'Login successful') {               
+            if (response.data.message === 'Login successful') {
                 navigate('/company-select')
             }
             else {
@@ -66,14 +66,14 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-300 backdrop-blur-md px-4 sm:px-6 lg:px-8">
             <Card className="w-full max-w-md bg-white shadow-lg">
-                <CardHeader className="flex flex-col items-center space-y-4 pt-6 sm:pt-8">
+                <CardHeader className="flex flex-col items-center space-y-4 pt-4 sm:pt-8">
                     <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
                         <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="currentColor">
                             <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
                         </svg>
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Logga in</h1>
-                    <p className="text-sm text-gray-600">Logga in med Google</p>
+                    {/* <p className="text-sm text-gray-600">Logga in med Google</p> */}
                 </CardHeader>
                 <CardContent className="space-y-4 px-4 sm:px-6">
                     <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
@@ -101,14 +101,14 @@ export default function LoginPage() {
                                     fill="#EA4335"
                                 ></path>
                             </svg>
-                            Google
+                            Fortsätt via Google
                         </Button>
                     </div>
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-gray-300"></span>
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
+                        <div className="relative flex justify-center text-xs">
                             <span className="bg-white px-2 text-gray-500">Eller fortsätt med Email</span>
                         </div>
                     </div>
