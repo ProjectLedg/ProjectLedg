@@ -9,7 +9,7 @@ namespace ProjectLedg.Server.Services.IServices
     public interface IUserService
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserById(int id);
+        Task<User> GetUserById(string id);
         Task<AccountCreationResult> CreateUserAsync(CreateAccountRequestDTO request);
         Task<IdentityResult> UpdateUserAsync(User user);
         Task<IdentityResult> DeleteUserAsync(string password, ClaimsPrincipal currentUser);
