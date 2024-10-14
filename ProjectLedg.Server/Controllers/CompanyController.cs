@@ -20,16 +20,21 @@ namespace ProjectLedg.Server.Controllers
             _companyService = companyService;
         }
 
+        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyDTO companyDto)
-        {
+        {   
+
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            ClaimsPrincipal claimsUser = User;
+
             // Create the company and get the created company entity, which includes the auto-generated Id
-            var createdCompany = await _companyService.CreateCompanyAsync(companyDto);
+            var createdCompany = await _companyService.CreateCompanyAsync(companyDto,claimsUser);
 
             if (createdCompany == null)
             {
@@ -61,6 +66,9 @@ namespace ProjectLedg.Server.Controllers
 
             return Ok(companies);
         }
+
+       
+
 
     }
 }
