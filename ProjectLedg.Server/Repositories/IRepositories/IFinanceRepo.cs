@@ -11,13 +11,13 @@ namespace ProjectLedg.Server.Repositories.IRepositories
 
         public Task<decimal> GetYearToDateExpensesAsync(int companyId, FiscalYear fiscalYear);
 
-        public Task<List<MonthlyTotalDTO>> GetProfitHistory(FiscalYear fiscalYear);
+        public Task<List<MonthlyTotalDTO>> GetProfitHistoryAsync(FiscalYear fiscalYear);
 
-        public Task<List<MonthlyTotalDTO>> GetRevenueHistory(FiscalYear fiscalYear);
+        public Task<List<MonthlyTotalDTO>> GetRevenueHistoryAsync(FiscalYear fiscalYear);
 
-        public Task<List<MonthlyTotalDTO>> GetExpensesHistory(FiscalYear fiscalYear);
+        public Task<List<MonthlyTotalDTO>> GetExpensesHistoryAsync(FiscalYear fiscalYear);
 
-        public Task<FiscalYear> GetFiscalYearAsync(DateTime startDate,  DateTime endDate);
+        public Task<FiscalYear> GetFiscalYearAsync(int companyId, DateTime startDate,  DateTime endDate);
 
 
     }

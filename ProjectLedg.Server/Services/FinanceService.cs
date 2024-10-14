@@ -43,47 +43,65 @@ namespace ProjectLedg.Server.Services
 
 
         // Get YTD profit
-        public Task<FinanceFiscalYearDTO> GetYearToDateProfitAsync(FinanceRequestDTO financeDto)
+        public async Task<ProfitDTO> GetYearToDateProfitAsync(FinanceRequestDTO financeDto)
         {
-            throw new NotImplementedException();
+            // Get fiscal year entity to be used in YTD calculations
+            var fiscalYear = await _financeRepo.GetFiscalYearAsync(financeDto.CompanyId, financeDto.StartDate, financeDto.EndDate);
+
+            // Get months and their profit
+            var monthlyProfit = await _financeRepo.GetProfitHistoryAsync(fiscalYear);
+
+            // Create profit dto with all values
+            return new ProfitDTO
+            {
+                TotalProfit = await _financeRepo.GetYearToDateProfitAsync(financeDto.CompanyId, fiscalYear),
+                ProfitHistory = monthlyProfit,
+                ChangePercentage = ValueChangeMonthOverMonth(monthlyProfit),
+            };
         }
 
         // Get YTD revenue
-        public async Task<FinanceFiscalYearDTO> GetYearToDateRevenueAsync(FinanceRequestDTO financeDto)
+        public async Task<RevenueDTO> GetYearToDateRevenueAsync(FinanceRequestDTO financeDto)
         {
-            FiscalYear fiscalYear = await _financeRepo.GetFiscalYearAsync(financeDto.StartDate, financeDto.EndDate);
+            // Get fiscal year entity to be used in YTD calculations
+            var fiscalYear = await _financeRepo.GetFiscalYearAsync(financeDto.CompanyId, financeDto.StartDate, financeDto.EndDate);
             
-            var monthlyRev = await _financeRepo.GetRevenueHistory(fiscalYear);
+            // Get months and their revenue
+            var monthlyRevenue = await _financeRepo.GetRevenueHistoryAsync(fiscalYear);
             
-            List<RevenueHistoryDTO> revHistory = new List<RevenueHistoryDTO>();
-            foreach(var rev in monthlyRev)
-            {
-                revHistory.Add(new RevenueHistoryDTO
-                {
-                    Month = rev.Month,
-                    MonthRevenue = rev.Amount
-                });
-            }
-
-
-
-
-            RevenueDTO revenue = new RevenueDTO
+            // Put all values together in revenue dto and return
+            return new RevenueDTO
             {
                 TotalRevenue = await _financeRepo.GetYearToDateRevenueAsync(financeDto.CompanyId, fiscalYear),
-                RevenueHistory = new
+                RevenueHistory = monthlyRevenue,
+                ChangePercentage = ValueChangeMonthOverMonth(monthlyRevenue)
             };
-
-
-
         }
 
         // Get YTD expenses
-        public Task<FinanceFiscalYearDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto)
+        public Task<ExpensesDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto)
         {
             throw new NotImplementedException();
         }
 
+        private double ValueChangeMonthOverMonth(List<MonthlyTotalDTO> monthList)
+        {
+            // Needs to be at least 2 data sets to compare
+            if (monthList.Count < 2)
+                throw new InvalidOperationException("Too few values in list. Need 2 or more values to calculate MoM% change.");
 
+            // Round and convert first and last months value to nearest int
+            double finalMonth = (double)Math.Round(monthList.Last().Amount, MidpointRounding.AwayFromZero);
+            double initialMonth = (double)Math.Round(monthList.First().Amount, MidpointRounding.AwayFromZero);
+
+            // If the initial month is 0, avoid error by dividing by zero
+            if (initialMonth == 0)
+                throw new InvalidOperationException("Initial month's revenue is zero, cannot calculate percentage change.");
+
+            // Compound Monthly Growth Rate Formula (CMGR)
+            // Gives the average month over month (MoM) growth change %
+            // Formula: CMGR = (Final Month Value ÷ Initial Month Value) ^ (1 ÷ # of Months) – 1
+            return Math.Pow(finalMonth / initialMonth, 1.0 / (monthList.Count)) - 1;
+        }
     }
 }

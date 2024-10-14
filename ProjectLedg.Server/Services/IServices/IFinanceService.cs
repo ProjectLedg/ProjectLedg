@@ -4,10 +4,10 @@ namespace ProjectLedg.Server.Services.IServices
 {
     public interface IFinanceService
     {
-        public Task<FinanceFiscalYearDTO> GetYearToDateProfitAsync(FinanceRequestDTO financeDto);
+        public Task<ProfitDTO> GetYearToDateProfitAsync(FinanceRequestDTO financeDto);
 
-        public Task<FinanceFiscalYearDTO> GetYearToDateRevenueAsync(FinanceRequestDTO financeDto);
+        public Task<RevenueDTO> GetYearToDateRevenueAsync(FinanceRequestDTO financeDto);
 
-        public Task<FinanceFiscalYearDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto);
+        public Task<ExpensesDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto);
     }
 }
