@@ -73,7 +73,7 @@ const MobileNav = ({ navItems }) => (
 
 export default function Component() {
   return (
-    <div className="flex h-screen overflow-hidden shadow-lg bg-gradient-to-bl from-neutral-700/40 to-gray-200">
+    <div className="flex h-screen overflow-hidden shadow-lg bg-gradient-to-bl from-blue-700/40 to-gray-200">
       <Sidebar className="hidden border-r md:block" />
       <div className="flex flex-col flex-1 overflow-hidden">
         <header className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] py-4">

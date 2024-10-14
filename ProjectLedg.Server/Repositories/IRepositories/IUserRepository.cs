@@ -8,7 +8,7 @@ namespace ProjectLedg.Server.Repositories.IRepositories
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserById(int id);
+        Task<User> GetUserById(string id);
         Task<IdentityResult> CreateUserAsync(User user, string password);
         Task<IdentityResult> UpdateUserAsync(User user);
         Task<IdentityResult> DeleteUserAsync(string password, ClaimsPrincipal currentUser);

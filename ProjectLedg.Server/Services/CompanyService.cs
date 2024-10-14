@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Company;
 using ProjectLedg.Server.Repositories;
@@ -13,31 +14,54 @@ namespace ProjectLedg.Server.Services
     public class CompanyService : ICompanyService
     {
         private readonly ICompanyRepository _companyRepository;
-        public CompanyService(ICompanyRepository companyRepository)
+        private readonly IUserService _userService;
+        public CompanyService(ICompanyRepository companyRepository, IUserService userService)
         {
             _companyRepository = companyRepository;
+            _userService = userService;
+
         }
 
-        public async Task<CompanyDTO> CreateCompanyAsync(CreateCompanyDTO request)
+        [Authorize]
+        public async Task<CompanyDTO> CreateCompanyAsync(CreateCompanyDTO request, ClaimsPrincipal userClaims)
         {
+            string? userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if(userId == null)
+                return null;
+
+            var user = await _userService.GetUserById(userId);
+
             // Create a new company entity from the DTO
             var company = new Company
             {
                 CompanyName = request.CompanyName,
                 OrgNumber = request.OrgNumber,
-                AmountOfEmployees = request.AmountOfEmployees
+                AmountOfEmployees = request.AmountOfEmployees,
+                CompanyDescription = request.CompanyDescription,
+                Users = new List<User> { user }
             };
 
+            // Initialize the user's Companies collection if it's null
+            user.Companies ??= new List<Company>();
+            user.Companies.Add(company);
+
             // Save the new company to the database
-            await _companyRepository.CreateCompanyAsync(company);
+            var createdcomp = await _companyRepository.CreateCompanyAsync(company);
+
+            if(createdcomp == null)
+            {
+                return null;
+            }
 
             // Return a DTO that includes the generated Id and other properties
             return new CompanyDTO
             {
-                Id = company.Id,  // The auto-generated Id from the database
+                Id = company.Id,
                 CompanyName = company.CompanyName,
                 OrgNumber = company.OrgNumber,
-                AmountOfEmployees = company.AmountOfEmployees
+                AmountOfEmployees = company.AmountOfEmployees,
+                CompanyDescription = company.CompanyDescription
             };
         }
 

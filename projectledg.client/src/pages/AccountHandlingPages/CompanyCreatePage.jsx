@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axiosConfig from '/axiosconfig'
 import { Loader2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -8,18 +8,44 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
-
 const initialFields = [
-  { id: 'companyName', label: 'Företagsnamn', type: 'text', placeholder: 'Företagsnamn' },
-  { id: 'orgNumber', label: 'Orgnummer', type: 'text', placeholder: 'Orgnummer' },
-  { id: 'amountOfEmployees', label: 'Antal anställda', type: 'number', placeholder: '0' },
+  { 
+    id: 'companyName', 
+    label: 'Företagsnamn', 
+    type: 'text', 
+    placeholder: 'Företagsnamn',
+    description: 'Ange det fullständiga namnet på ditt företag.'
+  },
+  { 
+    id: 'orgNumber', 
+    label: 'Orgnummer', 
+    type: 'text', 
+    placeholder: 'XXXXXX-XXXX',
+    description: 'Ange ditt företags organisationsnummer i formatet XXXXXX-XXXX.'
+  },
+  { 
+    id: 'amountOfEmployees', 
+    label: 'Antal anställda', 
+    type: 'number', 
+    placeholder: '0',
+    description: 'Ange det totala antalet anställda i ditt företag. Måste vara ett positivt heltal.'
+  },
+  { 
+    id: 'companyDescription', 
+    label: 'Verksamhetsbeskrivning', 
+    type: 'text', 
+    placeholder: 'Verksamhetsbeskrivning',
+    description: 'Beskriv kortfattat vad ditt företag gör och vilka tjänster ni tillhandahåller.'
+  },
 ]
 
 export default function CompanyCreatePage() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     companyName: '',
     orgNumber: '',
-    amountOfEmployees: 0
+    amountOfEmployees: 0,
+    companyDescription: ''
   })
   
   const [isLoading, setIsLoading] = useState(false)
@@ -29,21 +55,24 @@ export default function CompanyCreatePage() {
     const { id, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [id]: id === 'amountOfEmployees' ? parseInt(value) || 0 : value
+      [id]: id === 'amountOfEmployees' ? Math.max(0, parseInt(value) || 0) : value
     }))
   }
-
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
+    const postData = {
+      ...formData,
+      amountOfEmployees: Number(formData.amountOfEmployees)
+    }
+
     try {
-      const response = await axiosConfig.post('/Company/create', formData)
+      const response = await axiosConfig.post('/Company/create', postData)
       console.log('Form submitted successfully:', response.data)
-      Navigate('/company-select')
+      navigate('/company-select')
     } catch (err) {
       console.error('Error submitting form:', err)
       setError('An error occurred while submitting the form. Please try again.')
@@ -57,7 +86,7 @@ export default function CompanyCreatePage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Sätt upp Företag</CardTitle>
-          <CardDescription>För in företags information</CardDescription>
+          <CardDescription>För in företagets information</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -71,7 +100,9 @@ export default function CompanyCreatePage() {
                   onChange={handleInputChange}
                   value={formData[field.id]}
                   className="w-full"
+                  min={field.id === 'amountOfEmployees' ? 0 : undefined}
                 />
+                <p className="text-sm text-muted-foreground">{field.description}</p>
               </div>
             ))}
             {error && (

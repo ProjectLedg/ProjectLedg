@@ -16,6 +16,10 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<Company> CreateCompanyAsync(Company company)
         {
+            if(_context.Companies.Any(c => c.OrgNumber == company.OrgNumber))
+            {
+                return null;
+            }
             _context.Companies.Add(company);
             await _context.SaveChangesAsync();
             return company;
