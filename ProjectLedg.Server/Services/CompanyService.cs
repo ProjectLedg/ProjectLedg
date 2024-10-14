@@ -47,7 +47,12 @@ namespace ProjectLedg.Server.Services
             user.Companies.Add(company);
 
             // Save the new company to the database
-            await _companyRepository.CreateCompanyAsync(company);
+            var createdcomp = await _companyRepository.CreateCompanyAsync(company);
+
+            if(createdcomp == null)
+            {
+                return null;
+            }
 
             // Return a DTO that includes the generated Id and other properties
             return new CompanyDTO
