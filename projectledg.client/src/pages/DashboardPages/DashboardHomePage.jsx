@@ -3,15 +3,38 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ProfitabilityCard from './DashboardPageComp/ProfitabilityCard'
+import MetricGraph from './DashboardPageComp/MetricGraph'
+import {
+  TooltipShad,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
-const MetricCard = ({ title, value, change, changeType, chart, icon: Icon }) => (
-  <Card className="overflow-hidden">
+const tooltipInfo = {
+  income: "Inkomst: <br /> Den totala summan pengar som tjänats in under en viss period.",
+  expenses: "Kostnader: <br /> Den totala summan pengar som spenderats under en viss period.",
+  revenue: "Omsättning: <br /> Den totala summan pengar som genererats från försäljning av varor eller tjänster under en viss period."
+}
+
+const MetricCard = ({ title, value, change, changeType, toolDescription, chart, icon: Icon }) => (
+  <Card className="overflow-hidden max-h-64">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center">
         {Icon && <Icon className="mr-2 h-4 w-4" />}
         {title}
       </CardTitle>
-      <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+      <TooltipProvider>
+          <TooltipShad>
+            <TooltipTrigger>
+                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+            </TooltipTrigger>
+              <TooltipContent>
+                <p dangerouslySetInnerHTML={{ __html: toolDescription }}></p>
+              </TooltipContent>
+          </TooltipShad>
+      </TooltipProvider>
+      
     </CardHeader>
     <CardContent>
       <div className="text-lg sm:text-2xl font-bold">{value}</div>
@@ -92,6 +115,54 @@ export default function DashboardHomePage() {
   const [dashboardData, setDashboardData] = useState(mockDashboardData)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [topMetricFilter, setTopMetricFilter] = useState('revenue')
+  const [bottomMetricFilter, setBottomMetricFilter] = useState('customers')
+
+  const metricsData = {
+    revenue: [
+      { month: "Jan", value: 100000 },
+      { month: "Feb", value: 120000 },
+      { month: "Mar", value: 150000 },
+      { month: "Apr", value: 180000 },
+      { month: "May", value: 200000 },
+      { month: "Jun", value: 220000 },
+      { month: "Jul", value: 250000 },
+    ],
+    customers: [
+      { month: "Jan", value: 1000 },
+      { month: "Feb", value: 1200 },
+      { month: "Mar", value: 1500 },
+      { month: "Apr", value: 1800 },
+      { month: "May", value: 2000 },
+      { month: "Jun", value: 2200 },
+      { month: "Jul", value: 2500 },
+    ],
+    orders: [
+      { month: "Jan", value: 500 },
+      { month: "Feb", value: 600 },
+      { month: "Mar", value: 750 },
+      { month: "Apr", value: 900 },
+      { month: "May", value: 1000 },
+      { month: "Jun", value: 1100 },
+      { month: "Jul", value: 1250 },
+    ],
+    averageOrderValue: [
+      { month: "Jan", value: 200 },
+      { month: "Feb", value: 200 },
+      { month: "Mar", value: 200 },
+      { month: "Apr", value: 0 },
+      { month: "May", value: -100 },
+      { month: "Jun", value: -150 },
+      { month: "Jul", value: -200 },
+    ],
+  }
+
+  const metricOptions = [
+    { value: 'revenue', label: 'Revenue' },
+    { value: 'customers', label: 'Customers' },
+    { value: 'orders', label: 'Orders' },
+    { value: 'averageOrderValue', label: 'Average Order Value' },
+  ]
 
   // Commented out API call logic
   /*
@@ -133,11 +204,12 @@ export default function DashboardHomePage() {
       
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
-          title="Saldo" 
+          title="Omsättning" 
           value={`${dashboardData.totalCash.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.totalCash.changePercentage}% MoM`}
           changeType={dashboardData.totalCash.changePercentage >= 0 ? 'positive' : 'negative'}
           icon={Wallet}
+          toolDescription={tooltipInfo.revenue}
           chart={
             <LineChart data={dashboardData.totalCash.history}>
               <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
@@ -153,6 +225,7 @@ export default function DashboardHomePage() {
           change={`${dashboardData.income.changePercentage}% MoM`}
           changeType={dashboardData.income.changePercentage >= 0 ? 'positive' : 'negative'}
           icon={TrendingUp}
+          toolDescription={tooltipInfo.income}
           chart={
             <BarChart data={dashboardData.income.history}>
               <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
@@ -167,11 +240,12 @@ export default function DashboardHomePage() {
           }
         />
         <MetricCard 
-          title="Gross Burn" 
+          title="Kostnader" 
           value={`${dashboardData.grossBurn.currentValue.toLocaleString()} kr`}
           change={`${dashboardData.grossBurn.changePercentage}% MoM`}
           changeType={dashboardData.grossBurn.changePercentage <= 0 ? 'positive' : 'negative'}
           icon={TrendingDown}
+          toolDescription={tooltipInfo.expenses}
           chart={
             <BarChart data={dashboardData.grossBurn.history}>
               <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
@@ -186,6 +260,22 @@ export default function DashboardHomePage() {
           }
         />
         {dashboardData.runway && <ProfitabilityCard runway={dashboardData.runway} />}
+      </div>
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <MetricGraph 
+          metricFilter={topMetricFilter} 
+          setMetricFilter={setTopMetricFilter} 
+          title="Left Metric"
+          metricsData={metricsData}
+          metricOptions={metricOptions}
+        />
+        <MetricGraph 
+          metricFilter={bottomMetricFilter} 
+          setMetricFilter={setBottomMetricFilter} 
+          title="Right Metric"
+          metricsData={metricsData}
+          metricOptions={metricOptions}
+        />
       </div>
     </div>
   )

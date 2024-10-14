@@ -92,8 +92,10 @@ export default function Component() {
             </Button>
           </div>
         </header>
-        <div className="h-full overflow-y-auto rounded-[1.5rem] bg-white/60 bg-opacity-80 mt-4 sm:mt-10 mx-4 sm:mx-6 md:mx-8 lg:mx-40 my-2 sm:my-5 shadow-lg p-4 md:p-6 lg:p-8">
-          <Outlet />
+        <div className="flex-1 overflow-auto">
+           <div className="h-full rounded-[1.5rem] bg-white/60 bg-opacity-80 mt-4 sm:mt-10 mx-4 sm:mx-6 md:mx-8 lg:mx-40 my-2 sm:my-5 shadow-lg p-4 md:p-6 lg:p-8">
+              <Outlet />
+        </div>
         </div>
       </div>
     </div>
