@@ -4,15 +4,15 @@
     public class RevenueDTO
     {
         public decimal TotalRevenue { get; set; }
-        public int ChangePercentage { get; set; } // Month over month (MoM%)
+        public double ChangePercentage { get; set; } // Month over month (MoM%)
 
-        public List<RevenueHistoryDTO>? RevenueHistory { get; set; } // All months to date of this fiscal year
+        public List<MonthlyTotalDTO>? RevenueHistory { get; set; } // All months to date of this fiscal year
     }
 
-    public class RevenueHistoryDTO
-    {
-        public int Year { get; set; }
-        public int Month { get; set; }
-        public decimal MonthRevenue { get; set; }
-    }
+    //public class RevenueHistoryDTO
+    //{
+    //    public DateTime Date { get; set; }
+    //    public string Month { get; set; }
+    //    public decimal Value { get; set; }
+    //}
 }
