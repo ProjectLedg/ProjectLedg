@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import GridItem from "./GridItem";
-import { AnimatePresence } from "framer-motion";
 
 import {
   BadgeDollarSign,
@@ -46,75 +45,73 @@ const DISPLAY_DURATION = 3000;
 
 const Problems = () => {
   const [text1, setText1] = useState("");
-  const [color1, setColor1] = useState("bg-green-200");
-  const [icon1, setIcon1] = useState(null);
+  const [color1, setColor1] = useState("bg-transparent");
+  
   const [text2, setText2] = useState("");
-  const [color2, setColor2] = useState("bg-green-200");
-  const [icon2, setIcon2] = useState(null);
+  const [color2, setColor2] = useState("bg-transparent");
+
   const [text3, setText3] = useState("");
-  const [color3, setColor3] = useState("bg-green-200");
-  const [icon3, setIcon3] = useState(null);
+  const [color3, setColor3] = useState("bg-transparent");
+
   const [text4, setText4] = useState("");
-  const [color4, setColor4] = useState("bg-green-200");
-  const [icon4, setIcon4] = useState(null);
+  const [color4, setColor4] = useState("bg-transparent");
+
   const [text5, setText5] = useState("");
-  const [color5, setColor5] = useState("bg-green-200");
-  const [icon5, setIcon5] = useState(null);
+  const [color5, setColor5] = useState("bg-transparent");
+
   const [text6, setText6] = useState("");
-  const [color6, setColor6] = useState("bg-green-200");
-  const [icon6, setIcon6] = useState(null);
+  const [color6, setColor6] = useState("bg-transparent");
+
   const [text7, setText7] = useState("");
-  const [color7, setColor7] = useState("bg-green-200");
-  const [icon7, setIcon7] = useState(null);
+  const [color7, setColor7] = useState("bg-transparent");
+
   const [text8, setText8] = useState("");
-  const [color8, setColor8] = useState("bg-green-200");
-  const [icon8, setIcon8] = useState(null);
+  const [color8, setColor8] = useState("bg-transparent");
+
   const [text9, setText9] = useState("");
-  const [color9, setColor9] = useState("bg-green-200");
-  const [icon9, setIcon9] = useState(null);
+  const [color9, setColor9] = useState("bg-transparent");
+
   const [text10, setText10] = useState("");
-  const [color10, setColor10] = useState("bg-green-200");
-  const [icon10, setIcon10] = useState(null);
+  const [color10, setColor10] = useState("bg-transparent");
+
   const [text11, setText11] = useState("");
-  const [color11, setColor11] = useState("bg-green-200");
-  const [icon11, setIcon11] = useState(null);
+  const [color11, setColor11] = useState("bg-transparent");
+
   const [text12, setText12] = useState("");
-  const [color12, setColor12] = useState("bg-green-200");
-  const [icon12, setIcon12] = useState(null);
+  const [color12, setColor12] = useState("bg-transparent");
+
   const [text13, setText13] = useState("");
-  const [color13, setColor13] = useState("bg-green-200");
-  const [icon13, setIcon13] = useState(null);
+  const [color13, setColor13] = useState("bg-transparent");
+
   const [text14, setText14] = useState("");
-  const [color14, setColor14] = useState("bg-green-200");
-  const [icon14, setIcon14] = useState(null);
+  const [color14, setColor14] = useState("bg-transparent");
+
   const [text15, setText15] = useState("");
-  const [color15, setColor15] = useState("bg-green-200");
-  const [icon15, setIcon15] = useState(null);
+  const [color15, setColor15] = useState("bg-transparent");
+
   const [text16, setText16] = useState("");
-  const [color16, setColor16] = useState("bg-green-200");
-  const [icon16, setIcon16] = useState(null);
+  const [color16, setColor16] = useState("bg-transparent");
 
 
   useEffect(() => {
+
     const updateTextAndColor = (setText, setColor) => {
-      setText(""); // Clear text for 1-second downtime
-      setColor("bg-transparent"); // Set to transparent or another "hidden" color
+      setText("");
+      setColor("bg-transparent");
 
       setTimeout(() => {
-        // After 1 second, set a new text and color
         setText(texts[Math.floor(Math.random() * texts.length)]);
         setColor(colors[Math.floor(Math.random() * colors.length)]);
         setIcon(textIconMap[randomText]);
-      }, 1000); // 1-second delay
+      }, 1000);
     };
 
     const intervals = [];
     const baseDuration = DISPLAY_DURATION;
 
-    // Define static offsets that are random and don't follow a sequence
     const offsets = [
-      400, 1200, 2400, 1800, 900, 1500, 2300, 1700,
-      600, 1400, 150, 1600, 2000, 1100, 2700, 800
+      410.2, 1204.1, 2413.5, 1802.9, 907.1, 1526.2, 2989.6, 1707.1,
+      601.4, 1402.3, 150.8, 1611.4, 2002.3, 1105.6, 2702.3, 802.23
     ];
 
     intervals.push(setInterval(() => updateTextAndColor(setText1, setColor1), baseDuration + offsets[0]));
@@ -134,7 +131,6 @@ const Problems = () => {
     intervals.push(setInterval(() => updateTextAndColor(setText15, setColor15), baseDuration + offsets[14]));
     intervals.push(setInterval(() => updateTextAndColor(setText16, setColor16), baseDuration + offsets[15]));
 
-    // Cleanup
     return () => intervals.forEach(clearInterval);
   }, []);
 
@@ -209,7 +205,7 @@ const Problems = () => {
               <GridItem
                 color={color9}
                 text={text9}
-                icon={ textIconMap[text9]}
+                icon={textIconMap[text9]}
               />
             </div>
             <div>
