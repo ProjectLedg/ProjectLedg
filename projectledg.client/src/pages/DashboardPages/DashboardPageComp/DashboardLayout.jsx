@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { Link, Outlet } from 'react-router-dom'
+import { useParams, Link, Outlet } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
@@ -29,7 +27,7 @@ const navItems = [
 
 const NavItem = ({ icon: Icon, label, path }) => {
     const { companyId } = useParams(); // Get companyId from the route params
-
+    
     const fullPath = `/dashboard/${companyId}${path}`
 
     return (
@@ -78,13 +76,9 @@ const MobileNav = ({ navItems }) => (
   </Sheet>
 )
 
-export default function Component() {
-  const { companyId } = useParams();
-  useEffect(() => {
-    // Use companyId to fetch data from your backend
-    console.log("Selected Company ID:", companyId);
-    // Make an API call to fetch the company data here
-  }, [companyId]);
+export default function DashboardLayout() {
+  // Get company id from url
+  const { companyId } = useParams(); 
 
   return (
     <div className="flex h-screen overflow-hidden shadow-lg bg-gradient-to-bl from-neutral-700/40 to-gray-200">
@@ -93,7 +87,7 @@ export default function Component() {
         <header className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] py-4">
           <div className="flex items-center">
             <MobileNav navItems={navItems} />
-            <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1> 
+            <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Dashboard for företag: {companyId}</h1> 
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
             <Button variant="ghost" size="icon">

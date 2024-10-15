@@ -42,6 +42,9 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function DashboardHomePage() {
+  // Get company id from url
+  const {companyId} = useParams();
+
   const mockDashboardData = {
     currentMonth: "March 2021",
     totalCash: {
@@ -93,7 +96,6 @@ export default function DashboardHomePage() {
   const [dashboardData, setDashboardData] = useState(mockDashboardData)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-  const {companyId} = useParams();
 
   // Commented out API call logic
   /*
@@ -127,8 +129,9 @@ export default function DashboardHomePage() {
   }
   */
 
+
   useEffect(() => {
-    console.log("Fetching financial reports for Company ID:", companyId);
+    console.log("Fetching financial r eports for Company ID:", companyId);
     // Add backend api fetch here
   }, [companyId])
 
