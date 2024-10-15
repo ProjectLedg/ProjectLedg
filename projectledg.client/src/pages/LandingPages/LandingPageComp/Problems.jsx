@@ -102,7 +102,7 @@ const Problems = () => {
       setTimeout(() => {
         setText(texts[Math.floor(Math.random() * texts.length)]);
         setColor(colors[Math.floor(Math.random() * colors.length)]);
-        setIcon(textIconMap[randomText]);
+        
       }, 1000);
     };
 
