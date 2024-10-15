@@ -15,24 +15,36 @@ namespace ProjectLedg.Server.Services
         }
 
         // Get YTD profit, revenue & expenses 
-        public Task<FinanceFiscalYearDTO> GetYearToDateFinancesAsync(FinanceRequestDTO financeDto)
-        {
-            // calculate values
+        public async Task<FinanceFiscalYearDTO> GetYearToDateFinancesAsync(FinanceRequestDTO financeDto)
+        {   
+            // Get fiscal year for the company
+            var fiscalYear = await _financeRepo.GetFiscalYearAsync(financeDto.CompanyId, financeDto.StartDate, financeDto.EndDate);
+           
+            // Gather monthly finances
+            var monthlyProfit = await _financeRepo.GetProfitHistoryAsync(fiscalYear);
+            var monthlyRevenue = await _financeRepo.GetRevenueHistoryAsync(fiscalYear);
+            var monthlyExpenses = await _financeRepo.GetExpensesHistoryAsync(fiscalYear);
 
 
-            FinanceFiscalYearDTO test = new FinanceFiscalYearDTO
+            FinanceFiscalYearDTO fiscalYearFinances = new FinanceFiscalYearDTO
             {
                 Revenue = new RevenueDTO
                 {
-                    //  Add values
+                    TotalRevenue = await _financeRepo.GetYearToDateRevenueAsync(financeDto.CompanyId, fiscalYear),
+                    RevenueHistory = monthlyRevenue,
+                    ChangePercentage = ValueChangeMonthOverMonth(monthlyRevenue),
                 },
                 Profit = new ProfitDTO
                 {
-                    //  Add values
+                    TotalProfit = await _financeRepo.GetYearToDateProfitAsync(financeDto.CompanyId, fiscalYear),
+                    ProfitHistory = monthlyProfit,
+                    ChangePercentage = ValueChangeMonthOverMonth(monthlyProfit),
                 },
                 Expenses = new ExpensesDTO
                 {
-                    //  Add values
+                    TotalExpenses = await _financeRepo.GetYearToDateExpensesAsync(financeDto.CompanyId, fiscalYear),
+                    ExpensesHistory = monthlyExpenses,
+                    ChangePercentage = ValueChangeMonthOverMonth(monthlyExpenses),
                 }
             };
 
@@ -51,7 +63,7 @@ namespace ProjectLedg.Server.Services
             // Get months and their profit
             var monthlyProfit = await _financeRepo.GetProfitHistoryAsync(fiscalYear);
 
-            // Create profit dto with all values
+            // Return profit with total expense amount, months and their expenses historically and the MoM% change
             return new ProfitDTO
             {
                 TotalProfit = await _financeRepo.GetYearToDateProfitAsync(financeDto.CompanyId, fiscalYear),
@@ -68,8 +80,8 @@ namespace ProjectLedg.Server.Services
             
             // Get months and their revenue
             var monthlyRevenue = await _financeRepo.GetRevenueHistoryAsync(fiscalYear);
-            
-            // Put all values together in revenue dto and return
+
+            // Return revenue with total expense amount, months and their expenses historically and the MoM% change
             return new RevenueDTO
             {
                 TotalRevenue = await _financeRepo.GetYearToDateRevenueAsync(financeDto.CompanyId, fiscalYear),
@@ -79,9 +91,21 @@ namespace ProjectLedg.Server.Services
         }
 
         // Get YTD expenses
-        public Task<ExpensesDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto)
+        public async Task<ExpensesDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto)
         {
-            throw new NotImplementedException();
+            // Get fiscal year entity to be used in YTD calculations
+            var fiscalYear = await _financeRepo.GetFiscalYearAsync(financeDto.CompanyId, financeDto.StartDate, financeDto.EndDate);
+
+            // Get all months in year and their expenses
+            var monthlyExpenses = await _financeRepo.GetExpensesHistoryAsync(fiscalYear);
+
+            // Return expenses with total expense amount, months and their expenses historically and the MoM% change
+            return new ExpensesDTO
+            {
+                TotalExpenses = await _financeRepo.GetYearToDateExpensesAsync(financeDto.CompanyId, fiscalYear),
+                ExpensesHistory = monthlyExpenses,
+                ChangePercentage = ValueChangeMonthOverMonth(monthlyExpenses)
+            };
         }
 
         private double ValueChangeMonthOverMonth(List<MonthlyTotalDTO> monthList)
