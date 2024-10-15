@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "./LandingPageComp/Navbar";
 import Content from "./LandingPageComp/Content";
-import CardShow from "./LandingPageComp/CardShow";
+import CardShow from "./LandingPageComp/Problems";
 
 export default function LandingPage() {
   return (
@@ -10,8 +10,9 @@ export default function LandingPage() {
       <div className="w-[100vw] flex flex-row justify-center">
         <Content />
       </div>
+      <div className="w-[100vw] overflow-auto">
         <CardShow />
-
+      </div>
     </>
   );
 }

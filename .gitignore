@@ -508,3 +508,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp
 .vs/slnx.sqlite
+ProjectLedg.Server/obj/ProjectLedg.Server.csproj.nuget.g.targets
