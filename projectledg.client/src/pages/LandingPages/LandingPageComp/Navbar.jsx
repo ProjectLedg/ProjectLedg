@@ -35,13 +35,15 @@ export default function Navbar() {
         {/* Logo Section */}
         <div className="flex-shrink-0 w-1/4 flex justify-start">
           {/* Placeholder for logo */}
-          <div className="w-8 h-8 bg-black rounded-full"></div>
+          <div className="w-8 h-8 bg-black rounded-full">
+             <Link to="/" className="w-full h-full block"></Link>
+          </div>
         </div>
 
         {/* Navigation Items Section */}
         <div className="hidden md:block rounded-full px-2 py-1 flex-grow flex justify-center">
           <div className="flex justify-around text-black">
-            <NavItem to="/why" className="mx-2">Varför Ledge?</NavItem>
+            <NavItem to="#why" className="mx-2">Varför Ledge?</NavItem>
             <NavItem to="/features" className="mx-2">Tjänster</NavItem>
             <NavItem to="/pricing" className="mx-2">Priser</NavItem>
             <NavItem to="/contact" className="mx-2">Kontakt</NavItem>
@@ -79,7 +81,7 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md p-4">
           <div className="flex flex-col space-y-2">
-            <NavItem to="/why">Varför Ledge?</NavItem>
+            <NavItem to="#why">Varför Ledge?</NavItem>
             <NavItem to="/features">Tjänster</NavItem>
             <NavItem to="/pricing">Priser</NavItem>
             <NavItem to="/contact">Kontakt</NavItem>
@@ -98,11 +100,33 @@ export default function Navbar() {
   );
 }
 
-function NavItem({ to, children, color, padding }) {
+function NavItem({ to, children, className = "" }) {
+  const isAnchorLink = to.startsWith('#');
+
+  if (isAnchorLink) {
+    return (
+      <a
+        href={to}
+        className={`text-black hover:text-gray-300 px-2 py-1 rounded-full text-lg font-normal transition-colors duration-300 ${className}`}
+        onClick={(e) => {
+          e.preventDefault();
+          const element = document.querySelector(to);
+          if (element) {
+            const yOffset = -100; // Adjust this value to control how much higher it scrolls
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          }
+        }}
+      >
+        {children}
+      </a>
+    );
+  }
+
   return (
     <Link
       to={to}
-      className={`text-black hover:text-gray-300 px-2 py-1 rounded-full text-lg font-normal transition-colors duration-300 ${color} ${padding}`}
+      className={`text-black hover:text-gray-300 px-2 py-1 rounded-full text-lg font-normal transition-colors duration-300 ${className}`}
     >
       {children}
     </Link>
