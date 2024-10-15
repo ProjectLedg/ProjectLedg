@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardFooter } from "@/components/ui/card"
@@ -147,12 +148,7 @@ const SignUpPage = () => {
                   </svg>
                   Fortsätt med Google
                 </Button>
-                {/* <Button variant="outline" className="w-full max-w-md flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z" />
-                  </svg>
-                  Fortsätt med Facebook
-                </Button> */}
+                
               </div>
             </div>
 
@@ -257,9 +253,9 @@ const SignUpPage = () => {
             </p>
             <p className="text-sm text-gray-500 mt-2 sm:mt-0">
               Har redan konto?{" "}
-              <a href="/" className="text-blue-600 hover:underline">
-                Logga in
-              </a>
+              <Link to="/login" className="text-blue-600 hover:underline">
+                 Logga in
+                  </Link>
             </p>
           </CardFooter>
         </Card>
@@ -272,7 +268,15 @@ const SignUpPage = () => {
               A email verification has been sent to your email. Please check your inbox and follow the instructions to complete your registration.
             </DialogDescription>
           </DialogHeader>
-          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+          <Link to="/login" className="inline-block">
+              <Button 
+              onClick={() => setIsModalOpen(false)}
+              className="bg-green-500 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 ease-in-out hover:bg-green-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+            >
+              Logga in
+            </Button>
+    </Link>
+          
         </DialogContent>
       </Dialog>
     </div>
