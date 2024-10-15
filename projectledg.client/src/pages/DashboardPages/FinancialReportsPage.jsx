@@ -124,16 +124,17 @@ export default function FinancialReportsPage() {
               Ladda ner
             </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent >
             <ChartContainer 
+            
               config={{ 
                 assets: { label: 'Tillgångar', color: 'hsl(var(--chart-1))' },
                 liabilities: { label: 'Skulder', color: 'hsl(var(--chart-2))' }
               }} 
-              className="h-[200px] sm:h-[300px]"
+              className="h-[200px] sm:h-[300px] w-[100%] "
             >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={financialData.balansData}>
+                <LineChart data={financialData.balansData} className="ml-[-2rem]">
                   <XAxis dataKey="date" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
                   <YAxis tick={{fontSize: 10}} tickFormatter={(value) => `${value / 1000}k`} />
                   <Line type="monotone" dataKey="assets" stroke="var(--color-assets)" strokeWidth={2} />
