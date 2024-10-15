@@ -46,7 +46,7 @@ useEffect(() => {
             }
             // if there's only one company skip the select and go to dahsboard directly
             else if (companiesData.length === 1){
-                navigate(`dashboard/${companiesData[0].id}`)
+                navigate(`/dashboard/${companiesData[0].id}`)
             }
 
         } catch (error) {

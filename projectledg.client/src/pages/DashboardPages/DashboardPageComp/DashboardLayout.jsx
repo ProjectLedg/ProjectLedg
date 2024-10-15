@@ -1,5 +1,4 @@
-import React from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { useParams, Link, Outlet } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
@@ -17,21 +16,27 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { icon: Home, label: 'Hem', path: '/dashboard', position: 'top' },
-  { icon: Activity, label: 'Finasiell rapport', path: '/dashboard/financial-reports', position: 'top' },
-  { icon: BookCheck, label: 'Bokför', path: '/dashboard/book', position: 'top' },
-  { icon: BookDown, label:'Årsredovisning', path:'/dashboard/financial-statement', position:'top'},
-  { icon: Settings, label: 'Inställningar', path: '/dashboard/settings', position: 'bottom' },
+  { icon: Home, label: 'Hem', path: '', position: 'top' },
+  { icon: Activity, label: 'Finasiell rapport', path: '/financial-reports', position: 'top' },
+  { icon: BookCheck, label: 'Bokför', path: '/book', position: 'top' },
+  { icon: BookDown, label:'Årsredovisning', path:'/financial-statement', position:'top'},
+  { icon: Settings, label: 'Inställningar', path: '/settings', position: 'bottom' },
   { icon: HelpCircle, label: 'Hjälp', path: '/', position: 'bottom' },
   { icon: LogOut, label: 'Logga ut', path: '/', position: 'bottom'},
 ]
 
-const NavItem = ({ icon: Icon, label, path }) => (
-  <Link to={path} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
-    <Icon className="h-5 w-5" />
-    <span>{label}</span>
-  </Link>
-)
+const NavItem = ({ icon: Icon, label, path }) => {
+    const { companyId } = useParams(); // Get companyId from the route params
+    
+    const fullPath = `/dashboard/${companyId}${path}`
+
+    return (
+      <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+        <Icon className="h-5 w-5" />
+        <span>{label}</span>
+      </Link>
+    )
+}
 
 const Sidebar = ({ className }) => (
   <div className={cn("pb-12 bg-white/60 bg-opacity-80 w-60 flex flex-col h-full", className)}>
@@ -71,7 +76,10 @@ const MobileNav = ({ navItems }) => (
   </Sheet>
 )
 
-export default function Component() {
+export default function DashboardLayout() {
+  // Get company id from url
+  const { companyId } = useParams(); 
+
   return (
     <div className="flex h-screen overflow-hidden shadow-lg bg-gradient-to-bl from-blue-700/40 to-gray-200">
       <Sidebar className="hidden border-r md:block" />
@@ -79,7 +87,7 @@ export default function Component() {
         <header className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:mx-40 bg-white/60 bg-opacity-80 rounded-b-[1.5rem] py-4">
           <div className="flex items-center">
             <MobileNav navItems={navItems} />
-            <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1> 
+            <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Dashboard for företag: {companyId}</h1> 
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
             <Button variant="ghost" size="icon">
