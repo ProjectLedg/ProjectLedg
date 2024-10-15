@@ -2,17 +2,25 @@ import React from "react";
 import Navbar from "./LandingPageComp/Navbar";
 import Content from "./LandingPageComp/Content";
 import CardShow from "./LandingPageComp/Problems";
+import FooterSection from "./LandingPageComp/FooterSection";
+import NewsletterSignup from "./LandingPageComp/NewsletterSignup";
 
 export default function LandingPage() {
-  return (
+return (
     <>
-      <Navbar />
-      <div className="w-[100vw] flex flex-row justify-center">
-        <Content />
-      </div>
-      <div className="w-[100vw] overflow-auto">
-        <CardShow />
-      </div>
+        <Navbar />
+        <div className="w-[100vw] flex flex-col items-center justify-center space-y-10">
+            <Content />
+        </div>
+        <div className="w-[100vw] overflow-auto">
+            <section id="why" className="scroll-mt-32">
+                <CardShow />
+            </section>     
+        </div>
+        <div className="flex flex-col items-center pb-36">
+            <NewsletterSignup />
+        </div>   
+        <FooterSection />
     </>
-  );
+);
 }
