@@ -41,7 +41,7 @@ const colors = [
   "bg-purple-200",
 ];
 
-const DISPLAY_DURATION = 3000;
+
 
 const Problems = () => {
   const [text1, setText1] = useState("");
@@ -107,7 +107,7 @@ const Problems = () => {
     };
 
     const intervals = [];
-    const baseDuration = DISPLAY_DURATION;
+    const baseDuration = 4000;
 
     const offsets = [
       410.2, 1204.1, 2413.5, 1802.9, 907.1, 1526.2, 2989.6, 1707.1,
