@@ -16,6 +16,10 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<Company> CreateCompanyAsync(Company company)
         {
+            if(_context.Companies.Any(c => c.OrgNumber == company.OrgNumber))
+            {
+                return null;
+            }
             _context.Companies.Add(company);
             await _context.SaveChangesAsync();
             return company;
@@ -24,6 +28,14 @@ namespace ProjectLedg.Server.Repositories
         public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
         {
             return await _context.Companies.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Company>> GetCompaniesForUserAsync(string userId)
+        {
+            return await _context.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(c => c.Companies)
+                .ToListAsync();
         }
 
         public async Task<Company> GetCompanyByIdAsync(int id)

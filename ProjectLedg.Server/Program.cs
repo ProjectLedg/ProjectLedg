@@ -18,6 +18,9 @@ using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
 using ProjectLedg.Server.Services;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace ProjectLedg.Server
 {
@@ -29,6 +32,7 @@ namespace ProjectLedg.Server
             var services = builder.Services;
             Env.Load();
 
+         
             var mailKitSettingsSection = new MailKitSettings
             {
                 MailServer = Environment.GetEnvironmentVariable("MAILSERVER"),
@@ -62,7 +66,7 @@ namespace ProjectLedg.Server
             }).AddEntityFrameworkStores<ProjectLedgContext>()
               .AddDefaultTokenProviders();
 
-            builder.Services.AddAuthentication(options =>
+            services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,9 +80,28 @@ namespace ProjectLedg.Server
                     ValidateLifetime = true,
                     ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
                     ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
                 };
             });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+                .AddCookie()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+                    options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedFirstName");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
+
+             
+                });
 
             services.AddAuthorization();
 
@@ -88,7 +111,8 @@ namespace ProjectLedg.Server
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
+
+                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -139,7 +163,7 @@ namespace ProjectLedg.Server
             services.AddScoped<IEmailSender, EmailSender>();
             //JWT
             services.AddScoped<JwtRepository>();
-            services.AddScoped<AuthenticationService>();
+            services.AddScoped<ProjectLedg.Server.Services.AuthenticationService>();
             //PDF
             services.AddScoped<IPDFService, PDFService>();
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
@@ -174,6 +198,9 @@ namespace ProjectLedg.Server
             app.MapFallbackToFile("/index.html");
 
             app.Run();
+
+           
+
         }
     }
 }

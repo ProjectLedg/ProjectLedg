@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Company;
 using ProjectLedg.Server.Services.IServices;
+using System.Security.Claims;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -18,16 +20,21 @@ namespace ProjectLedg.Server.Controllers
             _companyService = companyService;
         }
 
+        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyDTO companyDto)
-        {
+        {   
+
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            ClaimsPrincipal claimsUser = User;
+
             // Create the company and get the created company entity, which includes the auto-generated Id
-            var createdCompany = await _companyService.CreateCompanyAsync(companyDto);
+            var createdCompany = await _companyService.CreateCompanyAsync(companyDto,claimsUser);
 
             if (createdCompany == null)
             {
@@ -37,8 +44,6 @@ namespace ProjectLedg.Server.Controllers
             // Assuming the returned object has the auto-generated Id after saving
             return CreatedAtAction(nameof(GetCompanyById), new { id = createdCompany.Id }, createdCompany);
         }
-
-
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCompanyById(int id)
@@ -50,6 +55,20 @@ namespace ProjectLedg.Server.Controllers
             }
             return Ok(company);
         }
+
+        [Authorize]
+        [HttpGet("getUserCompanies")]
+        public async Task<IActionResult> GetCompaniesForUser()
+        {
+            ClaimsPrincipal claims = User;
+
+            var companies = await _companyService.GetCompaniesForUserAsync(claims);
+
+            return Ok(companies);
+        }
+
+       
+
 
     }
 }

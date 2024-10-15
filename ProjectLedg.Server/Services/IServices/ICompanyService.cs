@@ -10,7 +10,9 @@ namespace ProjectLedg.Server.Services.IServices
     {
         Task<IEnumerable<Company>> GetAllCompaniesAsync();
         Task<Company> GetCompanyByIdAsync(int id);
-        Task<CompanyDTO> CreateCompanyAsync(CreateCompanyDTO request);
+        Task<CompanyDTO> CreateCompanyAsync(CreateCompanyDTO request, ClaimsPrincipal userClaims);
+        Task<IEnumerable<UsersCompaniesDTO>> GetCompaniesForUserAsync(ClaimsPrincipal claims);
+
         //Task<> UpdateCompanyAsync(Company company);
         //Task<> DeleteCompanyAsync(string password, ClaimsPrincipal currentUser);
         //Task<> LoginAsync(string email, string password);

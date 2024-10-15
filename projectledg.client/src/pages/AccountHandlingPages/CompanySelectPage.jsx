@@ -1,34 +1,62 @@
 import {useRef, useEffect, useState} from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard  from './CompanySelectPageComponents/CompanyCard'
+import { useNavigate } from 'react-router-dom'
+import axiosConfig from '/axiosconfig'
 
-
-export default function CompanySelectPage() {
+export default function CompanySelectPage() {;
     
-    // Replace with api call for users companies
-    const companies = [
-        { id: 1, companyName: 'ProjectLedge AB', orgNumber:"5512121212", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 2, companyName: 'AddeBadde Bygg & VVS AB', orgNumber: "5500224466", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 3, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 4, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
-        { id: 5, companyName: 'Emplojd.com', orgNumber: "5511335577", imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzEeCxzRgaXXJLyj5E5VJSYryWOImZBbjPXg&sheight=80&width=80' },
+    // Images for the company placeholder icons (more can be added or changed later)
+    const companyIcons = [
+        "src/assets/company-icons/balance.png",
+        "src/assets/company-icons/bank.png",
+        "src/assets/company-icons/box.png",
+        "src/assets/company-icons/briefcase.png",
+        "src/assets/company-icons/calculator.png",
+        "src/assets/company-icons/city.png",
+        "src/assets/company-icons/company.png"
     ]
 
     // Replace with imported json?
     const infoText = {
         sectionTitle: "Välj företag",
-        sectionDescription: "Logged in users can view full business profiles and can save contact details."
+        sectionDescription: ""
     }
 
     const scrollContainerRef = useRef(null);
+    const [companies, setCompanies] = useState([]);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const navigate = useNavigate();
 
 
 useEffect(() => {
+    const getUserCompanies = async () => {
+        try {
+            const response = await axiosConfig.get("/Company/getUserCompanies");
+            const companiesData = response.data;
+            setCompanies(response.data);
+
+            // if there's no companies go to company create page
+            if (companiesData.length === 0 ) {
+                navigate(`/company-create`)
+            }
+            // if there's only one company skip the select and go to dahsboard directly
+            else if (companiesData.length === 1){
+                navigate(`dashboard/${companiesData[0].id}`)
+            }
+
+        } catch (error) {
+            console.error("An error occurred retrieving companies:", error);
+        }
+    };  
+    getUserCompanies();
+
+
+
     // Check if there is any scrollable overflow in the container, if not (0) then disable the arrow (otherwise it'll show even if there is nothing to scroll upon first render)
     const container = scrollContainerRef.current;
     if (container.scrollWidth - container.clientWidth === 0)
@@ -45,6 +73,7 @@ useEffect(() => {
 
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
+
 }, []);
 
 // Scrolls card carousel 200px in the arrow direction
@@ -73,16 +102,25 @@ const handleMouseMove = (e) => {
         scrollContainerRef.current.scrollLeft = scrollLeft - walk; 
 }
 
+const handleCompanySelect = (company) => {
+    console.log(company)
+    navigate(`/dashboard/${company.companyId}`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+}
+
+const handleCompanyAdd = () => {    
+    navigate('/company-create');
+}
+
  
-    return (
-        
-        <section className="bg-slate-300 min-h-screen flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl p-8 shadow-lg max-w-5xl w-full">
+    return ( 
+        <section className="bg-white min-h-screen flex items-center justify-center p-4 overflow-x-hidden	">
+            <div className=" bg-green-300 rounded-xl p-8 shadow-lg max-w-5xl w-full">
                 <h1 className="text-2xl font-bold text-center mb-2">{infoText.sectionTitle}</h1>
                 <p className="text-gray-600 text-center mb-8">
                     {infoText.sectionDescription}
                 </p>
                 <div className='relative'>
+                    {/* Left arrow button  */}
                     {showLeftArrow && (
                         <button
                             onClick={() => scroll('left')}
@@ -92,8 +130,7 @@ const handleMouseMove = (e) => {
                             <ChevronLeft size={24}/>
                         </button>
                     )}
-
-
+                    {/* Right arrow button */}
                     {showRightArrow && (
                         <button
                             onClick={() => scroll('right')}
@@ -106,7 +143,7 @@ const handleMouseMove = (e) => {
 
                     <div
                         ref={scrollContainerRef}
-                        className='flex overflow-x-auto space-x-4 pb-4 scrollbar-hide cursor-grab active:cursor-grabbing' 
+                        className='flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing' 
                         style={{
                             scrollbarWidth: "none",
                             msOverflowStyle: "none",
@@ -119,24 +156,27 @@ const handleMouseMove = (e) => {
                         onMouseLeave={handleMouseUp}
                         onMouseMove={handleMouseMove}
                     >
-                        {companies.map((company) => (
+
+                        {companies.map((company, i) => (
                             <CompanyCard
                                 key={company.id}
+                                companyId = {company.id}
                                 companyName={company.companyName}
                                 orgNumber={company.orgNumber}
-                                imageUrl={company.imageUrl}
+                                imageUrl={companyIcons[i]}
+                                handleCompanySelect={handleCompanySelect}
                             />
                         ))}
-                        <button className='flex-shrink-0 w-48 bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-200 transition-colors duration-300'>
+                        <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-200 transition-colors duration-300'>
                             <PlusCircle size={48} className='text-gray-400 mb-2' />
                             <span className="sr-only">Lägg till nytt företag</span>
                         </button>
                     </div>
                     {showLeftArrow && (
-                        <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+                        <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-green-300 to-transparent pointer-events-none "></div>
                     )}
                     {showRightArrow && (
-                        <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                        <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-green-300 to-transparent pointer-events-none"></div>
                     )}
 
                 </div>
