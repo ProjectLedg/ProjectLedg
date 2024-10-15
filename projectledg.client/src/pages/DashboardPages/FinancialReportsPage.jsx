@@ -160,10 +160,10 @@ export default function FinancialReportsPage() {
                 income: { label: 'Intäkter', color: 'hsl(var(--chart-3))' },
                 expenses: { label: 'Kostnader', color: 'hsl(var(--chart-4))' }
               }} 
-              className="h-[200px] sm:h-[300px]"
+              className="h-[200px] sm:h-[300px] w-[100%]"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={financialData.resultatData}>
+                <BarChart data={financialData.resultatData} className="ml-[-2rem]">
                   <XAxis dataKey="month" tick={{fontSize: 10}} />
                   <YAxis tick={{fontSize: 10}} tickFormatter={(value) => `${value / 1000}k`} />
                   <Bar dataKey="income" fill="var(--color-income)" />
