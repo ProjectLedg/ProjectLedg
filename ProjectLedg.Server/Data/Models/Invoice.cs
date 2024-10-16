@@ -12,6 +12,7 @@ namespace ProjectLedg.Server.Data.Models
         public byte[] InvoiceFile { get; set; }
         public bool IsPaid { get; set; }
         public bool IsOutgoing { get; set; }
+        public bool IsBooked { get; set; } // If invoice is "bokförd" 
         public string ClientName { get; set; }
         public string SenderName { get; set; }
 
