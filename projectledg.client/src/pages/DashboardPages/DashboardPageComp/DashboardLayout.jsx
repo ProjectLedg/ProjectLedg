@@ -47,7 +47,7 @@ const Sidebar = ({ className }) => (
         </div>
       </div>
     </div>
-    <div className="mt-[30rem] px-3 py-2 border-t">
+    <div className="mt-auto px-3 py-2 border-t">
       <div className="space-y-1">
         {navItems.filter(item => item.position === 'bottom').map((item, index) => (
           <NavItem key={index} {...item} />
@@ -80,37 +80,39 @@ export default function Component() {
       <div className="flex flex-col flex-1">
         {/* Main Content */}
         <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
-
-          {/* Navbar */}
-          <div className="relative">
-            <header className="fixed top-0 z-10 lg:max-w-[calc(100%-15rem)] w-full sm:w-[calc(100%-4rem)] md:w-[calc(100%-8rem)] lg:mx-auto px-4 sm:px-6 md:px-8 py-4 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-xl rounded-b-[1.5rem]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  {/* Mobile Navigation */}
-                  <div className="md:hidden">
-                    <MobileNav navItems={navItems} />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 w-full">
+            {/* Navbar */}
+            <header className="fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-xl rounded-b-[1.5rem] px-[1rem]">
+                  <div className="flex items-center">
+                    {/* Mobile Navigation */}
+                    <div className="md:hidden">
+                      <MobileNav navItems={navItems} />
+                    </div>
+                    <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1>
                   </div>
-                  <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1>
-                </div>
-                <div className="flex items-center space-x-2 sm:space-x-4">
-                  <Button variant="ghost" size="icon">
-                    <MessageSquarePlus className="h-5 w-5" />
-                    <span className="sr-only">Ask Digits</span>
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <UserPlus className="h-5 w-5" />
-                    <span className="sr-only">Invite Client</span>
-                  </Button>
+                  <div className="flex items-center space-x-2 sm:space-x-4">
+                    <Button variant="ghost" size="icon">
+                      <MessageSquarePlus className="h-5 w-5" />
+                      <span className="sr-only">Ask Digits</span>
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                      <UserPlus className="h-5 w-5" />
+                      <span className="sr-only">Invite Client</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </header>
-          </div>
 
-          {/* Chart Content Box */}
-          <div className="chart-content-box h-fit rounded-[1.5rem] bg-white/60 bg-opacity-80 sm:mt-10 mx-4 mt-20 sm:mx-6 md:mx-8 sm:my-[2rem] md:my-[6rem] lg:my-[8rem] lg:mx-auto lg:max-w-[calc(100%-15rem)] my-2 shadow-lg p-4 md:p-6 lg:p-8">
-            <Outlet />
+            {/* Chart Content Box */}
+            <div className="mt-24 mb-8">
+              <div className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8">
+                <Outlet />
+              </div>
+            </div>
           </div>
-
         </div>
       </div>
     </div>
