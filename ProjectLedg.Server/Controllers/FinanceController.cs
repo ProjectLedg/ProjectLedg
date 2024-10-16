@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectLedg.Server.Data.Models.DTOs.Finance;
 using ProjectLedg.Server.Services.IServices;
 
 namespace ProjectLedg.Server.Controllers
@@ -15,5 +16,12 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Endpoints
+        [HttpPost]
+        public async Task<IActionResult> GetYearToDateFinances(FinanceRequestDTO request)
+        {
+            var reuslt = await _financeService.GetYearToDateFinancesAsync(request);
+
+            return Ok(reuslt);
+        }
     }
 }
