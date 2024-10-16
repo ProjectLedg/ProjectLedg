@@ -11,7 +11,7 @@ const PricingPage = () => {
       name: "Gratis",
       price: "0 sek ",
       description: "Detta är en demo version av Ledge",
-      features: ["Ai Bokföring", "Årsredovisning", "Fakturering","Ekonomi översikt"],
+      features: ["Ai Bokföring", "Årsredovisning, BR & RR","Ekonomi översikt"],
       cta: "Starta nu",
       locked: false,
     },
