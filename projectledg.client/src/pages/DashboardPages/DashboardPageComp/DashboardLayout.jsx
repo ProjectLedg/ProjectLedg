@@ -84,7 +84,7 @@ export default function Component() {
             {/* Navbar */}
             <header className="fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-xl rounded-b-[1.5rem] px-[1rem]">
+                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 bg-opacity-20 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem]">
                   <div className="flex items-center">
                     {/* Mobile Navigation */}
                     <div className="md:hidden">
