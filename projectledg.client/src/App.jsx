@@ -9,7 +9,8 @@ import ContactPage from './pages/LandingPages/ContactPage'
 import PricingPage from './pages/LandingPages/PricingPage'
 import FeaturePage from './pages/LandingPages/FeaturePage'
 import WhyPage from  './pages/LandingPages/WhyPage'
-import DashboardPage from './pages/DashboardPages/DashboardPage'
+import DashboardLayout from './pages/DashboardPages/DashboardPageComp/DashboardLayout'
+import DashboardHomePage from './pages/DashboardPages/DashboardHomePage'
 
 function App() {
     return (
@@ -19,7 +20,11 @@ function App() {
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path="/signup" element={<SignupPage/>}/>
                 <Route path="/company-select" element={<CompanySelectPage/>}/>
-                <Route path="/dashboard/*" element={<DashboardPage />} />
+                <Route path="/dashboard/:companyId" element={<DashboardLayout />}>
+                    {/* Nested Routes */}
+                    <Route index element={<DashboardHomePage />} />
+                    {/* Add futute sub-dashboard routes here */}
+                </Route>
                 <Route path="/why" element={<WhyPage/>}/>
                 <Route path="/feature" element={<FeaturePage/>}/>
                 <Route path="/pricing" element={<PricingPage/>}/>
