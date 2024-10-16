@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public decimal Amount { get; set; }
+        public bool IsDebit { get; set; }
         public DateTime TransactionDate { get; set; }
 
         public virtual Invoice Invoice { get; set; }

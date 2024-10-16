@@ -182,19 +182,25 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Credit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Debit")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FiscalYearId")
+                    b.Property<int>("Year")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FiscalYearId");
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("BasAccounts");
                 });
@@ -240,30 +246,6 @@ namespace ProjectLedg.Server.Migrations
                     b.ToTable("Emails");
                 });
 
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.FiscalYear", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("FiscalYears");
-                });
-
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -276,11 +258,11 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("FiscalYearId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
@@ -292,6 +274,9 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsOutgoing")
                         .HasColumnType("bit");
@@ -308,7 +293,7 @@ namespace ProjectLedg.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FiscalYearId");
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Invoices");
                 });
@@ -329,6 +314,9 @@ namespace ProjectLedg.Server.Migrations
 
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDebit")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
@@ -484,23 +472,16 @@ namespace ProjectLedg.Server.Migrations
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.BasAccount", b =>
                 {
-                    b.HasOne("ProjectLedg.Server.Data.Models.FiscalYear", null)
-                        .WithMany("BasAccounts")
-                        .HasForeignKey("FiscalYearId");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.FiscalYear", b =>
-                {
                     b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
-                        .WithMany("FiscalYears")
+                        .WithMany("BasAccounts")
                         .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
-                    b.HasOne("ProjectLedg.Server.Data.Models.FiscalYear", null)
+                    b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
                         .WithMany("Invoices")
-                        .HasForeignKey("FiscalYearId");
+                        .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -528,11 +509,6 @@ namespace ProjectLedg.Server.Migrations
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Company", b =>
-                {
-                    b.Navigation("FiscalYears");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.FiscalYear", b =>
                 {
                     b.Navigation("BasAccounts");
 
