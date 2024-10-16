@@ -11,6 +11,10 @@ import FeaturePage from './pages/LandingPages/FeaturePage'
 import WhyPage from  './pages/LandingPages/WhyPage'
 import DashboardLayout from './pages/DashboardPages/DashboardPageComp/DashboardLayout'
 import DashboardHomePage from './pages/DashboardPages/DashboardHomePage'
+import FinancialReportsPage from './pages/DashboardPages/FinancialReportsPage'
+import FinancialStatementPage from './pages/DashboardPages/FinancialStatementPage'
+import SettingsPage from './pages/DashboardPages/SettingsPage'
+import BookingPage from './pages/DashboardPages/BookingPage'
 
 function App() {
     return (
@@ -23,7 +27,10 @@ function App() {
                 <Route path="/dashboard/:companyId" element={<DashboardLayout />}>
                     {/* Nested Routes */}
                     <Route index element={<DashboardHomePage />} />
-                    {/* Add futute sub-dashboard routes here */}
+                    <Route path="financial-reports" element={<FinancialReportsPage />} />
+                    <Route path="book" element={<BookingPage />} />
+                    <Route path="financial-statement" element={<FinancialStatementPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
                 </Route>
                 <Route path="/why" element={<WhyPage/>}/>
                 <Route path="/feature" element={<FeaturePage/>}/>
