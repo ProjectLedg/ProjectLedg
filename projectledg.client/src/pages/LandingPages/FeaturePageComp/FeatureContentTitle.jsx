@@ -37,7 +37,7 @@ export default function FeatureContentTitle() {
                 key={index}
                 className="inline-block opacity-0"
                 style={{
-                    animation: `fade-in-left 0.4s ease-in-out forwards`,
+                    animation: `fade-in-left 0.6s ease-in-out forwards`,
                     animationDelay: `${index * 0.04}s`,
                 }}
             >
@@ -47,15 +47,16 @@ export default function FeatureContentTitle() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen space-y-6">
+        <div className="flex flex-col items-center justify-center h-screen space-y-6" style={{ height: '45vw' }}>
             {/* Inject custom keyframes */}
             <style>{keyframes}</style>
 
             {/* Element 1 - Whole element fades in down, letters fade in left */}
             <h1
-                className="opacity-0 text-5xl font-medium text-center text-black"
+                className="opacity-0 font-medium text-center text-green-500"
                 style={{
                     animation: "fade-in-down 2s ease-in-out 0.5s forwards",
+                    fontSize: '3vw',
                 }}
             >
                 {splitText("Välkommen till Ledg, vi gör bokföring enkelt!")}
@@ -65,9 +66,10 @@ export default function FeatureContentTitle() {
 
             {/* Element 2 */}
             <p
-                className="opacity-0 text-3xl text-center text-black"
+                className="opacity-0  text-center text-gray-600"
                 style={{
                     animation: "fade-in-down 2.5s ease-in-out 0.8s forwards",
+                    fontSize: '2vw',
                 }}
             >
                 {splitText("bättre än Visma")}
@@ -75,15 +77,6 @@ export default function FeatureContentTitle() {
                 {splitText("bättre än Fortnox")}
             </p>
 
-            {/* Element 3 */}
-            <div
-                className="opacity-0 flex items-center"
-                style={{
-                    animation: "fade-in-down 1.2s ease-in-out 0.7s forwards",
-                }}
-            >
-
-            </div>
         </div>
     );
 }

@@ -29,14 +29,14 @@ export default function Navbar() {
   return (
     <div
       className={`w-full flex justify-between py-3 px-10 sticky top-0 bg-white bg-opacity-20 backdrop-blur-lg 
-      ${shadow ? "shadow-md transition-shadow duration-300 ease-in-out" : "transition-shadow duration-300 ease-in-out"} z-10`}
+      ${shadow ? "shadow-md transition-shadow duration-300 ease-in-out" : "transition-shadow duration-300 ease-in-out"} z-50`}
     >
       <nav className="text-black flex items-center justify-between w-full">
         {/* Logo Section */}
         <div className="flex-shrink-0 w-1/4 flex justify-start">
           {/* Placeholder for logo */}
           <div className="w-8 h-8 bg-black rounded-full">
-             <Link to="/" className="w-full h-full block"></Link>
+            <Link to="/" className="w-full h-full block"></Link>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ export default function Navbar() {
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md p-4">
           <div className="flex flex-col space-y-2">
 
-           
+
             <NavItem to="/why">Varför Ledge?</NavItem>
             <NavItem to="/feature">Tjänster</NavItem>
 
