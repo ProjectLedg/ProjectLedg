@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,47 +11,72 @@ namespace ProjectLedg.Server.Controllers
     public class PDFController : ControllerBase
     {
         private readonly IPDFService _pdfService;
+        private readonly FormRecognizerService _formService;
 
-        public PDFController(IPDFService pdfService)
+        public PDFController(IPDFService pdfService, FormRecognizerService formService)
         {
             _pdfService = pdfService;
+            _formService = formService;
         }
 
-        // GET request to generate a simple annual report PDF and return the file for download
+        //GET request to generate a simple annual report PDF and return the file for download
         [HttpGet("generatepdf")]
         public IActionResult GenerateAnnualReportPdf()
         {
-            // Generate the PDF bytes using the service
+            //generate the PDF bytes using the service
             var pdf = _pdfService.GenerateAnnualReportPdf();
 
-            // Return the generated PDF as a file
+            //return the generated PDF as a file
             return File(pdf, "application/pdf", "AnnualReport.pdf");
         }
 
-        // POST request to generate the PDF and store it on the server
+        //POST request to generate the PDF and store it on the server
         [HttpPost("generatepdf/{fileName}")]
         public async Task<IActionResult> GenerateAndSavePdf(string fileName)
         {
-            // Generate the PDF
+            //generate the PDF
             var pdfBytes = _pdfService.GenerateAnnualReportPdf();
 
-            // Define the directory path for saving the PDF
+            //define the directory path for saving the PDF
             var pdfDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pdfs");
             var pdfFileName = $"{fileName}.pdf";  // Use the provided fileName
             var filePath = Path.Combine(pdfDirectory, pdfFileName);
 
-            // Ensure the directory exists
+            //ensure the directory exists
             if (!Directory.Exists(pdfDirectory))
             {
                 Directory.CreateDirectory(pdfDirectory);
             }
 
-            // Save the PDF file
+            //save the PDF file
             await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
 
-            // Return the URL to the saved PDF
+            //return the URL to the saved PDF
             var pdfUrl = $"{Request.Scheme}://{Request.Host}/pdfs/{pdfFileName}";
             return Ok(new { pdfUrl });
         }
+
+        [HttpPost("analyze")]
+        public async Task<IActionResult> AnalyzeForm(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded");
+            }
+
+            //save the file to a temporary location
+            var filePath = Path.GetTempFileName();
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            //calling the FormRecognizerService to analyze the file and get the extracted data
+            var extractedData = await _formService.AnalyzeInvoice(filePath);
+
+            //return the extracted data as a JSON response
+            return Ok(extractedData);
+        }
+
     }
 }
