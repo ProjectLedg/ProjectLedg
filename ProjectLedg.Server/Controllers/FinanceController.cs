@@ -19,9 +19,9 @@ namespace ProjectLedg.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> GetYearToDateFinances(FinanceRequestDTO request)
         {
-            var reuslt = await _financeService.GetYearToDateFinancesAsync(request);
+            var result = await _financeService.GetYearToDateFinancesAsync(request);
 
-            return Ok(reuslt);
+            return Ok(result);
         }
     }
 }

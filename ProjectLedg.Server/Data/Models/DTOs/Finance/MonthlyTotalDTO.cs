@@ -4,6 +4,5 @@
     {
         public decimal Amount { get; set; }
         public string MonthName { get; set; }
-        public DateTime Date { get; set; }
     }
 }
