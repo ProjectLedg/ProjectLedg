@@ -27,7 +27,7 @@
                     .Where(ba => 
                         ba.Year == year && 
                         EF.Functions.Like(ba.AccountNumber, "3%")) // Filter "Konto klass 3" credit is for revenue
-                    .SumAsync(ba => ba.Debit - ba.Credit); // Credit for account class 3
+                    .SumAsync(ba => ba.Credit - ba.Debit); // Credit for account class 3
             }
 
 
@@ -44,7 +44,7 @@
                          EF.Functions.Like(ba.AccountNumber, "5%") || // For "övriga kostnader" 
                          EF.Functions.Like(ba.AccountNumber, "6%") || // For "övriga kostnader"
                          EF.Functions.Like(ba.AccountNumber, "7%"))) // For "personalkostnader´"
-                     .SumAsync(ba => ba.Credit - ba.Debit); // Debit for account classes above
+                     .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
             }
 
             // Get YTD profit
@@ -53,9 +53,9 @@
                 var revenue = await GetYearToDateRevenueAsync(companyId, year);
                 var expenses = await GetYearToDateExpensesAsync(companyId, year);
 
-                return revenue - expenses;
+                return revenue - expenses; 
             }
-
+        
             public async Task<List<MonthlyTotalDTO>> GetRevenueHistoryAsync(int companyId, int year)
             {
                 return await _context.Companies
@@ -103,13 +103,13 @@
                         // Subtract the revenue from the expenses
                         -
                         // Calculate expenses by subtracting the account classes 4-7 (expenses) debit from their credits
-                        ((g.Where(t => t.IsDebit == false && (
+                        ((g.Where(t => t.IsDebit == true && (
                              EF.Functions.Like(t.BasAccount.AccountNumber, "4%") || // For "material- och varukostnader"
                              EF.Functions.Like(t.BasAccount.AccountNumber, "5%") || // For "övriga kostnader" 
                              EF.Functions.Like(t.BasAccount.AccountNumber, "6%") || // For "övriga kostnader"
                              EF.Functions.Like(t.BasAccount.AccountNumber, "7%"))) // For "personalkostnader´"
                             .Sum(t => t.Amount)) -
-                        (g.Where(t => t.IsDebit == true && (
+                        (g.Where(t => t.IsDebit == false && (
                              EF.Functions.Like(t.BasAccount.AccountNumber, "4%") || // For "material- och varukostnader"
                              EF.Functions.Like(t.BasAccount.AccountNumber, "5%") || // For "övriga kostnader" 
                              EF.Functions.Like(t.BasAccount.AccountNumber, "6%") || // For "övriga kostnader"
@@ -139,8 +139,8 @@
 
                         // Set amount to the sum of credit - the sum of debit
                         Amount = 
-                        g.Where(t => t.IsDebit == false).Sum(t => t.Amount) -
-                        g.Where(t => t.IsDebit == true).Sum(t => t.Amount)
+                        g.Where(t => t.IsDebit == true).Sum(t => t.Amount) -
+                        g.Where(t => t.IsDebit == false).Sum(t => t.Amount)
 
                     })
                     .ToListAsync();
