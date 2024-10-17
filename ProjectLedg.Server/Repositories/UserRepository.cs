@@ -66,7 +66,7 @@ namespace ProjectLedg.Server.Repositories
         }
 
         // Get a specific User by ID
-        public async Task<User> GetUserById(int id)
+        public async Task<User> GetUserById(string id)
         {
             return await _context.Users.FindAsync(id);
         }

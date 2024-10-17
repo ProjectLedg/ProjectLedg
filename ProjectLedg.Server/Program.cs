@@ -112,7 +112,7 @@ namespace ProjectLedg.Server
                 options.AddDefaultPolicy(builder =>
                 {
 
-                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
+                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294", "https://projectledg.azurewebsites.net")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -175,6 +175,10 @@ namespace ProjectLedg.Server
             //Finances
             services.AddScoped<IFinanceRepo, FinanceRepo>();
             services.AddScoped<IFinanceService, FinanceService>();
+
+            //EmailList
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailRepository, EmailRepository>();
 
 
             var app = builder.Build();

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Content() {
   const navigate = useNavigate();
+
   return (
     <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24">
       <h1 className="py-10 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -17,7 +18,10 @@ export default function Content() {
         <Button className="w-32" onClick={() => navigate("/signup")}>
           Läs mer
         </Button>
-        <button className="group relative inline-flex items-center justify-center overflow-hidden w-32  text-sm font-medium text-slate-800 transition-colors duration-700 ease-out hover:text-green-500 focus:outline-none focus:ring active:bg-green-800 active:text-white rounded-full">
+        <button 
+          className="group relative inline-flex items-center justify-center overflow-hidden w-32 text-sm font-medium text-slate-800 transition-colors duration-700 ease-out hover:text-green-500 focus:outline-none focus:ring active:bg-green-800 active:text-white rounded-full"
+          onClick={() => navigate("/signup")}
+        >
           <span className="absolute inset-0 rounded-full border-2 border-transparent transition-all duration-700 ease-out group-hover:border-green-500"></span>
           <span className="absolute left-0 top-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
           <span className="absolute right-0 top-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
