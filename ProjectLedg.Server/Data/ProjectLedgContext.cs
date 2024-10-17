@@ -54,12 +54,38 @@ namespace ProjectLedg.Server.Data
                     new { CompaniesId = 1, UsersId = "1" }
                 ));
 
-            // Seed BasAccount data 
             modelBuilder.Entity<BasAccount>().HasData(
-                new BasAccount { Id = 1, Debit = 17550, Description = "Revenue Account", AccountNumber = "3000", Year = 2023, CompanyId = 1 },
-                new BasAccount { Id = 2, Debit = 3500, Description = "Material Costs", AccountNumber = "4000", Year = 2023, CompanyId = 1 },
-                new BasAccount { Id = 3, Debit = 4300, Description = "Personnel Costs", AccountNumber = "7000", Year = 2023, CompanyId = 1 }
-            );
+            new BasAccount
+            {
+                Id = 1,
+                Debit = 0,  // For revenue accounts, usually debit is 0
+                Credit = 17550,  // Credit value for revenue (account class 3)
+                Description = "Revenue Account",
+                AccountNumber = "3000",
+                Year = 2023,
+                CompanyId = 1
+            },
+            new BasAccount
+            {
+                Id = 2,
+                Debit = 3500,  // Debit value for material costs (account class 4)
+                Credit = 0,  // Typically, expenses don't have credit unless there's a refund
+                Description = "Material Costs",
+                AccountNumber = "4000",
+                Year = 2023,
+                CompanyId = 1
+            },
+            new BasAccount
+            {
+                Id = 3,
+                Debit = 4300,  // Debit value for personnel costs (account class 7)
+                Credit = 0,  // No credit for expenses
+                Description = "Personnel Costs",
+                AccountNumber = "7000",
+                Year = 2023,
+                CompanyId = 1
+            }
+        );
 
             // Seed Invoice data 
             modelBuilder.Entity<Invoice>().HasData(
