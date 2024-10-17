@@ -21,14 +21,14 @@ const initialFields = [
     label: 'Orgnummer', 
     type: 'text', 
     placeholder: 'XXXXXX-XXXX',
-    description: 'Ange ditt företags organisationsnummer i formatet XXXXXX-XXXX.'
+    description: 'Ange ditt företags organisationsnummer'
   },
   { 
     id: 'amountOfEmployees', 
     label: 'Antal anställda', 
     type: 'number', 
     placeholder: '0',
-    description: 'Ange det totala antalet anställda i ditt företag. Måste vara ett positivt heltal.'
+    description: 'Ange det totala antalet anställda i ditt företag.'
   },
   { 
     id: 'companyDescription', 
@@ -101,6 +101,7 @@ export default function CompanyCreatePage() {
                   value={formData[field.id]}
                   className="w-full"
                   min={field.id === 'amountOfEmployees' ? 0 : undefined}
+                  required
                 />
                 <p className="text-sm text-muted-foreground">{field.description}</p>
               </div>
