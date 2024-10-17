@@ -1,8 +1,7 @@
-﻿namespace ProjectLedg.Server.Data.Models
+﻿namespace ProjectLedg.Server.Data.Models.DTOs.Email
 {
-    public class EmailList
+    public class EmailDTO
     {
-        public int Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
         public string Message { get; set; }
