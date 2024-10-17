@@ -32,7 +32,7 @@ namespace ProjectLedg.Server
             var services = builder.Services;
             Env.Load();
 
-         
+
             var mailKitSettingsSection = new MailKitSettings
             {
                 MailServer = Environment.GetEnvironmentVariable("MAILSERVER"),
@@ -100,7 +100,7 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
-             
+
                 });
 
             services.AddAuthorization();
@@ -183,15 +183,13 @@ namespace ProjectLedg.Server
 
             var app = builder.Build();
 
-            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.UseRouting();
 
             app.UseHttpsRedirection();
 
@@ -205,9 +203,6 @@ namespace ProjectLedg.Server
             //app.MapFallbackToFile("/index.html");
 
             app.Run();
-
-           
-
         }
     }
 }
