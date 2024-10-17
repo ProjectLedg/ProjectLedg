@@ -16,6 +16,9 @@ namespace ProjectLedg.Server.Data.Models
         public string ClientName { get; set; }
         public string SenderName { get; set; }
 
+        public int CompanyId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
+
+
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

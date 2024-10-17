@@ -172,6 +172,9 @@ namespace ProjectLedg.Server
             //Company
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<ICompanyService, CompanyService>();
+            //Finances
+            services.AddScoped<IFinanceRepo, FinanceRepo>();
+            services.AddScoped<IFinanceService, FinanceService>();
 
             //EmailList
             services.AddScoped<IEmailService, EmailService>();
