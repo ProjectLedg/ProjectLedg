@@ -137,13 +137,13 @@ export default function DashboardLayout() {
             </header>
 
             {/* Chart Content Box */}
-            <div className="mt-24 mb-8 flex flex-ro">
+            <div className="mt-24 mb-8 flex flex-row">
               <div className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8">
                 <Outlet />
               </div>
 
               {/* Conditionally render ChatWindow */}
-              {isChatOpen && <ChatWindow />}
+              {isChatOpen && <ChatWindow onClose={toggleChat} />}
             </div>
           </div>
         </div>
