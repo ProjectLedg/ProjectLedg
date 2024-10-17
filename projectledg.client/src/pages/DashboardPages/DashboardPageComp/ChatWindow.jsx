@@ -12,7 +12,6 @@ export default function ChatWindow({ onClose }) {
 
     return (
         <div className="relative p-2  bg-white/60 bg-opacity-80 shadow-lg rounded-2xl w-[620px] ml-4">
-            {/* Inner popup content */}
             <div className="bg-gray-100 rounded-xl overflow-hidden">
                 <div className="flex justify-between items-center p-4">
                     <div className="flex items-center space-x-2">
