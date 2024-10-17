@@ -54,8 +54,18 @@ export default {
     				'4': 'hsl(var(--chart-4))',
     				'5': 'hsl(var(--chart-5))'
     			}
-    		}
+    		},
+            keyframes: {
+				'bg-fade': {
+					'0%': { backgroundColor: 'rgba(243, 244, 246, 1)' }, // bg-gray-100
+					'10%': { backgroundColor: 'rgba(255, 255, 255, 1)' }, // white
+					'100%': { backgroundColor: 'rgba(243, 244, 246, 1)' }, // back to bg-gray-100
+				},
+			},
+			animation: {
+				'bg-fade': 'bg-fade 4s cubic-bezier(0.25, 1, 0.5, 1)',
+			},
     	}
     },
 	plugins: [require("tailwindcss-animate")],
-  }
+};

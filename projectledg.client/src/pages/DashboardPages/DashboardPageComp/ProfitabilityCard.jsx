@@ -1,6 +1,12 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HelpCircle, PieChart, DollarSign } from 'lucide-react'
+import {
+  TooltipShad,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const ProfitabilityCard = ({ runway }) => {
   if (!runway) {
@@ -16,17 +22,27 @@ const ProfitabilityCard = ({ runway }) => {
   const statusColor = getStatusColor(runway.percentage)
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card className="max-h-64 overflow-hidden flex flex-col pb-4">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 py-2 pt-6">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <PieChart className="mr-2 h-4 w-4" />
           Lönsamhet
         </CardTitle>
-        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+        
+        <TooltipProvider>
+          <TooltipShad>
+            <TooltipTrigger>
+                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+            </TooltipTrigger>
+              <TooltipContent>
+                <p>Lönsamhets räknas utifrån vinstmarginalen på ett normaliserat värde</p>
+              </TooltipContent>
+          </TooltipShad>
+      </TooltipProvider>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col items-center">
-          <div className="relative w-32 h-32">
+      <CardContent className="flex-grow flex flex-col justify-between py-2">
+        <div className="flex items-center justify-around">
+          <div className="relative w-24 h-24">
             <svg className="w-full h-full" viewBox="0 0 100 100">
               <circle 
                 className="text-gray-200 stroke-current" 
@@ -49,11 +65,11 @@ const ProfitabilityCard = ({ runway }) => {
               ></circle>
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <DollarSign className={`h-12 w-12 ${statusColor}`} />
+              <DollarSign className={`h-8 w-8 ${statusColor}`} />
             </div>
           </div>
-          <div className="mt-4 text-center">
-            <div className={`text-2xl font-bold ${statusColor}`}>
+          <div className="text-center">
+            <div className={`text-xl font-bold ${statusColor}`}>
               {runway.status}
             </div>
             <div className="text-sm text-muted-foreground">
@@ -61,14 +77,13 @@ const ProfitabilityCard = ({ runway }) => {
             </div>
           </div>
         </div>
-        <div className="mt-6">
-          <div className="flex justify-around text-m mb-1">
-            <span>Lönsamhet poäng: </span>
-            <span className={`font-large ${statusColor}`}>
+        <div className="mt-2">
+          <div className="flex justify-between text-sm">
+            <span>Lönsamhet poäng:</span>
+            <span className={`font-semibold ${statusColor}`}>
               {runway.percentage}
             </span>
           </div>
-          
         </div>
       </CardContent>
     </Card>
