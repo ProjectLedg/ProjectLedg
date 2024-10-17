@@ -5,10 +5,10 @@ on:
     - main
 env:
   AZURE_WEBAPP_NAME: ProjectLedg
-  AZURE_WEBAPP_PACKAGE_PATH: ProjectLedg.Server\publish
+  AZURE_WEBAPP_PACKAGE_PATH: ProjectLedg\ProjectLedg.Server\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
-  WORKING_DIRECTORY: ProjectLedg.Server
+  WORKING_DIRECTORY: ProjectLedg\ProjectLedg.Server
 jobs:
   build:
     runs-on: windows-latest
