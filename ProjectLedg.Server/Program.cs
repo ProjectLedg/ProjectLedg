@@ -173,6 +173,10 @@ namespace ProjectLedg.Server
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<ICompanyService, CompanyService>();
 
+            //EmailList
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailRepository, EmailRepository>();
+
 
             var app = builder.Build();
 
