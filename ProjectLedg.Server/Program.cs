@@ -173,8 +173,8 @@ namespace ProjectLedg.Server
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<ICompanyService, CompanyService>();
             //Finances
-            //services.AddScoped<IFinanceRepo, FinanceRepo>();
-            //services.AddScoped<IFinanceService, FinanceService>();
+            services.AddScoped<IFinanceRepo, FinanceRepo>();
+            services.AddScoped<IFinanceService, FinanceService>();
 
 
             var app = builder.Build();
