@@ -141,7 +141,7 @@ export default function DashboardLayout() {
       {/* Main Content */}
       <div className="flex flex-col flex-1">
         <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
-          <div className="max-w-7xl mx-auto sm:px-6 md:px-8 w-full">
+          <div className={`max-w-7xl sm:px-6 md:px-8 w-full ${isChatOpen ? 'mx-0' : 'mx-auto'}`}>
 
             {/* Navbar */}
             <header className="fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
