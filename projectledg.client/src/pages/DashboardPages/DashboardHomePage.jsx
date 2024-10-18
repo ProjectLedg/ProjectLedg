@@ -214,7 +214,7 @@ export default function DashboardHomePage() {
       </div>
       <div className={`GRIDCONTAINER flex ${isChatOpen ? 'flex-col' : 'flex-row'}`}>
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+        <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] pb-4' : 'w-[50%] pr-2'}`}>
 
           <MetricCard
             title="Omsättning"
@@ -254,7 +254,7 @@ export default function DashboardHomePage() {
           />
         </div>
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+        <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] ' : 'w-[50%] pl-2 '}`}>
 
           <MetricCard
             title="Kostnader"
