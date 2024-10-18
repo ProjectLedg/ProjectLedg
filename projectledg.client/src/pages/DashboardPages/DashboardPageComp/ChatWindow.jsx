@@ -11,7 +11,7 @@ export default function ChatWindow({ onClose }) {
     }
 
     return (
-        <div className="chatWindow flex flex-col absolute bottom--1 right-0 p-2 w-[20vw] h-[90vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl max-w-[620px] ml-4">
+        <div className="chatWindow flex flex-col absolute bottom--1 right-0 p-2 w-[30vw] h-[90vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl max-w-[620px] ml-4">
             <div className="bg-gray-100 rounded-xl overflow-hidden">
                 <div className="flex justify-between items-center p-4">
                     <div className="flex items-center space-x-2">
