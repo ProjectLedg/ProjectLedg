@@ -64,7 +64,7 @@ namespace ProjectLedg.Server.Controllers
                 return BadRequest("No file uploaded");
             }
 
-            //save the file to a temporary location
+            //save the file to a temporary locations
             var filePath = Path.GetTempFileName();
             using (var stream = System.IO.File.Create(filePath))
             {
