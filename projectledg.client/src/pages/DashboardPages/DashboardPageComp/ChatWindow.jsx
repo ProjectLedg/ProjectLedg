@@ -11,7 +11,7 @@ export default function ChatWindow({ onClose }) {
     }
 
     return (
-        <div className="relative p-2  bg-white/60 bg-opacity-80 shadow-lg rounded-2xl w-[620px] ml-4">
+        <div className="chatWindow flex flex-col absolute bottom--1 right-0 p-2 w-[20vw] h-[90vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl max-w-[620px] ml-4">
             <div className="bg-gray-100 rounded-xl overflow-hidden">
                 <div className="flex justify-between items-center p-4">
                     <div className="flex items-center space-x-2">
@@ -59,25 +59,29 @@ export default function ChatWindow({ onClose }) {
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-4 bg-transparent">
-                    <div className="flex items-center space-x-2">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Fråga Ledge..."
-                            className="flex-grow p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button type="submit" className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200">
-                            <Send size={20} />
-                        </button>
+                    <div className="flex flex-row justify-between items-center space-x-2">
+                        <div className="flex-grow p-1 bg-white rounded-full  flex items-center">
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Fråga Ledge..."
+                                className="flex-grow p-2 bg-transparent rounded-full focus:outline-none "
+                            />
+                            <button type="submit" className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200">
+                                <Send size={20} />
+                            </button>
+                        </div>
                     </div>
                 </form>
+
+
             </div>
 
             {/* Extra space at the bottom for buttons */}
             <div className="flex justify-around mt-4 space-x-2">
-                <button className="flex-1 p-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">Ny Chat</button>
-                <button className="flex-1 p-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">Button 2</button>
+                <button className="flex-1 justify-center align-center p-2 h-3 w-4 text-small bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">Ny Chat</button>
+                <button className="flex-1 p-2 h-3 w-4 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">Button 2</button>
             </div>
         </div>
     )
