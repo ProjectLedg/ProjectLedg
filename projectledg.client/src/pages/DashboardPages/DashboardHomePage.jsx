@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useOutletContext } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
@@ -26,22 +26,21 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
         {title}
       </CardTitle>
       <TooltipProvider>
-          <TooltipShad>
-            <TooltipTrigger>
-                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-            </TooltipTrigger>
-              <TooltipContent>
-                <p dangerouslySetInnerHTML={{ __html: toolDescription }}></p>
-              </TooltipContent>
-          </TooltipShad>
+        <TooltipShad>
+          <TooltipTrigger>
+            <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p dangerouslySetInnerHTML={{ __html: toolDescription }}></p>
+          </TooltipContent>
+        </TooltipShad>
       </TooltipProvider>
-      
+
     </CardHeader>
     <CardContent>
       <div className="text-lg sm:text-2xl font-bold">{value}</div>
-      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-        changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-      }`}>
+      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
         {change}
       </div>
       <div className="h-[60px] sm:h-[80px] mt-4">
@@ -66,7 +65,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function DashboardHomePage() {
   // Get company id from url
-  const {companyId} = useParams();
+  const { companyId } = useParams();
+  const { isChatOpen } = useOutletContext();
 
   const mockDashboardData = {
     currentMonth: "March 2021",
@@ -212,77 +212,88 @@ export default function DashboardHomePage() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{dashboardData.currentMonth}</h2>
       </div>
-      
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard 
-          title="Omsättning" 
-          value={`${dashboardData.totalCash.currentValue.toLocaleString()} kr`}
-          change={`${dashboardData.totalCash.changePercentage}% MoM`}
-          changeType={dashboardData.totalCash.changePercentage >= 0 ? 'positive' : 'negative'}
-          icon={Wallet}
-          toolDescription={tooltipInfo.revenue}
-          chart={
-            <LineChart data={dashboardData.totalCash.history}>
-              <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
-              <YAxis hide />
-              <Tooltip content={<CustomTooltip />} />
-              <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} dot={false} />
-            </LineChart>
-          }
-        />
-        <MetricCard 
-          title="Inkomst" 
-          value={`${dashboardData.income.currentValue.toLocaleString()} kr`}
-          change={`${dashboardData.income.changePercentage}% MoM`}
-          changeType={dashboardData.income.changePercentage >= 0 ? 'positive' : 'negative'}
-          icon={TrendingUp}
-          toolDescription={tooltipInfo.income}
-          chart={
-            <BarChart data={dashboardData.income.history}>
-              <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
-              <YAxis hide />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value">
-                {dashboardData.income.history.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.value >= 0 ? "#10B981" : "#EF4444"} />
-                ))}
-              </Bar>
-            </BarChart>
-          }
-        />
-        <MetricCard 
-          title="Kostnader" 
-          value={`${dashboardData.grossBurn.currentValue.toLocaleString()} kr`}
-          change={`${dashboardData.grossBurn.changePercentage}% MoM`}
-          changeType={dashboardData.grossBurn.changePercentage <= 0 ? 'positive' : 'negative'}
-          icon={TrendingDown}
-          toolDescription={tooltipInfo.expenses}
-          chart={
-            <BarChart data={dashboardData.grossBurn.history}>
-              <XAxis dataKey="month" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
-              <YAxis hide />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value">
-                {dashboardData.grossBurn.history.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.value >= 0 ? "#10B981" : "#EF4444"} />
-                ))}
-              </Bar>
-            </BarChart>
-          }
-        />
-        {dashboardData.runway && <ProfitabilityCard runway={dashboardData.runway} />}
+      <div className={`GRIDCONTAINER flex ${isChatOpen ? 'flex-col' : 'flex-row'}`}>
+
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+
+          <MetricCard
+            title="Omsättning"
+            value={`${dashboardData.totalCash.currentValue.toLocaleString()} kr`}
+            change={`${dashboardData.totalCash.changePercentage}% MoM`}
+            changeType={dashboardData.totalCash.changePercentage >= 0 ? 'positive' : 'negative'}
+            icon={Wallet}
+            toolDescription={tooltipInfo.revenue}
+            chart={
+              <LineChart data={dashboardData.totalCash.history}>
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+                <YAxis hide />
+                <Tooltip content={<CustomTooltip />} />
+                <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} dot={false} />
+              </LineChart>
+            }
+          />
+          <MetricCard
+            title="Inkomst"
+            value={`${dashboardData.income.currentValue.toLocaleString()} kr`}
+            change={`${dashboardData.income.changePercentage}% MoM`}
+            changeType={dashboardData.income.changePercentage >= 0 ? 'positive' : 'negative'}
+            icon={TrendingUp}
+            toolDescription={tooltipInfo.income}
+            chart={
+              <BarChart data={dashboardData.income.history}>
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+                <YAxis hide />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="value">
+                  {dashboardData.income.history.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.value >= 0 ? "#10B981" : "#EF4444"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            }
+          />
+        </div>
+
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+
+          <MetricCard
+            title="Kostnader"
+            value={`${dashboardData.grossBurn.currentValue.toLocaleString()} kr`}
+            change={`${dashboardData.grossBurn.changePercentage}% MoM`}
+            changeType={dashboardData.grossBurn.changePercentage <= 0 ? 'positive' : 'negative'}
+            icon={TrendingDown}
+            toolDescription={tooltipInfo.expenses}
+            chart={
+              <BarChart data={dashboardData.grossBurn.history}>
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+                <YAxis hide />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="value">
+                  {dashboardData.grossBurn.history.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.value >= 0 ? "#10B981" : "#EF4444"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            }
+          />
+          {dashboardData.runway && <ProfitabilityCard runway={dashboardData.runway} />}
+        </div>
+
+
+
       </div>
+
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <MetricGraph 
-          metricFilter={topMetricFilter} 
-          setMetricFilter={setTopMetricFilter} 
+        <MetricGraph
+          metricFilter={topMetricFilter}
+          setMetricFilter={setTopMetricFilter}
           title="Left Metric"
           metricsData={metricsData}
           metricOptions={metricOptions}
         />
-        <MetricGraph 
-          metricFilter={bottomMetricFilter} 
-          setMetricFilter={setBottomMetricFilter} 
+        <MetricGraph
+          metricFilter={bottomMetricFilter}
+          setMetricFilter={setBottomMetricFilter}
           title="Right Metric"
           metricsData={metricsData}
           metricOptions={metricOptions}
