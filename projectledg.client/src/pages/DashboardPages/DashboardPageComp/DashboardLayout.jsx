@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link, Outlet } from "react-router-dom";
+import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -40,7 +40,7 @@ const NavItem = ({ icon: Icon, label, path }) => {
 };
 
 const Sidebar = () => (
-  <div className="hidden md:flex pb-12 bg-yellow/60 bg-opacity-80 w-60 h-full flex-col border-r md:block bg-gradient-to-r from-gray-200 to-gray-100/50 flex">
+  <div className="hidden md:flex pb-12 bg-yellow/60 bg-opacity-80 w-60 h-full flex-col border-r bg-gradient-to-r from-gray-200 to-gray-100/50">
     <div className="flex-grow space-y-4 py-4">
       <div className="px-3 py-2">
         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Meny</h2>
@@ -123,9 +123,9 @@ export default function DashboardLayout() {
                     <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1>
                   </div>
                   <div className="flex items-center space-x-2 sm:space-x-4">
-                    <Button variant="ghost" size="icon" onClick={toggleChat}>
+                    <Button variant="ghost" size="icon" onClick={toggleChat} className={`transition-colors duration-200 ${isChatOpen ? 'bg-white' : ''}`}>
                       <MessageSquarePlus className="h-5 w-5" />
-                      <span className="sr-only">Ask Digits</span>
+                      <span className="sr-only">Ask Ledge</span>
                     </Button>
                     <Button variant="ghost" size="icon">
                       <UserPlus className="h-5 w-5" />
@@ -138,12 +138,13 @@ export default function DashboardLayout() {
 
             {/* Chart Content Box */}
             <div className="mt-24 mb-8 flex flex-row">
-              <div className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8">
-                <Outlet />
+              <div className={`chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 ${isChatOpen ? 'w-[60vw]' : 'w-full'}`}>
+                <Outlet context={{ isChatOpen }} />
               </div>
 
               {/* Conditionally render ChatWindow */}
               {isChatOpen && <ChatWindow onClose={toggleChat} />}
+
             </div>
           </div>
         </div>
