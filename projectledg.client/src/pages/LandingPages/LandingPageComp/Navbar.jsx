@@ -45,7 +45,7 @@ export default function Navbar() {
           <div className="flex justify-around text-black">
 
             <NavItem to="/why" className="mx-2">Varför Ledge?</NavItem>
-            <NavItem to="/feature" className="mx-2">Tjänster</NavItem>
+            <NavItem to="/features" className="mx-2">Tjänster</NavItem>
             <NavItem to="/pricing" className="mx-2">Priser</NavItem>
             <NavItem to="/contact" className="mx-2">Kontakt</NavItem>
           </div>

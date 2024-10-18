@@ -1,5 +1,6 @@
 import React from "react"
 import Navbar from "./LandingPageComp/Navbar"
+import FooterSection from "./LandingPageComp/FooterSection"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check, Lock, Sparkles } from "lucide-react"
@@ -94,6 +95,7 @@ const PricingPage = () => {
           ))}
         </div>
       </main>
+      <FooterSection />
     </div>
   )
 }
