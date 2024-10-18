@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241017090753_addedEmailinformation")]
+    partial class addedEmailinformation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,13 +38,6 @@ namespace ProjectLedg.Server.Migrations
                     b.HasIndex("UsersId");
 
                     b.ToTable("CompanyUser");
-
-                    b.HasData(
-                        new
-                        {
-                            CompaniesId = 1,
-                            UsersId = "1"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -189,7 +185,7 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Credit")
@@ -210,38 +206,6 @@ namespace ProjectLedg.Server.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("BasAccounts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccountNumber = "3000",
-                            CompanyId = 1,
-                            Credit = 17550m,
-                            Debit = 0m,
-                            Description = "Revenue Account",
-                            Year = 2023
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccountNumber = "4000",
-                            CompanyId = 1,
-                            Credit = 0m,
-                            Debit = 3500m,
-                            Description = "Material Costs",
-                            Year = 2023
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AccountNumber = "7000",
-                            CompanyId = 1,
-                            Credit = 0m,
-                            Debit = 4300m,
-                            Description = "Personnel Costs",
-                            Year = 2023
-                        });
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Company", b =>
@@ -270,15 +234,6 @@ namespace ProjectLedg.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AmountOfEmployees = 10,
-                            CompanyName = "Test Company",
-                            OrgNumber = "1234567890"
-                        });
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.EmailList", b =>
@@ -318,7 +273,7 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DueDate")
@@ -356,38 +311,6 @@ namespace ProjectLedg.Server.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Invoices");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClientName = "Client A",
-                            CompanyId = 1,
-                            DueDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFile = new byte[0],
-                            InvoiceNumber = "INV001",
-                            IsBooked = true,
-                            IsOutgoing = true,
-                            IsPaid = true,
-                            SenderName = "Company A",
-                            TotalAmount = 5000.00m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ClientName = "Client B",
-                            CompanyId = 1,
-                            DueDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFile = new byte[0],
-                            InvoiceNumber = "INV002",
-                            IsBooked = false,
-                            IsOutgoing = false,
-                            IsPaid = false,
-                            SenderName = "Company B",
-                            TotalAmount = 1500.00m
-                        });
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -419,126 +342,7 @@ namespace ProjectLedg.Server.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.ToTable("Transactions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 2001,
-                            Amount = 5000.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 1,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2002,
-                            Amount = 1500.00m,
-                            BasAccountId = 2,
-                            InvoiceId = 2,
-                            IsDebit = true,
-                            TransactionDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2003,
-                            Amount = 750.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 1,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2004,
-                            Amount = 3000.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 2,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2005,
-                            Amount = 1200.00m,
-                            BasAccountId = 2,
-                            InvoiceId = 2,
-                            IsDebit = true,
-                            TransactionDate = new DateTime(2023, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2006,
-                            Amount = 2500.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 1,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2007,
-                            Amount = 1800.00m,
-                            BasAccountId = 3,
-                            InvoiceId = 2,
-                            IsDebit = true,
-                            TransactionDate = new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2008,
-                            Amount = 3000.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 1,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2009,
-                            Amount = 500.00m,
-                            BasAccountId = 2,
-                            InvoiceId = 2,
-                            IsDebit = true,
-                            TransactionDate = new DateTime(2023, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2010,
-                            Amount = 2000.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 1,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2011,
-                            Amount = 2500.00m,
-                            BasAccountId = 3,
-                            InvoiceId = 2,
-                            IsDebit = true,
-                            TransactionDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2012,
-                            Amount = 1500.00m,
-                            BasAccountId = 1,
-                            InvoiceId = 1,
-                            IsDebit = false,
-                            TransactionDate = new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2013,
-                            Amount = 300.00m,
-                            BasAccountId = 2,
-                            InvoiceId = 2,
-                            IsDebit = true,
-                            TransactionDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.User", b =>
@@ -613,27 +417,6 @@ namespace ProjectLedg.Server.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AccessFailedCount = 0,
-                            AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "39f9fc9e-6692-49c3-9209-365e7c02f54e",
-                            Email = "testuser@example.com",
-                            EmailConfirmed = true,
-                            FirstName = "John",
-                            LastName = "Doe",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "TESTUSER@EXAMPLE.COM",
-                            NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENHaPuBEZaZtw02CiG/z7yLSb4ommBoXI3THheCfWrLCgGSHotC+XFIWG9x/tpoL7Q==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "c5775ccc-9bd7-45aa-9831-a5dcb5d2b02a",
-                            TwoFactorEnabled = false,
-                            UserName = "testuser@example.com"
-                        });
                 });
 
             modelBuilder.Entity("CompanyUser", b =>
@@ -706,18 +489,14 @@ namespace ProjectLedg.Server.Migrations
                 {
                     b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
                         .WithMany("BasAccounts")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
                     b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
                         .WithMany("Invoices")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -725,13 +504,13 @@ namespace ProjectLedg.Server.Migrations
                     b.HasOne("ProjectLedg.Server.Data.Models.BasAccount", "BasAccount")
                         .WithMany("Transactions")
                         .HasForeignKey("BasAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProjectLedg.Server.Data.Models.Invoice", "Invoice")
                         .WithMany("Transactions")
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BasAccount");

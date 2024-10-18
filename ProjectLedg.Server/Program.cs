@@ -32,7 +32,7 @@ namespace ProjectLedg.Server
             var services = builder.Services;
             Env.Load();
 
-         
+
             var mailKitSettingsSection = new MailKitSettings
             {
                 MailServer = Environment.GetEnvironmentVariable("MAILSERVER"),
@@ -100,7 +100,7 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
-             
+
                 });
 
             services.AddAuthorization();
@@ -112,7 +112,7 @@ namespace ProjectLedg.Server
                 options.AddDefaultPolicy(builder =>
                 {
 
-                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294") //7294 is a placeholder for MVC project.
+                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294", "https://projectledg.azurewebsites.net")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -172,19 +172,24 @@ namespace ProjectLedg.Server
             //Company
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<ICompanyService, CompanyService>();
+            //Finances
+            services.AddScoped<IFinanceRepo, FinanceRepo>();
+            services.AddScoped<IFinanceService, FinanceService>();
+
+            //EmailList
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailRepository, EmailRepository>();
 
 
             var app = builder.Build();
 
-            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.UseRouting();
 
             app.UseHttpsRedirection();
 
@@ -195,12 +200,9 @@ namespace ProjectLedg.Server
 
             app.MapControllers();
 
-            app.MapFallbackToFile("/index.html");
+            //app.MapFallbackToFile("/index.html");
 
             app.Run();
-
-           
-
         }
     }
 }

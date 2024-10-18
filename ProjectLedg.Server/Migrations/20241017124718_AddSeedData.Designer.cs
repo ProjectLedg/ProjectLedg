@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241017124718_AddSeedData")]
+    partial class AddSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,8 +220,8 @@ namespace ProjectLedg.Server.Migrations
                             Id = 1,
                             AccountNumber = "3000",
                             CompanyId = 1,
-                            Credit = 17550m,
-                            Debit = 0m,
+                            Credit = 0m,
+                            Debit = 17550m,
                             Description = "Revenue Account",
                             Year = 2023
                         },
@@ -255,10 +258,6 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<int>("AmountOfEmployees")
                         .HasColumnType("int");
 
-                    b.Property<string>("CompanyDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -290,14 +289,6 @@ namespace ProjectLedg.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -620,7 +611,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "39f9fc9e-6692-49c3-9209-365e7c02f54e",
+                            ConcurrencyStamp = "40cac00e-5079-41f2-91f5-d50f9b9bd11f",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -628,9 +619,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENHaPuBEZaZtw02CiG/z7yLSb4ommBoXI3THheCfWrLCgGSHotC+XFIWG9x/tpoL7Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBBi5ItVV4jqlU+AF+oUg49NfkZGvvoF4w5oGN4pn+44QyK349l9dBRe+QOX8PXORg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c5775ccc-9bd7-45aa-9831-a5dcb5d2b02a",
+                            SecurityStamp = "090312a5-cf7a-44fc-a7af-b02c3a4ff29c",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
