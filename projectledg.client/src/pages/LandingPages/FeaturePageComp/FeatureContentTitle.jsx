@@ -47,26 +47,29 @@ export default function FeatureContentTitle() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen space-y-6" style={{ height: '45vw' }}>
+        <div className="flex flex-col items-center justify-center h-screen space-y-[3vw]" style={{ height: '45vw' }}>
             {/* Inject custom keyframes */}
             <style>{keyframes}</style>
 
             {/* Element 1 - Whole element fades in down, letters fade in left */}
             <h1
-                className="opacity-0 font-medium text-center text-green-500"
+                className="opacity-0 font-medium text-center text-gray-700"
                 style={{
                     animation: "fade-in-down 2s ease-in-out 0.5s forwards",
                     fontSize: '3vw',
                 }}
             >
-                {splitText("Välkommen till Ledg, vi gör bokföring enkelt!")}
+                {splitText("Välkommen till Ledg, vi gör bokföring")}{" "}
+                <span className="text-green-500">{splitText("ENKELT")}</span>!
                 <br />
-                {splitText("Snabbt och effektivt utan revisorer.")}
+                <span className="text-green-500">{splitText("SNABBT")}</span>!
+                <span>{splitText(" och")}</span> <span className="text-green-500">{splitText("EFFEKTIVT")}</span>!{" "}
+                {splitText(" utan revisorer.")}
             </h1>
 
             {/* Element 2 */}
             <p
-                className="opacity-0  text-center text-gray-600"
+                className="brödtext opacity-0  text-center text-gray-600"
                 style={{
                     animation: "fade-in-down 2.5s ease-in-out 0.8s forwards",
                     fontSize: '2vw',
