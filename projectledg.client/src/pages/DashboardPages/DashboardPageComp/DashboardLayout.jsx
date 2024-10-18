@@ -39,11 +39,21 @@ const NavItem = ({ icon: Icon, label, path }) => {
   );
 };
 
+const NavItemSmall = ({ icon: Icon, path }) => {
+  const { companyId } = useParams(); // Get companyId from the route params
+  const fullPath = `/dashboard/${companyId}${path}`;
+
+  return (
+    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+      <Icon className="h-6 w-6" />
+    </Link>
+  );
+};
+
 const Sidebar = () => (
   <div className="hidden md:flex pb-12 bg-yellow/60 bg-opacity-80 w-60 h-full flex-col border-r bg-gradient-to-r from-gray-200 to-gray-100/50">
     <div className="flex-grow space-y-4 py-4">
       <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Meny</h2>
         <div className="space-y-1">
           {navItems.filter(item => item.position === "top").map((item, index) => (
             <NavItem key={index} {...item} />
@@ -55,6 +65,27 @@ const Sidebar = () => (
       <div className="space-y-1">
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
           <NavItem key={index} {...item} />
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const SidebarSmall = () => (
+  <div className="hidden md:flex pb-12 bg-yellow/60 bg-opacity-80 w-20 h-full flex-col border-r bg-gradient-to-r from-gray-200 to-gray-100/50">
+    <div className="flex-grow space-y-4 py-4">
+      <div className="px-3 py-2 ">
+        <div className="space-y-1 flex flex-col justify-around h-[30vh]">
+          {navItems.filter(item => item.position === "top").map((item, index) => (
+            <NavItemSmall key={index} {...item} />
+          ))}
+        </div>
+      </div>
+    </div>
+    <div className="mt-auto px-3 py-2 border-t">
+      <div className="space-y-1 flex flex-col justify-around h-[20vh]">
+        {navItems.filter(item => item.position === "bottom").map((item, index) => (
+          <NavItemSmall key={index} {...item} />
         ))}
       </div>
     </div>
@@ -103,7 +134,9 @@ export default function DashboardLayout() {
   return (
     <div className="flex h-screen overflow-hidden shadow-lg">
       {/* Sidebar */}
-      <Sidebar />
+      <div>
+        {isChatOpen ? <SidebarSmall /> : <Sidebar />}
+      </div>
 
       {/* Main Content */}
       <div className="flex flex-col flex-1">
