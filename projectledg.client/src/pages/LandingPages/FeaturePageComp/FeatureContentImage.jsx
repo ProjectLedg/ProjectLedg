@@ -1,7 +1,7 @@
 import React from "react";
 import BookingImage from "@/assets/BookingImageFiles.jpg";
 
-const loremText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.";
+const loremText = "Med vår bokföringsapp blir ekonomihanteringen smidigare än någonsin. Vi gör det enkelt för dig att automatisera bokföringen och snabbt få en överblick över ditt företags ekonomi. Låt oss ta hand om det komplexa, så att du kan fokusera på att utveckla din verksamhet.";
 
 
 export default function FeatureImage() {
