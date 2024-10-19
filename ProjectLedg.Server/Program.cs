@@ -51,10 +51,14 @@ namespace ProjectLedg.Server
                 options.Password = mailKitSettingsSection.Password;
             });
 
+            var formRecognizerEndpoint = Environment.GetEnvironmentVariable("FORM_RECOGNIZER_ENDPOINT");
+            var formRecognizerApiKey = Environment.GetEnvironmentVariable("FORM_RECOGNIZER_KEY");
+
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
                 options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("AZURE_DATABASE_CONNECTION_STRING"));
             });
 
             // Add services to the container.
@@ -179,6 +183,11 @@ namespace ProjectLedg.Server
             //EmailList
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailRepository, EmailRepository>();
+            //Form Recognizer
+            services.AddScoped<FormRecognizerService>(sp => new FormRecognizerService(
+                formRecognizerEndpoint,
+                formRecognizerApiKey
+            ));
 
 
             var app = builder.Build();

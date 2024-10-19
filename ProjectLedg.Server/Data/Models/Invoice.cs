@@ -8,13 +8,28 @@ namespace ProjectLedg.Server.Data.Models
         public string InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
-        public decimal TotalAmount { get; set; }
-        public byte[] InvoiceFile { get; set; }
+        public decimal InvoiceTotal { get; set; }
+        public string? Items { get; set; }
+        public string? PaymentDetails { get; set; }
+        public decimal TotalTax { get; set; }
         public bool IsPaid { get; set; }
         public bool IsOutgoing { get; set; }
         public bool IsBooked { get; set; } // If invoice is "bokförd" 
-        public string ClientName { get; set; }
-        public string SenderName { get; set; }
+
+        //Customer Related queries
+        public string CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerAddress { get; set; }
+        public string CustomerAddressRecipient { get; set; }
+
+        //Vendor Related queries
+        public string VendorName { get; set; }
+        public string VendorAddress { get; set; }
+        public string VendorAddressRecipient { get; set; }
+        public string VendorTaxId { get; set; }
+
+        //Saves the SASed URL of the invoice to the Database
+        public string? InvoiceFilePath { get; set; }
 
         public int CompanyId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
 
