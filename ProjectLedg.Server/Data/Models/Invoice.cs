@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjectLedg.Server.Data.Models
 {
     public class Invoice
     {
+        [Key]
         public int Id { get; set; }
         public string InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
         public decimal InvoiceTotal { get; set; }
-        public string? Items { get; set; }
         public string? PaymentDetails { get; set; }
         public decimal TotalTax { get; set; }
         public bool IsPaid { get; set; }
@@ -30,6 +31,8 @@ namespace ProjectLedg.Server.Data.Models
 
         //Saves the SASed URL of the invoice to the Database
         public string? InvoiceFilePath { get; set; }
+
+        public List<InvoiceItems> Items { get; set; } = new List<InvoiceItems>();
 
         public int CompanyId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
 
