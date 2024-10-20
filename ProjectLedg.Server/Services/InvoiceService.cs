@@ -1,0 +1,158 @@
+﻿using ProjectLedg.Server.Data.Models;
+using ProjectLedg.Server.Data.Models.DTOs.Invoice;
+using ProjectLedg.Server.Repositories.IRepositories;
+using ProjectLedg.Server.Services.IServices;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace ProjectLedg.Server.Services
+{
+    public class InvoiceService : IInvoiceService
+    {
+        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IBlobStorageService _blobStorageService;
+
+        public InvoiceService(IInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService)
+        {
+            _invoiceRepository = invoiceRepository;
+            _blobStorageService = blobStorageService;
+        }
+
+        public async Task<bool> SaveInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId)
+        {
+            //Validate and upload the file (as before)
+            var fileInfo = new FileInfo(tempFilePath);
+            if (fileInfo.Length == 0 || fileInfo.Length > 10 * 1024 * 1024)
+            {
+                return false;
+            }
+
+            using (var tempFileStream = System.IO.File.OpenRead(tempFilePath))
+            {
+                var blobUrl = await _blobStorageService.UploadBlobAsync(tempFileStream, fileInfo.Name);
+
+                //Create a new Invoice object
+                var invoice = new Invoice
+                {
+                    InvoiceNumber = invoiceDto.InvoiceNumber,
+                    InvoiceDate = invoiceDto.InvoiceDate,
+                    DueDate = invoiceDto.DueDate,
+                    InvoiceTotal = invoiceDto.InvoiceTotal,
+                    CustomerId = userId,
+                    CustomerName = invoiceDto.CustomerName,
+                    CustomerAddress = invoiceDto.CustomerAddress,
+                    CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient,
+                    VendorName = invoiceDto.VendorName,
+                    VendorAddress = invoiceDto.VendorAddress,
+                    VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
+                    VendorTaxId = invoiceDto.VendorTaxId,
+                    InvoiceFilePath = blobUrl
+                };
+
+                //add the items from the DTO to the Invoice
+                foreach (var itemDto in invoiceDto.Items)
+                {
+                    var invoiceItem = new InvoiceItems
+                    {
+                        Description = itemDto.Description,
+                        Quantity = itemDto.Quantity,
+                        UnitPrice = itemDto.UnitPrice,
+                        Amount = itemDto.Amount
+                    };
+
+                    invoice.Items.Add(invoiceItem);
+                }
+
+                //saving the invoice and its items to the database
+                var result = await _invoiceRepository.SaveInvoiceAsync(invoice);
+
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+
+                return result;
+            }
+        }
+
+        //other crud operations for Manual use
+        public async Task<Invoice?> GetInvoiceByIdAsync(int invoiceId)
+        {
+            return await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
+        }
+
+        public async Task<IEnumerable<Invoice>> GetAllInvoicesAsync()
+        {
+            return await _invoiceRepository.GetAllInvoicesAsync();
+        }
+
+        public async Task<bool> CreateInvoiceAsync(InvoiceDTO invoiceDto)
+        {
+            var invoice = new Invoice
+            {
+                InvoiceNumber = invoiceDto.InvoiceNumber,
+                InvoiceDate = invoiceDto.InvoiceDate,
+                DueDate = invoiceDto.DueDate,
+                InvoiceTotal = invoiceDto.InvoiceTotal,
+                PaymentDetails = invoiceDto.PaymentDetails,
+                TotalTax = invoiceDto.TotalTax,
+                IsPaid = invoiceDto.IsPaid,
+                IsOutgoing = invoiceDto.IsOutgoing,
+                IsBooked = invoiceDto.IsBooked,
+                CustomerName = invoiceDto.CustomerName,
+                CustomerAddress = invoiceDto.CustomerAddress,
+                CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient,
+                VendorName = invoiceDto.VendorName,
+                VendorAddress = invoiceDto.VendorAddress,
+                VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
+                VendorTaxId = invoiceDto.VendorTaxId
+            };
+
+            return await _invoiceRepository.CreateInvoiceAsync(invoice);
+        }
+
+        public async Task<bool> UpdateInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto)
+        {
+            var existingInvoice = await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
+            if (existingInvoice == null)
+            {
+                return false;
+            }
+
+            // Update the properties of the invoice
+            existingInvoice.InvoiceNumber = invoiceDto.InvoiceNumber;
+            existingInvoice.InvoiceDate = invoiceDto.InvoiceDate;
+            existingInvoice.DueDate = invoiceDto.DueDate;
+            existingInvoice.InvoiceTotal = invoiceDto.InvoiceTotal;
+            existingInvoice.TotalTax = invoiceDto.TotalTax;
+            existingInvoice.IsPaid = invoiceDto.IsPaid;
+            existingInvoice.IsOutgoing = invoiceDto.IsOutgoing;
+            existingInvoice.IsBooked = invoiceDto.IsBooked;
+            existingInvoice.CustomerName = invoiceDto.CustomerName;
+            existingInvoice.CustomerAddress = invoiceDto.CustomerAddress;
+            existingInvoice.CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient;
+            existingInvoice.VendorName = invoiceDto.VendorName;
+            existingInvoice.VendorAddress = invoiceDto.VendorAddress;
+            existingInvoice.VendorAddressRecipient = invoiceDto.VendorAddressRecipient;
+            existingInvoice.VendorTaxId = invoiceDto.VendorTaxId;
+
+            //Map the DTO items to the model items
+            existingInvoice.Items = invoiceDto.Items.Select(itemDto => new InvoiceItems
+            {
+                Description = itemDto.Description,
+                Quantity = itemDto.Quantity,
+                UnitPrice = itemDto.UnitPrice,
+                Amount = itemDto.Amount,
+                InvoiceId = existingInvoice.Id //FK linking the items to the invoice
+            }).ToList();
+
+            return await _invoiceRepository.UpdateInvoiceAsync(existingInvoice);
+        }
+
+        public async Task<bool> DeleteInvoiceAsync(int invoiceId)
+        {
+            return await _invoiceRepository.DeleteInvoiceAsync(invoiceId);
+        }
+    }
+}
