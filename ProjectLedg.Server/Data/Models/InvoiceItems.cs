@@ -1,7 +1,10 @@
-﻿namespace ProjectLedg.Server.Data.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProjectLedg.Server.Data.Models
 {
     public class InvoiceItems
     {
+        [Key]
         public int InvoiceItemId { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
