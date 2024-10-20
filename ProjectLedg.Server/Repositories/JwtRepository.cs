@@ -12,15 +12,16 @@ namespace ProjectLedg.Server.Repositories
         {
             try
             {
-                //Create Claims
+                // Create Claims
                 List<Claim> claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            };
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),  // Ensure user.Id is a string
+            new Claim(JwtRegisteredClaimNames.Email, user.Email)
+            //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  // JWT Token ID
+            //new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)  // When it was issued; Security thing
+        };
 
-
-                //Configuration of Token settings
+                // Configuration of Token settings
                 SymmetricSecurityKey secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")));
                 SigningCredentials credentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
@@ -29,9 +30,9 @@ namespace ProjectLedg.Server.Repositories
                     issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
                     audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
                     claims: claims,
-                    expires: DateTime.Now.AddHours(3),
+                    expires: DateTime.UtcNow.AddHours(3),  // Use UtcNow for consistency across time zones
                     signingCredentials: credentials
-                    );
+                );
 
                 // Serialize token
                 var tokenHandler = new JwtSecurityTokenHandler();
