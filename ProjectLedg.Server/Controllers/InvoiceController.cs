@@ -52,11 +52,13 @@ namespace ProjectLedg.Server.Controllers
                 return BadRequest("Temporary file not found. Please upload the file again.");
             }
 
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User not found in token.");
-            }
+            //var userId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Unauthorized("User not found in token.");
+            //}
+
+            var userId = "testUser"; 
 
             var result = await _invoiceService.SaveInvoiceAsync(invoiceDto, tempFilePath, userId);
 
