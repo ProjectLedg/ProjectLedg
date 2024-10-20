@@ -21,6 +21,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace ProjectLedg.Server
 {
@@ -32,6 +33,15 @@ namespace ProjectLedg.Server
             var services = builder.Services;
             Env.Load();
 
+            //Creating a Session for the temporary files to exist within.
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             var mailKitSettingsSection = new MailKitSettings
             {
@@ -184,15 +194,30 @@ namespace ProjectLedg.Server
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailRepository, EmailRepository>();
             //Form Recognizer
-            services.AddScoped<FormRecognizerService>(sp => new FormRecognizerService(
+            services.AddScoped<IFormRecognizerService>(sp => new FormRecognizerService(
                 formRecognizerEndpoint,
                 formRecognizerApiKey
             ));
+            //Blobs
+            services.AddScoped<IBlobStorageService>(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+
+                return new BlobStorageService(
+                    Environment.GetEnvironmentVariable("BLOB_STORAGE_CONNECTION_STRING"),
+                    Environment.GetEnvironmentVariable("BLOB_STORAGE_CONTAINER_NAME"),
+                    Environment.GetEnvironmentVariable("BLOB_STORAGE_API_KEY")
+                );
+            });
+            //Invoices
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
 
 
             var app = builder.Build();
 
             app.UseStaticFiles();
+            app.UseSession();
 
             // Configure the HTTP request pipeline.
 
