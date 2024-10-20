@@ -6,7 +6,7 @@
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
         public decimal InvoiceTotal { get; set; }
-        public List<string?> Items { get; set; }
+        public List<InvoiceItemDTO> Items { get; set; } = new List<InvoiceItemDTO>();
         public string? PaymentDetails { get; set; }
         public decimal TotalTax { get; set; }
         public bool IsPaid { get; set; }
