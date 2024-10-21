@@ -58,7 +58,7 @@ namespace ProjectLedg.Server
             services.AddDbContext<ProjectLedgContext>(options =>
             {
                 options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                options.UseSqlServer(Environment.GetEnvironmentVariable("AZURE_DATABASE_CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("AZURE_DATABASE_CONNECTION_STRING"));
             });
 
             // Add services to the container.
