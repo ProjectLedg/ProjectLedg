@@ -16,6 +16,7 @@ import {
   HelpCircle,
   BookDown,
   LogOut,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top" },
   { icon: BookCheck, label: "Bokför", path: "/book", position: "top" },
   { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top" },
+  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" }, 
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
   { icon: HelpCircle, label: "Hjälp", path: "/", position: "bottom" },
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
