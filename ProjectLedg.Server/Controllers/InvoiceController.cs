@@ -43,7 +43,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         [HttpPost("save")]
-        public async Task<IActionResult> SaveInvoice([FromForm] InvoiceDTO invoiceDto)
+        public async Task<IActionResult> SaveInvoice([FromBody] InvoiceDTO invoiceDto)
         {
             var tempFilePath = HttpContext.Session.GetString("TempFilePath");
 
