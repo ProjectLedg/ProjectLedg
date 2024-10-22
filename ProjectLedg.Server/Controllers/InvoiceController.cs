@@ -62,11 +62,6 @@ namespace ProjectLedg.Server.Controllers
 
             var result = await _invoiceService.SaveInvoiceAsync(invoiceDto, tempFilePath, userId);
 
-            if (!result)
-            {
-                return StatusCode(500, "An error occurred while saving the invoice.");
-            }
-
             return Ok(new { message = "Invoice saved successfully!" });
         }
 
