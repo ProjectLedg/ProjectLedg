@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ChatWindow from "./ChatWindow";
 import { motion, AnimatePresence } from "framer-motion"
-
+import Cookies from "js-cookie";
 import {
   Home,
   Menu,
@@ -33,7 +33,9 @@ const navItems = [
 const NavItem = ({ icon: Icon, label, path }) => {
   const { companyId } = useParams(); // Get companyId from the route params
   const fullPath = `/dashboard/${companyId}${path}`;
-
+  if(label === "Logga ut") {
+    return handleLogout({ icon: Icon, label, path });
+  }
   return (
     <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
       <Icon className="h-5 w-5" />
@@ -41,6 +43,26 @@ const NavItem = ({ icon: Icon, label, path }) => {
     </Link>
   );
 };
+
+
+const handleLogout = ({ icon: Icon, label, path }) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    Cookies.remove('JWTToken');
+    // Add any additional logout logic here
+    window.location.href = path; // Redirect after logout
+  };
+
+  return (
+    <a href={path} onClick={handleClick} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+      <Icon className="h-5 w-5" />
+      <span>{label}</span>
+    </a>
+  );
+};
+
+
+
 
 const NavItemSmall = ({ icon: Icon, path }) => {
   const { companyId } = useParams(); // Get companyId from the route params
