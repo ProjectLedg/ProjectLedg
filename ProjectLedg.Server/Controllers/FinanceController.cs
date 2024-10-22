@@ -16,7 +16,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Endpoints
-        [HttpPost]
+        [HttpPost("dashboardtopgraphs")]
         public async Task<IActionResult> GetYearToDateFinances(FinanceRequestDTO request)
         {
             var result = await _financeService.GetYearToDateFinancesAsync(request);

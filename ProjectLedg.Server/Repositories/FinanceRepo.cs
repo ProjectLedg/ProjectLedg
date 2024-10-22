@@ -146,13 +146,40 @@
                     .ToListAsync();
             }
 
-            // Returns fiscal year entity matching the inputted dates and company
-            //public async Task<FiscalYear> GetFiscalYearAsync(int companyId, DateTime startDate, DateTime endDate)
-            //{
-            //    return await _context.Companies
-            //        .Where(c => c.Id == companyId)
-            //        .SelectMany(fy => fy.FiscalYears)
-            //        .SingleOrDefaultAsync(f => f.StartDate >= startDate && f.EndDate <= endDate);
-            //}
-        }
+            public async Task<int> GetRunningMonthsAsync(int companyId)
+            {
+                var transactions = await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(c => c.BasAccounts)
+                    .SelectMany(ba => ba.Transactions)
+                    .Select(t => t.TransactionDate)
+                    .ToListAsync();
+                
+                if (!transactions.Any())
+                {
+                    return 0; // No transactions found
+                }
+
+                var firstTransactionDate = transactions.Min();
+                var latestTransactionDate = transactions.Max();
+
+                int monthsDifference = ((latestTransactionDate.Year - firstTransactionDate.Year) * 12) + latestTransactionDate.Month - firstTransactionDate.Month;
+
+                return monthsDifference;
+
+
+            }
+
+
+
+
+        // Returns fiscal year entity matching the inputted dates and company
+        //public async Task<FiscalYear> GetFiscalYearAsync(int companyId, DateTime startDate, DateTime endDate)
+        //{
+        //    return await _context.Companies
+        //        .Where(c => c.Id == companyId)
+        //        .SelectMany(fy => fy.FiscalYears)
+        //        .SingleOrDefaultAsync(f => f.StartDate >= startDate && f.EndDate <= endDate);
+        //}
     }
+}

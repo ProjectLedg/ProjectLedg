@@ -17,6 +17,9 @@ namespace ProjectLedg.Server.Repositories.IRepositories
 
         public Task<List<MonthlyTotalDTO>> GetExpensesHistoryAsync(int companyId, int year);
 
+        public Task<int> GetRunningMonthsAsync(int companyId);
+
+
         //public Task<FiscalYear> GetFiscalYearAsync(int companyId, DateTime startDate, DateTime endDate);
     }
 }

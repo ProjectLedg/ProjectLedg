@@ -25,6 +25,9 @@ namespace ProjectLedg.Server.Services
             var monthlyRevenue = await _financeRepo.GetRevenueHistoryAsync(financeDto.CompanyId, financeDto.Year);
             var monthlyExpenses = await _financeRepo.GetExpensesHistoryAsync(financeDto.CompanyId, financeDto.Year);
 
+            var runwayScore = await CalculateRunway(financeDto.CompanyId,financeDto.Year);
+
+
             return new FinanceFiscalYearDTO
             {
                 Revenue = new RevenueDTO
@@ -44,6 +47,12 @@ namespace ProjectLedg.Server.Services
                     TotalExpenses = await _financeRepo.GetYearToDateExpensesAsync(financeDto.CompanyId, financeDto.Year),
                     ExpensesHistory = monthlyExpenses,
                     ChangePercentage = ValueChangeMonthOverMonth(monthlyExpenses),
+                },
+                Runway = new RunwayDTO
+                {
+                    Message = runwayScore.Message,
+                    Percentage = runwayScore.Percentage,
+                    Months = runwayScore.Months,
                 }
             };
         }
@@ -140,5 +149,74 @@ namespace ProjectLedg.Server.Services
                 }
 
             }
+        private async Task<RunwayDTO> CalculateRunway(int companyId, int year)
+        {
+            int runningMonths = await _financeRepo.GetRunningMonthsAsync(companyId);
+            if (runningMonths == 0)
+            {
+                return new RunwayDTO
+                {
+                    Message = "No data",
+                    Percentage = 0,
+                    Months = 0
+                };
+            }
+
+            string status = "";
+
+            // Get values for calculation
+            var totalRevenue = await _financeRepo.GetYearToDateRevenueAsync(companyId, year);
+            var totalExpenses = await _financeRepo.GetYearToDateExpensesAsync(companyId, year);
+
+            // Calculate Rörelseresultat (EBIT)
+            decimal ebit = totalRevenue - totalExpenses;
+
+            // Check if totalRevenue is zero to avoid division by zero
+            if (totalRevenue == 0)
+            {
+                return new RunwayDTO
+                {
+                    Message = "No revenue data",
+                    Percentage = 0,
+                    Months = runningMonths
+                };
+            }
+
+            // Calculate Vinstmarginal
+            decimal profitMargin = (ebit / totalRevenue) * 100;
+
+            // Define min and max for profit margin for normalization
+            const decimal minimumProfitMargin = 0;
+            const decimal maximumProfitMargin = 50;
+
+            // Normalize profit margin
+            var normalizedProfitMargin = (profitMargin - minimumProfitMargin) / (maximumProfitMargin - minimumProfitMargin) * 100;
+
+            normalizedProfitMargin = Math.Max(0, Math.Min(normalizedProfitMargin, 100));
+
+            // Calculate runway
+            int roundedNormalizedProfitMargin = (int)Math.Round(normalizedProfitMargin);
+
+            if (roundedNormalizedProfitMargin < 30)
+            {
+                status = "Inte bra!";
+            }
+            else if (roundedNormalizedProfitMargin >= 30 && roundedNormalizedProfitMargin < 60)
+            {
+                status = "Bra!";
+            }
+            else if (roundedNormalizedProfitMargin >= 60)
+            {
+                status = "Väldigt bra!";
+            }
+
+            return new RunwayDTO
+            {
+                Message = status,
+                Percentage = roundedNormalizedProfitMargin,
+                Months = runningMonths
+            };
+        }
+
     }
 }
