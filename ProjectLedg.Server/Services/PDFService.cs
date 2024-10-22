@@ -148,86 +148,86 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
-            public byte[] GenerateInvoicePdf(InvoiceDTO invoice)
+        public byte[] GenerateInvoicePdf(InvoiceDTO invoice)
+        {
+            var sb = new StringBuilder();
+
+            // Header: Invoice Information
+            sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-bottom: 30px;'>");
+            sb.Append("<h1 style='color: #333;'>INVOICE</h1>");
+            sb.Append($"<h3 style='color: #666;'>Fakturanummer: {invoice.InvoiceNumber}</h3>");
+            sb.Append($"<p style='font-size: 12px; color: #666;'>Fakturadatum: {invoice.InvoiceDate:yyyy-MM-dd}</p>");
+            sb.Append($"<p style='font-size: 12px; color: #666;'>Förfallodatum: {invoice.DueDate:yyyy-MM-dd}</p>");
+            sb.Append("</div>");
+
+            // Vendor Information
+            sb.Append("<div style='margin-bottom: 30px; font-family: Arial, sans-serif;'>");
+            sb.Append($"<p style='font-weight: bold;'>{invoice.VendorName}</p>");
+            sb.Append($"<p>{invoice.VendorAddress}</p>");
+            sb.Append($"<p>{invoice.VendorAddressRecipient}</p>");
+            sb.Append($"<p>Tax ID: {invoice.VendorTaxId}</p>");
+            sb.Append("</div>");
+
+            // Customer Information
+            sb.Append("<div style='margin-bottom: 30px; font-family: Arial, sans-serif;'>");
+            sb.Append($"<p style='font-weight: bold;'>Bill To: {invoice.CustomerName}</p>");
+            sb.Append($"<p>{invoice.CustomerAddress}</p>");
+            sb.Append($"<p>Attn: {invoice.CustomerAddressRecipient}</p>");
+            sb.Append("</div>");
+
+            // Itemized Billing Table
+            sb.Append("<table style='width: 100%; border-collapse: collapse; margin-bottom: 30px; font-family: Arial, sans-serif;'>");
+            sb.Append("<thead><tr>");
+            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Description</th>");
+            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Quantity</th>");
+            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Unit Price</th>");
+            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Amount</th>");
+            sb.Append("</tr></thead>");
+            sb.Append("<tbody>");
+
+            foreach (var item in invoice.Items)
             {
-                var sb = new StringBuilder();
+                sb.Append("<tr>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.Description}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.Quantity}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.UnitPrice:C}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.Amount:C}</td>");
+                sb.Append("</tr>");
+            }
 
-                // Header: Invoice Information
-                sb.Append("<div style='text-align: center;'>");
-                sb.Append("<h1>INVOICE</h1>");
-                sb.Append($"<h3>Invoice Number: {invoice.InvoiceNumber}</h3>");
-                sb.Append($"<p>Invoice Date: {invoice.InvoiceDate:yyyy-MM-dd}</p>");
-                sb.Append($"<p>Due Date: {invoice.DueDate:yyyy-MM-dd}</p>");
-                sb.Append("</div>");
+            sb.Append("</tbody></table>");
 
-                // Vendor Information
-                sb.Append("<div style='margin-bottom: 30px;'>");
-                sb.Append($"<p><strong>{invoice.VendorName}</strong></p>");
-                sb.Append($"<p>{invoice.VendorAddress}</p>");
-                sb.Append($"<p>{invoice.VendorAddressRecipient}</p>");
-                sb.Append($"<p>Tax ID: {invoice.VendorTaxId}</p>");
-                sb.Append("</div>");
+            // Summary Section
+            sb.Append("<div style='text-align: right; font-family: Arial, sans-serif; margin-bottom: 50px;'>");
+            sb.Append($"<p style='font-size: 14px;'><strong>Subtotal:</strong> {invoice.InvoiceTotal:C}</p>");
+            sb.Append($"<p style='font-size: 14px;'><strong>Total Tax:</strong> {invoice.TotalTax:C}</p>");
+            sb.Append($"<h3 style='font-size: 18px; color: #333;'>Total: {invoice.InvoiceTotal + invoice.TotalTax:C}</h3>");
+            sb.Append("</div>");
 
-                // Customer Information
-                sb.Append("<div style='margin-bottom: 30px;'>");
-                sb.Append($"<p><strong>Bill To:</strong> {invoice.CustomerName}</p>");
-                sb.Append($"<p>{invoice.CustomerAddress}</p>");
-                sb.Append($"<p>Attn: {invoice.CustomerAddressRecipient}</p>");
-                sb.Append("</div>");
+            // Footer: Payment Information
+            sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-top: 50px;'>");
+            sb.Append($"<p style='font-size: 12px;'><strong>Payment Details:</strong> {invoice.PaymentDetails ?? "N/A"}</p>");
+            sb.Append("<p style='font-size: 12px;'>Thank you for your business!</p>");
+            sb.Append("</div>");
 
-                // Itemized Billing Table
-                sb.Append("<table style='width: 100%; border-collapse: collapse; margin-bottom: 30px;'>");
-                sb.Append("<thead><tr>");
-                sb.Append("<th style='border: 1px solid black; padding: 5px;'>Description</th>");
-                sb.Append("<th style='border: 1px solid black; padding: 5px;'>Quantity</th>");
-                sb.Append("<th style='border: 1px solid black; padding: 5px;'>Unit Price</th>");
-                sb.Append("<th style='border: 1px solid black; padding: 5px;'>Amount</th>");
-                sb.Append("</tr></thead>");
-                sb.Append("<tbody>");
-
-                foreach (var item in invoice.Items)
-                {
-                    sb.Append("<tr>");
-                    sb.Append($"<td style='border: 1px solid black; padding: 5px;'>{item.Description}</td>");
-                    sb.Append($"<td style='border: 1px solid black; padding: 5px;'>{item.Quantity}</td>");
-                    sb.Append($"<td style='border: 1px solid black; padding: 5px;'>{item.UnitPrice:C}</td>");
-                    sb.Append($"<td style='border: 1px solid black; padding: 5px;'>{item.Amount:C}</td>");
-                    sb.Append("</tr>");
-                }
-
-                sb.Append("</tbody></table>");
-
-                // Summary Section
-                sb.Append("<div style='text-align: right; margin-bottom: 50px;'>");
-                sb.Append($"<p><strong>Subtotal:</strong> {invoice.InvoiceTotal:C}</p>");
-                sb.Append($"<p><strong>Total Tax:</strong> {invoice.TotalTax:C}</p>");
-                sb.Append($"<h3>Total: {invoice.InvoiceTotal + invoice.TotalTax:C}</h3>");
-                sb.Append("</div>");
-
-                // Footer: Payment Information
-                sb.Append("<div style='text-align: center; margin-top: 50px;'>");
-                sb.Append($"<p><strong>Payment Details:</strong> {invoice.PaymentDetails ?? "N/A"}</p>");
-                sb.Append("<p>Thank you for your business!</p>");
-                sb.Append("</div>");
-
-                // PDF Document Generation
-                var doc = new HtmlToPdfDocument()
-                {
-                    GlobalSettings = {
-                    ColorMode = ColorMode.Color,
-                    Orientation = Orientation.Portrait,
-                    PaperSize = PaperKind.A4,
-                    Margins = new MarginSettings { Top = 20, Bottom = 20 }
-                },
-                    Objects = {
-                    new ObjectSettings() {
-                        HtmlContent = sb.ToString(),
-                        WebSettings = { DefaultEncoding = "utf-8" }
-                    }
-                }
-                };
-
-                return _converter.Convert(doc);
+            // PDF Document Generation
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings = {
+            ColorMode = ColorMode.Color,
+            Orientation = Orientation.Portrait,
+            PaperSize = PaperKind.A4,
+            Margins = new MarginSettings { Top = 20, Bottom = 20 }
+        },
+                Objects = {
+            new ObjectSettings() {
+                HtmlContent = sb.ToString(),
+                WebSettings = { DefaultEncoding = "utf-8" }
             }
         }
+            };
+
+            return _converter.Convert(doc);
+        }
     }
+}
