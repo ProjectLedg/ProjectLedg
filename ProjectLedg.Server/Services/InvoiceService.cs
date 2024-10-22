@@ -61,6 +61,7 @@ namespace ProjectLedg.Server.Services
                         VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
                         VendorTaxId = invoiceDto.VendorTaxId,
                         InvoiceFilePath = blobUrl,
+                        TotalTax = invoiceDto.TotalTax,
                         CustomerId = userId // Assuming userId is valid
                     };
 
