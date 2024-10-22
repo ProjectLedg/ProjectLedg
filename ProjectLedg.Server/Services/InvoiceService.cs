@@ -1,10 +1,13 @@
-﻿using ProjectLedg.Server.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectLedg.Server.Data;
+using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ProjectLedg.Server.Services
 {
@@ -12,69 +15,93 @@ namespace ProjectLedg.Server.Services
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly ProjectLedgContext _context;
 
-        public InvoiceService(IInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService)
+        public InvoiceService(IInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService, ProjectLedgContext context)
         {
             _invoiceRepository = invoiceRepository;
             _blobStorageService = blobStorageService;
+            _context = context;
         }
 
         public async Task<bool> SaveInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId)
         {
-            //Validate and upload the file (as before)
-            var fileInfo = new FileInfo(tempFilePath);
-            if (fileInfo.Length == 0 || fileInfo.Length > 10 * 1024 * 1024)
+            try
             {
-                return false;
-            }
-
-            using (var tempFileStream = System.IO.File.OpenRead(tempFilePath))
-            {
-                var blobUrl = await _blobStorageService.UploadBlobAsync(tempFileStream, fileInfo.Name);
-
-                //Create a new Invoice object
-                var invoice = new Invoice
+                var fileInfo = new FileInfo(tempFilePath);
+                if (fileInfo.Length == 0 || fileInfo.Length > 10 * 1024 * 1024)
                 {
-                    InvoiceNumber = invoiceDto.InvoiceNumber,
-                    InvoiceDate = invoiceDto.InvoiceDate,
-                    DueDate = invoiceDto.DueDate,
-                    InvoiceTotal = invoiceDto.InvoiceTotal,
-                    CustomerId = userId,
-                    CustomerName = invoiceDto.CustomerName,
-                    CustomerAddress = invoiceDto.CustomerAddress,
-                    CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient,
-                    VendorName = invoiceDto.VendorName,
-                    VendorAddress = invoiceDto.VendorAddress,
-                    VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
-                    VendorTaxId = invoiceDto.VendorTaxId,
-                    InvoiceFilePath = blobUrl
-                };
+                    return false;
+                }
 
-                //add the items from the DTO to the Invoice
-                foreach (var itemDto in invoiceDto.Items)
+                using (var tempFileStream = System.IO.File.OpenRead(tempFilePath))
                 {
-                    var invoiceItem = new InvoiceItems
+                    var blobUrl = await _blobStorageService.UploadBlobAsync(tempFileStream, fileInfo.Name);
+                    Console.WriteLine($"Blob uploaded successfully: {blobUrl}");
+
+                    var company = await _context.Companies.FindAsync(invoiceDto.CompanyId);
+                    if (company == null)
                     {
-                        Description = itemDto.Description,
-                        Quantity = itemDto.Quantity,
-                        UnitPrice = itemDto.UnitPrice,
-                        Amount = itemDto.Amount
+                        Console.WriteLine("Company not found");
+                        return false;
+                    }
+
+                    var invoice = new Invoice
+                    {
+                        InvoiceNumber = invoiceDto.InvoiceNumber,
+                        InvoiceDate = invoiceDto.InvoiceDate,
+                        DueDate = invoiceDto.DueDate,
+                        InvoiceTotal = invoiceDto.InvoiceTotal,
+                        CompanyId = company.Id,
+                        CustomerName = invoiceDto.CustomerName,
+                        CustomerAddress = invoiceDto.CustomerAddress,
+                        CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient,
+                        VendorName = invoiceDto.VendorName,
+                        VendorAddress = invoiceDto.VendorAddress,
+                        VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
+                        VendorTaxId = invoiceDto.VendorTaxId,
+                        InvoiceFilePath = blobUrl,
+                        CustomerId = userId // Assuming userId is valid
                     };
 
-                    invoice.Items.Add(invoiceItem);
+                    foreach (var itemDto in invoiceDto.Items)
+                    {
+                        var invoiceItem = new InvoiceItems
+                        {
+                            Description = itemDto.Description,
+                            Quantity = itemDto.Quantity,
+                            UnitPrice = itemDto.UnitPrice,
+                            Amount = itemDto.Amount
+                        };
+
+                        invoice.Items.Add(invoiceItem);
+                    }
+
+                    Console.WriteLine("Attempting to save invoice to database...");
+
+                    var result = await _invoiceRepository.SaveInvoiceAsync(invoice);
+
+                    if (!result)
+                    {
+                        Console.WriteLine("Failed to save invoice to database");
+                        return false;
+                    }
+
+                    if (System.IO.File.Exists(tempFilePath))
+                    {
+                        System.IO.File.Delete(tempFilePath);
+                    }
+
+                    return true;
                 }
-
-                //saving the invoice and its items to the database
-                var result = await _invoiceRepository.SaveInvoiceAsync(invoice);
-
-                if (System.IO.File.Exists(tempFilePath))
-                {
-                    System.IO.File.Delete(tempFilePath);
-                }
-
-                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return false;
             }
         }
+
 
         //other crud operations for Manual use
         public async Task<Invoice?> GetInvoiceByIdAsync(int invoiceId)
