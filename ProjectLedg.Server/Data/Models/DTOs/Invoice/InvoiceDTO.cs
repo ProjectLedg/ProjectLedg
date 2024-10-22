@@ -23,5 +23,7 @@
         public string VendorAddress { get; set; }
         public string VendorAddressRecipient { get; set; }
         public string VendorTaxId { get; set; }
+
+        public int CompanyId { get; set; }
     }
 }
