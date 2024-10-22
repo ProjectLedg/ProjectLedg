@@ -50,8 +50,16 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<bool> SaveInvoiceAsync(Invoice invoice)
         {
-            await _context.Invoices.AddAsync(invoice);
-            return await _context.SaveChangesAsync() > 0;
+            try
+            {
+                await _context.Invoices.AddAsync(invoice);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving invoice: {ex.Message}");
+                return false;
+            }
         }
     }
 }
