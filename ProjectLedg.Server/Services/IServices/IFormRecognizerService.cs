@@ -2,6 +2,6 @@
 {
     public interface IFormRecognizerService
     {
-        Task AnalyzeForm(string filePath);
+        Task<Dictionary<string, object>> AnalyzeInvoice(string filePath);
     }
 }

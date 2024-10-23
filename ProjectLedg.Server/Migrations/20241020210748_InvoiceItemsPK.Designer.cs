@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241020210748_InvoiceItemsPK")]
+    partial class InvoiceItemsPK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -443,8 +446,8 @@ namespace ProjectLedg.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceItemId"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -696,7 +699,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "579aa6de-478b-48e9-b3af-6d8cc4dad7f1",
+                            ConcurrencyStamp = "0803e5c5-cd9d-44c1-8494-607fe289fba5",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -704,9 +707,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPL0lEp/b5aByq0E042UNNXDIT9UC/QJrBZD4Ol+9NaSg13aqr4yNVFhPappoXwiQg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMfZcuEyLxW4PrEh68O5tdXaAKJMi4MiRbFU5RcxFErxmHk6mDGGIlwVtLMnQtgrdw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4b329acf-cf30-4b32-911f-9caa173ed3cc",
+                            SecurityStamp = "621f6260-ac34-48e4-8573-acee275da212",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
