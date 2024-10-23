@@ -80,7 +80,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         [HttpPost("Generate-Invoice-Pdf")]
-        public IActionResult GenerateInvoicePdf([FromForm] InvoiceDTO invoice)
+        public IActionResult GenerateInvoicePdf([FromBody] InvoiceDTO invoice)
         {
             if (invoice == null)
             {
