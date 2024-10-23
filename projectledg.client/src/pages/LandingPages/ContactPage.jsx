@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin, Loader2 } from "lucide-react"
+import { Mail, Phone, MapPin, Loader2, Sparkles } from "lucide-react"
 
-const ContactPage = () => {
+export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,17 +51,20 @@ const ContactPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <main className="container mx-auto px-4 py-16 max-w-7xl flex-grow">
-        <h1 className="text-4xl font-bold text-center mb-4 text-green-500">Kontakta oss</h1>
+      <main className="container mx-auto px-4 py-16 max-w-7xl">
+        <h1 className="text-4xl font-bold text-center mb-4 text-gray-800">Kontakta oss</h1>
         <p className="text-center mb-12 text-gray-600">
           Vänligen fyll i formuläret nedan eller använd vår kontaktinformation.
         </p>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 justify-center">
           <Card className="bg-white shadow-lg border-green-500 border-2">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-green-500">Skicka ett meddelande till oss</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-between">
+                Skicka ett meddelande till oss
+                <Sparkles className="h-5 w-5 text-green-500" />
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,7 +105,7 @@ const ContactPage = () => {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-300"
+                  className="w-full transition-colors duration-300 bg-green-500 hover:bg-green-600 text-white rounded-md"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -125,7 +128,10 @@ const ContactPage = () => {
           </Card>
           <Card className="bg-white shadow-lg border-green-500 border-2">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-green-500">Kontaktinformation</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-between">
+                Kontaktinformation
+                <Sparkles className="h-5 w-5 text-green-500" />
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -144,5 +150,3 @@ const ContactPage = () => {
     </div>
   )
 }
-
-export default ContactPage

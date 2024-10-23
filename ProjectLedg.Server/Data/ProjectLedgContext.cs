@@ -43,7 +43,7 @@ namespace ProjectLedg.Server.Data
 
             // Seed Company data
             modelBuilder.Entity<Company>().HasData(
-                new Company { Id = 1, CompanyName = "Test Company", OrgNumber = "1234567890", AmountOfEmployees = 10 }
+                new Company { Id = 1, CompanyName = "Test Company", OrgNumber = "1234567890", CompanyDescription = "This is a Company", AmountOfEmployees = 10 }
             );
 
             // Seed relationship between User and Company
@@ -66,14 +66,123 @@ namespace ProjectLedg.Server.Data
                 new BasAccount { Id = 8, Debit = 500, Credit = 0, Description = "Extraordinary Costs", AccountNumber = "8000", Year = 2023, CompanyId = 1 }  // Konto klass 8: Övriga rörelsekostnader
             );
 
-            // Seed Invoice data 
+            //// Seed Invoice data
             modelBuilder.Entity<Invoice>().HasData(
-                new Invoice { Id = 1, InvoiceNumber = "INV001", InvoiceDate = new DateTime(2023, 01, 05), DueDate = new DateTime(2023, 01, 15), TotalAmount = 5750.00m, IsPaid = true, IsOutgoing = true, IsBooked = true, ClientName = "Client A", SenderName = "Company A", CompanyId = 1, InvoiceFile = new byte[0] },
-                new Invoice { Id = 2, InvoiceNumber = "INV002", InvoiceDate = new DateTime(2023, 02, 01), DueDate = new DateTime(2023, 02, 10), TotalAmount = 4500.00m, IsPaid = false, IsOutgoing = false, IsBooked = false, ClientName = "Client B", SenderName = "Company B", CompanyId = 1, InvoiceFile = new byte[0] },
-                new Invoice { Id = 3, InvoiceNumber = "INV003", InvoiceDate = new DateTime(2023, 03, 01), DueDate = new DateTime(2023, 03, 10), TotalAmount = 15800.00m, IsPaid = true, IsOutgoing = true, IsBooked = true, ClientName = "Client C", SenderName = "Company C", CompanyId = 1, InvoiceFile = new byte[0] },
-                new Invoice { Id = 4, InvoiceNumber = "INV004", InvoiceDate = new DateTime(2023, 04, 01), DueDate = new DateTime(2023, 04, 10), TotalAmount = 72000.00m, IsPaid = true, IsOutgoing = true, IsBooked = true, ClientName = "Client D", SenderName = "Company D", CompanyId = 1, InvoiceFile = new byte[0] },
-                new Invoice { Id = 5, InvoiceNumber = "INV005", InvoiceDate = new DateTime(2023, 05, 01), DueDate = new DateTime(2023, 05, 10), TotalAmount = 11250.00m, IsPaid = true, IsOutgoing = true, IsBooked = true, ClientName = "Client E", SenderName = "Company E", CompanyId = 1, InvoiceFile = new byte[0] }
-            );
+              new Invoice
+              {
+                  Id = 1,
+                  InvoiceNumber = "INV001",
+                  InvoiceDate = new DateTime(2023, 01, 05),
+                  DueDate = new DateTime(2023, 01, 15),
+                  InvoiceTotal = 5750.00m,
+                  IsPaid = true,
+                  IsOutgoing = true,
+                  IsBooked = true,
+                  TotalTax = 50.00m,
+                  CustomerId = "1",
+                  CustomerName = "Hjalmar Stranninge",
+                  CustomerAddress = "Arenavägen 61",
+                  CustomerAddressRecipient = "Hjalmar Stranninge AB",
+                  VendorName = "Blues Kök & Bar",
+                  VendorAddress = "Arenavägen 61",
+                  VendorAddressRecipient = "Erkan",
+                  VendorTaxId = "59315",
+                  InvoiceFilePath = "https://localhost:7223",
+                  CompanyId = 1 // Foreign key reference to Company
+              },
+              new Invoice
+              {
+                  Id = 2,
+                  InvoiceNumber = "INV002",
+                  InvoiceDate = new DateTime(2023, 01, 05),
+                  DueDate = new DateTime(2023, 02, 15),
+                  InvoiceTotal = 4500.00m,
+                  IsPaid = false,
+                  IsOutgoing = false,
+                  IsBooked = false,
+                  PaymentDetails = "34395139",
+                  TotalTax = 50.00m,
+                  CustomerId = "1",
+                  CustomerName = "Hjalmar Stranninge",
+                  CustomerAddress = "Arenavägen 61",
+                  CustomerAddressRecipient = "Hjalmar Stranninge AB",
+                  VendorName = "Blues Kök & Bar",
+                  VendorAddress = "Arenavägen 61",
+                  VendorAddressRecipient = "Erkan",
+                  VendorTaxId = "59315",
+                  InvoiceFilePath = "https://localhost:7223",
+                  CompanyId = 1 // Foreign key reference to Company
+              },
+              new Invoice
+              {
+                  Id = 3,
+                  InvoiceNumber = "INV003",
+                  InvoiceDate = new DateTime(2023, 01, 05),
+                  DueDate = new DateTime(2023, 03, 15),
+                  InvoiceTotal = 15800.00m,
+                  IsPaid = true,
+                  IsOutgoing = true,
+                  IsBooked = true,
+                  PaymentDetails = "34395139",
+                  TotalTax = 50.00m,
+                  CustomerId = "1",
+                  CustomerName = "Hjalmar Stranninge",
+                  CustomerAddress = "Arenavägen 61",
+                  CustomerAddressRecipient = "Hjalmar Stranninge AB",
+                  VendorName = "Blues Kök & Bar",
+                  VendorAddress = "Arenavägen 61",
+                  VendorAddressRecipient = "Erkan",
+                  VendorTaxId = "59315",
+                  InvoiceFilePath = "https://localhost:7223",
+                  CompanyId = 1 // Foreign key reference to Company
+              },
+              new Invoice
+              {
+                  Id = 4,
+                  InvoiceNumber = "INV004",
+                  InvoiceDate = new DateTime(2023, 01, 05),
+                  DueDate = new DateTime(2023, 04, 15),
+                  InvoiceTotal = 72000.00m,
+                  IsPaid = true,
+                  IsOutgoing = true,
+                  IsBooked = true,
+                  PaymentDetails = "34395139",
+                  TotalTax = 50.00m,
+                  CustomerId = "1",
+                  CustomerName = "Hjalmar Stranninge",
+                  CustomerAddress = "Arenavägen 61",
+                  CustomerAddressRecipient = "Hjalmar Stranninge AB",
+                  VendorName = "Blues Kök & Bar",
+                  VendorAddress = "Arenavägen 61",
+                  VendorAddressRecipient = "Erkan",
+                  VendorTaxId = "59315",
+                  InvoiceFilePath = "https://localhost:7223",
+                  CompanyId = 1 // Foreign key reference to Company
+              },
+              new Invoice
+              {
+                  Id = 5,
+                  InvoiceNumber = "INV005",
+                  InvoiceDate = new DateTime(2023, 01, 05),
+                  DueDate = new DateTime(2023, 05, 15),
+                  InvoiceTotal = 11250.00m,
+                  IsPaid = true,
+                  IsOutgoing = true,
+                  IsBooked = true,
+                  PaymentDetails = "34395139",
+                  TotalTax = 50.00m,
+                  CustomerId = "1",
+                  CustomerName = "Hjalmar Stranninge",
+                  CustomerAddress = "Arenavägen 61",
+                  CustomerAddressRecipient = "Hjalmar Stranninge AB",
+                  VendorName = "Blues Kök & Bar",
+                  VendorAddress = "Arenavägen 61",
+                  VendorAddressRecipient = "Erkan",
+                  VendorTaxId = "59315",
+                  InvoiceFilePath = "https://localhost:7223",
+                  CompanyId = 1 // Foreign key reference to Company
+              }
+          );
 
             // Seed Transaction data over several months
             modelBuilder.Entity<Transaction>().HasData(
@@ -98,7 +207,6 @@ namespace ProjectLedg.Server.Data
             );
 
 
-
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Invoice)
                 .WithMany(i => i.Transactions)
@@ -111,7 +219,7 @@ namespace ProjectLedg.Server.Data
                 .HasForeignKey(t => t.BasAccountId)
                 .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on BasAccount
 
-            base.OnModelCreating(modelBuilder);
+base.OnModelCreating(modelBuilder);
         }
     }
 }

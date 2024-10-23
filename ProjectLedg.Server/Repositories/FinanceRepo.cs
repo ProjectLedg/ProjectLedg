@@ -192,20 +192,226 @@ using System.Globalization;
                     .ToListAsync();
             }
 
+        public Task<List<BalanceDataDTO>> GetBalanceData(int companyId, int year)
+        {
+            throw new NotImplementedException();
+        }
 
+        public async Task<int> GetRunningMonthsAsync(int companyId)
+        {
+            var transactions = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .SelectMany(ba => ba.Transactions)
+                .Select(t => t.TransactionDate)
+                .ToListAsync();
 
-            public Task<List<BalanceDataDTO>> GetBalanceData(int companyId, int year)
+            if (!transactions.Any())
             {
-                throw new NotImplementedException();
+                return 0; // No transactions found
             }
 
-            // Returns fiscal year entity matching the inputted dates and company
-            //public async Task<FiscalYear> GetFiscalYearAsync(int companyId, DateTime startDate, DateTime endDate)
-            //{
-            //    return await _context.Companies
-            //        .Where(c => c.Id == companyId)
-            //        .SelectMany(fy => fy.FiscalYears)
-            //        .SingleOrDefaultAsync(f => f.StartDate >= startDate && f.EndDate <= endDate);
-            //}
+            var firstTransactionDate = transactions.Min();
+            var latestTransactionDate = transactions.Max();
+
+            int monthsDifference = ((latestTransactionDate.Year - firstTransactionDate.Year) * 12) + latestTransactionDate.Month - firstTransactionDate.Month;
+
+            return monthsDifference;
+
+
         }
+
+        public async Task<List<MonthlyTotalDTO>> GetGrossProfitHistoryAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
+                    .Where(ba => ba.Year == year)
+                    .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .Select(g => new MonthlyTotalDTO
+                    {
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+
+                        // Filter the revenue credit posts and subtract the expenses debit posts
+                        Amount =
+                        // Calculate revenue by subtracting the account class 3 (revenue) debit from its credit 
+                        (((g.Where(t => t.IsDebit == false && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)))
+                        // Subtract the revenue from the expenses
+                        -
+                        // Calculate expenses by subtracting the account classes 4 (expenses) debit from their credits
+                        ((g.Where(t => t.IsDebit == true && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "4%"))) // For "inköp av varor material´"
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == false && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "4%"))) // For "inköp av varor material´"
+                            .Sum(t => t.Amount))))
+                    })
+                    .ToListAsync();
+        }
+
+        public async Task<List<MonthlyTotalDTO>> GetOperatingMarginHistoryAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
+                    .Where(ba => ba.Year == year)
+                    .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .Select(g => new MonthlyTotalDTO
+                    {
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+
+                        // Filter the revenue credit posts and subtract the expenses debit posts
+                        Amount =
+                        // Calculate revenue by subtracting the account class 3 (revenue) debit from its credit 
+                        ((((g.Where(t => t.IsDebit == false && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)))
+                        // Subtract the revenue from the expenses
+                        -
+                        // Calculate expenses by subtracting the account classes 4-7 (expenses) debit from their credits
+                        ((g.Where(t => t.IsDebit == true && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "4%") || // For "material- och varukostnader"
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "5%") || // For "övriga kostnader" 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "6%") || // For "övriga kostnader"
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "7%"))) // For "personalkostnader´"
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == false && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "4%") || // For "material- och varukostnader"
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "5%") || // For "övriga kostnader" 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "6%") || // For "övriga kostnader"
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "7%"))) // For "personalkostnader´"
+                            .Sum(t => t.Amount)))))
+                            /
+                            (((g.Where(t => t.IsDebit == false && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)) -
+                            (g.Where(t => t.IsDebit == true && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)))) *100
+                    })
+                    .ToListAsync();
+        }
+
+        public async Task<List<MonthlyTotalDTO>> GetCashFlowAnalysisHistoryAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
+                    .Where(ba => ba.Year == year)
+                    .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .Select(g => new MonthlyTotalDTO
+                    {
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+
+                        // Filter the revenue credit posts and subtract the expenses debit posts
+                        Amount =
+                        // Calculate revenue by subtracting the account class 3 (revenue) debit from its credit 
+                        (((g.Where(t => t.IsDebit == false && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)))
+                        // Subtract the revenue from the expenses
+                        -
+                        ((g.Where(t => t.IsDebit == true && (                             
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "5%") || // For "övriga kostnader" 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "6%") || // For "övriga kostnader"
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "7%"))) // For "personalkostnader´"
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == false && (                             
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "5%") || // For "övriga kostnader" 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "6%") || // For "övriga kostnader"
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "7%"))) // For "personalkostnader´"
+                            .Sum(t => t.Amount))))
+
+                            +
+                           
+                        ((g.Where(t => t.IsDebit == false && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "11%") || // For AnnläggningsTillgångar, Maskiner eller fastighet 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "12%") || 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "13%"))) 
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "11%") || // For AnnläggningsTillgångar, Maskiner eller fastighet 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "12%") || 
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "13%"))) 
+                            .Sum(t => t.Amount)))
+
+                                +
+                           
+                        ((g.Where(t => t.IsDebit == false && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "23%")))
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "23%")))
+                            .Sum(t => t.Amount)))
+
+                                
+
+                    })
+                    .ToListAsync();
+        }
+
+        public async Task<List<MonthlyTotalDTO>> GetGrossMarginHistoryAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
+                    .Where(ba => ba.Year == year)
+                    .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .Select(g => new MonthlyTotalDTO
+                    {
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+
+                        // Filter the revenue credit posts and subtract the expenses debit posts
+                        Amount =
+                        // Calculate revenue by subtracting the account class 3 (revenue) debit from its credit 
+                        (((((g.Where(t => t.IsDebit == false && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)))
+                        // Subtract the revenue from the expenses
+                        -
+                        // Calculate expenses by subtracting the account classes 4 (expenses) debit from their credits
+                        ((g.Where(t => t.IsDebit == true && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "4%"))) // For "inköp av varor material´"
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == false && (
+                             EF.Functions.Like(t.BasAccount.AccountNumber, "4%"))) // For "inköp av varor material´"
+                            .Sum(t => t.Amount))))
+                            /
+                            ((g.Where(t => t.IsDebit == false && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)) -
+                        (g.Where(t => t.IsDebit == true && EF.Functions.Like(t.BasAccount.AccountNumber, "3%"))
+                            .Sum(t => t.Amount)))
+
+
+
+
+                            ) *100)
+                    })
+                    .ToListAsync();
+        }
+
+
+
+
+        // Returns fiscal year entity matching the inputted dates and company
+        //public async Task<FiscalYear> GetFiscalYearAsync(int companyId, DateTime startDate, DateTime endDate)
+        //{
+        //    return await _context.Companies
+        //        .Where(c => c.Id == companyId)
+        //        .SelectMany(fy => fy.FiscalYears)
+        //        .SingleOrDefaultAsync(f => f.StartDate >= startDate && f.EndDate <= endDate);
+        //}
     }
+}

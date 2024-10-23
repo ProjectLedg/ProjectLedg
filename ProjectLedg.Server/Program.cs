@@ -21,6 +21,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace ProjectLedg.Server
 {
@@ -32,7 +33,16 @@ namespace ProjectLedg.Server
             var services = builder.Services;
             Env.Load();
 
-         
+            //Creating a Session for the temporary files to exist within.
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             var mailKitSettingsSection = new MailKitSettings
             {
                 MailServer = Environment.GetEnvironmentVariable("MAILSERVER"),
@@ -51,10 +61,14 @@ namespace ProjectLedg.Server
                 options.Password = mailKitSettingsSection.Password;
             });
 
+            var formRecognizerEndpoint = Environment.GetEnvironmentVariable("FORM_RECOGNIZER_ENDPOINT");
+            var formRecognizerApiKey = Environment.GetEnvironmentVariable("FORM_RECOGNIZER_KEY");
+
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
                 options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("AZURE_DATABASE_CONNECTION_STRING"));
             });
 
             // Add services to the container.
@@ -100,7 +114,7 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "localizedLastName");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
-             
+
                 });
 
             services.AddAuthorization();
@@ -179,19 +193,37 @@ namespace ProjectLedg.Server
             //EmailList
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailRepository, EmailRepository>();
+            //Form Recognizer
+            services.AddScoped<IFormRecognizerService>(sp => new FormRecognizerService(
+                formRecognizerEndpoint,
+                formRecognizerApiKey
+            ));
+            //Blobs
+            services.AddScoped<IBlobStorageService>(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+
+                return new BlobStorageService(
+                    Environment.GetEnvironmentVariable("BLOB_STORAGE_CONNECTION_STRING"),
+                    Environment.GetEnvironmentVariable("BLOB_STORAGE_CONTAINER_NAME"),
+                    Environment.GetEnvironmentVariable("BLOB_STORAGE_API_KEY")
+                );
+            });
+            //Invoices
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
 
 
             var app = builder.Build();
 
-            app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseSession();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.UseRouting();
 
             app.UseHttpsRedirection();
 
@@ -202,12 +234,9 @@ namespace ProjectLedg.Server
 
             app.MapControllers();
 
-            app.MapFallbackToFile("/index.html");
+            //app.MapFallbackToFile("/index.html");
 
             app.Run();
-
-           
-
         }
     }
 }
