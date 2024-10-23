@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241021133742_UpdateSeedData")]
+    partial class UpdateSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,7 +221,7 @@ namespace ProjectLedg.Server.Migrations
                             AccountNumber = "1000",
                             CompanyId = 1,
                             Credit = 0m,
-                            Debit = 12750m,
+                            Debit = 50000m,
                             Description = "Assets",
                             Year = 2023
                         },
@@ -227,8 +230,8 @@ namespace ProjectLedg.Server.Migrations
                             Id = 2,
                             AccountNumber = "2000",
                             CompanyId = 1,
-                            Credit = 3000m,
-                            Debit = 1500m,
+                            Credit = 25000m,
+                            Debit = 0m,
                             Description = "Liabilities",
                             Year = 2023
                         },
@@ -237,8 +240,8 @@ namespace ProjectLedg.Server.Migrations
                             Id = 3,
                             AccountNumber = "3000",
                             CompanyId = 1,
-                            Credit = 17250m,
-                            Debit = 0m,
+                            Credit = 0m,
+                            Debit = 17550m,
                             Description = "Revenue Account",
                             Year = 2023
                         },
@@ -248,7 +251,7 @@ namespace ProjectLedg.Server.Migrations
                             AccountNumber = "4000",
                             CompanyId = 1,
                             Credit = 0m,
-                            Debit = 4300m,
+                            Debit = 4500m,
                             Description = "Material Costs",
                             Year = 2023
                         },
@@ -258,7 +261,7 @@ namespace ProjectLedg.Server.Migrations
                             AccountNumber = "5000",
                             CompanyId = 1,
                             Credit = 0m,
-                            Debit = 2200m,
+                            Debit = 15000m,
                             Description = "Other External Costs",
                             Year = 2023
                         },
@@ -268,7 +271,7 @@ namespace ProjectLedg.Server.Migrations
                             AccountNumber = "6000",
                             CompanyId = 1,
                             Credit = 0m,
-                            Debit = 2000m,
+                            Debit = 7000m,
                             Description = "Depreciation Costs",
                             Year = 2023
                         },
@@ -278,7 +281,7 @@ namespace ProjectLedg.Server.Migrations
                             AccountNumber = "7000",
                             CompanyId = 1,
                             Credit = 0m,
-                            Debit = 1000m,
+                            Debit = 4300m,
                             Description = "Personnel Costs",
                             Year = 2023
                         },
@@ -288,7 +291,7 @@ namespace ProjectLedg.Server.Migrations
                             AccountNumber = "8000",
                             CompanyId = 1,
                             Credit = 0m,
-                            Debit = 500m,
+                            Debit = 3000m,
                             Description = "Extraordinary Costs",
                             Year = 2023
                         });
@@ -325,7 +328,6 @@ namespace ProjectLedg.Server.Migrations
                         {
                             Id = 1,
                             AmountOfEmployees = 10,
-                            CompanyDescription = "This is a Company",
                             CompanyName = "Test Company",
                             OrgNumber = "1234567890"
                         });
@@ -364,24 +366,12 @@ namespace ProjectLedg.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
-
-                    b.Property<string>("CustomerAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerAddressRecipient")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
@@ -389,15 +379,13 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InvoiceFilePath")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("InvoiceFile")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("InvoiceTotal")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsBooked")
                         .HasColumnType("bit");
@@ -408,27 +396,12 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PaymentDetails")
+                    b.Property<string>("SenderName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("TotalTax")
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("VendorAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorAddressRecipient")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorTaxId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -440,147 +413,78 @@ namespace ProjectLedg.Server.Migrations
                         new
                         {
                             Id = 1,
+                            ClientName = "Client A",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
                             DueDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV001",
-                            InvoiceTotal = 5750.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company A",
+                            TotalAmount = 5750.00m
                         },
                         new
                         {
                             Id = 2,
+                            ClientName = "Client B",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV002",
-                            InvoiceTotal = 4500.00m,
-                            IsBooked = true,
-                            IsOutgoing = true,
-                            IsPaid = true,
-                            PaymentDetails = "34395139",
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            IsBooked = false,
+                            IsOutgoing = false,
+                            IsPaid = false,
+                            SenderName = "Company B",
+                            TotalAmount = 4500.00m
                         },
                         new
                         {
                             Id = 3,
+                            ClientName = "Client C",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV003",
-                            InvoiceTotal = 15800.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company C",
+                            TotalAmount = 15000.00m
                         },
                         new
                         {
                             Id = 4,
+                            ClientName = "Client D",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV004",
-                            InvoiceTotal = 72000.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company D",
+                            TotalAmount = 10000.00m
                         },
                         new
                         {
-                            Id = 1,
+                            Id = 5,
+                            ClientName = "Client E",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV005",
-                            InvoiceTotal = 11250.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
-                        },
-                        
-                        );
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.InvoiceItems", b =>
-                {
-                    b.Property<int>("InvoiceItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceItemId"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("InvoiceItemId");
-
-                    b.HasIndex("InvoiceId");
-
-                    b.ToTable("InvoiceItems");
+                            SenderName = "Company E",
+                            TotalAmount = 5000.00m
+                        });
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -621,7 +525,7 @@ namespace ProjectLedg.Server.Migrations
                             Amount = 5000.00m,
                             BasAccountId = 1,
                             InvoiceId = 1,
-                            IsDebit = true,
+                            IsDebit = false,
                             TransactionDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -630,7 +534,7 @@ namespace ProjectLedg.Server.Migrations
                             Amount = 750.00m,
                             BasAccountId = 1,
                             InvoiceId = 1,
-                            IsDebit = true,
+                            IsDebit = false,
                             TransactionDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -639,7 +543,7 @@ namespace ProjectLedg.Server.Migrations
                             Amount = 2500.00m,
                             BasAccountId = 1,
                             InvoiceId = 3,
-                            IsDebit = true,
+                            IsDebit = false,
                             TransactionDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -648,7 +552,7 @@ namespace ProjectLedg.Server.Migrations
                             Amount = 3000.00m,
                             BasAccountId = 1,
                             InvoiceId = 4,
-                            IsDebit = true,
+                            IsDebit = false,
                             TransactionDate = new DateTime(2023, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -657,7 +561,7 @@ namespace ProjectLedg.Server.Migrations
                             Amount = 1500.00m,
                             BasAccountId = 1,
                             InvoiceId = 5,
-                            IsDebit = true,
+                            IsDebit = false,
                             TransactionDate = new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -681,25 +585,25 @@ namespace ProjectLedg.Server.Migrations
                         new
                         {
                             Id = 2007,
-                            Amount = 9000.00m,
+                            Amount = 1800.00m,
                             BasAccountId = 3,
                             InvoiceId = 3,
-                            IsDebit = false,
+                            IsDebit = true,
                             TransactionDate = new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2011,
-                            Amount = 8250.00m,
+                            Amount = 2500.00m,
                             BasAccountId = 3,
                             InvoiceId = 5,
-                            IsDebit = false,
+                            IsDebit = true,
                             TransactionDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2014,
-                            Amount = 43000.00m,
+                            Amount = 15000.00m,
                             BasAccountId = 4,
                             InvoiceId = 3,
                             IsDebit = true,
@@ -708,10 +612,10 @@ namespace ProjectLedg.Server.Migrations
                         new
                         {
                             Id = 2015,
-                            Amount = 2200.00m,
+                            Amount = 10000.00m,
                             BasAccountId = 5,
                             InvoiceId = 4,
-                            IsDebit = true,
+                            IsDebit = false,
                             TransactionDate = new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -822,7 +726,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "9fa92307-a647-480e-91e9-0b602472b167",
+                            ConcurrencyStamp = "49697bfc-69ae-4cdb-8410-9207829aa2c7",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -830,9 +734,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHlA6xzz7nHwuU387kgcoRMGB530rsqSaOCoplZ85gHxt6IIFg8ZklzwOvh/koDugQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKOA+Je3ar7I/SoZXbh/+rchWXYw9V6cHKO5EWB8zt01LuWIomZPregRYiwuwBhERA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ed45be2a-f940-4ace-b160-e7e10b65a98c",
+                            SecurityStamp = "fa726e9d-5bf3-4888-90e8-5be22d98f1af",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
@@ -922,17 +826,6 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.InvoiceItems", b =>
-                {
-                    b.HasOne("ProjectLedg.Server.Data.Models.Invoice", "Invoice")
-                        .WithMany("Items")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Invoice");
-                });
-
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
                 {
                     b.HasOne("ProjectLedg.Server.Data.Models.BasAccount", "BasAccount")
@@ -966,8 +859,6 @@ namespace ProjectLedg.Server.Migrations
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
-                    b.Navigation("Items");
-
                     b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618

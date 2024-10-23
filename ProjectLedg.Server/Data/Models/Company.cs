@@ -7,7 +7,7 @@
         public string OrgNumber { get; set; }
         public int AmountOfEmployees { get; set; }
 
-        public string CompanyDescription { get; set; }
+        public string? CompanyDescription { get; set; }
         //public virtual ICollection<FiscalYear> FiscalYears { get; set; }
         
         public virtual ICollection<BasAccount>? BasAccounts { get; set; }
