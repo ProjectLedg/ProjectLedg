@@ -547,9 +547,7 @@ namespace ProjectLedg.Server.Migrations
                             VendorAddressRecipient = "Erkan",
                             VendorName = "Blues Kök & Bar",
                             VendorTaxId = "59315"
-                        },
-                        
-                        );
+                        });
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.InvoiceItems", b =>

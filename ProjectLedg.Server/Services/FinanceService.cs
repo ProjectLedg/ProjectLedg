@@ -390,7 +390,7 @@ namespace ProjectLedg.Server.Services
             }
 
             return (text, symbol);
-        };
+        }
 
 
         public async Task<FinanceInsightsYearDTO> GetFinanceInsightsYearAsync(FinanceRequestDTO financeDto)
