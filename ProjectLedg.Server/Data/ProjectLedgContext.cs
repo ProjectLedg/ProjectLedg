@@ -11,8 +11,9 @@ namespace ProjectLedg.Server.Data
         public ProjectLedgContext(DbContextOptions<ProjectLedgContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
-        //public DbSet<FiscalYear> FiscalYears { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceItems> InvoiceItems { get; set; }
+        public DbSet<IngoingInvoice> IngoingInvoices { get; set; }
+        public DbSet<OutgoingInvoice> OutgoingInvoices { get; set; }
         public DbSet<BasAccount> BasAccounts { get; set; }
         public DbSet<EmailList> Emails { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
@@ -43,7 +44,7 @@ namespace ProjectLedg.Server.Data
 
             // Seed Company data
             modelBuilder.Entity<Company>().HasData(
-                new Company { Id = 1, CompanyName = "Test Company", OrgNumber = "1234567890", CompanyDescription = "This is a Company", AmountOfEmployees = 10 }
+                new Company { Id = 1, CompanyName = "Test Company", OrgNumber = "1234567890", CompanyDescription = "This is a Company", AmountOfEmployees = 10, Address="Test adress" ,TaxId ="1231531432"}
             );
 
             // Seed relationship between User and Company
@@ -88,8 +89,8 @@ namespace ProjectLedg.Server.Data
         );
 
             //// Seed Invoice data
-            modelBuilder.Entity<Invoice>().HasData(
-    new Invoice
+            modelBuilder.Entity<IngoingInvoice>().HasData(
+    new IngoingInvoice
     {
         Id = 1,
         InvoiceNumber = "INV001",
@@ -111,7 +112,7 @@ namespace ProjectLedg.Server.Data
         InvoiceFilePath = "https://localhost:7223",
         CompanyId = 1 // Foreign key reference to Company
     },
-    new Invoice
+    new IngoingInvoice
     {
         Id = 2,
         InvoiceNumber = "INV002",
@@ -258,7 +259,7 @@ namespace ProjectLedg.Server.Data
             );
 
 modelBuilder.Entity<Transaction>()
-    .HasOne(t => t.Invoice)
+    .HasOne(t => t.IngoingInvoice)
     .WithMany(i => i.Transactions)
     .HasForeignKey(t => t.InvoiceId)
     .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on Invoice
