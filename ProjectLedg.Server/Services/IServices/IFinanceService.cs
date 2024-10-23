@@ -10,5 +10,7 @@ namespace ProjectLedg.Server.Services.IServices
         public Task<RevenueDTO> GetYearToDateRevenueAsync(FinanceRequestDTO financeDto);
 
         public Task<ExpensesDTO> GetYearToDateExpensesAsync(FinanceRequestDTO financeDto);
+
+        public Task<FinanceInsightsYearDTO> GetFinanceInsightsYearAsync(FinanceRequestDTO financeDto);
     }
 }

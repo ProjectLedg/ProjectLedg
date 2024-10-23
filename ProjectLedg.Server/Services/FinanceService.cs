@@ -149,6 +149,41 @@ namespace ProjectLedg.Server.Services
                 }
 
             }
+
+
+        public async Task<FinanceInsightsYearDTO> GetFinanceInsightsYearAsync(FinanceRequestDTO financeDto)
+        {
+            try {
+                var grossprofit = await _financeRepo.GetGrossProfitHistoryAsync(financeDto.CompanyId, financeDto.Year);
+                var operatingMargin = await _financeRepo.GetOperatingMarginHistoryAsync(financeDto.CompanyId, financeDto.Year);
+                var cashFlowAnalysis = await _financeRepo.GetCashFlowAnalysisHistoryAsync(financeDto.CompanyId, financeDto.Year);
+                var grossMargin = await _financeRepo.GetGrossMarginHistoryAsync(financeDto.CompanyId, financeDto.Year);
+
+                return new FinanceInsightsYearDTO
+                {
+                    GrossProfit = grossprofit,
+                    OperatingMargin = operatingMargin,
+                    CashFlowAnalysis = cashFlowAnalysis,
+                    GrossMargin = grossMargin
+                };
+
+            }
+            catch (Exception e)
+            {
+                return new FinanceInsightsYearDTO
+                {
+                    GrossProfit = new List<MonthlyTotalDTO>(),
+                    OperatingMargin = new List<MonthlyTotalDTO>(),
+                    CashFlowAnalysis = new List<MonthlyTotalDTO>(),
+                    GrossMargin = new List<MonthlyTotalDTO>()
+                };
+            }
+
+        }
+
+        
+
+
         private async Task<RunwayDTO> CalculateRunway(int companyId, int year)
         {
             int runningMonths = await _financeRepo.GetRunningMonthsAsync(companyId);
@@ -218,5 +253,6 @@ namespace ProjectLedg.Server.Services
             };
         }
 
+       
     }
 }
