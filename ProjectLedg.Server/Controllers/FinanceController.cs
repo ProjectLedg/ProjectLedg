@@ -23,5 +23,13 @@ namespace ProjectLedg.Server.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("dashboardbottomgraphs")]
+        public async Task<IActionResult> GetYearToDateInsights(FinanceRequestDTO request)
+        {
+            var result = await _financeService.GetFinanceInsightsYearAsync(request);
+
+            return Ok(result);
+        }
     }
 }
