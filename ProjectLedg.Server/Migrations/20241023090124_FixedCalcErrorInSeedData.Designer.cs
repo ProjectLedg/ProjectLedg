@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241023090124_FixedCalcErrorInSeedData")]
+    partial class FixedCalcErrorInSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -302,10 +305,6 @@ namespace ProjectLedg.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("AmountOfEmployees")
                         .HasColumnType("int");
 
@@ -320,10 +319,6 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TaxId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
@@ -332,47 +327,10 @@ namespace ProjectLedg.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Address = "Test adress",
                             AmountOfEmployees = 10,
-                            CompanyDescription = "This is a Company",
                             CompanyName = "Test Company",
-                            OrgNumber = "1234567890",
-                            TaxId = "1231531432"
+                            OrgNumber = "1234567890"
                         });
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Customer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OrganizationNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TaxId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.EmailList", b =>
@@ -400,7 +358,7 @@ namespace ProjectLedg.Server.Migrations
                     b.ToTable("Emails");
                 });
 
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.IngoingInvoice", b =>
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -408,24 +366,12 @@ namespace ProjectLedg.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
-
-                    b.Property<string>("CustomerAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerAddressRecipient")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
@@ -433,15 +379,13 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InvoiceFilePath")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("InvoiceFile")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("InvoiceTotal")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsBooked")
                         .HasColumnType("bit");
@@ -452,231 +396,95 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PaymentDetails")
+                    b.Property<string>("SenderName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("TotalTax")
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("VendorAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorAddressRecipient")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorTaxId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("IngoingInvoices");
+                    b.ToTable("Invoices");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            ClientName = "Client A",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
                             DueDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV001",
-                            InvoiceTotal = 5750.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company A",
+                            TotalAmount = 5750.00m
                         },
                         new
                         {
                             Id = 2,
+                            ClientName = "Client B",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV002",
-                            InvoiceTotal = 4500.00m,
-                            IsBooked = true,
-                            IsOutgoing = true,
-                            IsPaid = true,
-                            PaymentDetails = "34395139",
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            IsBooked = false,
+                            IsOutgoing = false,
+                            IsPaid = false,
+                            SenderName = "Company B",
+                            TotalAmount = 4500.00m
                         },
                         new
                         {
                             Id = 3,
+                            ClientName = "Client C",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV003",
-                            InvoiceTotal = 15800.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company C",
+                            TotalAmount = 15800.00m
                         },
                         new
                         {
                             Id = 4,
+                            ClientName = "Client D",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV004",
-                            InvoiceTotal = 72000.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company D",
+                            TotalAmount = 72000.00m
                         },
                         new
                         {
-                            Id = 1,
+                            Id = 5,
+                            ClientName = "Client E",
                             CompanyId = 1,
-                            CustomerAddress = "Arenavägen 61",
-                            CustomerAddressRecipient = "Hjalmar Stranninge AB",
-                            CustomerId = "1",
-                            CustomerName = "Hjalmar Stranninge",
-                            DueDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceFilePath = "https://localhost:7223",
+                            DueDate = new DateTime(2023, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceDate = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InvoiceFile = new byte[0],
                             InvoiceNumber = "INV005",
-                            InvoiceTotal = 11250.00m,
                             IsBooked = true,
                             IsOutgoing = true,
                             IsPaid = true,
-                            TotalTax = 50.00m,
-                            VendorAddress = "Arenavägen 61",
-                            VendorAddressRecipient = "Erkan",
-                            VendorName = "Blues Kök & Bar",
-                            VendorTaxId = "59315"
+                            SenderName = "Company E",
+                            TotalAmount = 11250.00m
                         });
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.InvoiceItems", b =>
-                {
-                    b.Property<int>("InvoiceItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceItemId"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OutgoingInvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("InvoiceItemId");
-
-                    b.HasIndex("InvoiceId");
-
-                    b.HasIndex("OutgoingInvoiceId");
-
-                    b.ToTable("InvoiceItems");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InvoiceFilePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("InvoiceTotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsOutgoing")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PaymentDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalTax")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("OutgoingInvoices");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -699,9 +507,6 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<bool>("IsDebit")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("OutgoingInvoiceId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
 
@@ -710,8 +515,6 @@ namespace ProjectLedg.Server.Migrations
                     b.HasIndex("BasAccountId");
 
                     b.HasIndex("InvoiceId");
-
-                    b.HasIndex("OutgoingInvoiceId");
 
                     b.ToTable("Transactions");
 
@@ -923,10 +726,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-
-                            ConcurrencyStamp = "c326a911-c0e7-463b-b2a9-c10bdfca7350",
-
-
+                            ConcurrencyStamp = "9fa92307-a647-480e-91e9-0b602472b167",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -934,10 +734,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-
-                            PasswordHash = "AQAAAAIAAYagAAAAEK7PDOQUBnYL73ALELi2kTnGWa0vv248LyC/GJzSSHSkE1MV1L5XizdTQvKUxqJBZg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHlA6xzz7nHwuU387kgcoRMGB530rsqSaOCoplZ85gHxt6IIFg8ZklzwOvh/koDugQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e2eae5e6-6d3e-4e4b-892b-586bd9e52c82",
+                            SecurityStamp = "ed45be2a-f940-4ace-b160-e7e10b65a98c",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
@@ -1018,42 +817,13 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Customer", b =>
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
                     b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
-                        .WithMany("Customers")
-                        .HasForeignKey("CompanyId");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.IngoingInvoice", b =>
-                {
-                    b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
-                        .WithMany("IngoingInvoices")
+                        .WithMany("Invoices")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.InvoiceItems", b =>
-                {
-                    b.HasOne("ProjectLedg.Server.Data.Models.IngoingInvoice", "Invoice")
-                        .WithMany("Items")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjectLedg.Server.Data.Models.OutgoingInvoice", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OutgoingInvoiceId");
-
-                    b.Navigation("Invoice");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
-                {
-                    b.HasOne("ProjectLedg.Server.Data.Models.Customer", null)
-                        .WithMany("OutgoingInvoices")
-                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -1064,21 +834,15 @@ namespace ProjectLedg.Server.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProjectLedg.Server.Data.Models.IngoingInvoice", "IngoingInvoice")
+                    b.HasOne("ProjectLedg.Server.Data.Models.Invoice", "Invoice")
                         .WithMany("Transactions")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProjectLedg.Server.Data.Models.OutgoingInvoice", "OutgoingInvoice")
-                        .WithMany("Transactions")
-                        .HasForeignKey("OutgoingInvoiceId");
-
                     b.Navigation("BasAccount");
 
-                    b.Navigation("IngoingInvoice");
-
-                    b.Navigation("OutgoingInvoice");
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.BasAccount", b =>
@@ -1090,27 +854,11 @@ namespace ProjectLedg.Server.Migrations
                 {
                     b.Navigation("BasAccounts");
 
-                    b.Navigation("Customers");
-
-                    b.Navigation("IngoingInvoices");
+                    b.Navigation("Invoices");
                 });
 
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Customer", b =>
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Invoice", b =>
                 {
-                    b.Navigation("OutgoingInvoices");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.IngoingInvoice", b =>
-                {
-                    b.Navigation("Items");
-
-                    b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
-                {
-                    b.Navigation("Items");
-
                     b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618

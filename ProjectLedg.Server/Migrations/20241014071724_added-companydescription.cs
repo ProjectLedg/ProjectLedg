@@ -14,8 +14,8 @@ namespace ProjectLedg.Server.Migrations
                 name: "CompanyDescription",
                 table: "Companies",
                 type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+                nullable: true,
+                defaultValue: null);
         }
 
         /// <inheritdoc />
