@@ -46,7 +46,7 @@ namespace ProjectLedg.Server.Services
                         return false;
                     }
 
-                    var invoice = new Invoice
+                    var invoice = new IngoingInvoice
                     {
                         InvoiceNumber = invoiceDto.InvoiceNumber,
                         InvoiceDate = invoiceDto.InvoiceDate,
@@ -105,19 +105,19 @@ namespace ProjectLedg.Server.Services
 
 
         //other crud operations for Manual use
-        public async Task<Invoice?> GetInvoiceByIdAsync(int invoiceId)
+        public async Task<IngoingInvoice?> GetInvoiceByIdAsync(int invoiceId)
         {
             return await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
         }
 
-        public async Task<IEnumerable<Invoice>> GetAllInvoicesAsync()
+        public async Task<IEnumerable<IngoingInvoice>> GetAllInvoicesAsync()
         {
             return await _invoiceRepository.GetAllInvoicesAsync();
         }
 
         public async Task<bool> CreateInvoiceAsync(InvoiceDTO invoiceDto)
         {
-            var invoice = new Invoice
+            var invoice = new IngoingInvoice
             {
                 InvoiceNumber = invoiceDto.InvoiceNumber,
                 InvoiceDate = invoiceDto.InvoiceDate,
