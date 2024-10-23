@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
@@ -41,7 +42,7 @@ namespace ProjectLedg.Server.Controllers
 
             return Ok(extractedData);
         }
-
+        [Authorize]
         [HttpPost("save")]
         public async Task<IActionResult> SaveInvoice([FromBody] InvoiceDTO invoiceDto)
         {
