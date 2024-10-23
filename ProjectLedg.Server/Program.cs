@@ -105,6 +105,16 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
 
+                })
+                //Add Microsoft account authentication
+                .AddMicrosoftAccount(options =>
+                {
+                    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
+                    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 });
 
             services.AddAuthorization();
