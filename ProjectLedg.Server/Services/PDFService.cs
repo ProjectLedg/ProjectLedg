@@ -154,7 +154,7 @@ namespace ProjectLedg.Server.Services
 
             // Header: Invoice Information
             sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-bottom: 30px;'>");
-            sb.Append("<h1 style='color: #333;'>INVOICE</h1>");
+            sb.Append("<h1 style='color: #333;'>FAKTURA</h1>");
             sb.Append($"<h3 style='color: #666;'>Fakturanummer: {invoice.InvoiceNumber}</h3>");
             sb.Append($"<p style='font-size: 12px; color: #666;'>Fakturadatum: {invoice.InvoiceDate:yyyy-MM-dd}</p>");
             sb.Append($"<p style='font-size: 12px; color: #666;'>Förfallodatum: {invoice.DueDate:yyyy-MM-dd}</p>");
@@ -206,8 +206,8 @@ namespace ProjectLedg.Server.Services
 
             // Footer: Payment Information
             sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-top: 50px;'>");
-            sb.Append($"<p style='font-size: 12px;'><strong>Payment Details:</strong> {invoice.PaymentDetails ?? "N/A"}</p>");
-            sb.Append("<p style='font-size: 12px;'>Thank you for your business!</p>");
+            sb.Append($"<p style='font-size: 12px;'><strong>Betalnings:</strong> {invoice.PaymentDetails ?? "N/A"}</p>");
+            sb.Append("<p style='font-size: 12px;'>Denna faktura har skapats med Ledge's Faktura tjänst!</p>");
             sb.Append("</div>");
 
             // PDF Document Generation
