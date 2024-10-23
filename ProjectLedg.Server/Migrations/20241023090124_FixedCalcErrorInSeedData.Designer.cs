@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241023090124_FixedCalcErrorInSeedData")]
+    partial class FixedCalcErrorInSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
