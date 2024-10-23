@@ -16,10 +16,18 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Endpoints
-        [HttpPost]
+        [HttpPost("DashboardDataYTD")]
         public async Task<IActionResult> GetYearToDateFinances(FinanceRequestDTO request)
         {
             var result = await _financeService.GetYearToDateFinancesAsync(request);
+
+            return Ok(result);
+        }
+
+        [HttpPost("GetFinancialReport")]
+        public async Task<IActionResult> GetFinancialReport(FinanceRequestDTO request)
+        {
+            var result = await _financeService.GetFinancialReportAsync(request);
 
             return Ok(result);
         }

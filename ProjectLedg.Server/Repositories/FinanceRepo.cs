@@ -4,6 +4,7 @@
     using ProjectLedg.Server.Data.Models.DTOs.Finance;
     using ProjectLedg.Server.Repositories.IRepositories;
     using System.ComponentModel.Design;
+using System.Globalization;
 
     namespace ProjectLedg.Server.Repositories
     {
@@ -37,9 +38,9 @@
                 return await _context.Companies
                      .Where(c => c.Id == companyId)
                      .SelectMany(c => c.BasAccounts)
-                     // "Konto klass" 4, 5 , 6 & 7 is" is for expenses
                      .Where(ba => 
                          ba.Year == year && (
+                         // "Konto klass" 4, 5 , 6 & 7 is" is for expenses
                          EF.Functions.Like(ba.AccountNumber, "4%") || // For "material- och varukostnader"
                          EF.Functions.Like(ba.AccountNumber, "5%") || // For "övriga kostnader" 
                          EF.Functions.Like(ba.AccountNumber, "6%") || // For "övriga kostnader"
@@ -55,7 +56,52 @@
 
                 return revenue - expenses; 
             }
-        
+
+            public async Task<List<MonthlyTotalDTO>> GetYearToDateAssetsHistoryAsync(int companyId, int year)
+            {
+                return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(c => c.BasAccounts)
+                    .Where(ba =>
+                        ba.Year == year &&
+                        EF.Functions.Like(ba.AccountNumber, "1%"))
+                    .SelectMany(ba => ba.Transactions)
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .Select(g => new MonthlyTotalDTO
+                    {
+                        // Sum debit and credit separatly and subtract
+                        Amount = 
+                        g.Where(t => t.IsDebit == true).Sum(t => t.Amount) - 
+                        g.Where(t => t.IsDebit == false).Sum(t => t.Amount),
+
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")),
+                    })
+                    .ToListAsync();
+            }
+
+            public async Task<List<MonthlyTotalDTO>> GetYearToDateDebtsHistoryAsync(int companyId, int year)
+            {
+                return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(c => c.BasAccounts)
+                    .Where(ba =>
+                        ba.Year == year &&
+                        EF.Functions.Like(ba.AccountNumber, "2%"))
+                    .SelectMany(ba => ba.Transactions)
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .Select(g => new MonthlyTotalDTO
+                    {
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")),
+
+                        Amount = 
+                            g.Where(t => t.IsDebit == false).Sum(t => t.Amount) -
+                            g.Where(t => t.IsDebit == true).Sum(t => t.Amount)
+                    })
+                    .ToListAsync();
+            }
+
             public async Task<List<MonthlyTotalDTO>> GetRevenueHistoryAsync(int companyId, int year)
             {
                 return await _context.Companies
@@ -67,7 +113,7 @@
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                     .Select(g => new MonthlyTotalDTO
                     {
-                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")),
 
                         // Set amount to the sum of credit - the sum of debit
                         Amount = 
@@ -91,7 +137,7 @@
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                     .Select(g => new MonthlyTotalDTO
                     {
-                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")), 
 
                         // Filter the revenue credit posts and subtract the expenses debit posts
                         Amount =
@@ -135,7 +181,7 @@
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                     .Select(g => new MonthlyTotalDTO
                     {
-                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")), 
 
                         // Set amount to the sum of credit - the sum of debit
                         Amount = 
@@ -144,6 +190,13 @@
 
                     })
                     .ToListAsync();
+            }
+
+
+
+            public Task<List<BalanceDataDTO>> GetBalanceData(int companyId, int year)
+            {
+                throw new NotImplementedException();
             }
 
             // Returns fiscal year entity matching the inputted dates and company
