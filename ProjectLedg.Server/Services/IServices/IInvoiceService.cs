@@ -5,8 +5,8 @@ namespace ProjectLedg.Server.Services.IServices
 {
     public interface IInvoiceService
     {
-        Task<Invoice?> GetInvoiceByIdAsync(int invoiceId);
-        Task<IEnumerable<Invoice>> GetAllInvoicesAsync();
+        Task<IngoingInvoice?> GetInvoiceByIdAsync(int invoiceId);
+        Task<IEnumerable<IngoingInvoice>> GetAllInvoicesAsync();
         Task<bool> CreateInvoiceAsync(InvoiceDTO invoiceDto);
         Task<bool> UpdateInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto);
         Task<bool> DeleteInvoiceAsync(int invoiceId);

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectLedg.Server.Data.Models
 {
-    public class Invoice
+    public class IngoingInvoice
     {
         [Key]
         public int Id { get; set; }

@@ -5,54 +5,54 @@ using ProjectLedg.Server.Repositories.IRepositories;
 
 namespace ProjectLedg.Server.Repositories
 {
-    public class InvoiceRepository : IInvoiceRepository
+    public class IngoingInvoiceRepository : IInvoiceRepository
     {
         private readonly ProjectLedgContext _context;
 
-        public InvoiceRepository(ProjectLedgContext context)
+        public IngoingInvoiceRepository(ProjectLedgContext context)
         {
             _context = context;
         }
 
-        public async Task<Invoice?> GetInvoiceByIdAsync(int invoiceId)
+        public async Task<IngoingInvoice?> GetInvoiceByIdAsync(int invoiceId)
         {
-            return await _context.Invoices.FindAsync(invoiceId);
+            return await _context.IngoingInvoices.FindAsync(invoiceId);
         }
 
-        public async Task<IEnumerable<Invoice>> GetAllInvoicesAsync()
+        public async Task<IEnumerable<IngoingInvoice>> GetAllInvoicesAsync()
         {
-            return await _context.Invoices.ToListAsync();
+            return await _context.IngoingInvoices.ToListAsync();
         }
 
-        public async Task<bool> CreateInvoiceAsync(Invoice invoice)
+        public async Task<bool> CreateInvoiceAsync(IngoingInvoice invoice)
         {
-            await _context.Invoices.AddAsync(invoice);
+            await _context.IngoingInvoices.AddAsync(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateInvoiceAsync(Invoice invoice)
+        public async Task<bool> UpdateInvoiceAsync(IngoingInvoice invoice)
         {
-            _context.Invoices.Update(invoice);
+            _context.IngoingInvoices.Update(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> DeleteInvoiceAsync(int invoiceId)
         {
-            var invoice = await _context.Invoices.FindAsync(invoiceId);
+            var invoice = await _context.IngoingInvoices.FindAsync(invoiceId);
             if (invoice == null)
             {
                 return false;
             }
 
-            _context.Invoices.Remove(invoice);
+            _context.IngoingInvoices.Remove(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> SaveInvoiceAsync(Invoice invoice)
+        public async Task<bool> SaveInvoiceAsync(IngoingInvoice invoice)
         {
             try
             {
-                await _context.Invoices.AddAsync(invoice);
+                await _context.IngoingInvoices.AddAsync(invoice);
                 return await _context.SaveChangesAsync() > 0;
             }
             catch (Exception ex)

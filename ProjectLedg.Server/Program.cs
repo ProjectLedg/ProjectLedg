@@ -210,7 +210,7 @@ namespace ProjectLedg.Server
                 );
             });
             //Invoices
-            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IInvoiceRepository, IngoingInvoiceRepository>();
             services.AddScoped<IInvoiceService, InvoiceService>();
 
 

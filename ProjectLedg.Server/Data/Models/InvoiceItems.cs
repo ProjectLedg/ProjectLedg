@@ -12,6 +12,6 @@ namespace ProjectLedg.Server.Data.Models
         public decimal Amount { get; set; }
 
         public int InvoiceId { get; set; } // FK to the Invoice model
-        public Invoice Invoice { get; set; } // Nav property to Invoice
+        public IngoingInvoice Invoice { get; set; } // Nav property to Invoice
     }
 }
