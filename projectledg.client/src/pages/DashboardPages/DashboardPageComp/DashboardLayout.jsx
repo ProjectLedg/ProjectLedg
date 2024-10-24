@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import ChatWindow from "./ChatWindow"; // Ensure this component exists and is imported
+import ChatWindow from "./ChatWindow";
+import { motion, AnimatePresence } from "framer-motion"
+import Cookies from "js-cookie";
 import {
   Home,
   Menu,
@@ -15,6 +16,7 @@ import {
   HelpCircle,
   BookDown,
   LogOut,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
@@ -22,6 +24,7 @@ const navItems = [
   { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top" },
   { icon: BookCheck, label: "Bokför", path: "/book", position: "top" },
   { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top" },
+  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
   { icon: HelpCircle, label: "Hjälp", path: "/", position: "bottom" },
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
@@ -30,7 +33,9 @@ const navItems = [
 const NavItem = ({ icon: Icon, label, path }) => {
   const { companyId } = useParams(); // Get companyId from the route params
   const fullPath = `/dashboard/${companyId}${path}`;
-
+  if (label === "Logga ut") {
+    return handleLogout({ icon: Icon, label, path });
+  }
   return (
     <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
       <Icon className="h-5 w-5" />
@@ -38,6 +43,24 @@ const NavItem = ({ icon: Icon, label, path }) => {
     </Link>
   );
 };
+
+
+const handleLogout = ({ icon: Icon, label, path }) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    Cookies.remove('JWTToken');
+    // Add any additional logout logic here
+    window.location.href = path; // Redirect after logout
+  };
+
+  return (
+    <a href={path} onClick={handleClick} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+      <Icon className="h-5 w-5" />
+      <span>{label}</span>
+    </a>
+  );
+};
+
 
 const NavItemSmall = ({ icon: Icon, path }) => {
   const { companyId } = useParams(); // Get companyId from the route params
@@ -50,47 +73,36 @@ const NavItemSmall = ({ icon: Icon, path }) => {
   );
 };
 
-const Sidebar = () => (
-  <div className="hidden md:flex pb-12 bg-yellow/60 bg-opacity-80 w-60 h-full flex-col border-r bg-gradient-to-r from-gray-200 to-gray-100/50">
+
+const Sidebar = ({ isChatOpen }) => (
+  <motion.div
+    initial={{ width: isChatOpen ? '5rem' : '15rem' }}
+    animate={{ width: isChatOpen ? '5rem' : '15rem' }}
+    transition={{ duration: 0.6 }}
+    className="hidden md:flex pb-12 h-full flex-col"
+  >
+
     <div className="flex-grow space-y-4 py-4">
       <div className="px-3 py-2">
-        <div className="space-y-1">
+        <div className={`space-y-1 ${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
           {navItems.filter(item => item.position === "top").map((item, index) => (
-            <NavItem key={index} {...item} />
+            !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
           ))}
         </div>
       </div>
     </div>
     <div className="mt-auto px-3 py-2 border-t">
-      <div className="space-y-1">
+      <div className={`space-y-1 ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          <NavItem key={index} {...item} />
+          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
         ))}
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
-const SidebarSmall = () => (
-  <div className="hidden md:flex pb-12 bg-yellow/60 bg-opacity-80 w-20 h-full flex-col border-r bg-gradient-to-r from-gray-200 to-gray-100/50">
-    <div className="flex-grow space-y-4 py-4">
-      <div className="px-3 py-2 ">
-        <div className="space-y-1 flex flex-col justify-around h-[30vh]">
-          {navItems.filter(item => item.position === "top").map((item, index) => (
-            <NavItemSmall key={index} {...item} />
-          ))}
-        </div>
-      </div>
-    </div>
-    <div className="mt-auto px-3 py-2 border-t">
-      <div className="space-y-1 flex flex-col justify-around h-[20vh]">
-        {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          <NavItemSmall key={index} {...item} />
-        ))}
-      </div>
-    </div>
-  </div>
-);
+
+
 
 const MobileNav = ({ navItems }) => (
   <Sheet>
@@ -134,18 +146,17 @@ export default function DashboardLayout() {
   return (
     <div className="flex h-screen overflow-hidden shadow-lg">
       {/* Sidebar */}
-      <div>
-        {isChatOpen ? <SidebarSmall /> : <Sidebar />}
-      </div>
+      <Sidebar isChatOpen={isChatOpen} />
+
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1">
-        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
-          <div className={`max-w-7xl sm:px-6 md:px-8 w-full ${isChatOpen ? 'mx-0' : 'mx-auto'}`}>
+      <div className="MAIN CONTENT flex flex-col flex-1">
+        <div className=" flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
+          <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">  {/* removed lg:mx-[3rem] */}
 
             {/* Navbar */}
-            <header className="fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
-              <div className="max-w-7xl mx-auto sm:px-6 md:px-8">
+            <header className="NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
+              <div className=" mx-auto sm:px-6 md:px-8">
                 <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem]">
                   <div className="flex items-center">
 
@@ -170,14 +181,36 @@ export default function DashboardLayout() {
             </header>
 
             {/* Chart Content Box */}
-            <div className="mt-24 mb-8 flex flex-row">
-              <div className={`chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 ${isChatOpen ? 'w-[60vw]' : 'w-full'}`}>
-                <Outlet context={{ isChatOpen }} />
+            <div className="flex flex-row m-0 mr-8">
+
+              <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
+
+                <motion.div
+                  className={`chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8  mb-8`}
+                  animate={{
+                    width: isChatOpen ? '67%' : '100%',
+                  }}
+                  initial={{ width: '100%' }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                >
+                  <Outlet context={{ isChatOpen }} />
+                </motion.div>
+
+                <AnimatePresence>
+                  {isChatOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 1000 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 1000 }}
+                      transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
+                      className="inherit w-[30vw] fixed right-0"
+                    >
+                      <ChatWindow onClose={toggleChat} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
               </div>
-
-              {/* Conditionally render ChatWindow */}
-              {isChatOpen && <ChatWindow onClose={toggleChat} />}
-
             </div>
           </div>
         </div>
