@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import NavbarButtons from "./NavbarButtons";
 import ChatWindow from "./ChatWindow";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
@@ -166,16 +167,9 @@ export default function DashboardLayout() {
                     </div>
                     <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1>
                   </div>
-                  <div className="flex items-center space-x-2 sm:space-x-4">
-                    <Button variant="ghost" size="icon" onClick={toggleChat} className={`transition-colors duration-200 ${isChatOpen ? 'bg-white' : ''}`}>
-                      <MessageSquarePlus className="h-5 w-5" />
-                      <span className="sr-only">Ask Ledge</span>
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <UserPlus className="h-5 w-5" />
-                      <span className="sr-only">Invite Client</span>
-                    </Button>
-                  </div>
+                  <div className="flex items-center mr-[5rem] space-x-2 sm:space-x-4">
+                            <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
+                    </div>
                 </div>
               </div>
             </header>
