@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
 using System.IO;
@@ -78,5 +79,24 @@ namespace ProjectLedg.Server.Controllers
             return Ok(extractedData);
         }
 
+        [HttpPost("Generate-Invoice-Pdf")]
+        public IActionResult GenerateInvoicePdf([FromBody] InvoiceDTO invoice)
+        {
+            if (invoice == null)
+            {
+                return BadRequest("Invoice data is required.");
+            }
+
+            try
+            {
+                var pdfBytes = _pdfService.GenerateInvoicePdf(invoice);
+
+                return File(pdfBytes, "application/pdf", $"{invoice.InvoiceNumber}_Invoice.pdf");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

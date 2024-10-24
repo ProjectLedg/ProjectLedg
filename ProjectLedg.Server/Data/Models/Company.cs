@@ -8,6 +8,8 @@
         public int AmountOfEmployees { get; set; }
         public string Address { get; set; }
         public string TaxId { get; set; }
+        public string CompanyDescription { get; set; }
+      
         public virtual ICollection<BasAccount>? BasAccounts { get; set; }
         public virtual ICollection<IngoingInvoice>? IngoingInvoices { get; set; }
         public virtual ICollection<Customer>? Customers { get; set; }
