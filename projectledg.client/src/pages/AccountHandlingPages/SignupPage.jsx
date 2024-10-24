@@ -85,6 +85,17 @@ const SignUpPage = () => {
     }
   };
 
+  const handleMicrosoftSignIn = () => {
+    try {
+      window.location.href = "https://localhost:7223/login-microsoft"
+    }
+    catch (error) {
+      console.error("Error during sign-in redirect:", error);
+      // alert("An error occured while redirecting to Google login. Please try again.")
+      alert("An error occured while redirecting to Microsoft login. Please try again.")
+    }
+  }
+
   const features = [
     'Lägg upp obegränsat med faktorur',
     'Översikt på din ekonomi',
@@ -148,7 +159,20 @@ const SignUpPage = () => {
                   </svg>
                   Fortsätt med Google
                 </Button>
-                
+                <Button
+                  onClick={handleMicrosoftSignIn}
+                  className="w-full bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center justify-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23" className="w-5 h-5 mr-2">
+                    <title>Logga in med Microsoft</title>
+                    <desc>Microsoft Logo</desc>
+                    <path fill="#f35325" d="M1 1h10v10H1z" />
+                    <path fill="#81bc06" d="M12 1h10v10H12z" />
+                    <path fill="#05a6f0" d="M1 12h10v10H1z" />
+                    <path fill="#ffba08" d="M12 12h10v10H12z" />
+                  </svg>
+                  Fortsätt via Microsoft
+                </Button>
               </div>
             </div>
 
@@ -254,8 +278,8 @@ const SignUpPage = () => {
             <p className="text-sm text-gray-500 mt-2 sm:mt-0">
               Har redan konto?{" "}
               <Link to="/login" className="text-blue-600 hover:underline">
-                 Logga in
-                  </Link>
+                Logga in
+              </Link>
             </p>
           </CardFooter>
         </Card>
@@ -269,14 +293,14 @@ const SignUpPage = () => {
             </DialogDescription>
           </DialogHeader>
           <Link to="/login" className="inline-block">
-              <Button 
+            <Button
               onClick={() => setIsModalOpen(false)}
               className="bg-green-500 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 ease-in-out hover:bg-green-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
             >
               Logga in
             </Button>
-    </Link>
-          
+          </Link>
+
         </DialogContent>
       </Dialog>
     </div>

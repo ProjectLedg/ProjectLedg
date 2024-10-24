@@ -58,9 +58,19 @@ export default function LoginPage() {
         }
     };
 
-
     const handleSignUpClick = () => {
         navigate('/signup')
+    }
+
+    const handleMicrosoftSignIn = () => {
+        try {
+            window.location.href = "https://localhost:7223/login-microsoft"
+        }
+        catch (error) {
+            console.error("Error during sign-in redirect:", error);
+            // alert("An error occured while redirecting to Google login. Please try again.")
+            alert("An error occured while redirecting to Microsoft login. Please try again.")
+        }
     }
 
     return (
@@ -76,10 +86,10 @@ export default function LoginPage() {
                     {/* <p className="text-sm text-gray-600">Logga in med Google</p> */}
                 </CardHeader>
                 <CardContent className="space-y-4 px-4 sm:px-6">
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <div className="flex flex-col space-y-2 ">
                         <Button
                             onClick={handleGoogleSignIn}
-                            className="flex-1 bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center"
+                            className="w-full bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center justify-center"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5 mr-2">
                                 <title>Logga in med Google</title>
@@ -102,6 +112,20 @@ export default function LoginPage() {
                                 ></path>
                             </svg>
                             Fortsätt via Google
+                        </Button>
+                        <Button
+                            onClick={handleMicrosoftSignIn}
+                            className="w-full bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center justify-center"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23" className="w-5 h-5 mr-2">
+                                <title>Logga in med Microsoft</title>
+                                <desc>Microsoft Logo</desc>
+                                <path fill="#f35325" d="M1 1h10v10H1z" />
+                                <path fill="#81bc06" d="M12 1h10v10H12z" />
+                                <path fill="#05a6f0" d="M1 12h10v10H1z" />
+                                <path fill="#ffba08" d="M12 12h10v10H12z" />
+                            </svg>
+                            Fortsätt via Microsoft
                         </Button>
                     </div>
                     <div className="relative">
