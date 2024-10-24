@@ -149,7 +149,7 @@ modelBuilder.Entity<Transaction>()
 
 
             modelBuilder.Entity<Transaction>()
-                .HasOne(t => t.Invoice)
+                .HasOne(t => t.IngoingInvoice)
                 .WithMany(i => i.Transactions)
                 .HasForeignKey(t => t.InvoiceId)
                 .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on Invoice
