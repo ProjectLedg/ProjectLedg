@@ -218,7 +218,7 @@ namespace ProjectLedg.Server.Services
             Orientation = Orientation.Portrait,
             PaperSize = PaperKind.A4,
             Margins = new MarginSettings { Top = 20, Bottom = 20 }
-        },
+            },
                 Objects = {
             new ObjectSettings() {
                 HtmlContent = sb.ToString(),
