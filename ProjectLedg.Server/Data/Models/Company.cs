@@ -13,5 +13,8 @@
         public virtual ICollection<IngoingInvoice>? IngoingInvoices { get; set; }
         public virtual ICollection<Customer>? Customers { get; set; }
         public virtual ICollection<User> Users { get; set; }
+
+        public string? CompanyDescription { get; set; }
+
     }
 }
