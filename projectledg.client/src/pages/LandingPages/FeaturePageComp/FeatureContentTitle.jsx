@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export default function FeatureContentTitle() {
+    const navigate = useNavigate();
     useEffect(() => {
         // Optional: Trigger any side effects when the component loads
     }, []);
@@ -75,10 +78,29 @@ export default function FeatureContentTitle() {
                     fontSize: '2vw',
                 }}
             >
-                {splitText("bättre än Visma")}
-                <br />
-                {splitText("bättre än Fortnox")}
+                {splitText("Vi gör bokföring enklare för småföretag")}
+
             </p>
+            <div className="flex justify-center px-2 sm:px-4 lg:px-6">
+                <div className="w-full sm:w-auto">
+                    <button
+                        className="group relative bg-black inline-flex items-center justify-center 
+                        overflow-hidden w-full sm:w-40 md:w-48 lg:w-52 xl:w-60 text-xs sm:text-base md:text-lg 
+                        lg:text-xl font-medium text-slate-100 transition-colors duration-700 ease-out hover:text-green-500 
+                        focus:outline-none focus:ring active:bg-green-800 active:text-white rounded-full py-1 px-2 sm:py-3 
+                        sm:px-6"
+                        onClick={() => navigate("/signup")}
+                    >
+                        <span className="absolute inset-0 rounded-full border-2 border-transparent transition-all duration-700 ease-out group-hover:border-green-500"></span>
+                        <span className="absolute left-0 top-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
+                        <span className="absolute right-0 top-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
+                        <span className="absolute bottom-0 right-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
+                        <span className="absolute bottom-0 left-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
+                        <span className="relative z-10 whitespace-nowrap">Börja din resa här</span>
+                    </button>
+                </div>
+            </div>
+
 
         </div>
     );
