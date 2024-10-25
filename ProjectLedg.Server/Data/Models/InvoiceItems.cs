@@ -10,8 +10,9 @@ namespace ProjectLedg.Server.Data.Models
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Amount { get; set; }
-
-        public int InvoiceId { get; set; } // FK to the Invoice model
-        public IngoingInvoice Invoice { get; set; } // Nav property to Invoice
+        public int? OutgoingInvoiceId { get; set; } // FK to the Invoice model
+        public int? IngoingInvoiceId { get; set; } // FK to the Invoice model
+        public IngoingInvoice IngoingInvoice { get; set; } // Nav property to Invoice
+        public OutgoingInvoice OutgoingInvoice { get; set; } // Nav property to Invoice
     }
 }
