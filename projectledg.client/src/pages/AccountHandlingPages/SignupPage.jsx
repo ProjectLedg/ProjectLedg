@@ -104,12 +104,12 @@ const SignUpPage = () => {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-200">
-      <div className="hidden bg-slate-300 lg:flex lg:w-1/3 p-8 lg:p-12 flex-col justify-between">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-300">
+      <div className="hidden flex-1 overflow-auto bg-gradient-to-b from-blue-700/40 to-gray-200 lg:flex lg:w-1/3 p-8 lg:p-12 flex-col justify-between">
         <div className='pt-40 pl-11'>
           <div className="w-10 h-10 bg-gray-800 rounded-lg mb-8"></div>
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Plan inkluderar</h2>
+            <h2 className="text-3xl font-bold mb-4 text-green-500">Plan inkluderar</h2>
             <ul className="space-y-2">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center">
@@ -123,7 +123,7 @@ const SignUpPage = () => {
       </div>
 
       <div className="w-full lg:w-2/3 flex items-center justify-center p-4 lg:p-0 min-h-screen px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md p-4 sm:p-8 lg:p-12 m-8">
+        <Card className="w-full max-w-md rounded-[1.5rem] p-4 sm:p-8 lg:p-12 m-8">
           <CardHeader className="flex flex-col items-center space-y-4 pt-2 sm:pt-4">
             <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="currentColor">
