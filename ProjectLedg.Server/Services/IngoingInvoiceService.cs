@@ -11,20 +11,20 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ProjectLedg.Server.Services
 {
-    public class InvoiceService : IInvoiceService
+    public class IngoingInvoiceService : IIngoingInvoiceService
     {
-        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IIngoingInvoiceRepository _invoiceRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly ProjectLedgContext _context;
 
-        public InvoiceService(IInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService, ProjectLedgContext context)
+        public IngoingInvoiceService(IIngoingInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService, ProjectLedgContext context)
         {
             _invoiceRepository = invoiceRepository;
             _blobStorageService = blobStorageService;
             _context = context;
         }
 
-        public async Task<bool> SaveInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId)
+        public async Task<bool> SaveIngoingInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace ProjectLedg.Server.Services
 
                     Console.WriteLine("Attempting to save invoice to database...");
 
-                    var result = await _invoiceRepository.SaveInvoiceAsync(invoice);
+                    var result = await _invoiceRepository.SaveIngoingInvoiceAsync(invoice);
 
                     if (!result)
                     {
@@ -103,19 +103,18 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-
         //other crud operations for Manual use
-        public async Task<IngoingInvoice?> GetInvoiceByIdAsync(int invoiceId)
+        public async Task<IngoingInvoice?> GetIngoingInvoiceByIdAsync(int invoiceId)
         {
-            return await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
+            return await _invoiceRepository.GetIngoingInvoiceByIdAsync(invoiceId);
         }
 
-        public async Task<IEnumerable<IngoingInvoice>> GetAllInvoicesAsync()
+        public async Task<IEnumerable<IngoingInvoice>> GetAllIngoingInvoicesAsync()
         {
-            return await _invoiceRepository.GetAllInvoicesAsync();
+            return await _invoiceRepository.GetAllIngoingInvoicesAsync();
         }
 
-        public async Task<bool> CreateInvoiceAsync(InvoiceDTO invoiceDto)
+        public async Task<bool> CreateIngoingInvoiceAsync(InvoiceDTO invoiceDto)
         {
             var invoice = new IngoingInvoice
             {
@@ -137,12 +136,12 @@ namespace ProjectLedg.Server.Services
                 VendorTaxId = invoiceDto.VendorTaxId
             };
 
-            return await _invoiceRepository.CreateInvoiceAsync(invoice);
+            return await _invoiceRepository.CreateIngoingInvoiceAsync(invoice);
         }
 
-        public async Task<bool> UpdateInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto)
+        public async Task<bool> UpdateIngoingInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto)
         {
-            var existingInvoice = await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
+            var existingInvoice = await _invoiceRepository.GetIngoingInvoiceByIdAsync(invoiceId);
             if (existingInvoice == null)
             {
                 return false;
@@ -175,12 +174,12 @@ namespace ProjectLedg.Server.Services
                 InvoiceId = existingInvoice.Id //FK linking the items to the invoice
             }).ToList();
 
-            return await _invoiceRepository.UpdateInvoiceAsync(existingInvoice);
+            return await _invoiceRepository.UpdateIngoingInvoiceAsync(existingInvoice);
         }
 
-        public async Task<bool> DeleteInvoiceAsync(int invoiceId)
+        public async Task<bool> DeleteIngoingInvoiceAsync(int invoiceId)
         {
-            return await _invoiceRepository.DeleteInvoiceAsync(invoiceId);
+            return await _invoiceRepository.DeleteIngoingInvoiceAsync(invoiceId);
         }
     }
 }
