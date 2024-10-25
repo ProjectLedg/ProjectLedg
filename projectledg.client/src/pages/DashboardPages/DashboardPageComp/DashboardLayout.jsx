@@ -153,7 +153,7 @@ export default function DashboardLayout() {
       {/* Main Content */}
       <div className="MAIN CONTENT flex flex-col flex-1">
         <div className=" flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
-          <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">  {/* removed lg:mx-[3rem] */}
+          <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">
 
             {/* Navbar */}
             <header className="NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
@@ -165,17 +165,17 @@ export default function DashboardLayout() {
                     <div className="md:hidden">
                       <MobileNav navItems={navItems} />
                     </div>
-                    <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1>
+                    <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">Ditt företag här</h1>
                   </div>
-                  <div className="flex items-center mr-[3rem] space-x-2 sm:space-x-4">
-                            <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
-                    </div>
+                  <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4">
+                    <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
+                  </div>
                 </div>
               </div>
             </header>
 
             {/* Chart Content Box */}
-            <div className="flex flex-row m-0 mr-8">
+            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
 
               <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
 
