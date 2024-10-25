@@ -16,6 +16,7 @@ namespace ProjectLedg.Server.Data.Models
         public bool IsOutgoing { get; set; }
         public bool IsBooked { get; set; } // If invoice is "bokförd" 
 
+        public int CustomerId { get; set; }// Just used for on model creating seed data not necessary to use in actual code
         public string? InvoiceFilePath { get; set; }
         public List<InvoiceItems> Items { get; set; } = new List<InvoiceItems>();
         public virtual ICollection<Transaction> Transactions { get; set; }
