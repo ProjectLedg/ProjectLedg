@@ -219,9 +219,12 @@ namespace ProjectLedg.Server
                     Environment.GetEnvironmentVariable("BLOB_STORAGE_API_KEY")
                 );
             });
-            //Invoices
-            services.AddScoped<IInvoiceRepository, IngoingInvoiceRepository>();
-            services.AddScoped<IInvoiceService, InvoiceService>();
+            //Ingoing Invoices
+            services.AddScoped<IIngoingInvoiceRepository, IngoingInvoiceRepository>();
+            services.AddScoped<IIngoingInvoiceService, IngoingInvoiceService>();
+            //Outgoing Invoices
+            services.AddScoped<IOutgoingInvoiceRepository, OutgoingInvoiceRepository>();
+            services.AddScoped<IOutgoingInvoiceService, OutgoingInvoiceService>();
 
 
             var app = builder.Build();
