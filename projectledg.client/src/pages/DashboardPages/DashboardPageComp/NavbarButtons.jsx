@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { MessageSquarePlus, Bell } from "lucide-react"
+import { Sparkles, Bell } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -26,13 +26,13 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         className={`
           relative overflow-hidden transition-all duration-300 ease-in-out
           px-4 py-2 font-medium text-sm rounded-full
-          ${isChatOpen 
-            ? 'bg-green-500 text-white border-green-500' 
-            : 'bg-white text-green-500 border-green-300 hover:bg-green-50'}
+          ${isChatOpen
+            ? 'bg-green-500 text-white border-green-500'
+            : 'bg-transparent text-gray-700 border-none hover:bg-green-50'}
         `}
       >
-        <MessageSquarePlus className="h-5 w-5 mr-2 inline-block" />
-        Fråga AI
+        <Sparkles className="h-5 w-5 mr-2 inline-block" />
+        Fråga Ledge
         <span className="sr-only">Öppna AI-chatt</span>
       </Button>
       <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
@@ -40,10 +40,10 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
           <Button
             variant="ghost"
             size="icon"
-            className="
-              relative overflow-hidden transition-all duration-300 ease-in-out
-              hover:bg-gray-100 text-gray-600 hover:text-gray-800
-            "
+            className={`
+        relative transition-all duration-300 ease-in-out
+        ${isNotificationsOpen ? 'bg-white' : 'bg-transparent'}
+      `}
             onClick={() => setIsNotificationsOpen(true)}
           >
             <Bell className="h-5 w-5" />
@@ -72,6 +72,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
           </div>
         </PopoverContent>
       </Popover>
+
     </div>
   )
 }
