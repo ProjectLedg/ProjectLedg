@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
 import ChatWindow from "./ChatWindow";
+import ChatWindowMobile from "./ChatWindowMobile";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
 import {
@@ -139,6 +140,18 @@ const MobileNav = ({ navItems }) => (
 export default function DashboardLayout() {
   const { companyId } = useParams();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); 
+    };
+
+    handleResize(); 
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
@@ -147,20 +160,18 @@ export default function DashboardLayout() {
   return (
     <div className="flex h-screen overflow-hidden shadow-lg">
       {/* Sidebar */}
-      <Sidebar isChatOpen={isChatOpen} />
-
+      {!isMobile && <Sidebar isChatOpen={isChatOpen} />}
 
       {/* Main Content */}
       <div className="MAIN CONTENT flex flex-col flex-1">
-        <div className=" flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
+        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
           <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">
 
             {/* Navbar */}
             <header className="NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
-              <div className=" mx-auto sm:px-6 md:px-8">
+              <div className="mx-auto sm:px-6 md:px-8">
                 <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem]">
                   <div className="flex items-center">
-
                     {/* Mobile Navigation */}
                     <div className="md:hidden">
                       <MobileNav navItems={navItems} />
@@ -174,37 +185,39 @@ export default function DashboardLayout() {
               </div>
             </header>
 
-            {/* Chart Content Box */}
+            {/* Main Content or Chat Window Mobile */}
             <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
+              {isMobile && isChatOpen ? (
+                // Render ChatWindowMobile on mobile view only
+                <ChatWindowMobile onClose={toggleChat} />
+              ) : (
+                <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
+                  <motion.div
+                    className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8"
+                    animate={{
+                      width: isChatOpen ? '67%' : '100%',
+                    }}
+                    initial={{ width: '100%' }}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  >
+                    <Outlet context={{ isChatOpen }} />
+                  </motion.div>
 
-              <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
-
-                <motion.div
-                  className={`chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8  mb-8`}
-                  animate={{
-                    width: isChatOpen ? '67%' : '100%',
-                  }}
-                  initial={{ width: '100%' }}
-                  transition={{ duration: 0.5, ease: 'easeInOut' }}
-                >
-                  <Outlet context={{ isChatOpen }} />
-                </motion.div>
-
-                <AnimatePresence>
-                  {isChatOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, x: 1000 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 1000 }}
-                      transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
-                      className="inherit w-[30vw] fixed right-0"
-                    >
-                      <ChatWindow onClose={toggleChat} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-              </div>
+                  <AnimatePresence>
+                    {isChatOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 1000 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 1000 }}
+                        transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
+                        className="inherit w-[30vw] fixed right-0"
+                      >
+                        <ChatWindow onClose={toggleChat} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
           </div>
         </div>
