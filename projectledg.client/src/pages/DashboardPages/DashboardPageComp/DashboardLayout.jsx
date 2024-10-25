@@ -168,7 +168,7 @@ export default function DashboardLayout() {
           <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">
 
             {/* Navbar */}
-            <header className="NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]">
+            <header className={`NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)] ${isChatOpen ? 'hidden' : ''}`}>
               <div className="mx-auto sm:px-6 md:px-8">
                 <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem]">
                   <div className="flex items-center">
