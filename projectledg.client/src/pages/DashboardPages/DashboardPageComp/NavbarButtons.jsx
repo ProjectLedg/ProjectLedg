@@ -49,7 +49,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
             <Bell className="h-5 w-5" />
             <span className="sr-only">Visa notiser</span>
             {newNotificationsCount > 0 && (
-              <span className="absolute -top-2 -right-2 flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold">
+              <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[0.5rem] font-bold">
                 {newNotificationsCount}
               </span>
             )}
