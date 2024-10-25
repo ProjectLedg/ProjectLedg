@@ -167,7 +167,7 @@ export default function DashboardLayout() {
                     </div>
                     <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold">Ditt företag här</h1>
                   </div>
-                  <div className="flex items-center mr-[5rem] space-x-2 sm:space-x-4">
+                  <div className="flex items-center mr-[3rem] space-x-2 sm:space-x-4">
                             <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
                     </div>
                 </div>
