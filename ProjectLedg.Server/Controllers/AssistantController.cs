@@ -16,7 +16,7 @@ namespace ProjectLedg.Server.Controllers
             _assistantService = assistantService;
         }
 
-        // Endpoint to send a message to the assistant and receive a response
+        //Endpoint to send a message to the assistant and receive a response
         [HttpPost("chat")]
         public async Task<IActionResult> Chat([FromBody] string message)
         {
