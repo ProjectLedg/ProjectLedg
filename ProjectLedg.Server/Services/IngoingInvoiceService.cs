@@ -11,13 +11,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ProjectLedg.Server.Services
 {
-    public class InvoiceService : IInvoiceService
+    public class IngoingInvoiceService : IIngoingInvoiceService
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly ProjectLedgContext _context;
 
-        public InvoiceService(IInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService, ProjectLedgContext context)
+        public IngoingInvoiceService(IInvoiceRepository invoiceRepository, IBlobStorageService blobStorageService, ProjectLedgContext context)
         {
             _invoiceRepository = invoiceRepository;
             _blobStorageService = blobStorageService;

@@ -3,7 +3,7 @@ using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 
 namespace ProjectLedg.Server.Services.IServices
 {
-    public interface IInvoiceService
+    public interface IIngoingInvoiceService
     {
         Task<IngoingInvoice?> GetInvoiceByIdAsync(int invoiceId);
         Task<IEnumerable<IngoingInvoice>> GetAllInvoicesAsync();
