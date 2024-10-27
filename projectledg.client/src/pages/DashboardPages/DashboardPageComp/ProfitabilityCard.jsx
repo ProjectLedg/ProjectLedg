@@ -70,7 +70,7 @@ const ProfitabilityCard = ({ runway }) => {
           </div>
           <div className="text-center">
             <div className={`text-xl font-bold ${statusColor}`}>
-              {runway.status}
+              {runway.message}
             </div>
             <div className="text-sm text-muted-foreground">
               Runway: {runway.months} månader

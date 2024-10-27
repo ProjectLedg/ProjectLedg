@@ -3,6 +3,7 @@ import { useParams, useOutletContext } from 'react-router-dom'
 import axiosConfig from '/axiosconfig'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
+import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ProfitabilityCard from './DashboardPageComp/ProfitabilityCard'
 import MetricGraph from './DashboardPageComp/MetricGraph'
@@ -110,10 +111,10 @@ const DashboardHomePage = () => {
   const { revenue, profit, expenses, runway } = topGraphsData;
 
   const metricOptions = [
-    { value: 'grossProfit', label: 'Gross Profit' },
-    { value: 'operatingMargin', label: 'Operating Margin' },
-    { value: 'cashFlowAnalysis', label: 'Cash Flow Analysis' },
-    { value: 'grossMargin', label: 'Gross Margin' },
+    { value: 'grossProfit', label: 'Total vinst' },
+    { value: 'operatingMargin', label: 'Rörelsemarginal' },
+    { value: 'cashFlowAnalysis', label: 'Kassaflödesanalys' },
+    { value: 'grossMargin', label: 'Bruttomarginal' },
   ];
 
   return (
@@ -191,14 +192,14 @@ const DashboardHomePage = () => {
         <MetricGraph
           metricFilter={topMetricFilter}
           setMetricFilter={setTopMetricFilter}
-          title="Left Metric"
+          title="Data Graf"
           metricsData={filterGraphsData}
           metricOptions={metricOptions}
         />
         <MetricGraph
           metricFilter={bottomMetricFilter}
           setMetricFilter={setBottomMetricFilter}
-          title="Right Metric"
+          title="Data Graf"
           metricsData={filterGraphsData}
           metricOptions={metricOptions}
         />
