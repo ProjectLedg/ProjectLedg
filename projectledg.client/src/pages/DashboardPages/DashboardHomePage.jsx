@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
+import axiosConfig from '/axiosconfig'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
@@ -35,7 +36,6 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
           </TooltipContent>
         </TooltipShad>
       </TooltipProvider>
-
     </CardHeader>
     <CardContent>
       <div className="text-lg sm:text-2xl font-bold">{value}</div>
@@ -63,190 +63,98 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export default function DashboardHomePage() {
-  // Get company id from url
+const DashboardHomePage = () => {
   const { companyId } = useParams();
   const { isChatOpen } = useOutletContext();
 
-  const mockDashboardData = {
-    currentMonth: "March 2021",
-    totalCash: {
-      currentValue: 62607,
-      changePercentage: 108,
-      history: [
-        { month: "Jan", value: 40000 },
-        { month: "Feb", value: 30000 },
-        { month: "Mar", value: 45000 },
-        { month: "Apr", value: 50000 },
-        { month: "May", value: 55000 },
-        { month: "Jun", value: 60000 },
-        { month: "Jul", value: 62607 }
-      ]
-    },
-    income: {
-      currentValue: 28561,
-      changePercentage: 12,
-      history: [
-        { month: "Jan", value: 20000 },
-        { month: "Feb", value: 22000 },
-        { month: "Mar", value: 24000 },
-        { month: "Apr", value: -26000 },
-        { month: "May", value: 27000 },
-        { month: "Jun", value: 28000 },
-        { month: "Jul", value: 28561 }
-      ]
-    },
-    grossBurn: {
-      currentValue: -4040,
-      changePercentage: 119,
-      history: [
-        { month: "Jan", value: -2000 },
-        { month: "Feb", value: -2200 },
-        { month: "Mar", value: -2500 },
-        { month: "Apr", value: -3000 },
-        { month: "May", value: 3500 },
-        { month: "Jun", value: 3800 },
-        { month: "Jul", value: -4040 }
-      ]
-    },
-    runway: {
-      status: "Väldigt bra!",
-      percentage: 80,
-      months: 68
-    }
-  }
+  const [topGraphsData, setTopGraphsData] = useState(null);
+  const [filterGraphsData, setFilterGraphsData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [dashboardData, setDashboardData] = useState(mockDashboardData)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [topMetricFilter, setTopMetricFilter] = useState('revenue')
-  const [bottomMetricFilter, setBottomMetricFilter] = useState('customers')
+  const [topMetricFilter, setTopMetricFilter] = useState('grossProfit');
+  const [bottomMetricFilter, setBottomMetricFilter] = useState('operatingMargin');
 
-  const metricsData = {
-    revenue: [
-      { month: "Jan", value: 100000 },
-      { month: "Feb", value: 120000 },
-      { month: "Mar", value: 150000 },
-      { month: "Apr", value: 180000 },
-      { month: "May", value: 200000 },
-      { month: "Jun", value: 220000 },
-      { month: "Jul", value: 250000 },
-    ],
-    customers: [
-      { month: "Jan", value: 1000 },
-      { month: "Feb", value: 1200 },
-      { month: "Mar", value: 1500 },
-      { month: "Apr", value: 1800 },
-      { month: "May", value: 2000 },
-      { month: "Jun", value: 2200 },
-      { month: "Jul", value: 2500 },
-    ],
-    orders: [
-      { month: "Jan", value: 500 },
-      { month: "Feb", value: 600 },
-      { month: "Mar", value: 750 },
-      { month: "Apr", value: 900 },
-      { month: "May", value: 1000 },
-      { month: "Jun", value: 1100 },
-      { month: "Jul", value: 1250 },
-    ],
-    averageOrderValue: [
-      { month: "Jan", value: 200 },
-      { month: "Feb", value: 200 },
-      { month: "Mar", value: 200 },
-      { month: "Apr", value: 0 },
-      { month: "May", value: -100 },
-      { month: "Jun", value: -150 },
-      { month: "Jul", value: -200 },
-    ],
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const currentYear = 2023;        //new Date().getFullYear();
+        const payload = {
+          companyId: parseInt(companyId),
+          year: currentYear
+        };
+        
+
+        const [topGraphsResponse, filterGraphsResponse] = await Promise.all([
+          axiosConfig.post('/Finance/dashboardtopgraphs', payload),
+          axiosConfig.post('/Finance/dashboardbottomgraphs', payload)
+        ]);
+
+        setTopGraphsData(topGraphsResponse.data);
+        setFilterGraphsData(filterGraphsResponse.data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [companyId]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!topGraphsData || !filterGraphsData) return null;
+
+  const { revenue, profit, expenses, runway } = topGraphsData;
 
   const metricOptions = [
-    { value: 'revenue', label: 'Revenue' },
-    { value: 'customers', label: 'Customers' },
-    { value: 'orders', label: 'Orders' },
-    { value: 'averageOrderValue', label: 'Average Order Value' },
-  ]
-
-  // Commented out API call logic
-  /*
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      setIsLoading(true)
-      setError(null)
-      try {
-        const response = await fetch('http://localhost:7223/dashboard')
-        if (!response.ok) {
-          throw new Error('Failed to fetch dashboard data')
-        }
-        const data = await response.json()
-        setDashboardData(data)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchDashboardData()
-  }, [])
-
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
-  }
-
-  if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>
-  }
-  */
-
-
-  useEffect(() => {
-    console.log("Fetching financial r eports for Company ID:", companyId);
-    // Add backend api fetch here
-  }, [companyId])
+    { value: 'grossProfit', label: 'Gross Profit' },
+    { value: 'operatingMargin', label: 'Operating Margin' },
+    { value: 'cashFlowAnalysis', label: 'Cash Flow Analysis' },
+    { value: 'grossMargin', label: 'Gross Margin' },
+  ];
 
   return (
     <div className="space-y-4 p-4 sm:p-6">
       <h2>Financial Reports for Company {companyId}</h2>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{dashboardData.currentMonth}</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Current Financial Overview</h2>
       </div>
       <div className={`GRIDCONTAINER flex ${isChatOpen ? 'flex-col' : 'flex-row'}`}>
-
         <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] pb-4' : 'w-[50%] pr-2'}`}>
-
           <MetricCard
             title="Omsättning"
-            value={`${dashboardData.totalCash.currentValue.toLocaleString()} kr`}
-            change={`${dashboardData.totalCash.changePercentage}% MoM`}
-            changeType={dashboardData.totalCash.changePercentage >= 0 ? 'positive' : 'negative'}
+            value={`${revenue.totalRevenue.toLocaleString()} kr`}
+            change={`${revenue.changePercentage}% MoM`}
+            changeType={revenue.changePercentage >= 0 ? 'positive' : 'negative'}
             icon={Wallet}
             toolDescription={tooltipInfo.revenue}
             chart={
-              <LineChart data={dashboardData.totalCash.history}>
-                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+              <LineChart data={revenue.revenueHistory}>
+                <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2} dot={false} />
               </LineChart>
             }
           />
           <MetricCard
-            title="Inkomst"
-            value={`${dashboardData.income.currentValue.toLocaleString()} kr`}
-            change={`${dashboardData.income.changePercentage}% MoM`}
-            changeType={dashboardData.income.changePercentage >= 0 ? 'positive' : 'negative'}
+            title="Vinst"
+            value={`${profit.totalProfit.toLocaleString()} kr`}
+            change={`${profit.changePercentage}% MoM`}
+            changeType={profit.changePercentage >= 0 ? 'positive' : 'negative'}
             icon={TrendingUp}
             toolDescription={tooltipInfo.income}
             chart={
-              <BarChart data={dashboardData.income.history}>
-                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+              <BarChart data={profit.profitHistory}>
+                <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="value">
-                  {dashboardData.income.history.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.value >= 0 ? "#10B981" : "#EF4444"} />
+                <Bar dataKey="amount">
+                  {profit.profitHistory.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B981" : "#EF4444"} />
                   ))}
                 </Bar>
               </BarChart>
@@ -255,32 +163,28 @@ export default function DashboardHomePage() {
         </div>
 
         <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] ' : 'w-[50%] pl-2 '}`}>
-
           <MetricCard
             title="Kostnader"
-            value={`${dashboardData.grossBurn.currentValue.toLocaleString()} kr`}
-            change={`${dashboardData.grossBurn.changePercentage}% MoM`}
-            changeType={dashboardData.grossBurn.changePercentage <= 0 ? 'positive' : 'negative'}
+            value={`${expenses.totalExpenses.toLocaleString()} kr`}
+            change={`${expenses.changePercentage}% MoM`}
+            changeType={expenses.changePercentage <= 0 ? 'positive' : 'negative'}
             icon={TrendingDown}
             toolDescription={tooltipInfo.expenses}
             chart={
-              <BarChart data={dashboardData.grossBurn.history}>
-                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+              <BarChart data={expenses.expensesHistory}>
+                <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="value">
-                  {dashboardData.grossBurn.history.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.value >= 0 ? "#10B981" : "#EF4444"} />
+                <Bar dataKey="amount">
+                  {expenses.expensesHistory.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B981" : "#EF4444"} />
                   ))}
                 </Bar>
               </BarChart>
             }
           />
-          {dashboardData.runway && <ProfitabilityCard runway={dashboardData.runway} />}
+          {runway && <ProfitabilityCard runway={runway} />}
         </div>
-
-
-
       </div>
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
@@ -288,17 +192,19 @@ export default function DashboardHomePage() {
           metricFilter={topMetricFilter}
           setMetricFilter={setTopMetricFilter}
           title="Left Metric"
-          metricsData={metricsData}
+          metricsData={filterGraphsData}
           metricOptions={metricOptions}
         />
         <MetricGraph
           metricFilter={bottomMetricFilter}
           setMetricFilter={setBottomMetricFilter}
           title="Right Metric"
-          metricsData={metricsData}
+          metricsData={filterGraphsData}
           metricOptions={metricOptions}
         />
       </div>
     </div>
   )
 }
+
+export default DashboardHomePage
