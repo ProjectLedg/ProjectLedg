@@ -8,11 +8,36 @@ import { Textarea } from "@/components/ui/textarea"
 import { Upload, FileText } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export default function InvoiceUploader() {
+export default function InvoiceUploader( {setInvoice} ) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [additionalInfo, setAdditionalInfo] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const scrollAreaRef = useRef(null)
+
+  // TEMP TEST DATA - REMOVE WHEN API WORKS
+  const [invoiceTestData, setInvoiceTestData] = useState({
+    invoiceNumber: "12345678",
+    invoiceDate: "2024-01-01",
+    dueDate: "2024-01-31",
+    invoiceDescription: "Tjänster för konsultande",
+    invoiceTotal: 1337,
+    items: [
+      { description: "test1", amount: 10256, taxAmount: 500, taxPercentage: "25", unitPrice: "2000", quantity: "1" },
+      { description: "test2", amount: 137, taxAmount: 22, taxPercentage: "22", unitPrice: "100", quantity: "4" },
+      { description: "test3", amount: 2005, taxAmount: 18, taxPercentage: "18", unitPrice: "100", quantity: "10" }
+    ],
+    paymentDetails: "1234",
+    totalTax: 334.25,
+    customerName: "Yomama",
+    customerAddress: "Arenavägen 61",
+    customerAddressRecipient: "Kånkelberry",
+    vendorName: "Snus AB",
+    vendorAddress: "Ingenstans 33",
+    vendorAddressRecipient: "Snusmumriken",
+    vendorTaxId: "4567",
+    isPaid: false,
+    isBooked: false,
+  })
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -28,11 +53,20 @@ export default function InvoiceUploader() {
       formData.append('invoice', selectedFile)
       formData.append('additionalInfo', additionalInfo)
 
-      const response = await axios.post('/api/upload-invoice', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      // TODO: Change to axios config when endpoint is fixed
+      // const response = await axios.post('/api/upload-invoice', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // })
+
+      // Update invoice state and send back to BookingPage
+
+      // Uncomment this when above api call works
+      // setInvoice(response.data);
+
+      // Temp to see if flow works in the meantime - REMOVE WHEN API WORKS
+      setInvoice(invoiceTestData);
 
       console.log('Upload successful:', response.data)
       // Here you might want to show a success message to the user
