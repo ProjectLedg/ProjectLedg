@@ -2,21 +2,22 @@ import React, { useState, useEffect, useRef } from "react"
 import axios from "axios"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Send } from "lucide-react"
+import { Check, X, FileText, Send } from "lucide-react"
 
-export default function InvoicePreview({ invoice, setInvoice }) {
-  //const [messages, setMessages] = useState([])
-  //const [inputMessage, setInputMessage] = useState("")
-
-  // const [multipleItems, setMultipleItems] = useState(false);
+export default function InvoicePreview({ invoice, setInvoice, }) {
   const [isLoading, setIsLoading] = useState(false)
   const scrollAreaRef = useRef(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
 
   // useEffect(() => {
   //   if (invoice.items.length > 1){
@@ -106,14 +107,19 @@ export default function InvoicePreview({ invoice, setInvoice }) {
 
     try {
       const formData = new FormData()
-      formData.append('invoice', selectedFile)
-      formData.append('additionalInfo', additionalInfo)
+      // formData.append('invoice', selectedFile)
+      // formData.append('additionalInfo', additionalInfo)
 
-      const response = await axios.post('/api/upload-invoice', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      // Don't think we need to post changes to api here, we want the modal to pop up instead right?
+      // Then confirm and in the modal (invoice logger) then post to backend.
+
+      // const response = await axios.post('/api/upload-invoice', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // })
+
+      setIsModalOpen(true);
 
       console.log('Upload successful:', response.data)
       // Here you might want to show a success message to the user
@@ -125,6 +131,13 @@ export default function InvoicePreview({ invoice, setInvoice }) {
     }
   }
 
+  const handleSaveChanges = () => {
+    // Post changes to backend API 
+    // NEED TO IMPLEMENT WHEN BACKEND API ENDPOINTS ARE FIXED
+
+    setIsModalOpen(false)
+  }
+
   // Display text if there's no invoice yet
   if (!invoice){
     return (
@@ -133,34 +146,37 @@ export default function InvoicePreview({ invoice, setInvoice }) {
           <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
         </CardHeader>
         <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
-          <h1>Ladda upp en faktura för att Förhandsgranska</h1>
+          <h3 className="text-xl text-gray-400">Ladda upp en faktura för att förhandsgranska</h3>
         </CardContent>
       </Card>
     )
   }
 
+  // Display invoice preview
   return (
     <Card className="w-full h-[600px] flex flex-col shadow-lg">
       <CardHeader className="border-b">
         <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
       </CardHeader>
 
+      {/* Buttons to select different parts of the invoice */}
       <Tabs defaultValue="details" className="flex flex-col h-full overflow-hidden">
-        <TabsList className="w-full border-b rounded-none p-4">
-          <TabsTrigger value="details" className="w-full">Faktura </TabsTrigger>
-          <TabsTrigger value="customer" className="w-full">Kund </TabsTrigger>
-          <TabsTrigger value="vendor" className="w-full">Leverantör </TabsTrigger>
-          <TabsTrigger value="items" className="w-full">Specifikation </TabsTrigger>
+        <TabsList className="w-full border-b rounded-none p-6">
+          <TabsTrigger value="details" className="w-full p-3">Faktura</TabsTrigger>
+          <TabsTrigger value="customer" className="w-full p-3">Kund</TabsTrigger>
+          <TabsTrigger value="vendor" className="w-full p-3">Leverantör</TabsTrigger>
+          <TabsTrigger value="items" className="w-full p-3">Specifikation</TabsTrigger>
         </TabsList>
 
       <CardContent className="flex-grow overflow-auto p-0 ">
-        <ScrollArea className="h-full p-4" ref={scrollAreaRef}>
+        <ScrollArea className="h-full px-4" ref={scrollAreaRef}>
 
+          {/* General invoice info */}
           <TabsContent value="details">
             <Card className="border-0 shadow-none">
               <CardContent>
-                <div className="grid grid-cols-1 gap-4 mt-6">
-                  <div>
+                <section className="grid grid-cols-1 gap-4 mt-6">
+                  <article>
                     <Label htmlFor="invoiceNumber">Fakturanummer</Label>
                     <Input
                       id="invoiceNumber"
@@ -168,8 +184,17 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.invoiceNumber}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                  </article>
+                  <article>
+                    <Label htmlFor="invoiceTotal">Totalt belopp</Label>
+                    <Input
+                      id="invoiceTotal"
+                      name="invoiceTotal"
+                      value={invoice.invoiceTotal}
+                      onChange={handleInputChange}
+                    />
+                  </article>
+                    <article>
                     <Label htmlFor="invoiceDate">Fakturadatum</Label>
                     <Input
                       id="invoiceDate"
@@ -178,8 +203,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.invoiceDate}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="dueDate">Förfallodatum</Label>
                     <Input
                       id="dueDate"
@@ -188,8 +213,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.dueDate}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="paymentDetails">Bankgiro/PlusGiro</Label>
                     <Input
                       id="paymentDetails"
@@ -197,17 +222,18 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.paymentDetails}
                       onChange={handleInputChange}
                     />
-                  </div>
-                </div>
+                    </article>
+                </section>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Customer info */}
           <TabsContent value="customer">
             <Card className="border-0 shadow-none">
               <CardContent>
-                <div className="space-y-4 mt-6">
-                  <div>
+                <section className="space-y-4 mt-6">
+                    <article>
                     <Label htmlFor="customerName">Kundnamn</Label>
                     <Input
                       id="customerName"
@@ -215,8 +241,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.customerName}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="customerAddress">Kundadress</Label>
                     <Input
                       id="customerAddress"
@@ -224,8 +250,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.customerAddress}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="customerAddressRecipient">Kundadressmottagare</Label>
                     <Input
                       id="customerAddressRecipient"
@@ -233,17 +259,18 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.customerAddressRecipient}
                       onChange={handleInputChange}
                     />
-                  </div>
-                </div>
+                    </article>
+                </section>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Vendor info */}
           <TabsContent value="vendor">
             <Card className="border-0 shadow-none">
               <CardContent>
-                <div className="space-y-4 mt-6">
-                  <div>
+                <section className="space-y-4 mt-6">
+                    <article>
                     <Label htmlFor="vendorName">Leverantörsnamn</Label>
                     <Input
                       id="vendorName"
@@ -251,8 +278,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.vendorName}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="vendorAddress">Leverantörsadress</Label>
                     <Input
                       id="vendorAddress"
@@ -260,8 +287,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.vendorAddress}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="vendorAddressRecipient">Leverantörsadressmottagare</Label>
                     <Input
                       id="vendorAddressRecipient"
@@ -269,8 +296,8 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.vendorAddressRecipient}
                       onChange={handleInputChange}
                     />
-                  </div>
-                  <div>
+                    </article>
+                    <article>
                     <Label htmlFor="vendorTaxId">Momsregistreringsnummer</Label>
                     <Input
                       id="vendorTaxId"
@@ -278,18 +305,19 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                       value={invoice.vendorTaxId}
                       onChange={handleInputChange}
                     />
-                  </div>
-                </div>
+                    </article>
+                </section>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Invoice specification (each item on the invoice) */}
           <TabsContent value="items">
             {invoice.items.map((item, i) =>  (
               <Card key={i} className="mb-4 border-0 border-b-2 rounded-none shadow-none space-y-4 mt-6">
-                <h2>Artikel: {i+1}</h2>
                 <CardContent className="shadow-none">
-                  <div className="grid grid-flow-row grid-cols-12 grid-rows-3 gap-4 ">
+                  {/* <h2 className="mb-2 font-medium">Artikel: {i + 1}</h2> */}
+                  <section className="grid grid-flow-row grid-cols-12 grid-rows-3 gap-4 mb-2 ">
                     <article className="col-span-full">
                       <Label htmlFor="itemDescription">Beskrivning</Label>
                       <Input
@@ -365,7 +393,7 @@ export default function InvoicePreview({ invoice, setInvoice }) {
                         <div className="absolute right-0 top-0 h-full flex items-center bg-slate-400 text-white rounded-r-md px-4 text-sm">st</div>
                       </div>
                     </article> 
-                </div>
+                </section>
               </CardContent>
             </Card>
             ))}
@@ -373,20 +401,91 @@ export default function InvoicePreview({ invoice, setInvoice }) {
         </ScrollArea>
       </CardContent>
       </Tabs>
-      <CardFooter className="border-t p-4">
+      <CardFooter className="border-t p-4 flex justify-center">
         <Button 
           onClick={handleSubmit} 
           disabled={!invoice || isLoading } 
-          className="w-full bg-green-500 hover:bg-green-600 text-white"
+          className="w-3/5 bg-green-500 hover:bg-green-600 text-white"
         >
           {isLoading ? (
             <span className="animate-spin mr-2">⏳</span>
           ) : (
-            <p className="w-4 h-4 mr-2" ></p>
+              <FileText className="w-4 h-4 mr-2" />
           )}
-          {isLoading ? 'Bokför...' : 'Bokför faktura'}
+          {isLoading ? 'Bokför...' : 'Godkänn faktura'}
         </Button>
       </CardFooter>
+
+      {/* Modal popup to display invoice and to confirm and save it to the database */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-green-600">Verifikation</DialogTitle>
+          </DialogHeader>
+          {invoice && (
+            <div className="mt-4 space-y-4">
+              <DialogDescription>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-semibold text-gray-600">Fakturanummer:</p>
+                    <p>{invoice.invoiceNumber}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Datum:</p>
+                    <p>{new Date(invoice.invoiceDate).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Belopp:</p>
+                    <p className="font-bold text-green-600">{invoice.invoiceTotal}kr</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Kund:</p>
+                    <p>{invoice.customerName}</p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="font-semibold text-gray-600">Beskrivning:</p>
+                  <p>{invoice.description}</p>
+                </div>
+              </DialogDescription>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="paid-status" className="font-semibold text-gray-600">Betalnings status:</Label>
+                  <Switch
+                    id="paid-status"
+                    checked={invoice.isPaid}
+                    onCheckedChange={() => handleStatusChange('isPaid')}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="booked-status" className="font-semibold text-gray-600">Bokförnings status:</Label>
+                  <Badge variant={invoice.isBooked ? "success" : "destructive"}>
+                    {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                    <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej bokförd"}</span>
+                  </Badge>
+                </div>
+                {!invoice.isBooked && (
+                  <div>
+                    <Label htmlFor="additional-info" className="font-semibold text-gray-600">Ytterliggare information:</Label>
+                    <Textarea
+                      // id="additional-info"
+                      // placeholder="Lägg till ev information till Ledge för att hjälpa till med automatisk bokföring...  "
+                      // value={selectedInvoice.additionalInfo}
+                      // onChange={handleAdditionalInfoChange}
+                      // className="mt-2"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={handleSaveChanges} className="bg-green-500 hover:bg-green-600 text-white">
+              Bekräfta och bokför
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }
