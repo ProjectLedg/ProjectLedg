@@ -125,6 +125,20 @@ export default function InvoicePreview({ invoice, setInvoice }) {
     }
   }
 
+  // Display text if there's no invoice yet
+  if (!invoice){
+    return (
+      <Card className="w-full h-[600px] flex flex-col shadow-lg">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
+        </CardHeader>
+        <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
+          <h1>Ladda upp en faktura för att Förhandsgranska</h1>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className="w-full h-[600px] flex flex-col shadow-lg">
       <CardHeader className="border-b">
