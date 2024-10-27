@@ -158,7 +158,7 @@ export default function InvoiceLogger() {
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="booked-status" className="font-semibold text-gray-600">Bokförd status:</Label>
+                  <Label htmlFor="booked-status" className="font-semibold text-gray-600">Bokförnings status:</Label>
                   <Badge variant={selectedInvoice.isBooked ? "success" : "destructive"}>
                     {selectedInvoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                     <span className="ml-1">{selectedInvoice.isBooked ? "Bokförd" : "Ej bokförd"}</span>
@@ -169,7 +169,7 @@ export default function InvoiceLogger() {
                     <Label htmlFor="additional-info" className="font-semibold text-gray-600">Ytterliggare information:</Label>
                     <Textarea
                       id="additional-info"
-                      placeholder="Lägg till ev information till Ledge flr att hjälpa till med automatisk bokföring...  "
+                      placeholder="Lägg till ev information till Ledge för att hjälpa till med automatisk bokföring...  "
                       value={selectedInvoice.additionalInfo}
                       onChange={handleAdditionalInfoChange}
                       className="mt-2"
