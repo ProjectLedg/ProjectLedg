@@ -9,30 +9,41 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Check, X, FileText } from "lucide-react"
+import invoiceLogger from './invoiceLogger.json'
+
 
 // Mock data for one invoice
-const mockInvoices = [
-  {
-    id: "INV-001",
-    date: "2023-07-15",
-    amount: 1234.56,
-    isPaid: true,
-    isBooked: false,
-    customer: "Acme Corp",
-    description: "Web development services for Q3",
-    additionalInfo: ""
-  }
-]
+// // const mockInvoices = [
+// //   {
+// //     id: "INV-001",
+// //     date: "2023-07-15",
+// //     amount: 1234.56,
+// //     isPaid: true,
+// //     isBooked: false,
+// //     customer: "Acme Corp",
+// //     description: "Web development services for Q3",
+// //     additionalInfo: ""
+// //   }
+// ]
+const mockInvoices = invoiceLogger;
+
+
 
 export default function InvoiceLogger() {
-  const [invoices, setInvoices] = useState(mockInvoices)
-  const [selectedInvoice, setSelectedInvoice] = useState(null)
+  const [invoices, setInvoices] = useState([])
+  const [selectedInvoice, setSelectedInvoice] = useState(invoiceLogger)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [startItem, setStartItem] = useState(0)
+  const [endItem, setEndItem] = useState(20)
+  const pagination = 20;
+  // const mockInvoices = invoiceLogger;
 
   useEffect(() => {
-    setInvoices(mockInvoices)
+    // TODO: Fetch all invoices for this company
+    setInvoices(mockInvoices) // Temp for testing
+
   }, [])
 
   const handleInvoiceClick = (invoice) => {
@@ -59,12 +70,30 @@ export default function InvoiceLogger() {
     setIsModalOpen(false)
   }
 
+  const handlePreviousPageClick = () => {
+    // Make sure user can't go into the negatives past "page 1"
+    const updatedEndItem = Math.max(endItem - pagination, pagination);
+    const updatedStartItem = Math.max(startItem - pagination, 0);
+
+    setEndItem(updatedEndItem)
+    setStartItem(updatedStartItem)
+  }
+
+  const handleNextPageClick = () => {
+    // Make sure user can't go into the negatives past the amount of available items
+    const updatedEndItem = Math.min(endItem + pagination, mockInvoices.mockTestData.length);
+    const updatedStartItem = startItem + pagination < mockInvoices.mockTestData.length ? startItem + pagination : startItem;
+
+    setEndItem(updatedEndItem)
+    setStartItem(updatedStartItem)
+  }
+
   return (
-    <Card className="w-full h-[20rem] flex flex-col shadow-lg">
+    <Card className="w-full h-[40rem] flex flex-col shadow-lg">
       <CardHeader className="border-b">
         <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
           <FileText className="mr-2 text-green-500" />
-          Faktura verifikation
+          Fakturor
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden p-0">
@@ -82,13 +111,14 @@ export default function InvoiceLogger() {
               <TableHeader>
                 <TableRow className="bg-gray-100">
                   <TableHead className="font-bold">Fakturanummer</TableHead>
-                  <TableHead className="font-bold">Datum</TableHead>
+                  <TableHead className="font-bold">Fakturadatum</TableHead>
+                  <TableHead className="font-bold">Förfallodatum</TableHead>
                   <TableHead className="font-bold">Belopp</TableHead>
                   <TableHead className="font-bold">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {invoices.map((invoice) => (
+                    {mockInvoices.mockTestData.slice(startItem, endItem).map((invoice) => (
                   <TableRow 
                     key={invoice.id} 
                     className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
@@ -96,7 +126,8 @@ export default function InvoiceLogger() {
                   >
                     <TableCell className="font-medium">{invoice.id}</TableCell>
                     <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-                    <TableCell className="font-semibold text-green-600">{invoice.amount.toFixed(2)}kr</TableCell>
+                    <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
+                    <TableCell className="font-semibold text-green-600">{invoice.amount}kr</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Badge variant={invoice.isPaid ? "success" : "destructive"}>
@@ -116,6 +147,15 @@ export default function InvoiceLogger() {
           )}
         </ScrollArea>
       </CardContent>
+      <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
+        <Button onClick={handlePreviousPageClick} disabled={startItem === 0} className="bg-gray-500 hover:bg-gray-600 text-white">
+          Föregående
+        </Button>
+        <Button onClick={handleNextPageClick} disabled={endItem >= mockInvoices.mockTestData.length} className="bg-gray-500 hover:bg-gray-600 text-white">
+          Nästa
+        </Button>
+      </div>
+
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -136,7 +176,7 @@ export default function InvoiceLogger() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-600">Belopp:</p>
-                    <p className="font-bold text-green-600">{selectedInvoice.amount.toFixed(2)}kr</p>
+                    <p className="font-bold text-green-600">{selectedInvoice.amount}kr</p>
                   </div>
                   <div>
                     <p className="font-semibold text-gray-600">Kund:</p>
