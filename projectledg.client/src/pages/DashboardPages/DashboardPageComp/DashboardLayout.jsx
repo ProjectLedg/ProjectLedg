@@ -10,8 +10,6 @@ import Cookies from "js-cookie";
 import {
   Home,
   Menu,
-  MessageSquarePlus,
-  UserPlus,
   Activity,
   BookCheck,
   Settings,
@@ -19,6 +17,7 @@ import {
   BookDown,
   LogOut,
   FileText,
+  SquarePen,
 } from "lucide-react";
 
 const navItems = [
@@ -168,7 +167,7 @@ export default function DashboardLayout() {
           <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">
 
             {/* Navbar */}
-            <header className={`NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)] ${isChatOpen ? 'hidden' : ''}`}>
+            <header className={`NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)] ${isChatOpen && isMobile ? 'hidden' : ''}`}>
               <div className="mx-auto sm:px-6 md:px-8">
                 <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem]">
                   <div className="flex items-center">
@@ -176,7 +175,7 @@ export default function DashboardLayout() {
                     <div className="md:hidden">
                       <MobileNav navItems={navItems} />
                     </div>
-                    <h1 className="text-l pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">Ditt företag här</h1>
+                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">Ditt företag här</h1>
                   </div>
                   <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4">
                     <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
