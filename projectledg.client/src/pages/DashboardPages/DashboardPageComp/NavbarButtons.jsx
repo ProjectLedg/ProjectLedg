@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { Sparkles, Bell } from "lucide-react"
+import { SquarePen, Bell } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -31,7 +31,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
             : 'bg-transparent text-gray-700 border-none hover:bg-green-50'}
         `}
       >
-        <Sparkles className="h-5 w-5 mr-2 inline-block" />
+        <SquarePen className="h-5 w-5 mr-2 inline-block" />
         Fråga Ledge
         <span className="sr-only">Öppna AI-chatt</span>
       </Button>
