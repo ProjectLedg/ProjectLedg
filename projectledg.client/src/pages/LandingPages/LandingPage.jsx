@@ -4,6 +4,7 @@ import Content from "./LandingPageComp/Content";
 import CardShow from "./LandingPageComp/Problems";
 import FooterSection from "./LandingPageComp/FooterSection";
 import NewsletterSignup from "./LandingPageComp/NewsletterSignup";
+import CallToAction from "./LandingPageComp/CallToAction";
 
 export default function LandingPage() {
 return (
@@ -16,6 +17,9 @@ return (
             <section id="why" className="scroll-mt-32">
                 <CardShow />
             </section>     
+        </div>
+        <div className="flex flex-col items-center pb-36">
+            <CallToAction />
         </div>
         <div className="flex flex-col items-center pb-36">
             <NewsletterSignup />
