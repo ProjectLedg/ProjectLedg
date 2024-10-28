@@ -9,13 +9,13 @@ namespace ProjectLedg.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InvoiceController : ControllerBase
+    public class IngoingInvoiceController : ControllerBase
     {
-        private readonly IInvoiceService _invoiceService;
+        private readonly IIngoingInvoiceService _invoiceService;
         private readonly IFormRecognizerService _formService;
         private readonly IBlobStorageService _blobStorageService;
 
-        public InvoiceController(IInvoiceService invoiceService, IFormRecognizerService formService, IBlobStorageService blobStorageService)
+        public IngoingInvoiceController(IIngoingInvoiceService invoiceService, IFormRecognizerService formService, IBlobStorageService blobStorageService)
         {
             _invoiceService = invoiceService;
             _formService = formService;
