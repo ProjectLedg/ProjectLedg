@@ -50,7 +50,7 @@ export default function FeatureContentTitle() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen space-y-[3vw]" style={{ height: '45vw' }}>
+        <div className="flex flex-col items-center justify-center h-screen space-y-[2vw]" style={{ height: '45vw' }}>
             {/* Inject custom keyframes */}
             <style>{keyframes}</style>
 
@@ -62,12 +62,14 @@ export default function FeatureContentTitle() {
                     fontSize: '3vw',
                 }}
             >
-                {splitText("Välkommen till Ledg, vi gör bokföring")}{" "}
-                <span className="text-green-500">{splitText("ENKELT")}</span>!
+                {splitText("Välkommen till ")}
+                <span className="text-green-500">{splitText("Ledge")}</span>{" "}
+                {splitText("vi gör bokföring")}{" "}
+                <span className="text-green-500">{splitText("ENKELT!")}</span>
                 <br />
-                <span className="text-green-500">{splitText("SNABBT")}</span>!
-                <span>{splitText(" och")}</span> <span className="text-green-500">{splitText("EFFEKTIVT")}</span>!{" "}
-                {splitText(" utan revisorer.")}
+                <span className="text-green-500">{splitText("SNABBT!")}</span>{" "}
+                <span>{splitText("och")}</span> <span className="text-green-500">{splitText("EFFEKTIVT!")}</span>{" "}
+                {splitText("utan revisorer.")}
             </h1>
 
             {/* Element 2 */}

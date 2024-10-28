@@ -7,5 +7,6 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<bool> CreateEmailAsync(EmailList email);
         Task <IEnumerable<EmailList>> GetAllEmailListAsync();
         Task <bool> DeleteEmailListAsync(int emailId);
+        Task AddEmailAsync(EmailList email);
     }
 }

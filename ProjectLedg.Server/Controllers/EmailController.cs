@@ -56,5 +56,45 @@ namespace ProjectLedg.Server.Controllers
             var emails = await _emailService.GetAllEmailsAsync();
             return Ok(emails);
         }
+
+        [HttpPost("SendMassEmail")]
+        public async Task<IActionResult> SendMassEmail([FromBody] MassEmailDTO massEmailDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _emailService.SendMassEmailAsync(massEmailDto.Subject, massEmailDto.Message);
+
+            if (response)
+            {
+                return Ok("E-mailmessages sent to the whole list");
+            }
+            else
+            {
+                return StatusCode(500, "Error occured while sending e-mailmessages");
+            }
+        }
+        [HttpPost("AddEmail")]
+        public async Task<IActionResult> AddEmail([FromBody] SubscriptionEmailDTO subscriptionEmailDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _emailService.AddEmailAsync(subscriptionEmailDto);
+
+            if (response)
+            {
+                return Ok("E-mail added to list!");
+            }
+            else
+            {
+                return StatusCode(500, "An Error occured while trying to add email to list");
+            }
+        }
+
     }
 }
