@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Send, Loader2 } from "lucide-react"
-import axiosConfig from '/axiosconfig'
+import axios from 'axios'
 
 export default function Component() {
   const [email, setEmail] = useState('')
@@ -16,8 +16,8 @@ export default function Component() {
 
     try {
       // Simulating API call Behöver bytas ut mot riktig endpoint och sätta loader enligt det, samt felhantering
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
+      const response = await axios.post('https://localhost:7223/api/email/AddEmail', { email })
+
       setStatus('success')
       setMessage('Tack för din prenumeration!')
       setEmail('')
@@ -43,14 +43,13 @@ export default function Component() {
               className="flex-grow bg-white bg-opacity-50 border-gray-300 focus:border-black focus:ring-black transition-colors duration-300"
               disabled={status === 'loading'}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={status === 'loading'}
-              className={`w-full sm:w-auto ${
-                status === 'loading' 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-black hover:bg-gray-800'
-              } text-white transition-all duration-300 ease-in-out transform hover:scale-105`}
+              className={`w-full sm:w-auto ${status === 'loading'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-black hover:bg-gray-800'
+                } text-white transition-all duration-300 ease-in-out transform hover:scale-105`}
             >
               {status === 'loading' ? (
                 <span className="flex items-center justify-center">
@@ -65,9 +64,8 @@ export default function Component() {
             </Button>
           </div>
           {message && (
-            <p className={`text-center text-sm font-medium ${
-              status === 'success' ? 'text-green-600' : 'text-red-600'
-            }`}>
+            <p className={`text-center text-sm font-medium ${status === 'success' ? 'text-green-600' : 'text-red-600'
+              }`}>
               {message}
             </p>
           )}
