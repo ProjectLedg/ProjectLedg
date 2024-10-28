@@ -32,7 +32,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         `}
       >
         <SquarePen className="h-5 w-5 mr-2 inline-block" />
-        Fråga Ledge
+        <span className="hidden sm:block">Fråga Ledge</span>
         <span className="sr-only">Öppna AI-chatt</span>
       </Button>
       <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
