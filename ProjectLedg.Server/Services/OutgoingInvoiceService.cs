@@ -33,10 +33,7 @@ namespace ProjectLedg.Server.Services
                 TotalTax = invoiceDto.TotalTax,
                 IsPaid = invoiceDto.IsPaid,
                 IsOutgoing = invoiceDto.IsOutgoing,
-                IsBooked = invoiceDto.IsBooked,
-                CustomerName = invoiceDto.CustomerName,
-                CustomerAddress = invoiceDto.CustomerAddress,
-                CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient
+                IsBooked = invoiceDto.IsBooked
             };
 
             return await _invoiceRepository.CreateOutgoingInvoiceAsync(invoice);
@@ -67,7 +64,7 @@ namespace ProjectLedg.Server.Services
                 Quantity = itemDto.Quantity,
                 UnitPrice = itemDto.UnitPrice,
                 Amount = itemDto.Amount,
-                InvoiceId = existingInvoice.Id //FK linking the items to the invoice
+                IngoingInvoiceId = existingInvoice.Id //FK linking the items to the invoice
             }).ToList();
 
             return await _invoiceRepository.UpdateOutgoingInvoiceAsync(existingInvoice);
