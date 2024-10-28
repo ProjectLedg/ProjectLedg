@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { MessageSquarePlus, Bell } from "lucide-react"
+import { SquarePen, Bell } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -26,13 +26,13 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         className={`
           relative overflow-hidden transition-all duration-300 ease-in-out
           px-4 py-2 font-medium text-sm rounded-full
-          ${isChatOpen 
-            ? 'bg-green-500 text-white border-green-500' 
-            : 'bg-white text-green-500 border-green-300 hover:bg-green-50'}
+          ${isChatOpen
+            ? 'bg-green-500 text-white border-green-500'
+            : 'bg-transparent text-gray-700 border-none hover:bg-green-50'}
         `}
       >
-        <MessageSquarePlus className="h-5 w-5 mr-2 inline-block" />
-        Fråga AI
+        <SquarePen className="h-5 w-5 mr-2 inline-block" />
+        <span className="hidden sm:block">Fråga Ledge</span>
         <span className="sr-only">Öppna AI-chatt</span>
       </Button>
       <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
@@ -40,16 +40,16 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
           <Button
             variant="ghost"
             size="icon"
-            className="
-              relative overflow-hidden transition-all duration-300 ease-in-out
-              hover:bg-gray-100 text-gray-600 hover:text-gray-800
-            "
+            className={`
+        relative transition-all duration-300 ease-in-out
+        ${isNotificationsOpen ? 'bg-white' : 'bg-transparent'}
+      `}
             onClick={() => setIsNotificationsOpen(true)}
           >
             <Bell className="h-5 w-5" />
             <span className="sr-only">Visa notiser</span>
             {newNotificationsCount > 0 && (
-              <span className="absolute -top-2 -right-2 flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold">
+              <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[0.5rem] font-bold">
                 {newNotificationsCount}
               </span>
             )}
@@ -72,6 +72,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
           </div>
         </PopoverContent>
       </Popover>
+
     </div>
   )
 }

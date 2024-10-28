@@ -412,6 +412,7 @@ namespace ProjectLedg.Server.Services
             }
             catch (Exception e)
             {
+                
                 return new FinanceInsightsYearDTO
                 {
                     GrossProfit = new List<MonthlyTotalDTO>(),

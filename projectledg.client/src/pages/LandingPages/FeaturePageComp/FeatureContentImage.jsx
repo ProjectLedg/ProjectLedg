@@ -1,7 +1,12 @@
 import React from "react";
 import BookingImage from "@/assets/BookingImageFiles.jpg";
 
-const loremText = "Med vår bokföringsapp blir ekonomihanteringen smidigare än någonsin. Vi gör det enkelt för dig att automatisera bokföringen och snabbt få en överblick över ditt företags ekonomi. Låt oss ta hand om det komplexa, så att du kan fokusera på att utveckla din verksamhet.";
+const imageText = (
+    <span>
+        Med <span className="text-green-500">Ledge</span> blir ekonomihanteringen smidigare än någonsin. Vi gör det <span className="text-green-500">enkelt</span> för dig att automatisera bokföringen och <span className="text-green-500">snabbt</span> få en överblick över ditt företags ekonomi. Låt oss ta hand om det komplexa, så att du kan fokusera på att utveckla din verksamhet.
+    </span>
+);
+
 
 
 export default function FeatureImage() {
@@ -16,8 +21,8 @@ export default function FeatureImage() {
                         paddingRight: '4vw', // 4% of viewport width
                     }}
                 >
-                    <p className="text-green-500 font-semibold" style={{ fontSize: '2vw' }}>
-                        {loremText}
+                    <p className="text-gray-700 font-semibold" style={{ fontSize: '2vw' }}>
+                        {imageText}
                     </p>
                 </div>
 

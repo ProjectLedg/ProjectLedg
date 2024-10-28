@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
+using System.ClientModel.Primitives;
+using OpenAI;
 
 namespace ProjectLedg.Server
 {
@@ -115,17 +117,17 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
 
-                })
-                //Add Microsoft account authentication
-                .AddMicrosoftAccount(options =>
-                {
-                    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
-                    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
-
-                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 });
+                //Add Microsoft account authentication
+                //.AddMicrosoftAccount(options =>
+                //{
+                //    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
+                //    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
+
+                //    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                //    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
+                //    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+                //});
 
             services.AddAuthorization();
 
@@ -225,7 +227,13 @@ namespace ProjectLedg.Server
             //Outgoing Invoices
             services.AddScoped<IOutgoingInvoiceRepository, OutgoingInvoiceRepository>();
             services.AddScoped<IOutgoingInvoiceService, OutgoingInvoiceService>();
+          
+            //OpenAI
+            var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var openAiClient = new OpenAIClient(new OpenAIAuthentication(apiKey: openAiApiKey));
 
+            builder.Services.AddSingleton(openAiClient);
+            builder.Services.AddScoped<IAssistantService, AssistantService>();
 
             var app = builder.Build();
 
