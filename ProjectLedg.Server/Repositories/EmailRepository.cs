@@ -15,6 +15,11 @@ namespace ProjectLedg.Server.Repositories
             _context = context;
         }
 
+        public async Task AddEmailAsync(EmailList email)
+        {
+            _context.Emails.Add(email); //Add email to db
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<bool> CreateEmailAsync(EmailList email)
         {

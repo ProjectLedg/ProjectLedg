@@ -1,4 +1,5 @@
 ﻿using ProjectLedg.Options.Email.IEmail;
+using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Email;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
@@ -16,7 +17,16 @@ namespace ProjectLedg.Server.Services
             _emailSender = emailSender;
         }
 
+        public async Task<bool> AddEmailAsync(SubscriptionEmailDTO subscriptionEmailDto)
+        {
+            var emailEntity = new EmailList
+            {
+                Email = subscriptionEmailDto.Email
+            };
 
+            await _emailRepository.AddEmailAsync(emailEntity);
+            return true;    //Returns true if email is added successfully
+        }
 
         public async Task<bool> CreateEmailAsync(EmailDTO dto)
         {
@@ -50,15 +60,31 @@ namespace ProjectLedg.Server.Services
             return response;
         }
 
-        public async Task<IEnumerable<EmailDTO>> GetAllEmailsAsync()
+        public async Task<IEnumerable<SubscriptionEmailDTO>> GetAllEmailsAsync()
         {
             var emails = await _emailRepository.GetAllEmailListAsync();
-            return emails.Select(a => new EmailDTO
+            return emails.Select(a => new SubscriptionEmailDTO
             {
-                Email = a.Email,
-                Name = a.Name,
-                Message = a.Message
+                Email = a.Email
             }).ToList();
+        }
+
+        public async Task<bool> SendMassEmailAsync(string subject, string htmlMessage)
+        {
+            var allEmails = await _emailRepository.GetAllEmailListAsync();
+
+            foreach (var email in allEmails)
+            {
+                var result = await _emailSender.SendEmailAsync(email.Email, subject, htmlMessage);
+
+                if (!result.Success)
+                {
+                    //handle errors
+                    Console.WriteLine($"Failed to send email to: {email.Email}, Error: {result.ErrorMessage}");
+                }
+            }
+
+            return true;
         }
     }
 }
