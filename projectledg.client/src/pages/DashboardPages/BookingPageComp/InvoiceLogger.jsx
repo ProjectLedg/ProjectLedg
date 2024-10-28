@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Check, X, FileText } from "lucide-react"
 import invoiceLogger from './invoiceLogger.json'
+import LoggerTable from './LoggerTable'
 
 
 // Mock data for one invoice
@@ -25,8 +26,8 @@ import invoiceLogger from './invoiceLogger.json'
 // //     additionalInfo: ""
 // //   }
 // ]
-const mockInvoices = invoiceLogger;
 
+const mockInvoices = invoiceLogger;
 
 
 export default function InvoiceLogger() {
@@ -72,25 +73,39 @@ export default function InvoiceLogger() {
 
   const handlePreviousPageClick = () => {
     // Make sure user can't go into the negatives past "page 1"
-    const updatedEndItem = Math.max(endItem - pagination, pagination);
-    const updatedStartItem = Math.max(startItem - pagination, 0);
+    if (pageNumber > 1) {
+      const updatedPageNumber = pageNumber - 1;
+      const updatedEndItem = updatedPageNumber * pagination;
+      const updatedStartItem = updatedEndItem - pagination;
 
-    setEndItem(updatedEndItem)
-    setStartItem(updatedStartItem)
+
+      console.log(updatedPageNumber)
+
+      setPageNumber(updatedPageNumber);
+      setEndItem(updatedEndItem);
+      setStartItem(updatedStartItem);
+    }
   }
 
   const handleNextPageClick = () => {
     // Make sure user can't go into the negatives past the amount of available items
-    const updatedEndItem = Math.min(endItem + pagination, mockInvoices.mockTestData.length);
-    const updatedStartItem = startItem + pagination < mockInvoices.mockTestData.length ? startItem + pagination : startItem;
+    if (pageNumber < totalPages) {
+      const updatedPageNumber = pageNumber + 1;
+      const updatedStartItem = pageNumber * pagination;
+      const updatedEndItem = Math.min(updatedStartItem + pagination, mockInvoices.mockTestData.length);
 
-    setEndItem(updatedEndItem)
-    setStartItem(updatedStartItem)
+      console.log(updatedPageNumber)
+
+
+      setPageNumber(updatedPageNumber);
+      setEndItem(updatedEndItem);
+      setStartItem(updatedStartItem);
+    }
   }
 
   return (
     <Card className="w-full h-[40rem] flex flex-col shadow-lg">
-      <CardHeader className="border-b">
+       <CardHeader className="border-b">
         <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
           <FileText className="mr-2 text-green-500" />
           Fakturor
@@ -107,54 +122,80 @@ export default function InvoiceLogger() {
               <p className="text-red-500">{error}</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-100">
-                  <TableHead className="font-bold">Fakturanummer</TableHead>
-                  <TableHead className="font-bold">Fakturadatum</TableHead>
-                  <TableHead className="font-bold">Förfallodatum</TableHead>
-                  <TableHead className="font-bold">Belopp</TableHead>
-                  <TableHead className="font-bold">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                    {mockInvoices.mockTestData.slice(startItem, endItem).map((invoice) => (
-                  <TableRow 
-                    key={invoice.id} 
-                    className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
-                    onClick={() => handleInvoiceClick(invoice)}
-                  >
-                    <TableCell className="font-medium">{invoice.id}</TableCell>
-                    <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-                    <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-                    <TableCell className="font-semibold text-green-600">{invoice.amount}kr</TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Badge variant={invoice.isPaid ? "success" : "destructive"}>
-                          {invoice.isPaid ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                          <span className="ml-1">{invoice.isPaid ? "Betald" : "Ej betald"}</span>
-                        </Badge>
-                        <Badge variant={invoice.isBooked ? "success" : "destructive"}>
-                          {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                          <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej Bokförd"}</span>
-                        </Badge>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            
+            // <Table>
+            //   <TableHeader>
+            //     <TableRow className="bg-gray-100">
+            //       <TableHead className="font-bold">Fakturanummer</TableHead>
+            //       <TableHead className="font-bold">Fakturadatum</TableHead>
+            //       <TableHead className="font-bold">Förfallodatum</TableHead>
+            //       <TableHead className="font-bold">Belopp</TableHead>
+            //       <TableHead className="font-bold">Status</TableHead>
+            //     </TableRow>
+            //   </TableHeader>
+            //   <TableBody>
+            //       {mockInvoices.mockTestData.slice(startItem, endItem).map((invoice) => (
+            //       <TableRow
+            //         key={invoice.id}
+            //         className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+            //         onClick={() => handleInvoiceClick(invoice)}
+            //       >
+            //         <TableCell className="font-medium">{invoice.id}</TableCell>
+            //         <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
+            //         <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
+            //         <TableCell className="font-semibold text-green-600">{invoice.amount}kr</TableCell>
+            //         <TableCell>
+            //           <div className="flex space-x-2">
+            //             <Badge variant={invoice.isPaid ? "success" : "destructive"}>
+            //               {invoice.isPaid ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            //               <span className="ml-1">{invoice.isPaid ? "Betald" : "Ej betald"}</span>
+            //             </Badge>
+            //             <Badge variant={invoice.isBooked ? "success" : "destructive"}>
+            //               {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            //               <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej Bokförd"}</span>
+            //             </Badge>
+            //           </div>
+            //         </TableCell>
+            //       </TableRow>
+            //     ))}
+            //   </TableBody>
+            // </Table>           
+            
+            <LoggerTable/>
           )}
         </ScrollArea>
       </CardContent>
       <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
-        <Button onClick={handlePreviousPageClick} disabled={startItem === 0} className="bg-gray-500 hover:bg-gray-600 text-white">
+        {/* <Button onClick={handlePreviousPageClick} disabled={startItem === 0} className="bg-gray-500 hover:bg-gray-600 text-white">
           Föregående
         </Button>
         <Button onClick={handleNextPageClick} disabled={endItem >= mockInvoices.mockTestData.length} className="bg-gray-500 hover:bg-gray-600 text-white">
           Nästa
-        </Button>
-      </div>
+        </Button> */}
+
+        <Pagination>
+          <PaginationContent>
+            {/* Previous button */}
+            <PaginationItem disabled={pageNumber === 1}>
+              <PaginationPrevious onClick={handlePreviousPageClick}  />
+            </PaginationItem>
+
+            {/* Map all pages */}
+            {Array.from({ length: endPage - adjustedStartPage + 1 }, (_, index) => {
+              const page = adjustedStartPage + index;
+              return (
+                <PaginationItem key={page} active={pageNumber === page}>
+                  <PaginationLink className={pageNumber === page ? "bg-green-400" : "" }  onClick={() => setPageNumber(page)}>{page}</PaginationLink>
+                </PaginationItem>
+              );
+            })}
+            {/* Next button */}
+            <PaginationItem disabled={pageNumber === totalPages}>
+              <PaginationNext onClick={handleNextPageClick} />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div> 
 
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -226,6 +267,10 @@ export default function InvoiceLogger() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+
     </Card>
+
+
   )
 }
