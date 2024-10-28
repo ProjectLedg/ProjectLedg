@@ -7,7 +7,7 @@ namespace ProjectLedg.Server.Services.IServices
     {
         Task<OutgoingInvoice?> GetOutgoingInvoiceByIdAsync(int invoiceId);
         Task<IEnumerable<OutgoingInvoice>> GetAllOutgoingInvoicesAsync();
-        Task<bool> CreateOutgoingInvoiceAsync(InvoiceDTO invoiceDto);
+        Task<bool> CreateOutgoingInvoiceAsync(OutgoingInvoiceCreationDTO invoiceDto);
         Task<bool> UpdateOutgoingInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto);
         Task<bool> DeleteOutgoingInvoiceAsync(int invoiceId);
     }
