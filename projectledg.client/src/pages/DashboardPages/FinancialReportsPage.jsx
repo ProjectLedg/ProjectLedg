@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
-import { ArrowUpRight, ArrowDownRight, Download } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, Download, RefreshCcw } from 'lucide-react'
 import { Skeleton } from "@/components/ui/skeleton"
 
 const MetricCard = ({ title, value, change, changeType }) => (
@@ -54,37 +54,39 @@ export default function FinancialReportsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const currentYear =2023;         //new Date().getFullYear()
-        const response = await axiosConfig.post('/Finance/GetFinancialReport', {
-          companyId: parseInt(companyId),
-          year: currentYear
-        })
-        setFinancialData(response.data)
-      } catch (error) {
-        setError('Failed to fetch financial data. Please try again later.')
-      } finally {
-        setIsLoading(false)
-      }
+  const fetchData = async () => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const currentYear = 2023 // new Date().getFullYear()
+      const response = await axiosConfig.post('/Finance/GetFinancialReport', {
+        companyId: parseInt(companyId),
+        year: currentYear
+      })
+      setFinancialData(response.data)
+    } catch (error) {
+      setError('Failed to fetch financial data. Please try again later.')
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchData()
   }, [companyId])
-
-  if (error) {
-    return <div className="text-center text-red-500 mt-8">{error}</div>
-  }
 
   return (
     <div className="space-y-4 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 sm:mb-0">Finansiella Rapporter</h2>
+        <Button onClick={fetchData} variant="outline" size="sm" disabled={isLoading}>
+          <RefreshCcw className="mr-2 h-4 w-4" />
+          Uppdatera data
+        </Button>
       </div>
       
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {isLoading ? (
+        {isLoading || !financialData ? (
           Array(4).fill(0).map((_, index) => (
             <Card key={index}>
               <CardHeader className="pb-2">
@@ -119,7 +121,7 @@ export default function FinancialReportsPage() {
             </Button>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
+            {isLoading || !financialData ? (
               <Skeleton className="h-[200px] sm:h-[300px] w-full" />
             ) : (
               <ChartContainer 
@@ -130,7 +132,7 @@ export default function FinancialReportsPage() {
                 className="h-[200px] sm:h-[300px] w-[100%]"
               >
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={financialData.balanceData} className="ml-[-2rem]">
+                  <LineChart data={financialData.balanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <XAxis dataKey="date" tick={{fontSize: 10}} interval={'preserveStartEnd'} />
                     <YAxis tick={{fontSize: 10}} tickFormatter={(value) => `${value / 1000}k`} />
                     <Line type="monotone" dataKey="assets" stroke="var(--color-assets)" strokeWidth={2} />
@@ -152,7 +154,7 @@ export default function FinancialReportsPage() {
             </Button>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
+            {isLoading || !financialData ? (
               <Skeleton className="h-[200px] sm:h-[300px] w-full" />
             ) : (
               <ChartContainer 
@@ -163,12 +165,12 @@ export default function FinancialReportsPage() {
                 className="h-[200px] sm:h-[300px] w-[100%]"
               >
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={financialData.resultData} className="ml-[-2rem]">
+                  <BarChart data={financialData.resultData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <XAxis dataKey="monthName" tick={{fontSize: 10}} />
                     <YAxis tick={{fontSize: 10}} tickFormatter={(value) => `${value / 1000}k`} />
+                    <ChartTooltip content={<CustomTooltip />} cursor={{fill: 'rgba(0, 0, 0, 0.1)'}} />
                     <Bar dataKey="revenue" fill="var(--color-revenue)" />
                     <Bar dataKey="expenses" fill="var(--color-expenses)" />
-                    <ChartTooltip content={<CustomTooltip />} />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -176,6 +178,16 @@ export default function FinancialReportsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {error && (
+        <div className="text-center text-red-500 mt-4">
+          {error}
+          <Button onClick={fetchData} variant="outline" size="sm" className="ml-2">
+            <RefreshCcw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

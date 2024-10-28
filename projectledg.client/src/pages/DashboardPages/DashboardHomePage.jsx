@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
 import axiosConfig from '/axiosconfig'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from '@/components/ui/progress'
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
-import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ProfitabilityCard from './DashboardPageComp/ProfitabilityCard'
 import MetricGraph from './DashboardPageComp/MetricGraph'
@@ -52,6 +52,29 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
     </CardContent>
   </Card>
 )
+
+const LoadingSpinner = () => {
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 100 ? 100 : prevProgress + 10))
+    }, 70)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="w-64 space-y-4">
+        <Progress value={progress} className="w-full" />
+        <p className="text-center text-sm text-muted-foreground">Loading financial data...</p>
+      </div>
+    </div>
+  )
+}
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -104,7 +127,7 @@ const DashboardHomePage = () => {
     fetchData();
   }, [companyId]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <div>Error: {error}</div>;
   if (!topGraphsData || !filterGraphsData) return null;
 
