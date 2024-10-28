@@ -13,7 +13,7 @@ export default function ChatWindow({ onClose }) {
     return (
         <div className="chatWindow flex flex-col  right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl ">
             <div className="bg-gray-100 rounded-xl overflow-hidden h-[100%]">
-                <div className="flex justify-between items-center p-4 HALLÅÅ">
+                <div className="flex justify-between items-center p-4 ">
                     <button onClick={onClose} className="text-gray-500  hover:text-gray-700">
                         <SquarePen size={25} />
                     </button>
