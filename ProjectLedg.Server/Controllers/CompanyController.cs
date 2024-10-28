@@ -24,8 +24,6 @@ namespace ProjectLedg.Server.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyDTO companyDto)
         {   
-
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
