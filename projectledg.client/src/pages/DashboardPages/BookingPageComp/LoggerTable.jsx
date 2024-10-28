@@ -1,24 +1,14 @@
 import { useState, useEffect } from "react"
-import { MoreHorizontal, SortDesc } from "lucide-react"
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Check, X, Filter, ListFilter, ArrowUpNarrowWide, ArrowDownWideNarrow} from "lucide-react"
+import { Check, X, ListFilter, ArrowUpNarrowWide, ArrowDownWideNarrow} from "lucide-react"
     
 import invoiceLogger from './invoiceLogger.json'
 
 export default function LoggerTable() {
 const [startItem, setStartItem] = useState(0)
 const [endItem, setEndItem] = useState(20)
-const pagination = 20;
 const [showUnpaid, setShowUnpaid] = useState(false)
 const [showUnbooked, setShowUnbooked] = useState(false)
 const [sortBy, setSortBy] = useState("id") // Default sorting by invoice id
@@ -43,6 +33,11 @@ const [sortOrder, setSortOrder] = useState("asc") // Default sort order ascendin
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0
         }
     });
+
+    const handleInvoiceClick = (invoice) => {
+        setSelectedInvoice({ ...invoice })
+        setIsModalOpen(true)
+    }
 
 return (
     <div>
