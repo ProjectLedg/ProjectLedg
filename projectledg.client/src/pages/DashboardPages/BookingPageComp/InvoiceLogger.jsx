@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Check, X, FileText } from "lucide-react"
 import invoiceLogger from './invoiceLogger.json'
 import LoggerTable from './LoggerTable'
+import LoggerPagination from "./LoggerPagination"
 
 
 // Mock data for one invoice
@@ -35,10 +37,13 @@ export default function InvoiceLogger() {
   const [selectedInvoice, setSelectedInvoice] = useState(invoiceLogger)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [startItem, setStartItem] = useState(0)
-  const [endItem, setEndItem] = useState(20)
+  const [error, setError] = useState(null)  
   const pagination = 20;
+
+  const totalInvoices = mockInvoices.mockTestData.length; // TODO: Change this to the api variable when endpoint is finished
+  const totalPages = Math.ceil(mockInvoices.mockTestData.length / pagination);
+
+
   // const mockInvoices = invoiceLogger;
 
   useEffect(() => {
@@ -69,38 +74,6 @@ export default function InvoiceLogger() {
       )
     )
     setIsModalOpen(false)
-  }
-
-  const handlePreviousPageClick = () => {
-    // Make sure user can't go into the negatives past "page 1"
-    if (pageNumber > 1) {
-      const updatedPageNumber = pageNumber - 1;
-      const updatedEndItem = updatedPageNumber * pagination;
-      const updatedStartItem = updatedEndItem - pagination;
-
-
-      console.log(updatedPageNumber)
-
-      setPageNumber(updatedPageNumber);
-      setEndItem(updatedEndItem);
-      setStartItem(updatedStartItem);
-    }
-  }
-
-  const handleNextPageClick = () => {
-    // Make sure user can't go into the negatives past the amount of available items
-    if (pageNumber < totalPages) {
-      const updatedPageNumber = pageNumber + 1;
-      const updatedStartItem = pageNumber * pagination;
-      const updatedEndItem = Math.min(updatedStartItem + pagination, mockInvoices.mockTestData.length);
-
-      console.log(updatedPageNumber)
-
-
-      setPageNumber(updatedPageNumber);
-      setEndItem(updatedEndItem);
-      setStartItem(updatedStartItem);
-    }
   }
 
   return (
@@ -166,35 +139,7 @@ export default function InvoiceLogger() {
         </ScrollArea>
       </CardContent>
       <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
-        {/* <Button onClick={handlePreviousPageClick} disabled={startItem === 0} className="bg-gray-500 hover:bg-gray-600 text-white">
-          Föregående
-        </Button>
-        <Button onClick={handleNextPageClick} disabled={endItem >= mockInvoices.mockTestData.length} className="bg-gray-500 hover:bg-gray-600 text-white">
-          Nästa
-        </Button> */}
-
-        <Pagination>
-          <PaginationContent>
-            {/* Previous button */}
-            <PaginationItem disabled={pageNumber === 1}>
-              <PaginationPrevious onClick={handlePreviousPageClick}  />
-            </PaginationItem>
-
-            {/* Map all pages */}
-            {Array.from({ length: endPage - adjustedStartPage + 1 }, (_, index) => {
-              const page = adjustedStartPage + index;
-              return (
-                <PaginationItem key={page} active={pageNumber === page}>
-                  <PaginationLink className={pageNumber === page ? "bg-green-400" : "" }  onClick={() => setPageNumber(page)}>{page}</PaginationLink>
-                </PaginationItem>
-              );
-            })}
-            {/* Next button */}
-            <PaginationItem disabled={pageNumber === totalPages}>
-              <PaginationNext onClick={handleNextPageClick} />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <LoggerPagination totalPages={totalPages} totalInvoices={totalInvoices} />
       </div> 
 
 
@@ -267,10 +212,6 @@ export default function InvoiceLogger() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-
     </Card>
-
-
   )
 }
