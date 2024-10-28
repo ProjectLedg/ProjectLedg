@@ -31,6 +31,20 @@ const initialFields = [
     description: 'Ange det totala antalet anställda i ditt företag.'
   },
   { 
+    id: 'address', 
+    label: 'Adress', 
+    type: 'text', 
+    placeholder: 'Företagets adress',
+    description: 'Ange företagets fullständiga adress.'
+  },
+  { 
+    id: 'taxId', 
+    label: 'Skatte-ID', 
+    type: 'text', 
+    placeholder: 'Skatte-ID',
+    description: 'Ange företagets skatte-ID.'
+  },
+  { 
     id: 'companyDescription', 
     label: 'Verksamhetsbeskrivning', 
     type: 'text', 
@@ -45,6 +59,8 @@ export default function CompanyCreatePage() {
     companyName: '',
     orgNumber: '',
     amountOfEmployees: 0,
+    address: '',
+    taxId: '',
     companyDescription: ''
   })
   
