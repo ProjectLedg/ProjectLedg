@@ -119,9 +119,8 @@ const DashboardHomePage = () => {
 
   return (
     <div className="space-y-4 p-4 sm:p-6">
-      <h2>Financial Reports for Company {companyId}</h2>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Current Financial Overview</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Översikt</h2>
       </div>
       <div className={`GRIDCONTAINER flex ${isChatOpen ? 'flex-col' : 'flex-row'}`}>
         <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] pb-4' : 'w-[50%] pr-2'}`}>
