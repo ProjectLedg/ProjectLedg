@@ -172,7 +172,7 @@ namespace ProjectLedg.Server.Services
                 Quantity = itemDto.Quantity,
                 UnitPrice = itemDto.UnitPrice,
                 Amount = itemDto.Amount,
-                InvoiceId = existingInvoice.Id //FK linking the items to the invoice
+                IngoingInvoiceId = existingInvoice.Id //FK linking the items to the invoice
             }).ToList();
 
             return await _invoiceRepository.UpdateInvoiceAsync(existingInvoice);
