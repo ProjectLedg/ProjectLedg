@@ -75,7 +75,7 @@ public class AssistantService : IAssistantService
 
     private async Task<string> FetchUserInvoicesAsync(string userId)
     {
-        var invoices = await _ingoingInvoiceService.GetAllInvoicesAsync();
+        var invoices = await _ingoingInvoiceService.GetAllIngoingInvoicesAsync();
         var userInvoices = invoices.Where(i => i.CustomerId == userId).OrderByDescending(i => i.InvoiceDate).Take(5).ToList();
 
         if (!userInvoices.Any())
