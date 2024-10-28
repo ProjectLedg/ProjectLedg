@@ -44,7 +44,8 @@ namespace ProjectLedg.Server.Controllers
         }
         [Authorize]
         [HttpPost("save")]
-        public async Task<IActionResult> SaveInvoice([FromBody] InvoiceDTO invoiceDto)
+        public async Task<IActionResult> SaveIngoingInvoice([FromBody] InvoiceDTO invoiceDto)
+
         {
             var tempFilePath = HttpContext.Session.GetString("TempFilePath");
 
@@ -60,8 +61,7 @@ namespace ProjectLedg.Server.Controllers
             //}
 
             var userId = "testUser"; 
-
-            var result = await _invoiceService.SaveInvoiceAsync(invoiceDto, tempFilePath, userId);
+            var result = await _invoiceService.SaveIngoingInvoiceAsync(invoiceDto, tempFilePath, userId);
 
             return Ok(new { message = "Invoice saved successfully!" });
         }
@@ -69,7 +69,7 @@ namespace ProjectLedg.Server.Controllers
         [HttpGet("{invoiceId}")]
         public async Task<IActionResult> GetInvoice(int invoiceId)
         {
-            var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+            var invoice = await _invoiceService.GetIngoingInvoiceByIdAsync(invoiceId);
             if (invoice == null)
             {
                 return NotFound("Invoice not found.");
@@ -80,14 +80,14 @@ namespace ProjectLedg.Server.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAllInvoices()
         {
-            var invoices = await _invoiceService.GetAllInvoicesAsync();
+            var invoices = await _invoiceService.GetAllIngoingInvoicesAsync();
             return Ok(invoices);
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateInvoice([FromBody] InvoiceDTO invoiceDto)
         {
-            var result = await _invoiceService.CreateInvoiceAsync(invoiceDto);
+            var result = await _invoiceService.CreateIngoingInvoiceAsync(invoiceDto);
             if (!result)
             {
                 return StatusCode(500, "An error occurred while creating the invoice.");
@@ -99,7 +99,7 @@ namespace ProjectLedg.Server.Controllers
         [HttpPut("update/{invoiceId}")]
         public async Task<IActionResult> UpdateInvoice(int invoiceId, [FromBody] InvoiceDTO invoiceDto)
         {
-            var result = await _invoiceService.UpdateInvoiceAsync(invoiceId, invoiceDto);
+            var result = await _invoiceService.UpdateIngoingInvoiceAsync(invoiceId, invoiceDto);
             if (!result)
             {
                 return StatusCode(500, "An error occurred while updating the invoice.");
@@ -111,7 +111,7 @@ namespace ProjectLedg.Server.Controllers
         [HttpDelete("delete/{invoiceId}")]
         public async Task<IActionResult> DeleteInvoice(int invoiceId)
         {
-            var result = await _invoiceService.DeleteInvoiceAsync(invoiceId);
+            var result = await _invoiceService.DeleteIngoingInvoiceAsync(invoiceId);
             if (!result)
             {
                 return StatusCode(500, "An error occurred while deleting the invoice.");

@@ -5,11 +5,11 @@ namespace ProjectLedg.Server.Services.IServices
 {
     public interface IIngoingInvoiceService
     {
-        Task<IngoingInvoice?> GetInvoiceByIdAsync(int invoiceId);
-        Task<IEnumerable<IngoingInvoice>> GetAllInvoicesAsync();
-        Task<bool> CreateInvoiceAsync(InvoiceDTO invoiceDto);
-        Task<bool> UpdateInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto);
-        Task<bool> DeleteInvoiceAsync(int invoiceId);
-        Task<bool> SaveInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId);
+        Task<IngoingInvoice?> GetIngoingInvoiceByIdAsync(int invoiceId);
+        Task<IEnumerable<IngoingInvoice>> GetAllIngoingInvoicesAsync();
+        Task<bool> CreateIngoingInvoiceAsync(InvoiceDTO invoiceDto);
+        Task<bool> UpdateIngoingInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto);
+        Task<bool> DeleteIngoingInvoiceAsync(int invoiceId);
+        Task<bool> SaveIngoingInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId);
     }
 }
