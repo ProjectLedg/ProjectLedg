@@ -23,7 +23,7 @@ namespace ProjectLedg.Server.Services
 
         public async Task<bool> CreateOutgoingInvoiceAsync(OutgoingInvoiceCreationDTO invoiceDto)
         {
-            var invoice = new OutgoingInvoiceCreationDTO
+            var invoice = new OutgoingInvoice
             {
                 InvoiceNumber = invoiceDto.InvoiceNumber,
                 InvoiceDate = invoiceDto.InvoiceDate,
