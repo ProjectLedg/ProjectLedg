@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
 import ChatWindow from "./ChatWindow";
+import axiosConfig from "/axiosconfig";
 import ChatWindowMobile from "./ChatWindowMobile";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
@@ -140,8 +141,23 @@ export default function DashboardLayout() {
   const { companyId } = useParams();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [companyData, setCompanyData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchCompanyData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.get(`/Company/${companyId}`);
+      setCompanyData(response.data);
+    } catch (error) {
+      console.error("Failed to fetch company data", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
+    fetchCompanyData();
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768); 
     };
@@ -150,11 +166,15 @@ export default function DashboardLayout() {
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [companyId]);
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a more sophisticated loading component
+  }
 
   return (
     <div className="flex h-screen overflow-hidden shadow-lg">
@@ -175,7 +195,7 @@ export default function DashboardLayout() {
                     <div className="md:hidden">
                       <MobileNav navItems={navItems} />
                     </div>
-                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">Ditt företag här</h1>
+                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">{companyData ? companyData.companyName : 'Company Name'}</h1>
                   </div>
                   <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4">
                     <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
