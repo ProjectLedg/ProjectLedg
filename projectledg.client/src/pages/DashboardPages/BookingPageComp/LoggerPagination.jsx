@@ -1,11 +1,7 @@
 import { useState } from "react"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
 
-
-
 export default function LoggerPagination({totalPages, totalInvoices, setStartItem, setEndItem}) {
-    // const [startItem, setStartItem] = useState(1)
-    // const [endItem, setEndItem] = useState(20)
     const [pageNumber, setPageNumber] = useState(1)
 
     // Pagination set variables

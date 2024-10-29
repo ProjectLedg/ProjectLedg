@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Check, X, ListFilter, Filter, ArrowUpNarrowWide, ArrowDownWideNarrow} from "lucide-react"
     
-import invoiceLogger from './invoiceLogger.json'
 
-export default function LoggerTable({ handleInvoiceClick, startItem, endItem }) {
+export default function LoggerTable({ invoices, handleInvoiceClick, startItem, endItem }) {
 const [showUnpaid, setShowUnpaid] = useState(false)
 const [showUnbooked, setShowUnbooked] = useState(false)
 const [sortBy, setSortBy] = useState("id") // Default sorting by invoice id
@@ -23,7 +22,7 @@ const [sortOrder, setSortOrder] = useState("asc") // Default sort order ascendin
     };
 
     // Sort the data for the column in asc or desc order
-    const sortedData = [...invoiceLogger.mockTestData].sort((a, b) => {
+    const sortedData = [...invoices].sort((a, b) => {
     const aValue = a[sortBy];
     const bValue = b[sortBy];
 
@@ -41,7 +40,7 @@ return (
                 <DropdownMenu className="flex flex-row justify-around">
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("id")}>Fakturanummer {sortBy === "id" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("date")}>Fakturadatum {sortBy === "date" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
-                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("dueDate")}>Förfallodatum {sortBy === "date" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
+                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("dueDate")}>Förfallodatum {sortBy === "dueDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("amount")}>Belopp {sortBy === "amount" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
                 <DropdownMenuTrigger>
                     <TableHead 
@@ -87,7 +86,7 @@ return (
                         {new Date(invoice.date).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                        {new Date(invoice.date).toLocaleDateString()}
+                        {new Date(invoice.dueDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="font-medium">
                         {invoice.amount}kr

@@ -15,25 +15,9 @@ import LoggerTable from './LoggerTable'
 import LoggerPagination from "./LoggerPagination"
 
 
-// Mock data for one invoice
-// // const mockInvoices = [
-// //   {
-// //     id: "INV-001",
-// //     date: "2023-07-15",
-// //     amount: 1234.56,
-// //     isPaid: true,
-// //     isBooked: false,
-// //     customer: "Acme Corp",
-// //     description: "Web development services for Q3",
-// //     additionalInfo: ""
-// //   }
-// ]
-
-const mockInvoices = invoiceLogger;
-
 
 export default function InvoiceLogger() {
-  const [invoices, setInvoices] = useState([])
+  const [invoices, setInvoices] = useState(invoiceLogger.mockTestData) // setting at start for testing untill api is implemented
   const [selectedInvoice, setSelectedInvoice] = useState(invoiceLogger)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -44,15 +28,13 @@ export default function InvoiceLogger() {
   const [startItem, setStartItem] = useState(0)
   const [endItem, setEndItem] = useState(pagination)
 
-  const totalInvoices = mockInvoices.mockTestData.length; // TODO: Change this to the api variable when endpoint is finished
-  const totalPages = Math.ceil(mockInvoices.mockTestData.length / pagination);
+  const totalInvoices = invoices.length; // TODO: Change this to the api variable when endpoint is finished
+  const totalPages = Math.ceil(invoices.length / pagination);
 
-
-  // const mockInvoices = invoiceLogger;
 
   useEffect(() => {
-    // TODO: Fetch all invoices for this company
-    setInvoices(mockInvoices) // Temp for testing
+    // TODO: Fetch all invoices for this company and set invoices
+    // setInvoices(mockInvoices) 
 
   }, [])
 
@@ -72,6 +54,9 @@ export default function InvoiceLogger() {
   }
 
   const handleSaveChanges = () => {
+    // Save changes to invoice (iterate through and save new array of invoices)
+    // Then post changes to api
+
     // setInvoices(prevInvoices => 
     //   prevInvoices.map(invoice => 
     //     invoice.id === selectedInvoice.id ? selectedInvoice : invoice
@@ -101,22 +86,22 @@ export default function InvoiceLogger() {
           ) : (      
               // Invoice log table - send in callback function for opening modal popup
               <LoggerTable 
-              handleInvoiceClick={handleInvoiceClick} 
-              startItem={startItem}
-              endItem={endItem} 
+                invoices={invoices}
+                handleInvoiceClick={handleInvoiceClick} 
+                startItem={startItem}
+                endItem={endItem} 
               />
           )}
         </ScrollArea>
       </CardContent>
       <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
         <LoggerPagination 
-        totalPages={totalPages} 
-        totalInvoices={totalInvoices}
-        setStartItem={setStartItem}
-        setEndItem={setEndItem}
+          totalPages={totalPages} 
+          totalInvoices={totalInvoices}
+          setStartItem={setStartItem}
+          setEndItem={setEndItem}
          />
       </div> 
-
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
