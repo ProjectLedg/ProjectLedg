@@ -38,7 +38,11 @@ export default function InvoiceLogger() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)  
+
+  // Pagination
   const pagination = 20;
+  const [startItem, setStartItem] = useState(0)
+  const [endItem, setEndItem] = useState(pagination)
 
   const totalInvoices = mockInvoices.mockTestData.length; // TODO: Change this to the api variable when endpoint is finished
   const totalPages = Math.ceil(mockInvoices.mockTestData.length / pagination);
@@ -68,11 +72,11 @@ export default function InvoiceLogger() {
   }
 
   const handleSaveChanges = () => {
-    setInvoices(prevInvoices => 
-      prevInvoices.map(invoice => 
-        invoice.id === selectedInvoice.id ? selectedInvoice : invoice
-      )
-    )
+    // setInvoices(prevInvoices => 
+    //   prevInvoices.map(invoice => 
+    //     invoice.id === selectedInvoice.id ? selectedInvoice : invoice
+    //   )
+    // )
     setIsModalOpen(false)
   }
 
@@ -94,52 +98,23 @@ export default function InvoiceLogger() {
             <div className="flex items-center justify-center h-full">
               <p className="text-red-500">{error}</p>
             </div>
-          ) : (
-            
-            // <Table>
-            //   <TableHeader>
-            //     <TableRow className="bg-gray-100">
-            //       <TableHead className="font-bold">Fakturanummer</TableHead>
-            //       <TableHead className="font-bold">Fakturadatum</TableHead>
-            //       <TableHead className="font-bold">Förfallodatum</TableHead>
-            //       <TableHead className="font-bold">Belopp</TableHead>
-            //       <TableHead className="font-bold">Status</TableHead>
-            //     </TableRow>
-            //   </TableHeader>
-            //   <TableBody>
-            //       {mockInvoices.mockTestData.slice(startItem, endItem).map((invoice) => (
-            //       <TableRow
-            //         key={invoice.id}
-            //         className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
-            //         onClick={() => handleInvoiceClick(invoice)}
-            //       >
-            //         <TableCell className="font-medium">{invoice.id}</TableCell>
-            //         <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-            //         <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-            //         <TableCell className="font-semibold text-green-600">{invoice.amount}kr</TableCell>
-            //         <TableCell>
-            //           <div className="flex space-x-2">
-            //             <Badge variant={invoice.isPaid ? "success" : "destructive"}>
-            //               {invoice.isPaid ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-            //               <span className="ml-1">{invoice.isPaid ? "Betald" : "Ej betald"}</span>
-            //             </Badge>
-            //             <Badge variant={invoice.isBooked ? "success" : "destructive"}>
-            //               {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-            //               <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej Bokförd"}</span>
-            //             </Badge>
-            //           </div>
-            //         </TableCell>
-            //       </TableRow>
-            //     ))}
-            //   </TableBody>
-            // </Table>           
-            
-            <LoggerTable/>
+          ) : (      
+              // Invoice log table - send in callback function for opening modal popup
+              <LoggerTable 
+              handleInvoiceClick={handleInvoiceClick} 
+              startItem={startItem}
+              endItem={endItem} 
+              />
           )}
         </ScrollArea>
       </CardContent>
       <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
-        <LoggerPagination totalPages={totalPages} totalInvoices={totalInvoices} />
+        <LoggerPagination 
+        totalPages={totalPages} 
+        totalInvoices={totalInvoices}
+        setStartItem={setStartItem}
+        setEndItem={setEndItem}
+         />
       </div> 
 
 
