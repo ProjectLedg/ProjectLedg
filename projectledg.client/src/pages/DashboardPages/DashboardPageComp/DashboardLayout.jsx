@@ -3,7 +3,7 @@ import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
-import ChatWindow from "./ChatWindow";
+import ChatService from "@/services/ChatService";
 import ChatWindowMobile from "./ChatWindowMobile";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
@@ -188,7 +188,7 @@ export default function DashboardLayout() {
             <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
-                <ChatWindowMobile onClose={toggleChat} />
+                <ChatService onClose={toggleChat} mobile/>
               ) : (
                 <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
                   <motion.div
@@ -211,7 +211,7 @@ export default function DashboardLayout() {
                         transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
                         className="inherit w-[30vw] fixed right-0"
                       >
-                        <ChatWindow onClose={toggleChat} />
+                        <ChatService onClose={toggleChat} />
                       </motion.div>
                     )}
                   </AnimatePresence>
