@@ -12,9 +12,9 @@ namespace ProjectLedg.Server.Controllers
     public class PDFController : ControllerBase
     {
         private readonly IPDFService _pdfService;
-        private readonly FormRecognizerService _formService;
+        private readonly IFormRecognizerService _formService;
 
-        public PDFController(IPDFService pdfService, FormRecognizerService formService)
+        public PDFController(IPDFService pdfService, IFormRecognizerService formService)
         {
             _pdfService = pdfService;
             _formService = formService;
