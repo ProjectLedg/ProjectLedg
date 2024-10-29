@@ -28,57 +28,67 @@ namespace ProjectLedg.Server.Services
             return await _invoiceRepository.GetAllOutgoingInvoicesAsync();
         }
 
-        public async Task<bool> CreateOutgoingInvoiceAsync(OutgoingInvoiceCreationDTO invoiceDto, int companyId)
+        public async Task<int> CreateOutgoingInvoiceAsync(OutgoingInvoiceCreationDTO invoiceDto, int companyId)
         {
-            
-
-            // Create a new invoice entity from DTO properties
-            var invoice = new OutgoingInvoice
-            {
-                InvoiceNumber = invoiceDto.InvoiceNumber,
-                InvoiceDate = invoiceDto.InvoiceDate,
-                DueDate = invoiceDto.DueDate,
-                InvoiceTotal = invoiceDto.InvoiceTotal,
-                PaymentDetails = invoiceDto.PaymentDetails,
-                TotalTax = invoiceDto.TotalTax,
-                IsPaid = false,
-                IsBooked = false
-            };
-
-            // Try to find the existing customer by organization number
-            var existingCustomer = await _customerRepository.GetCustomerByOrgNumber(invoiceDto.CustomerOrgNumber);
-
-            if (existingCustomer == null)
-            {
-                // Create a new customer if none exists
-                var customer = new Customer
+            try {
+                // Create a new invoice entity from DTO properties
+                var invoice = new OutgoingInvoice
                 {
-                    Name = invoiceDto.CustomerName,
-                    Address = invoiceDto.CustomerAddress,
-                    OrganizationNumber = invoiceDto.CustomerOrgNumber,
-                    TaxId = invoiceDto.CustomerTaxId,
-                    OutgoingInvoices = new List<OutgoingInvoice> { invoice }  // Initialize with the new invoice
+                    InvoiceNumber = invoiceDto.InvoiceNumber,
+                    InvoiceDate = invoiceDto.InvoiceDate,
+                    DueDate = invoiceDto.DueDate,
+                    InvoiceTotal = invoiceDto.InvoiceTotal,
+                    PaymentDetails = invoiceDto.PaymentDetails,
+                    TotalTax = invoiceDto.TotalTax,
+                    IsPaid = false,
+                    IsBooked = false
                 };
 
-                // Create the new customer and associate it with the company
-                await _customerRepository.CreateCustomerAsync(customer, companyId);
-            }
-            else
-            {
-                // Check if OutgoingInvoices collection is initialized, if not, initialize it
-                if (existingCustomer.OutgoingInvoices == null)
+                // Try to find the existing customer by organization number
+                var existingCustomer = await _customerRepository.GetCustomerByOrgNumber(invoiceDto.CustomerOrgNumber);
+
+                if (existingCustomer == null)
                 {
-                    existingCustomer.OutgoingInvoices = new List<OutgoingInvoice>();
+                    // Create a new customer if none exists
+                    var customer = new Customer
+                    {
+                        Name = invoiceDto.CustomerName,
+                        Address = invoiceDto.CustomerAddress,
+                        OrganizationNumber = invoiceDto.CustomerOrgNumber,
+                        TaxId = invoiceDto.CustomerTaxId,
+                        OutgoingInvoices = new List<OutgoingInvoice> { invoice }  // Initialize with the new invoice
+                    };
+
+                    // Create the new customer and associate it with the company
+                    await _customerRepository.CreateCustomerAsync(customer, companyId);
+                }
+                else
+                {
+                    // Check if OutgoingInvoices collection is initialized, if not, initialize it
+                    if (existingCustomer.OutgoingInvoices == null)
+                    {
+                        existingCustomer.OutgoingInvoices = new List<OutgoingInvoice>();
+                    }
+
+                    // Add the new invoice to the existing customer
+                    existingCustomer.OutgoingInvoices.Add(invoice);
+
+                    // Update the customer to save the new invoice association
+                    await _customerRepository.UpdateCustomerWithInvoice(existingCustomer);
                 }
 
-                // Add the new invoice to the existing customer
-                existingCustomer.OutgoingInvoices.Add(invoice);
+                return invoice.Id;
 
-                // Update the customer to save the new invoice association
-                await _customerRepository.UpdateCustomerWithInvoice(existingCustomer);
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while creating the invoice", ex);
             }
 
-            return true;
+
+
         }
 
 

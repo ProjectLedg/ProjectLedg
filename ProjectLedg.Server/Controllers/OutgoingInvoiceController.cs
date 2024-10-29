@@ -37,13 +37,10 @@ namespace ProjectLedg.Server.Controllers
         public async Task<IActionResult> CreateInvoice([FromBody] OutgoingInvoiceCreationDTO invoiceDto,[FromRoute]int companyId)
         {
             var result = await _invoiceService.CreateOutgoingInvoiceAsync(invoiceDto,companyId);
-            
-            if (!result)
-            {
-                return StatusCode(500, "An error occurred while creating the invoice.");
-            }
 
-            return Ok(new { message = "Invoice created successfully!" });
+            var response = new OutgoingInvoiceIdDTO { OutgoingInvoiceId = result };
+
+            return Ok(response);
         }
 
         [HttpPut("update/{invoiceId}")]
