@@ -5,6 +5,7 @@ using ProjectLedg.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
+using ProjectLedg.Server.Data.Models;
 
 public class AssistantService : IAssistantService
 {
@@ -12,13 +13,19 @@ public class AssistantService : IAssistantService
     private readonly ProjectLedgContext _dbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IIngoingInvoiceService _ingoingInvoiceService;
+    private readonly IBasAccountService _basAccountService;
+    private readonly string _csvFilePath;
+    private readonly string _directivesFilePath;
 
-    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService)
+    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService)
     {
         _openAiClient = openAiClient;
         _dbContext = dbContext;
         _httpContextAccessor = httpContextAccessor;
         _ingoingInvoiceService = invoiceService;
+        _basAccountService = basAccountService;
+        _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
+        _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
     }
 
     public async Task<string> SendMessageToAssistantAsync(string message)
@@ -38,31 +45,80 @@ public class AssistantService : IAssistantService
         }
         */
 
-        var systemMessage = new Message(Role.System, "This GPT is a Swedish accounting expert designed to assist users with categorizing invoices according to the BAS Chart of Accounts. It focuses on business expenses, revenue recognition, VAT handling, and provides guidance within Swedish BAS accounting standards. It can retrieve and display the authenticated user’s information if requested with 'fetch my info' or 'user info' and display the last 5 invoices with 'show my invoices'.");
-        var userMessage = new Message(Role.User, message);
+         //Load BAS accounts and assistant directives
+    var basAccounts = LoadBasAccounts();
+    var basContext = string.Join("\n", basAccounts.Select(a =>
+        $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
+    var assistantDirectives = LoadAssistantDirectives();
 
-        var messages = new List<Message> { systemMessage, userMessage };
-        var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini");
+    //Combining assistant directives and BAS chart context
+    var systemMessage = new Message(Role.System,
+        $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
 
-        var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+    var userMessage = new Message(Role.User, message);
 
-        if (message.Contains("fetch my info", StringComparison.OrdinalIgnoreCase) ||
-            message.Contains("user info", StringComparison.OrdinalIgnoreCase))
-        {
-            // Passing a test user ID for non-authenticated testing
-            var userInfo = await FetchUserInfoAsync("test-user-id");
-            return userInfo ?? "User not found.";
-        }
-        else if (message.Contains("show my invoices", StringComparison.OrdinalIgnoreCase))
-        {
-            // Passing a test user ID for non-authenticated testing
-            var invoices = await FetchUserInvoicesAsync("test-user-id");
-            return invoices ?? "No invoices found for the authenticated user.";
-        }
+    var messages = new List<Message> { systemMessage, userMessage };
+    var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini");
 
-        var content = response.FirstChoice?.Message?.Content;
-        return content.ValueKind == JsonValueKind.String ? content.GetString() : "No valid response from assistant.";
+    var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+    // Retrieve and handle response content safely
+    if (response.FirstChoice?.Message?.Content.ValueKind == JsonValueKind.String)
+    {
+        return response.FirstChoice.Message.Content.GetString();
     }
+    
+    return "No valid response from assistant.";
+}
+
+    private List<BasAccount> LoadBasAccounts()
+    {
+        var basAccounts = new List<BasAccount>();
+
+        try
+        {
+            if (!File.Exists(_csvFilePath))
+            {
+                //Log a message or handle the missing file as needed
+                Console.WriteLine($"BAS chart CSV file not found at path: {_csvFilePath}");
+                return basAccounts; //Return an empty list if file is not found
+            }
+
+            var lines = File.ReadAllLines(_csvFilePath);
+            foreach (var line in lines.Skip(1)) //Skip header line
+            {
+                var fields = line.Split(',');
+                if (fields.Length >= 4) //Adjust based on actual CSV structure
+                {
+                    basAccounts.Add(new BasAccount
+                    {
+                        AccountNumber = fields[0].Trim(),
+                        Description = fields[1].Trim(),
+                        Debit = decimal.TryParse(fields[2], out var debit) ? debit : 0,
+                        Credit = decimal.TryParse(fields[3], out var credit) ? credit : 0,
+                        Year = int.TryParse(fields[4], out var year) ? year : 0
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //Log or handle other exceptions if needed
+            Console.WriteLine($"Error loading BAS accounts: {ex.Message}");
+        }
+
+        return basAccounts; //Always return the list, even if empty
+    }
+
+    private string LoadAssistantDirectives()
+    {
+        if (!File.Exists(_directivesFilePath))
+        {
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
+        }
+        return File.ReadAllText(_directivesFilePath);
+    }
+
 
     private async Task<string> FetchUserInfoAsync(string userId)
     {
