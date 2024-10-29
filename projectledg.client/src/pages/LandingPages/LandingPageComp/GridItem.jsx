@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const GridItem = ({ color, text, icon: IconComponent }) => {
   return (
 
-    <div className="relative bg-gray-100 rounded-lg shadow-lg shadow-black/30 aspect-square">
+    <div className="relative bg-gray-200 rounded-lg shadow-lg shadow-black/30 aspect-square">
       <div className="flex flex-col justify-around items-center pt-4 h-full">
         <AnimatePresence mode="wait">
           <motion.div
