@@ -10,7 +10,14 @@ namespace ProjectLedg.Server.Services
     {
         private readonly IOutgoingInvoiceRepository _invoiceRepository;
         private readonly IBlobStorageService _blobStorageService;
-        private readonly ProjectLedgContext _context;
+        private readonly ICustomerRepository _customerRepository;
+
+        public OutgoingInvoiceService(IOutgoingInvoiceRepository invoiceRepository,ICustomerRepository customerRepository, IBlobStorageService blobStorageService)
+        {
+            _customerRepository = customerRepository;
+            _invoiceRepository = invoiceRepository;
+            _blobStorageService = blobStorageService;
+        }
         public async Task<OutgoingInvoice?> GetOutgoingInvoiceByIdAsync(int invoiceId)
         {
             return await _invoiceRepository.GetOutgoingInvoiceByIdAsync(invoiceId);
@@ -21,8 +28,11 @@ namespace ProjectLedg.Server.Services
             return await _invoiceRepository.GetAllOutgoingInvoicesAsync();
         }
 
-        public async Task<bool> CreateOutgoingInvoiceAsync(OutgoingInvoiceCreationDTO invoiceDto)
+        public async Task<bool> CreateOutgoingInvoiceAsync(OutgoingInvoiceCreationDTO invoiceDto, int companyId)
         {
+            
+
+            // Create a new invoice entity from DTO properties
             var invoice = new OutgoingInvoice
             {
                 InvoiceNumber = invoiceDto.InvoiceNumber,
@@ -31,13 +41,46 @@ namespace ProjectLedg.Server.Services
                 InvoiceTotal = invoiceDto.InvoiceTotal,
                 PaymentDetails = invoiceDto.PaymentDetails,
                 TotalTax = invoiceDto.TotalTax,
-                IsPaid = invoiceDto.IsPaid,
-                IsOutgoing = invoiceDto.IsOutgoing,
-                IsBooked = invoiceDto.IsBooked
+                IsPaid = false,
+                IsBooked = false
             };
 
-            return await _invoiceRepository.CreateOutgoingInvoiceAsync(invoice);
+            // Try to find the existing customer by organization number
+            var existingCustomer = await _customerRepository.GetCustomerByOrgNumber(invoiceDto.CustomerOrgNumber);
+
+            if (existingCustomer == null)
+            {
+                // Create a new customer if none exists
+                var customer = new Customer
+                {
+                    Name = invoiceDto.CustomerName,
+                    Address = invoiceDto.CustomerAddress,
+                    OrganizationNumber = invoiceDto.CustomerOrgNumber,
+                    TaxId = invoiceDto.CustomerTaxId,
+                    OutgoingInvoices = new List<OutgoingInvoice> { invoice }  // Initialize with the new invoice
+                };
+
+                // Create the new customer and associate it with the company
+                await _customerRepository.CreateCustomerAsync(customer, companyId);
+            }
+            else
+            {
+                // Check if OutgoingInvoices collection is initialized, if not, initialize it
+                if (existingCustomer.OutgoingInvoices == null)
+                {
+                    existingCustomer.OutgoingInvoices = new List<OutgoingInvoice>();
+                }
+
+                // Add the new invoice to the existing customer
+                existingCustomer.OutgoingInvoices.Add(invoice);
+
+                // Update the customer to save the new invoice association
+                await _customerRepository.UpdateCustomerWithInvoice(existingCustomer);
+            }
+
+            return true;
         }
+
 
         public async Task<bool> UpdateOutgoingInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto)
         {
@@ -54,7 +97,6 @@ namespace ProjectLedg.Server.Services
             existingInvoice.InvoiceTotal = invoiceDto.InvoiceTotal;
             existingInvoice.TotalTax = invoiceDto.TotalTax;
             existingInvoice.IsPaid = invoiceDto.IsPaid;
-            existingInvoice.IsOutgoing = invoiceDto.IsOutgoing;
             existingInvoice.IsBooked = invoiceDto.IsBooked;
 
             //Map the DTO items to the model items

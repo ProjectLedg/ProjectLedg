@@ -125,7 +125,6 @@ namespace ProjectLedg.Server.Services
                 PaymentDetails = invoiceDto.PaymentDetails,
                 TotalTax = invoiceDto.TotalTax,
                 IsPaid = invoiceDto.IsPaid,
-                IsOutgoing = invoiceDto.IsOutgoing,
                 IsBooked = invoiceDto.IsBooked,
                 CustomerName = invoiceDto.CustomerName,
                 CustomerAddress = invoiceDto.CustomerAddress,
@@ -154,7 +153,6 @@ namespace ProjectLedg.Server.Services
             existingInvoice.InvoiceTotal = invoiceDto.InvoiceTotal;
             existingInvoice.TotalTax = invoiceDto.TotalTax;
             existingInvoice.IsPaid = invoiceDto.IsPaid;
-            existingInvoice.IsOutgoing = invoiceDto.IsOutgoing;
             existingInvoice.IsBooked = invoiceDto.IsBooked;
             existingInvoice.CustomerName = invoiceDto.CustomerName;
             existingInvoice.CustomerAddress = invoiceDto.CustomerAddress;
