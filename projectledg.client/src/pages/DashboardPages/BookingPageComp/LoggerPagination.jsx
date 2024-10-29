@@ -3,9 +3,9 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 
 
 
-export default function LoggerPagination({totalPages, totalInvoices}) {
-    const [startItem, setStartItem] = useState(1)
-    const [endItem, setEndItem] = useState(20)
+export default function LoggerPagination({totalPages, totalInvoices, setStartItem, setEndItem}) {
+    // const [startItem, setStartItem] = useState(1)
+    // const [endItem, setEndItem] = useState(20)
     const [pageNumber, setPageNumber] = useState(1)
 
     // Pagination set variables
@@ -18,6 +18,24 @@ export default function LoggerPagination({totalPages, totalInvoices}) {
 
     const adjustedStartPage = Math.max(1, Math.min(startPage, totalPages - maxVisiblePages + 1));
 
+    const handlUpdateStartItem = (updatedStartItem) => {
+        setStartItem(updatedStartItem)
+    }
+
+    const handlUpdateEndItem = (updatedEndItem) => {
+        setEndItem(updatedEndItem)
+    }
+
+    // Makes sure clicking the pagination numbers does the correct action and nothing when pressing current page number
+    const handleNumberPageClick = (page) => {
+        if (page != pageNumber && page < pageNumber ) {
+            handlePreviousPageClick()
+        }
+        else if (page != pageNumber && page > pageNumber) {
+            handleNextPageClick()
+        }
+    }
+
     const handlePreviousPageClick = () => {
         // Make sure user can't go into the negatives past "page 1"
         if (pageNumber > 1) {
@@ -25,12 +43,10 @@ export default function LoggerPagination({totalPages, totalInvoices}) {
             const updatedEndItem = updatedPageNumber * pagination;
             const updatedStartItem = updatedEndItem - pagination;
 
-
-            console.log(updatedPageNumber)
-
             setPageNumber(updatedPageNumber);
-            setEndItem(updatedEndItem);
-            setStartItem(updatedStartItem);
+
+            handlUpdateStartItem(updatedStartItem);
+            handlUpdateEndItem(updatedEndItem);
         }
     }
 
@@ -41,12 +57,10 @@ export default function LoggerPagination({totalPages, totalInvoices}) {
             const updatedStartItem = pageNumber * pagination;
             const updatedEndItem = Math.min(updatedStartItem + pagination, totalInvoices);
 
-            console.log(updatedPageNumber)
-
-
             setPageNumber(updatedPageNumber);
-            setEndItem(updatedEndItem);
-            setStartItem(updatedStartItem);
+
+            handlUpdateStartItem(updatedStartItem);
+            handlUpdateEndItem(updatedEndItem);
         }
     }
 
@@ -54,7 +68,7 @@ export default function LoggerPagination({totalPages, totalInvoices}) {
         <Pagination>
             <PaginationContent>
                 {/* Previous button */}
-                <PaginationItem disabled={pageNumber === 1}>
+                <PaginationItem className="cursor-pointer"  disabled={pageNumber === 1}>
                     <PaginationPrevious onClick={handlePreviousPageClick} />
                 </PaginationItem>
 
@@ -62,13 +76,17 @@ export default function LoggerPagination({totalPages, totalInvoices}) {
                 {Array.from({ length: endPage - adjustedStartPage + 1 }, (_, index) => {
                     const page = adjustedStartPage + index;
                     return (
-                        <PaginationItem key={page} active={pageNumber === page}>
-                            <PaginationLink className={pageNumber === page ? "bg-green-400" : ""} onClick={() => setPageNumber(page)}>{page}</PaginationLink>
+                        <PaginationItem className="cursor-pointer" key={page} active={pageNumber === page}>
+                            <PaginationLink 
+                                className={pageNumber === page ? "text-primary-foreground bg-green-500 hover:text-primary-foreground hover:bg-green-500/80" : ""} 
+                                onClick={() => handleNumberPageClick(page)}>
+                                {page}
+                            </PaginationLink>
                         </PaginationItem>
                     );
                 })}
                 {/* Next button */}
-                <PaginationItem disabled={pageNumber === totalPages}>
+                <PaginationItem className="cursor-pointer" disabled={pageNumber === totalPages}>
                     <PaginationNext onClick={handleNextPageClick} />
                 </PaginationItem>
             </PaginationContent>
