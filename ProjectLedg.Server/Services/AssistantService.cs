@@ -4,8 +4,6 @@ using ProjectLedg.Server.Services.IServices;
 using ProjectLedg.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text.Json;
 
 public class AssistantService : IAssistantService
@@ -25,6 +23,8 @@ public class AssistantService : IAssistantService
 
     public async Task<string> SendMessageToAssistantAsync(string message)
     {
+        // Commenting out authentication part for testing without login
+        /*
         var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
                             ?? _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -36,6 +36,7 @@ public class AssistantService : IAssistantService
 
             return $"User is not authenticated. Claims available: {string.Join(", ", claims)}";
         }
+        */
 
         var systemMessage = new Message(Role.System, "This GPT is a Swedish accounting expert designed to assist users with categorizing invoices according to the BAS Chart of Accounts. It focuses on business expenses, revenue recognition, VAT handling, and provides guidance within Swedish BAS accounting standards. It can retrieve and display the authenticated user’s information if requested with 'fetch my info' or 'user info' and display the last 5 invoices with 'show my invoices'.");
         var userMessage = new Message(Role.User, message);
@@ -48,12 +49,14 @@ public class AssistantService : IAssistantService
         if (message.Contains("fetch my info", StringComparison.OrdinalIgnoreCase) ||
             message.Contains("user info", StringComparison.OrdinalIgnoreCase))
         {
-            var userInfo = await FetchUserInfoAsync(currentUserId);
+            // Passing a test user ID for non-authenticated testing
+            var userInfo = await FetchUserInfoAsync("test-user-id");
             return userInfo ?? "User not found.";
         }
         else if (message.Contains("show my invoices", StringComparison.OrdinalIgnoreCase))
         {
-            var invoices = await FetchUserInvoicesAsync(currentUserId);
+            // Passing a test user ID for non-authenticated testing
+            var invoices = await FetchUserInvoicesAsync("test-user-id");
             return invoices ?? "No invoices found for the authenticated user.";
         }
 
