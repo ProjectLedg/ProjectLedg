@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Check, X, FileText } from "lucide-react"
 import invoiceLogger from './invoiceLogger.json'
 import invoiceLoggerOutgoing from './invoiceLoggerOutgoing.json'
@@ -32,9 +33,7 @@ export default function InvoiceLogger() {
 
   const totalInvoices = invoices.length; // TODO: Change this to the api variable when endpoint is finished
   const totalPages = Math.ceil(invoices.length / pagination);
-
-
-
+  
 
   useEffect(() => {
     // TODO: Fetch all ingoing invoices for this company and set invoices & ingoingInvoices
@@ -92,6 +91,34 @@ export default function InvoiceLogger() {
     //   )
     // )
     setIsModalOpen(false)
+  }
+
+
+  // Loading skeleton animation
+  if (isLoading) {
+    return (
+      <Card className="w-full h-[600px] flex flex-col shadow-lg">
+        <CardHeader className="flex flex-row justify-between border-b">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+            <FileText className="mr-2 text-green-500" />
+            Fakturor
+          </CardTitle>
+          <div className="flex gap-2">
+            <Skeleton className="h-12 w-56 rounded-md" />
+          </div>
+          
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 gap-4 mt-8 ">
+          <Skeleton className="h-12 w-[90%] rounded-md" />
+          <Skeleton className="h-12 w-[70%] rounded-md" />
+          <Skeleton className="h-12 w-[88%] rounded-md" />
+          <Skeleton className="h-12 w-[66%] rounded-md" />
+          <Skeleton className="h-12 w-[75%] rounded-md" />
+          <Skeleton className="h-12 w-[82%] rounded-md" />
+          <Skeleton className="h-12 w-[68%] rounded-md" />         
+        </CardContent>
+      </Card>
+    )
   }
 
   return (

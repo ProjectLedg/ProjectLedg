@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Check, X, FileText, Send } from "lucide-react"
 
@@ -151,6 +152,40 @@ export default function InvoicePreview({ invoice, setInvoice, }) {
       </Card>
     )
   }
+
+  // Loading skeleton animation
+  if (isLoading) {
+    return (
+      <Card className="w-full h-[600px] flex flex-col shadow-lg">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 gap-4 mt-6">
+          <Skeleton className="h-12 w-[85%] rounded-md" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[65%]" />
+            <Skeleton className="h-4 w-[40%]" />
+          </div>
+          <Skeleton className="h-12 w-[50%] rounded-md" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[60%]" />
+            <Skeleton className="h-4 w-[30%]" />
+          </div>
+          <Skeleton className="h-12 w-[80%] rounded-md" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[35%]" />
+            <Skeleton className="h-4 w-[70%]" />
+          </div>
+          <Skeleton className="h-12 w-[55%] rounded-md" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[75%]" />
+            <Skeleton className="h-4 w-[25%]" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
 
   // Display invoice preview
   return (
