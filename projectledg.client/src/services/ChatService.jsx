@@ -1,5 +1,5 @@
 import ChatWindow from "@/pages/DashboardPages/DashboardPageComp/ChatWindow";
-import ChatWindowMobile from "@/pages/DashboardPages/DashboardPageComp/ChatWindowMobile"
+import ChatWindowMobile from "@/pages/DashboardPages/DashboardPageComp/ChatWindowMobile";
 import axios from 'axios';
 
 export default function ChatService({ onClose, mobile }) {
@@ -7,16 +7,17 @@ export default function ChatService({ onClose, mobile }) {
         try {
             const response = await axios.post(
                 'https://projectledg.azurewebsites.net/api/Assistant/chat',
-                JSON.stringify(input), // Send the input directly as a string
+                JSON.stringify(input),
                 {
                     headers: {
-                        'Content-Type': 'application/json', // Ensure the Content-Type header is set
+                        'Content-Type': 'application/json',
                     },
                 }
             );
-            console.log(response);
+            return response.data; // Return the response data
         } catch (error) {
             console.error("Failed to send message", error);
+            throw error; // Rethrow the error if you want to handle it further up
         }
     }
 
