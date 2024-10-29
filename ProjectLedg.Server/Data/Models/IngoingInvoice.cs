@@ -18,7 +18,7 @@ namespace ProjectLedg.Server.Data.Models
         public bool IsOutgoing { get; set; }
         public bool IsBooked { get; set; } // If invoice is "bokförd" 
 
-        //Customer Related queries
+        //Customer Related queries  
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string CustomerAddress { get; set; }
