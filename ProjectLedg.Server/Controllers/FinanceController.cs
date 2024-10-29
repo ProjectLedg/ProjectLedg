@@ -5,7 +5,7 @@ using ProjectLedg.Server.Services.IServices;
 namespace ProjectLedg.Server.Controllers
 {
     [ApiController]
-    [Route("/api[controller]")]
+    [Route("/api/[controller]")]
     public class FinanceController: ControllerBase
     {
         private readonly IFinanceService _financeService;

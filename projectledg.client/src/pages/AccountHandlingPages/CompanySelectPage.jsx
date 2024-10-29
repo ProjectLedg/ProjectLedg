@@ -131,7 +131,7 @@ export default function CompanySelectPage() {
  
   return ( 
     <section className="bg-white min-h-screen flex items-center justify-center p-4 overflow-x-hidden">
-      <div className="bg-green-300 rounded-xl p-8 shadow-lg max-w-5xl w-full">
+      <div className="bg-green-500 rounded-xl p-8 shadow-lg max-w-5xl w-full">
         <h1 className="text-2xl font-bold text-center mb-2">{infoText.sectionTitle}</h1>
         <p className="text-gray-600 text-center mb-8">
           {infoText.sectionDescription}

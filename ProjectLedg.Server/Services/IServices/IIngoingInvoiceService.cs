@@ -1,0 +1,15 @@
+﻿using ProjectLedg.Server.Data.Models;
+using ProjectLedg.Server.Data.Models.DTOs.Invoice;
+
+namespace ProjectLedg.Server.Services.IServices
+{
+    public interface IIngoingInvoiceService
+    {
+        Task<IngoingInvoice?> GetIngoingInvoiceByIdAsync(int invoiceId);
+        Task<IEnumerable<IngoingInvoice>> GetAllIngoingInvoicesAsync();
+        Task<bool> CreateIngoingInvoiceAsync(InvoiceDTO invoiceDto);
+        Task<bool> UpdateIngoingInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto);
+        Task<bool> DeleteIngoingInvoiceAsync(int invoiceId);
+        Task<bool> SaveIngoingInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId);
+    }
+}

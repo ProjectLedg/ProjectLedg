@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
+using System.ClientModel.Primitives;
+using OpenAI;
 
 namespace ProjectLedg.Server
 {
@@ -68,7 +70,7 @@ namespace ProjectLedg.Server
             services.AddDbContext<ProjectLedgContext>(options =>
             {
                 options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("AZURE_DATABASE_CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
             // Add services to the container.
@@ -115,17 +117,17 @@ namespace ProjectLedg.Server
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "emailAddress");
 
 
-                })
-                //Add Microsoft account authentication
-                .AddMicrosoftAccount(options =>
-                {
-                    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
-                    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
-
-                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 });
+                //Add Microsoft account authentication
+                //.AddMicrosoftAccount(options =>
+                //{
+                //    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
+                //    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
+
+                //    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                //    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
+                //    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+                //});
 
             services.AddAuthorization();
 
@@ -219,10 +221,19 @@ namespace ProjectLedg.Server
                     Environment.GetEnvironmentVariable("BLOB_STORAGE_API_KEY")
                 );
             });
-            //Invoices
-            services.AddScoped<IInvoiceRepository, IngoingInvoiceRepository>();
-            services.AddScoped<IInvoiceService, InvoiceService>();
+            //Ingoing Invoices
+            services.AddScoped<IIngoingInvoiceRepository, IngoingInvoiceRepository>();
+            services.AddScoped<IIngoingInvoiceService, IngoingInvoiceService>();
+            //Outgoing Invoices
+            services.AddScoped<IOutgoingInvoiceRepository, OutgoingInvoiceRepository>();
+            services.AddScoped<IOutgoingInvoiceService, OutgoingInvoiceService>();
+          
+            //OpenAI
+            var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var openAiClient = new OpenAIClient(new OpenAIAuthentication(apiKey: openAiApiKey));
 
+            builder.Services.AddSingleton(openAiClient);
+            builder.Services.AddScoped<IAssistantService, AssistantService>();
 
             var app = builder.Build();
 

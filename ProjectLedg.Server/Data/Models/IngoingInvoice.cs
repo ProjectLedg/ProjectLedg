@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectLedg.Server.Data.Models
 {
@@ -34,7 +35,8 @@ namespace ProjectLedg.Server.Data.Models
 
         public List<InvoiceItems> Items { get; set; } = new List<InvoiceItems>();
 
-        public int CompanyId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
+        [ForeignKey("Company")]
+        public int CompanyId { get; set; }
 
 
         public virtual ICollection<Transaction> Transactions { get; set; }

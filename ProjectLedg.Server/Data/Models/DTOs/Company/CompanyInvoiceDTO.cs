@@ -1,12 +1,10 @@
 ﻿namespace ProjectLedg.Server.Data.Models.DTOs.Company
 {
-    public class CreateCompanyDTO
+    public class CompanyInvoiceDTO
     {
+        public int Id { get; set; }
         public string CompanyName { get; set; }
         public string OrgNumber { get; set; }
-        public int AmountOfEmployees { get; set; }
-        public string Address { get; set; }
         public string TaxId { get; set; }
-        public string CompanyDescription { get; set; }
     }
 }
