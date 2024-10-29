@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip } from 'lucide-react'
 
-export default function ChatWindow({ onClose }) {
+export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('')
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        // Handle message submission here
-        setInput('')
-    }
+        e.preventDefault();
+        if (input.trim()) {  // Ensure message is not empty
+            onSendMessage(input);  // Send input to ChatService
+            setInput('');  // Clear input after sending
+        }
+    };
 
     return (
         <div className="chatWindow flex flex-col  right-0 p-2 w-[30vw] h-[80vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl max-w-[720px]">
@@ -58,7 +60,7 @@ export default function ChatWindow({ onClose }) {
                 <form onSubmit={handleSubmit} className="p-4 bg-transparent">
                     <div className="flex flex-row justify-between items-center space-x-2">
                         <div className="flex-grow p-2 h-14 bg-white rounded-full  flex items-center">
-                            <button type="submit" className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-500 transition-colors duration-200">
+                            <button type="button" className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-500 transition-colors duration-200">
                                 <Paperclip size={20} />
                             </button>
                             <input

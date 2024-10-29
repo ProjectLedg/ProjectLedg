@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip } from 'lucide-react'
 
-export default function ChatWindow({ onClose }) {
+export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('')
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        // Handle message submission here
-        setInput('')
-    }
+        e.preventDefault();
+        if (input.trim()) {  // Ensure message is not empty
+            onSendMessage(input);  // Send input to ChatService
+            setInput('');  // Clear input after sending
+        }
+    };
 
     return (
         <div className="chatWindow flex flex-col  right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl ">
