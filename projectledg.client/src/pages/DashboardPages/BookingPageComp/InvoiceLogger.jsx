@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,13 +10,15 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Check, X, FileText } from "lucide-react"
 import invoiceLogger from './invoiceLogger.json'
+import invoiceLoggerOutgoing from './invoiceLoggerOutgoing.json'
 import LoggerTable from './LoggerTable'
 import LoggerPagination from "./LoggerPagination"
 
-
-
 export default function InvoiceLogger() {
   const [invoices, setInvoices] = useState(invoiceLogger.mockTestData) // setting at start for testing untill api is implemented
+  const [ingoingInvoices, setIngoingInvoices] = useState()
+  const [outgoingInvoices, setOutgoingInvoices] = useState()
+  
   const [selectedInvoice, setSelectedInvoice] = useState(invoiceLogger)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -27,16 +28,44 @@ export default function InvoiceLogger() {
   const pagination = 20;
   const [startItem, setStartItem] = useState(0)
   const [endItem, setEndItem] = useState(pagination)
+  const [pageNumber, setPageNumber] = useState(1) 
 
   const totalInvoices = invoices.length; // TODO: Change this to the api variable when endpoint is finished
   const totalPages = Math.ceil(invoices.length / pagination);
 
 
+
+
   useEffect(() => {
-    // TODO: Fetch all invoices for this company and set invoices
+    // TODO: Fetch all ingoing invoices for this company and set invoices
     // setInvoices(mockInvoices) 
+    
+
+    setIngoingInvoices(invoiceLogger.mockTestData)
+    setOutgoingInvoices(invoiceLoggerOutgoing.mockTestData)
 
   }, [])
+
+
+  const handleSetInvoicesOutgoing = () => {  
+    // Set invoices to outgoing
+    setInvoices(outgoingInvoices)
+
+    // Reset pagination to start values (if on page x it goes back to 1) - and sets pagination number to 1
+    setStartItem(0)
+    setEndItem(pagination)
+    setPageNumber(1)
+  }
+
+  const handleSetInvoicesIngoing = () => {
+    // Set invoices to outgoing
+    setInvoices(ingoingInvoices)
+
+    // Reset pagination to start values (if on page x it goes back to 1) - and sets pagination number to 1
+    setStartItem(0)
+    setEndItem(pagination)
+    setPageNumber(1)
+  }
 
   const handleInvoiceClick = (invoice) => {
     setSelectedInvoice({ ...invoice })
@@ -67,12 +96,19 @@ export default function InvoiceLogger() {
 
   return (
     <Card className="w-full h-[40rem] flex flex-col shadow-lg">
-       <CardHeader className="border-b">
+      <Tabs defaultValue="ingoing" className="flex flex-col h-full overflow-hidden">
+       <CardHeader className="flex flex-row justify-between border-b">
         <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
           <FileText className="mr-2 text-green-500" />
           Fakturor
         </CardTitle>
+        
+        <TabsList className="w-auto rounded-md p-6">
+            <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing}>Ingående</TabsTrigger>
+            <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing}>Utgående</TabsTrigger>
+        </TabsList>
       </CardHeader>
+
       <CardContent className="flex-grow overflow-hidden p-0">
         <ScrollArea className="h-full">
           {isLoading ? (
@@ -84,25 +120,32 @@ export default function InvoiceLogger() {
               <p className="text-red-500">{error}</p>
             </div>
           ) : (      
-              // Invoice log table - send in callback function for opening modal popup
-              <LoggerTable 
+              // Invoice log table - send in callback function for opening modal popup 
+              <LoggerTable
                 invoices={invoices}
-                handleInvoiceClick={handleInvoiceClick} 
+                handleInvoiceClick={handleInvoiceClick}
                 startItem={startItem}
-                endItem={endItem} 
+                endItem={endItem}
               />
           )}
+          
         </ScrollArea>
+        
       </CardContent>
+      </Tabs>
+
       <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
         <LoggerPagination 
           totalPages={totalPages} 
           totalInvoices={totalInvoices}
+          pagination={pagination}
           setStartItem={setStartItem}
           setEndItem={setEndItem}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
          />
       </div> 
-
+            
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

@@ -1,17 +1,13 @@
 import { useState } from "react"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
 
-export default function LoggerPagination({totalPages, totalInvoices, setStartItem, setEndItem}) {
-    const [pageNumber, setPageNumber] = useState(1)
+export default function LoggerPagination({ totalPages, totalInvoices, pagination, setStartItem, setEndItem, pageNumber, setPageNumber }) {
 
-    // Pagination set variables
-    const pagination = 20;
-    
+    // Set pagination  variables   
     // Determine the start and end of the visible range
     const maxVisiblePages = 3;
     const startPage = Math.max(1, pageNumber - Math.floor(maxVisiblePages / 2));
     const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
-
     const adjustedStartPage = Math.max(1, Math.min(startPage, totalPages - maxVisiblePages + 1));
 
     const handlUpdateStartItem = (updatedStartItem) => {
