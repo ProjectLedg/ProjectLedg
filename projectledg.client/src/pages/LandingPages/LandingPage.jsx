@@ -9,6 +9,7 @@ import CallToAction from "./LandingPageComp/CallToAction";
 export default function LandingPage() {
 return (
     <>
+        
         <Navbar />
         <div className="w-[100vw] flex flex-col items-center justify-center space-y-10">
             <Content />
@@ -25,6 +26,7 @@ return (
             <NewsletterSignup />
         </div>   
         <FooterSection />
+       
     </>
 );
 }
