@@ -37,13 +37,13 @@ export default function InvoiceLogger() {
 
 
   useEffect(() => {
-    // TODO: Fetch all ingoing invoices for this company and set invoices
+    // TODO: Fetch all ingoing invoices for this company and set invoices & ingoingInvoices
     // setInvoices(mockInvoices) 
-    
+
+    // TODO: Fetch all outgoing invoices for this company and set outgoingInvoices
 
     setIngoingInvoices(invoiceLogger.mockTestData)
     setOutgoingInvoices(invoiceLoggerOutgoing.mockTestData)
-
   }, [])
 
 

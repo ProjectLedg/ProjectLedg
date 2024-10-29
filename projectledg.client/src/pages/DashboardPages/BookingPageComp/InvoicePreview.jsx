@@ -132,7 +132,7 @@ export default function InvoicePreview({ invoice, setInvoice, }) {
   }
 
   const handleSaveChanges = () => {
-    // Post changes to backend API 
+    // Post and save changes to backend API 
     // NEED TO IMPLEMENT WHEN BACKEND API ENDPOINTS ARE FIXED
 
     setIsModalOpen(false)
