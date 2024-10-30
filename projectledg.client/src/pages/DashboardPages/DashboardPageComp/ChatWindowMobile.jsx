@@ -77,11 +77,11 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col p-4 overflow-y-auto flex-grow mb-">
+                    <div className="flex flex-col p-4 overflow-y-auto flex-grow mb-12">
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`max-w-[80%] p-4 rounded-3xl shadow-md mb-2 ${message.type === 'sent' ? 'bg-green-500 text-white self-end' : 'bg-transparent text-black self-start'}`}
+                                className={`mb-4 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-md max-w-[70%] text-white self-end' : 'bg-transparent text-black self-start'}`}
                             >
                                 <p className="text-md font-normal">{message.text}</p>
                             </div>
@@ -91,18 +91,28 @@ export default function ChatWindow({ onClose, onSendMessage }) {
 
                 <form onSubmit={handleSubmit} className="absolute bottom-0 left-0 right-0 bg-transparent p-1">
                     <div className="flex flex-row justify-between items-center space-x-2">
-                        <div className="flex-grow p-2 h-14 bg-white rounded-full flex items-center">
-                            <button type="button" className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-500 transition-colors duration-200">
+                        <div className="flex-grow p-2 h-auto bg-white rounded-3xl flex items-center">
+                            <button
+                                type="button"
+                                className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-500 transition-colors duration-200"
+                            >
                                 <Paperclip size={20} />
                             </button>
-                            <input
-                                type="text"
+                            <textarea
                                 value={input}
-                                onChange={(e) => setInput(e.target.value)}
+                                onChange={(e) => {
+                                    setInput(e.target.value);
+                                    e.target.style.height = "auto"; // Reset height to allow shrinking
+                                    e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height based on scroll height
+                                }}
                                 placeholder="Fråga Ledge..."
-                                className="flex-grow p-2 bg-transparent rounded-full focus:outline-none"
+                                className="flex-grow p-2 bg-transparent rounded-none focus:outline-none resize-none overflow-hidden"
+                                rows="1"
                             />
-                            <button type="submit" className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200">
+                            <button
+                                type="submit"
+                                className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
+                            >
                                 <Send size={20} />
                             </button>
                         </div>
