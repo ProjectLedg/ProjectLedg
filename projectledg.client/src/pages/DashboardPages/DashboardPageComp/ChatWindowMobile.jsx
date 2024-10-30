@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import ChatLoader from '@/ChatLoader';
+import Typewriter from '@/Typewriter';
 
 export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
-    const [messages, setMessages] = useState([]); // State to hold the array of messages
+    const [messages, setMessages] = useState([]);
     const [hasMessages, setHasMessages] = useState(false);
+    const [loading, setLoading] = useState(false); // New loading state
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (input.trim()) {
             const newMessage = { text: input, type: 'sent' };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
-            setHasMessages(true); // Set hasMessages to true when a message is sent
+            setHasMessages(true);
+            setInput('');
+
+            setLoading(true); // Set loading to true
+
             const response = await handleSend(input);
 
             const responseMessage = { text: response, type: 'received' };
             setMessages((prevMessages) => [...prevMessages, responseMessage]);
-
-            setInput('');
+            setLoading(false); // Reset loading to false
         }
     };
 
@@ -84,11 +89,17 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                                 key={index}
                                 className={`mb-4 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-md max-w-[70%] text-white self-end' : 'prose bg-transparent text-black self-start'}`}
                             >
-                                <ReactMarkdown
-                                    children={message.text}
-                                />
+                                {message.type === 'sent' ? (
+                                    <span>{message.text}</span>
+                                ) : (
+                                    <Typewriter
+                                        text={message.text}
+                                        delay={5}
+                                    />
+                                )}
                             </div>
                         ))}
+                        {loading && <ChatLoader />} {/* Render ChatLoader if loading */}
                     </div>
                 )}
 
