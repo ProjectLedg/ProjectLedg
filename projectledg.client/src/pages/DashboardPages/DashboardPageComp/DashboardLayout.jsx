@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
 import ChatService from "@/services/ChatService";
-import ChatWindowMobile from "./ChatWindowMobile";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
 import {
@@ -17,8 +16,8 @@ import {
   BookDown,
   LogOut,
   FileText,
-  SquarePen,
 } from "lucide-react";
+
 
 const navItems = [
   { icon: Home, label: "Hem", path: "", position: "top" },
@@ -31,6 +30,7 @@ const navItems = [
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
 ];
 
+
 const NavItem = ({ icon: Icon, label, path }) => {
   const { companyId } = useParams(); // Get companyId from the route params
   const fullPath = `/dashboard/${companyId}${path}`;
@@ -41,6 +41,18 @@ const NavItem = ({ icon: Icon, label, path }) => {
     <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
       <Icon className="h-5 w-5" />
       <span>{label}</span>
+    </Link>
+  );
+};
+
+
+const NavItemSmall = ({ icon: Icon, path }) => {
+  const { companyId } = useParams(); // Get companyId from the route params
+  const fullPath = `/dashboard/${companyId}${path}`;
+
+  return (
+    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+      <Icon className="h-6 w-6" />
     </Link>
   );
 };
@@ -59,18 +71,6 @@ const handleLogout = ({ icon: Icon, label, path }) => {
       <Icon className="h-5 w-5" />
       <span>{label}</span>
     </a>
-  );
-};
-
-
-const NavItemSmall = ({ icon: Icon, path }) => {
-  const { companyId } = useParams(); // Get companyId from the route params
-  const fullPath = `/dashboard/${companyId}${path}`;
-
-  return (
-    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
-      <Icon className="h-6 w-6" />
-    </Link>
   );
 };
 
@@ -101,8 +101,6 @@ const Sidebar = ({ isChatOpen }) => (
     </div>
   </motion.div>
 );
-
-
 
 
 const MobileNav = ({ navItems }) => (
@@ -136,6 +134,7 @@ const MobileNav = ({ navItems }) => (
   </Sheet>
 );
 
+
 export default function DashboardLayout() {
   const { companyId } = useParams();
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -156,6 +155,7 @@ export default function DashboardLayout() {
     setIsChatOpen(!isChatOpen);
   };
 
+  
   return (
     <div className="flex h-screen overflow-hidden shadow-lg">
       {/* Sidebar */}

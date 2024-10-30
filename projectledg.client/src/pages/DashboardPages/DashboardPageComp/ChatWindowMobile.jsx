@@ -7,23 +7,23 @@ export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [hasMessages, setHasMessages] = useState(false);
-    const [loading, setLoading] = useState(false); // New loading state
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (input.trim()) {
-            const newMessage = { text: input, type: 'sent' };
+    const handleSubmit = async (e, inputText = input) => {
+        if (e) e.preventDefault();
+        if (inputText.trim()) {
+            const newMessage = { text: inputText, type: 'sent' };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             setHasMessages(true);
             setInput('');
 
-            setLoading(true); // Set loading to true
+            setLoading(true);
 
-            const response = await handleSend(input);
+            const response = await handleSend(inputText);
 
             const responseMessage = { text: response, type: 'received' };
             setMessages((prevMessages) => [...prevMessages, responseMessage]);
-            setLoading(false); // Reset loading to false
+            setLoading(false);
         }
     };
 
@@ -38,14 +38,24 @@ export default function ChatWindow({ onClose, onSendMessage }) {
         }
     };
 
+    const handleSuggestionClick = async (suggestion) => {
+        setInput(suggestion);
+        await handleSubmit(null, suggestion);
+    };
+
+    const handleNewChat = () => {
+        setMessages([]); 
+        setHasMessages(false); 
+    };
+
     return (
         <div className="chatWindow flex flex-col right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl">
             <div className="bg-gray-100 rounded-xl overflow-hidden h-[100%] relative flex flex-col">
-                <div className="flex justify-between items-center p-4">
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                <div className="flex justify-between items-center p-4 shadow-sm">
+                    <button onClick={handleNewChat} className="text-gray-500 hover:text-gray-700 NEWCHAT">
                         <SquarePen size={25} />
                     </button>
-                    <button onClick={onClose} className="text-gray-500 bg-gray-200 p-1 rounded-full hover:text-gray-700">
+                    <button onClick={onClose} className="text-gray-500 bg-gray-200 p-1 rounded-full hover:text-gray-700 CLOSE">
                         <X size={20} />
                     </button>
                 </div>
@@ -67,6 +77,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                                 <button
                                     key={index}
                                     className="w-full text-left p-3 h-20 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center space-x-2"
+                                    onClick={() => handleSuggestionClick(topic)}
                                 >
                                     <div className="w-8 h-8 text-gray-100 bg-gray-800 rounded-xl flex items-center justify-center">
                                         {index === 0 ? (
@@ -87,7 +98,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`mb-12 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-lg max-w-[70%] text-white self-end' : 'prose bg-transparent text-black self-start'}`}
+                                className={`mb-12 ${message.type === 'sent' ? 'bg-green-500 px-3 py-3 rounded-3xl shadow-lg max-w-[70%] text-white self-end' : 'prose bg-transparent text-black self-start'}`}
                             >
                                 {message.type === 'sent' ? (
                                     <span>{message.text}</span>
@@ -99,7 +110,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                                 )}
                             </div>
                         ))}
-                        {loading && <ChatLoader />} {/* Render ChatLoader if loading */}
+                        {loading && <ChatLoader className="mb-12" />}
                     </div>
                 )}
 
