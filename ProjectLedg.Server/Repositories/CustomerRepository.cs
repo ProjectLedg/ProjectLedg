@@ -65,6 +65,20 @@ namespace ProjectLedg.Server.Repositories
             return customer;
         }
 
+        public async Task<Customer> GetCustomerByOutgoingInvoiceId(int outgoingInvoiceId)
+        {
+            var customer = await _context.Customers
+                .Where(c => c.OutgoingInvoices.Any(i => i.Id == outgoingInvoiceId))
+                .FirstOrDefaultAsync();
+
+            if (customer == null)
+            {
+                return null;
+            }
+
+            return customer;
+        }
+
         public async Task<Customer> UpdateCustomerWithInvoice(Customer customer)
         {
             // Check if the customer exists in the database

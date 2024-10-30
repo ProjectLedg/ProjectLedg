@@ -10,5 +10,6 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<Customer> GetCustomerByIdAsync(int id);
         Task<Customer> GetCustomerByOrgNumber(string orgNumber);
         Task<bool> DeleteCustomerAsync(int id);
+        Task<Customer> GetCustomerByOutgoingInvoiceId(int outgoingInvoiceId);
     }
 }
