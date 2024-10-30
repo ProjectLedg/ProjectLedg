@@ -40,6 +40,13 @@ namespace ProjectLedg.Server.Services
                     InvoiceTotal = invoiceDto.InvoiceTotal,
                     PaymentDetails = invoiceDto.PaymentDetails,
                     TotalTax = invoiceDto.TotalTax,
+                    Items = invoiceDto.Items.Select(itemDto => new InvoiceItems
+                    {
+                        Description = itemDto.Description,
+                        Quantity = itemDto.Quantity,
+                        UnitPrice = itemDto.UnitPrice,
+                        Amount = itemDto.Amount
+                    }).ToList(),
                     IsPaid = false,
                     IsBooked = false
                 };

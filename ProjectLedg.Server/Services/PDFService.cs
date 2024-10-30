@@ -5,15 +5,22 @@ using System.Text;
 using ProjectLedg.Server.Data.Models.DTOs.PDF;
 using System;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
+using ProjectLedg.Server.Repositories.IRepositories;
 
 namespace ProjectLedg.Server.Services
 {
     public class PDFService : IPDFService
     {
         private readonly IConverter _converter;
-        public PDFService(IConverter converter)
+        private readonly IOutgoingInvoiceRepository _invoiceRepository;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly ICustomerRepository _customerRepository;
+        public PDFService(IConverter converter, IOutgoingInvoiceRepository invoiceRepository, ICompanyRepository companyRepository, ICustomerRepository customerRepository)
         {
             _converter = converter;
+            _invoiceRepository = invoiceRepository;
+            _companyRepository = companyRepository;
+            _customerRepository = customerRepository;
         }
 
         public byte[] GenerateAnnualReportPdf()
@@ -148,67 +155,95 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
-        public byte[] GenerateInvoicePdf(InvoiceDTO invoice)
+        public async Task<byte[]> GenerateInvoicePdf(OutgoingInvoiceGenerationDTO dto)
         {
+
+
+            var outgoingInvoice = await _invoiceRepository.GetOutgoingInvoiceByIdAsync(dto.OutgoingInvoiceId);
+            if (outgoingInvoice == null)
+            {
+                throw new Exception("Invoice not found");
+            }
+
+            var company = await _companyRepository.GetCompanyByIdAsync(dto.CompanyId);
+            if (company == null)
+            {
+                throw new Exception("Company not found");
+            }
+
+            var customer = await _customerRepository.GetCustomerByOutgoingInvoiceId(dto.OutgoingInvoiceId);
+            if (customer == null)
+            {
+                throw new Exception("Customer not found");
+            }
+
+
+
+
+            //InvoiceDTO invoice
+
+
             var sb = new StringBuilder();
 
             // Header: Invoice Information
-            sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-bottom: 30px;'>");
-            sb.Append("<h1 style='color: #333;'>FAKTURA</h1>");
-            sb.Append($"<h3 style='color: #666;'>Fakturanummer: {invoice.InvoiceNumber}</h3>");
-            sb.Append($"<p style='font-size: 12px; color: #666;'>Fakturadatum: {invoice.InvoiceDate:yyyy-MM-dd}</p>");
-            sb.Append($"<p style='font-size: 12px; color: #666;'>Förfallodatum: {invoice.DueDate:yyyy-MM-dd}</p>");
+            sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-bottom: 40px; color: #333;'>");
+            sb.Append("<h1 style='color: #444; font-size: 32px; letter-spacing: 1px;'>FAKTURA</h1>");
+            sb.Append($"<h3 style='color: #777; font-size: 18px;'>Fakturanummer: {outgoingInvoice.InvoiceNumber}</h3>");
+            sb.Append($"<p style='font-size: 14px; color: #999;'>Fakturadatum: {outgoingInvoice.InvoiceDate:yyyy-MM-dd}</p>");
+            sb.Append($"<p style='font-size: 14px; color: #999;'>Förfallodatum: {outgoingInvoice.DueDate:yyyy-MM-dd}</p>");
             sb.Append("</div>");
 
             // Vendor Information
-            sb.Append("<div style='margin-bottom: 30px; font-family: Arial, sans-serif;'>");
-            sb.Append($"<p style='font-weight: bold;'>{invoice.VendorName}</p>");
-            sb.Append($"<p>{invoice.VendorAddress}</p>");
-            sb.Append($"<p>{invoice.VendorAddressRecipient}</p>");
-            sb.Append($"<p>Tax ID: {invoice.VendorTaxId}</p>");
+            sb.Append("<div style='margin-bottom: 30px; font-family: Arial, sans-serif; color: #333;'>");
+            sb.Append($"<p style='font-weight: bold; font-size: 16px;'>{company.CompanyName}</p>");
+            sb.Append($"<p style='font-size: 14px;'>Adress: {company.Address}</p>");
+            sb.Append($"<p style='font-size: 14px;'>Orgnummer: {company.OrgNumber}</p>");
+            sb.Append($"<p style='font-size: 14px;'>Momsnummer: {company.TaxId}</p>");
             sb.Append("</div>");
 
             // Customer Information
-            sb.Append("<div style='margin-bottom: 30px; font-family: Arial, sans-serif;'>");
-            sb.Append($"<p style='font-weight: bold;'>Bill To: {invoice.CustomerName}</p>");
-            sb.Append($"<p>{invoice.CustomerAddress}</p>");
-            sb.Append($"<p>Attn: {invoice.CustomerAddressRecipient}</p>");
+            sb.Append("<div style='margin-bottom: 30px; font-family: Arial, sans-serif; color: #333;'>");
+            sb.Append($"<p style='font-weight: bold; font-size: 16px;'>Faktureras till: {customer.Name}</p>");
+            sb.Append($"<p style='font-size: 14px;'>Adress: {customer.Address}</p>");
+            sb.Append($"<p style='font-size: 14px;'>Orgnummer: {customer.OrganizationNumber}</p>");
+            sb.Append($"<p style='font-size: 14px;'>Momsnummer: {customer.TaxId}</p>");
             sb.Append("</div>");
 
             // Itemized Billing Table
-            sb.Append("<table style='width: 100%; border-collapse: collapse; margin-bottom: 30px; font-family: Arial, sans-serif;'>");
-            sb.Append("<thead><tr>");
-            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Description</th>");
-            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Quantity</th>");
-            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Unit Price</th>");
-            sb.Append("<th style='border-bottom: 1px solid #ccc; padding: 8px; text-align: left;'>Amount</th>");
+            sb.Append("<table style='width: 100%; border-collapse: collapse; margin-bottom: 30px; font-family: Arial, sans-serif; color: #333;'>");
+            sb.Append("<thead><tr style='background-color: #f2f2f2;'>");
+            sb.Append("<th style='border-bottom: 2px solid #ccc; padding: 10px; text-align: left;'>Beskrivning</th>");
+            sb.Append("<th style='border-bottom: 2px solid #ccc; padding: 10px; text-align: right;'>Antal</th>");
+            sb.Append("<th style='border-bottom: 2px solid #ccc; padding: 10px; text-align: right;'>Pris/st</th>");
+            sb.Append("<th style='border-bottom: 2px solid #ccc; padding: 10px; text-align: right;'>Belopp</th>");
             sb.Append("</tr></thead>");
             sb.Append("<tbody>");
 
-            foreach (var item in invoice.Items)
+            foreach (var item in outgoingInvoice.Items)
             {
                 sb.Append("<tr>");
-                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.Description}</td>");
-                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.Quantity}</td>");
-                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.UnitPrice:C}</td>");
-                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 8px;'>{item.Amount:C}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 10px;'>{item.Description}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 10px; text-align: right;'>{item.Quantity}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 10px; text-align: right;'>{item.UnitPrice:C}</td>");
+                sb.Append($"<td style='border-bottom: 1px solid #eee; padding: 10px; text-align: right;'>{item.Amount:C}</td>");
                 sb.Append("</tr>");
             }
 
             sb.Append("</tbody></table>");
 
             // Summary Section
-            sb.Append("<div style='text-align: right; font-family: Arial, sans-serif; margin-bottom: 50px;'>");
-            sb.Append($"<p style='font-size: 14px;'><strong>Subtotal:</strong> {invoice.InvoiceTotal:C}</p>");
-            sb.Append($"<p style='font-size: 14px;'><strong>Total Tax:</strong> {invoice.TotalTax:C}</p>");
-            sb.Append($"<h3 style='font-size: 18px; color: #333;'>Total: {invoice.InvoiceTotal + invoice.TotalTax:C}</h3>");
+            sb.Append("<div style='text-align: right; font-family: Arial, sans-serif; color: #333; margin-bottom: 50px;'>");
+            sb.Append($"<p style='font-size: 16px;'><strong>Delsumma:</strong> {outgoingInvoice.InvoiceTotal:C}</p>");
+            sb.Append($"<p style='font-size: 16px;'><strong>Moms:</strong> {outgoingInvoice.TotalTax:C}</p>");
+            sb.Append($"<h3 style='font-size: 22px; color: #444; margin-top: 10px;'>Total: {outgoingInvoice.InvoiceTotal + outgoingInvoice.TotalTax:C}</h3>");
             sb.Append("</div>");
 
             // Footer: Payment Information
-            sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-top: 50px;'>");
-            sb.Append($"<p style='font-size: 12px;'><strong>Betalnings:</strong> {invoice.PaymentDetails ?? "N/A"}</p>");
-            sb.Append("<p style='font-size: 12px;'>Denna faktura har skapats med Ledge's Faktura tjänst!</p>");
+            sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; color: #777; margin-top: 50px;'>");
+            sb.Append($"<p style='font-size: 14px;'><strong>Bankgiro:</strong> {outgoingInvoice.PaymentDetails ?? "N/A"}</p>");
+            sb.Append("<p style='font-size: 12px; color: #aaa;'>Denna faktura är genererad av Ledge Faktura tjänst.</p>");
             sb.Append("</div>");
+
 
             // PDF Document Generation
             var doc = new HtmlToPdfDocument()
@@ -229,5 +264,7 @@ namespace ProjectLedg.Server.Services
 
             return _converter.Convert(doc);
         }
+
+        
     }
 }
