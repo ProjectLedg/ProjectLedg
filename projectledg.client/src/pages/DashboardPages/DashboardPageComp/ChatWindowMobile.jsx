@@ -62,7 +62,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                             </p>
                         </div>
 
-                        <div className="space-y-2 flex flex-col justify-between h-[45%]">
+                        <div className="space-y-2 flex flex-col justify-around h-[45%]">
                             {['Hur skapar jag en faktura?', 'Vilka utgifter är avdragsgilla?', 'Visa min senaste månatliga rapport'].map((topic, index) => (
                                 <button
                                     key={index}
@@ -87,7 +87,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`mb-4 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-md max-w-[70%] text-white self-end' : 'prose bg-transparent text-black self-start'}`}
+                                className={`mb-12 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-lg max-w-[70%] text-white self-end' : 'prose bg-transparent text-black self-start'}`}
                             >
                                 {message.type === 'sent' ? (
                                     <span>{message.text}</span>
