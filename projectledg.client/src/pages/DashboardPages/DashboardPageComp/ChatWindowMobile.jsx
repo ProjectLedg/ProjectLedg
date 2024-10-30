@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+
 
 export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
@@ -77,16 +80,19 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col p-4 overflow-y-auto flex-grow mb-12">
-                        {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`mb-4 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-md max-w-[70%] text-white self-end' : 'bg-transparent text-black self-start'}`}
-                            >
-                                <p className="text-md font-normal">{message.text}</p>
-                            </div>
-                        ))}
-                    </div>
+                        <div className="flex flex-col p-4 overflow-y-auto flex-grow mb-12 whitespace-pre-line break-words">
+                            {messages.map((message, index) => (
+                                <div
+                                    key={index}
+                                    className={`mb-4 ${message.type === 'sent' ? 'bg-green-500 px-5 py-2 rounded-3xl shadow-md max-w-[70%] text-white self-end' : 'bg-transparent text-black self-start'}`}
+                                >
+                                    <ReactMarkdown
+                                        children={message.text}
+                                        remarkPlugins={[remarkBreaks]} // Handles line breaks
+                                    />
+                                </div>
+                            ))}
+                        </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="absolute bottom-0 left-0 right-0 bg-transparent p-1">
@@ -102,8 +108,8 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                                 value={input}
                                 onChange={(e) => {
                                     setInput(e.target.value);
-                                    e.target.style.height = "auto"; // Reset height to allow shrinking
-                                    e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height based on scroll height
+                                    e.target.style.height = "auto"; 
+                                    e.target.style.height = `${e.target.scrollHeight}px`; 
                                 }}
                                 placeholder="Fråga Ledge..."
                                 className="flex-grow p-2 bg-transparent rounded-none focus:outline-none resize-none overflow-hidden"
