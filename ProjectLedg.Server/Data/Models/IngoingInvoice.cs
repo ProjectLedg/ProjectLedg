@@ -15,7 +15,6 @@ namespace ProjectLedg.Server.Data.Models
         public string? PaymentDetails { get; set; }
         public decimal TotalTax { get; set; }
         public bool IsPaid { get; set; }
-        public bool IsOutgoing { get; set; }
         public bool IsBooked { get; set; } // If invoice is "bokförd" 
 
         //Customer Related queries  
