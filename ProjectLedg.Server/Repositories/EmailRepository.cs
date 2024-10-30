@@ -23,7 +23,8 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<bool> CreateEmailAsync(EmailList email)
         {
-            try {
+            try
+            {
                 _context.Emails.Add(email);
                 await _context.SaveChangesAsync();
                 return true;
@@ -36,9 +37,22 @@ namespace ProjectLedg.Server.Repositories
             }
         }
 
+        public async Task<bool> DeleteEmailByEmailAsync(string email)
+        {
+            var emailToDelete = await _context.Emails.FirstOrDefaultAsync(e => e.Email == email);
+            if (emailToDelete == null)
+            {
+                return false;
+            }
+            _context.Emails.Remove(emailToDelete);
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> DeleteEmailListAsync(int emailId)
         {
-           var emailToDelete = await _context.Emails.FindAsync(emailId);
+            var emailToDelete = await _context.Emails.FindAsync(emailId);
             if (emailToDelete == null)
             {
                 return false;
