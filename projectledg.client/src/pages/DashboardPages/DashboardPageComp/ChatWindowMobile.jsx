@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip } from 'lucide-react';
 import ChatLoader from '@/ChatLoader';
 import Typewriter from '@/Typewriter';
 
 export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
-    const [messages, setMessages] = useState([]);
-    const [hasMessages, setHasMessages] = useState(false);
+    const [messages, setMessages] = useState(() => {
+        const savedMessages = localStorage.getItem('chatMessages');
+        return savedMessages ? JSON.parse(savedMessages) : [];
+    });
+    const [hasMessages, setHasMessages] = useState(messages.length > 0);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        localStorage.setItem('chatMessages', JSON.stringify(messages));
+    }, [messages]);
 
     const handleSubmit = async (e, inputText = input) => {
         if (e) e.preventDefault();
@@ -44,12 +51,14 @@ export default function ChatWindow({ onClose, onSendMessage }) {
     };
 
     const handleNewChat = () => {
-        setMessages([]); 
-        setHasMessages(false); 
+        console.log("Resetting chat");
+        setMessages([]);
+        setHasMessages(false);
+        localStorage.removeItem('chatMessages'); 
     };
 
     return (
-        <div className="chatWindow flex flex-col right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl">
+        <div className="chatWindow flex flex-col right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-2xl">
             <div className="bg-gray-100 rounded-xl overflow-hidden h-[100%] relative flex flex-col">
                 <div className="flex justify-between items-center p-4 shadow-sm">
                     <button onClick={handleNewChat} className="text-gray-500 hover:text-gray-700 NEWCHAT">
