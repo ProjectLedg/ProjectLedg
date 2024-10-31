@@ -3,9 +3,8 @@ import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip, Bot } 
 import ChatLoader from '@/ChatLoader';
 import Typewriter from '@/Typewriter';
 import ReactMarkdown from 'react-markdown';
-import ChatService from '@/services/ChatService';
 
-export default function ChatWindow({ onClose, onSendMessage }) {
+export default function ChatWindowMobile({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {
         const savedMessages = localStorage.getItem('chatMessages');
@@ -95,10 +94,10 @@ export default function ChatWindow({ onClose, onSendMessage }) {
         <div className="chatWindow flex flex-col right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-2xl">
             <div className="bg-gray-100 rounded-xl overflow-hidden h-[100%] relative flex flex-col">
                 <div className="flex justify-between items-center p-4 shadow-sm">
-                    <button onClick={handleNewChat} className="text-gray-500 hover:text-gray-700 NEWCHAT">
+                    <button onClick={handleNewChat} className="text-gray-500 hover:text-gray-700 ">
                         <SquarePen size={25} />
                     </button>
-                    <button onClick={onClose} className="text-gray-500 bg-gray-200 p-1 rounded-full hover:text-gray-700 CLOSE">
+                    <button onClick={onClose} className="text-gray-500 bg-gray-200 p-1 rounded-full hover:text-gray-700 ">
                         <X size={20} />
                     </button>
                 </div>
