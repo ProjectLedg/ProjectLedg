@@ -6,6 +6,9 @@ namespace ProjectLedg.Server.Services.IServices
     {
         Task<bool> CreateEmailAsync(EmailDTO dto);
         Task<bool> DeleteEmailAsync(int emailId);
-        Task<IEnumerable<EmailDTO>> GetAllEmailsAsync();
+        Task<IEnumerable<SubscriptionEmailDTO>> GetAllEmailsAsync();
+        Task<bool> SendMassEmailAsync(string subject, string htmlMessage);
+        Task<bool> AddEmailAsync(SubscriptionEmailDTO subscriptionEmailDto);
+        Task<bool> UnsubscribeEmailAsync(string email);
     }
 }

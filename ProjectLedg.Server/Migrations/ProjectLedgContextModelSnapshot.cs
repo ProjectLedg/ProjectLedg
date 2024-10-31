@@ -354,7 +354,7 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -373,7 +373,7 @@ namespace ProjectLedg.Server.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Customer");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.EmailList", b =>
@@ -389,11 +389,9 @@ namespace ProjectLedg.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -447,9 +445,6 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<bool>("IsBooked")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsOutgoing")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
@@ -496,7 +491,6 @@ namespace ProjectLedg.Server.Migrations
                             InvoiceNumber = "INV001",
                             InvoiceTotal = 5000.00m,
                             IsBooked = true,
-                            IsOutgoing = true,
                             IsPaid = true,
                             TotalTax = 50.00m,
                             VendorAddress = "Arenavägen 61",
@@ -518,7 +512,6 @@ namespace ProjectLedg.Server.Migrations
                             InvoiceNumber = "INV002",
                             InvoiceTotal = 5000.00m,
                             IsBooked = true,
-                            IsOutgoing = true,
                             IsPaid = true,
                             PaymentDetails = "34395139",
                             TotalTax = 50.00m,
@@ -602,7 +595,7 @@ namespace ProjectLedg.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DueDate")
@@ -622,9 +615,6 @@ namespace ProjectLedg.Server.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsOutgoing")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsPaid")
@@ -654,7 +644,7 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("BasAccountId")
+                    b.Property<int?>("BasAccountId")
                         .HasColumnType("int");
 
                     b.Property<int?>("IngoingInvoiceId")
@@ -887,7 +877,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "b4525248-1203-4902-b551-e4d047b7861e",
+                            ConcurrencyStamp = "c84d6a1c-49a3-47e4-8a69-bda6bfb2e8fd",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -895,9 +885,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEN6b9Tl1qqxsDbdg/vJeJgR1cyuDQ9IxqJatuibK3PrwXKq6mUDFYgZe/3SHUe4vZQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEApBzng1a3y/xrfgyRFxS6d22dMF+NzHzm9wlML18mtB5XJaeHnU3b8zcc4d9A1TfA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b7438e77-ca74-4151-b4ac-4991feca1724",
+                            SecurityStamp = "1e85e01a-ec25-44e7-9cc1-c785efa62765",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
@@ -982,9 +972,7 @@ namespace ProjectLedg.Server.Migrations
                 {
                     b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
                         .WithMany("Customers")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.IngoingInvoice", b =>
@@ -1015,11 +1003,11 @@ namespace ProjectLedg.Server.Migrations
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
                 {
-                    b.HasOne("ProjectLedg.Server.Data.Models.Customer", null)
+                    b.HasOne("ProjectLedg.Server.Data.Models.Customer", "Customer")
                         .WithMany("OutgoingInvoices")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -1027,8 +1015,7 @@ namespace ProjectLedg.Server.Migrations
                     b.HasOne("ProjectLedg.Server.Data.Models.BasAccount", "BasAccount")
                         .WithMany("Transactions")
                         .HasForeignKey("BasAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProjectLedg.Server.Data.Models.IngoingInvoice", "IngoingInvoice")
                         .WithMany("Transactions")

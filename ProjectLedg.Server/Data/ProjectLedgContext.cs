@@ -11,6 +11,7 @@ namespace ProjectLedg.Server.Data
         public ProjectLedgContext(DbContextOptions<ProjectLedgContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<InvoiceItems> InvoiceItems { get; set; }
         public DbSet<IngoingInvoice> IngoingInvoices { get; set; }
         public DbSet<OutgoingInvoice> OutgoingInvoices { get; set; }
@@ -101,7 +102,6 @@ namespace ProjectLedg.Server.Data
                     DueDate = new DateTime(2023, 01, 15),
                     InvoiceTotal = 5000.00m,
                     IsPaid = true,
-                    IsOutgoing = true,
                     IsBooked = true,
                     TotalTax = 50.00m,
                     CustomerId = "CUST001", // Scanned value
@@ -123,7 +123,6 @@ namespace ProjectLedg.Server.Data
                     DueDate = new DateTime(2023, 01, 15),
                     InvoiceTotal = 5000.00m,
                     IsPaid = true,
-                    IsOutgoing = true,
                     IsBooked = true,
                     PaymentDetails = "34395139",
                     TotalTax = 50.00m,

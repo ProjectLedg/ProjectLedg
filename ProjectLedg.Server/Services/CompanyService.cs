@@ -39,6 +39,8 @@ namespace ProjectLedg.Server.Services
                 OrgNumber = request.OrgNumber,
                 AmountOfEmployees = request.AmountOfEmployees,
                 CompanyDescription = request.CompanyDescription,
+                TaxId = request.TaxId,
+                Address = request.Address,
                 Users = new List<User> { user }
             };
 
@@ -61,7 +63,9 @@ namespace ProjectLedg.Server.Services
                 CompanyName = company.CompanyName,
                 OrgNumber = company.OrgNumber,
                 AmountOfEmployees = company.AmountOfEmployees,
-                CompanyDescription = company.CompanyDescription
+                CompanyDescription = company.CompanyDescription,
+                TaxId = company.TaxId,
+                Address = company.Address
             };
         }
 

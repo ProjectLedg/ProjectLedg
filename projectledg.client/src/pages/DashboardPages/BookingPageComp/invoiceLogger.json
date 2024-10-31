@@ -1,0 +1,292 @@
+{
+    "mockTestData": [
+        {
+        "id": "INV-001",
+        "date": "2023-05-9",
+        "dueDate": "2023-06-9",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-002",
+        "date": "2023-05-9",
+        "dueDate": "2023-06-9",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-003",
+        "date": "2023-05-9",
+        "dueDate": "2023-06-9",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-004",
+        "date": "2023-05-12",
+        "dueDate": "2023-06-12",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-005",
+        "date": "2023-05-12",
+        "dueDate": "2023-06-12",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-006",
+        "date": "2023-05-12",
+        "dueDate": "2023-06-12",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-007",
+        "date": "2023-05-12",
+        "dueDate": "2023-06-12",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-008",
+        "date": "2023-05-12",
+        "dueDate": "2023-06-12",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-009",
+        "date": "2023-05-10",
+        "dueDate": "2023-06-10",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-010",
+        "date": "2023-05-10",
+        "dueDate": "2023-06-10",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-011",
+        "date": "2023-05-10",
+        "dueDate": "2023-06-10",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-012",
+        "date": "2023-05-10",
+        "dueDate": "2023-06-10",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-013",
+        "date": "2023-05-10",
+        "dueDate": "2023-06-10",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-014",
+        "date": "2023-05-10",
+        "dueDate": "2023-06-10",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-015",
+        "date": "2023-06-15",
+        "dueDate": "2023-07-15",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-016",
+        "date": "2023-06-15",
+        "dueDate": "2023-07-15",
+        "amount": 1234.56,
+        "isPaid": false,
+        "isBooked": true,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-017",
+        "date": "2023-06-15",
+        "dueDate": "2023-07-15",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-018",
+        "date": "2023-06-15",
+        "dueDate": "2023-07-15",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-019",
+        "date": "2023-06-15",
+        "dueDate": "2023-07-15",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-020",
+        "date": "2023-07-15",
+        "dueDate": "2023-08-15",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+        "id": "INV-021",
+        "date": "2023-07-15",
+        "dueDate": "2023-08-15",
+        "amount": 1234.56,
+        "isPaid": true,
+        "isBooked": false,
+        "customer": "Acme Corp",
+        "description": "Web development services for Q3",
+        "additionalInfo": ""
+        },
+        {
+            "id": "INV-022",
+            "date": "2023-07-15",
+            "dueDate": "2023-08-15",
+            "amount": 1234.56,
+            "isPaid": true,
+            "isBooked": false,
+            "customer": "Acme Corp",
+            "description": "Web development services for Q3",
+            "additionalInfo": ""
+        },
+        {
+            "id": "INV-023",
+            "date": "2023-07-15",
+            "dueDate": "2023-08-15",
+            "amount": 1234.56,
+            "isPaid": true,
+            "isBooked": false,
+            "customer": "Acme Corp",
+            "description": "Web development services for Q3",
+            "additionalInfo": ""
+        },
+        {
+            "id": "INV-024",
+            "date": "2023-07-15",
+            "dueDate": "2023-08-15",
+            "amount": 1234.56,
+            "isPaid": true,
+            "isBooked": false,
+            "customer": "Acme Corp",
+            "description": "Web development services for Q3",
+            "additionalInfo": ""
+        },
+        {
+            "id": "INV-025",
+            "date": "2023-07-15",
+            "dueDate": "2023-08-15",
+            "amount": 1234.56,
+            "isPaid": true,
+            "isBooked": false,
+            "customer": "Acme Corp",
+            "description": "Web development services for Q3",
+            "additionalInfo": ""
+        },
+        {
+            "id": "INV-026",
+            "date": "2023-07-15",
+            "dueDate": "2023-08-15",
+            "amount": 1234.56,
+            "isPaid": true,
+            "isBooked": false,
+            "customer": "Acme Corp",
+            "description": "Web development services for Q3",
+            "additionalInfo": ""
+        }
+    ]
+}
+
+

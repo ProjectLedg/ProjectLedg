@@ -70,7 +70,7 @@ namespace ProjectLedg.Server
             services.AddDbContext<ProjectLedgContext>(options =>
             {
                 options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("AZURE_DATABASE_CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
             // Add services to the container.
@@ -202,6 +202,11 @@ namespace ProjectLedg.Server
             services.AddScoped<IFinanceRepo, FinanceRepo>();
             services.AddScoped<IFinanceService, FinanceService>();
 
+            //Customer
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerService, CustomerService>();
+
+
             //EmailList
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailRepository, EmailRepository>();
@@ -221,9 +226,13 @@ namespace ProjectLedg.Server
                     Environment.GetEnvironmentVariable("BLOB_STORAGE_API_KEY")
                 );
             });
-            //Invoices
-            services.AddScoped<IInvoiceRepository, IngoingInvoiceRepository>();
+            //Ingoing Invoices
+            services.AddScoped<IIngoingInvoiceRepository, IngoingInvoiceRepository>();
             services.AddScoped<IIngoingInvoiceService, IngoingInvoiceService>();
+            //Outgoing Invoices
+            services.AddScoped<IOutgoingInvoiceRepository, OutgoingInvoiceRepository>();
+            services.AddScoped<IOutgoingInvoiceService, OutgoingInvoiceService>();
+          
             //OpenAI
             var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             var openAiClient = new OpenAIClient(new OpenAIAuthentication(apiKey: openAiApiKey));
