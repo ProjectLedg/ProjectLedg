@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const Typewriter = ({ text, delay }) => {
+const Typewriter = ({ text, delay, onComplete }) => {
     const [currentText, setCurrentText] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -13,8 +13,10 @@ const Typewriter = ({ text, delay }) => {
             }, delay);
 
             return () => clearTimeout(timeout);
+        } else if (currentIndex === text.length && onComplete) {
+            onComplete();
         }
-    }, [currentIndex, delay, text]);
+    }, [currentIndex, delay, text, onComplete]);
 
     return <ReactMarkdown>{currentText}</ReactMarkdown>;
 };
