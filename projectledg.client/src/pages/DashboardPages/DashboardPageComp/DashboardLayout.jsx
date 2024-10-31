@@ -3,6 +3,7 @@ import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
+import ChatService from "@/services/ChatService";
 import ChatWindow from "./ChatWindow";
 import axiosConfig from "/axiosconfig";
 import ChatWindowMobile from "./ChatWindowMobile";
@@ -18,8 +19,8 @@ import {
   BookDown,
   LogOut,
   FileText,
-  SquarePen,
 } from "lucide-react";
+
 
 const navItems = [
   { icon: Home, label: "Hem", path: "", position: "top" },
@@ -32,6 +33,7 @@ const navItems = [
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
 ];
 
+
 const NavItem = ({ icon: Icon, label, path }) => {
   const { companyId } = useParams(); // Get companyId from the route params
   const fullPath = `/dashboard/${companyId}${path}`;
@@ -42,6 +44,18 @@ const NavItem = ({ icon: Icon, label, path }) => {
     <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
       <Icon className="h-5 w-5" />
       <span>{label}</span>
+    </Link>
+  );
+};
+
+
+const NavItemSmall = ({ icon: Icon, path }) => {
+  const { companyId } = useParams(); // Get companyId from the route params
+  const fullPath = `/dashboard/${companyId}${path}`;
+
+  return (
+    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+      <Icon className="h-6 w-6" />
     </Link>
   );
 };
@@ -60,18 +74,6 @@ const handleLogout = ({ icon: Icon, label, path }) => {
       <Icon className="h-5 w-5" />
       <span>{label}</span>
     </a>
-  );
-};
-
-
-const NavItemSmall = ({ icon: Icon, path }) => {
-  const { companyId } = useParams(); // Get companyId from the route params
-  const fullPath = `/dashboard/${companyId}${path}`;
-
-  return (
-    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
-      <Icon className="h-6 w-6" />
-    </Link>
   );
 };
 
@@ -104,8 +106,6 @@ const Sidebar = ({ isChatOpen }) => (
 );
 
 
-
-
 const MobileNav = ({ navItems }) => (
   <Sheet>
     <SheetTrigger asChild>
@@ -136,6 +136,7 @@ const MobileNav = ({ navItems }) => (
     </SheetContent>
   </Sheet>
 );
+
 
 export default function DashboardLayout() {
   const { companyId } = useParams();
@@ -171,6 +172,7 @@ export default function DashboardLayout() {
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
+  
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a more sophisticated loading component
@@ -208,7 +210,7 @@ export default function DashboardLayout() {
             <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
-                <ChatWindowMobile onClose={toggleChat} />
+                <ChatService onClose={toggleChat} mobile/>
               ) : (
                 <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
                   <motion.div
@@ -231,7 +233,7 @@ export default function DashboardLayout() {
                         transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
                         className="inherit w-[30vw] fixed right-0"
                       >
-                        <ChatWindow onClose={toggleChat} />
+                        <ChatService onClose={toggleChat} />
                       </motion.div>
                     )}
                   </AnimatePresence>
