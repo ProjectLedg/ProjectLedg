@@ -71,7 +71,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
             )}
             <div
                 className={`${message.type === 'sent'
-                    ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white'
+                    ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
                     : 'prose bg-gray-100 px-3 py-3 rounded-3xl  max-w-[100%] text-black'
                     }`}
             >
