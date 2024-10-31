@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip } from 'lucide-react';
+import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip, Bot } from 'lucide-react';
 import ChatLoader from '@/ChatLoader';
 import Typewriter from '@/Typewriter';
+import ReactMarkdown from 'react-markdown';
+import ChatService from '@/services/ChatService';
 
 export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
@@ -28,7 +30,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
 
             const response = await handleSend(inputText);
 
-            const responseMessage = { text: response, type: 'received' };
+            const responseMessage = { text: response, type: 'received', isTyping: true };
             setMessages((prevMessages) => [...prevMessages, responseMessage]);
             setLoading(false);
         }
@@ -54,8 +56,40 @@ export default function ChatWindow({ onClose, onSendMessage }) {
         console.log("Resetting chat");
         setMessages([]);
         setHasMessages(false);
-        localStorage.removeItem('chatMessages'); 
+        localStorage.removeItem('chatMessages');
     };
+
+    const renderedMessages = messages.map((message, index) => (
+        <div
+            key={index}
+            className={`mb-12 flex items-start ${message.type === 'sent' ? 'self-end' : 'self-start'}`}
+        >
+            {message.type === 'received' && (
+                <div className='p-2 mt-1 border-2 rounded-full '>
+                    <Bot className="w-6 h-6 " />
+                </div>
+            )}
+            <div
+                className={`${message.type === 'sent'
+                    ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white'
+                    : 'prose bg-gray-100 px-3 py-3 rounded-3xl  max-w-[100%] text-black'
+                    }`}
+            >
+                {message.type === 'sent' || !message.isTyping ? (
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                ) : (
+                    <Typewriter text={message.text} delay={5} onComplete={() => {
+                        setMessages((prevMessages) =>
+                            prevMessages.map((msg, i) =>
+                                i === index ? { ...msg, isTyping: false } : msg
+                            )
+                        );
+                    }} />
+
+                )}
+            </div>
+        </div>
+    ));
 
     return (
         <div className="chatWindow flex flex-col right-0 p-2 w-full h-[100vh] bg-white/60 bg-opacity-80 shadow-lg rounded-2xl">
@@ -104,21 +138,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                     </div>
                 ) : (
                     <div className="flex flex-col p-4 overflow-y-auto flex-grow mb-12">
-                        {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`mb-12 ${message.type === 'sent' ? 'bg-green-500 px-3 py-3 rounded-3xl shadow-lg max-w-[70%] text-white self-end' : 'prose bg-transparent text-black self-start'}`}
-                            >
-                                {message.type === 'sent' ? (
-                                    <span>{message.text}</span>
-                                ) : (
-                                    <Typewriter
-                                        text={message.text}
-                                        delay={5}
-                                    />
-                                )}
-                            </div>
-                        ))}
+                        {renderedMessages}
                         {loading && <ChatLoader className="mb-12" />}
                     </div>
                 )}
