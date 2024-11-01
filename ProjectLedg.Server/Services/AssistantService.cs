@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 using ProjectLedg.Server.Data.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 public class AssistantService : IAssistantService
 {
@@ -16,6 +18,13 @@ public class AssistantService : IAssistantService
     private readonly IBasAccountService _basAccountService;
     private readonly string _csvFilePath;
     private readonly string _directivesFilePath;
+    private readonly byte[] _aesKey = Enumerable.Range(0, Environment.GetEnvironmentVariable("AES_KEY").Length)
+        .Where(x => x % 2 == 0)
+        .Select(x => Convert.ToByte(Environment.GetEnvironmentVariable("AES_KEY").Substring(x, 2), 16))
+        .ToArray();
+    private readonly byte[] _aesIV = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV"));
+
+    private readonly Dictionary<string, Func<string[], Task<string>>> _commandHandlers;
 
     public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService)
     {
@@ -26,50 +35,90 @@ public class AssistantService : IAssistantService
         _basAccountService = basAccountService;
         _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
         _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
+
+        _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
+        {
+            { "GetCompanyBasAccounts", async args => await HandleGetCompanyBasAccounts(args) }
+        };
     }
 
     public async Task<string> SendMessageToAssistantAsync(string message)
     {
-        // Commenting out authentication part for testing without login
-        /*
-        var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-                            ?? _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var session = _httpContextAccessor.HttpContext.Session;
 
-        if (string.IsNullOrEmpty(currentUserId))
+        //Retrieve existing chat history from session, if any
+        var chatHistoryEncrypted = session.GetString("ChatHistory");
+        var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
+            ? new List<Message>()
+            : JsonSerializer.Deserialize<List<Message>>(DecryptData(chatHistoryEncrypted));
+
+        //Ensure system message is added only once per session
+        if (!messages.Any(m => m.Role == Role.System))
         {
-            var claims = _httpContextAccessor.HttpContext?.User?.Claims
-                .Select(c => $"{c.Type}: {c.Value}")
-                .ToList() ?? new List<string> { "No claims found" };
+            var basAccounts = LoadBasAccounts();
+            var basContext = string.Join("\n", basAccounts.Select(a =>
+                $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
+            var assistantDirectives = LoadAssistantDirectives();
 
-            return $"User is not authenticated. Claims available: {string.Join(", ", claims)}";
+            var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
+            messages.Insert(0, systemMessage);
         }
-        */
 
-         //Load BAS accounts and assistant directives
-    var basAccounts = LoadBasAccounts();
-    var basContext = string.Join("\n", basAccounts.Select(a =>
-        $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
-    var assistantDirectives = LoadAssistantDirectives();
+        //Add user's message
+        var userMessage = new Message(Role.User, message);
+        messages.Add(userMessage);
 
-    //Combining assistant directives and BAS chart context
-    var systemMessage = new Message(Role.System,
-        $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
+        //Limit to recent messages
+        var recentMessages = messages.TakeLast(10).ToList();
+        var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
 
-    var userMessage = new Message(Role.User, message);
+        //Process with OpenAI
+        var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+        var assistantResponse = response.FirstChoice?.Message?.Content.GetString() ?? "No valid response from assistant.";
+        messages.Add(new Message(Role.Assistant, assistantResponse));
 
-    var messages = new List<Message> { systemMessage, userMessage };
-    var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini");
+        var encryptedChatHistory = EncryptData(JsonSerializer.Serialize(messages));
+        //Encrypt and store in session
+        session.SetString("ChatHistory", encryptedChatHistory);
 
-    var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
-
-    // Retrieve and handle response content safely
-    if (response.FirstChoice?.Message?.Content.ValueKind == JsonValueKind.String)
-    {
-        return response.FirstChoice.Message.Content.GetString();
+        Console.WriteLine($"Encrypted Chat History: {encryptedChatHistory}");
+        return assistantResponse;
     }
-    
-    return "No valid response from assistant.";
-}
+
+    //Encrypts the chat history directly
+    private string EncryptData(string data)
+    {
+        using var aes = Aes.Create();
+        aes.Key = _aesKey;
+        aes.IV = _aesIV;
+
+        using var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+        using var ms = new MemoryStream();
+        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+        using (var sw = new StreamWriter(cs))
+        {
+            sw.Write(data);
+        }
+
+        return Convert.ToBase64String(ms.ToArray());
+    }
+
+    //Decrypts the chat history directly
+    private string DecryptData(string encryptedData)
+    {
+        var encryptedBytes = Convert.FromBase64String(encryptedData);
+
+        using var aes = Aes.Create();
+        aes.Key = _aesKey;
+        aes.IV = _aesIV;
+
+        using var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+        using var ms = new MemoryStream(encryptedBytes);
+        using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+        using var sr = new StreamReader(cs);
+
+        return sr.ReadToEnd();
+    }
 
     private List<BasAccount> LoadBasAccounts()
     {
@@ -79,16 +128,15 @@ public class AssistantService : IAssistantService
         {
             if (!File.Exists(_csvFilePath))
             {
-                //Log a message or handle the missing file as needed
                 Console.WriteLine($"BAS chart CSV file not found at path: {_csvFilePath}");
-                return basAccounts; //Return an empty list if file is not found
+                return basAccounts;
             }
 
             var lines = File.ReadAllLines(_csvFilePath);
-            foreach (var line in lines.Skip(1)) //Skip header line
+            foreach (var line in lines.Skip(1))
             {
                 var fields = line.Split(',');
-                if (fields.Length >= 4) //Adjust based on actual CSV structure
+                if (fields.Length >= 4)
                 {
                     basAccounts.Add(new BasAccount
                     {
@@ -103,11 +151,10 @@ public class AssistantService : IAssistantService
         }
         catch (Exception ex)
         {
-            //Log or handle other exceptions if needed
             Console.WriteLine($"Error loading BAS accounts: {ex.Message}");
         }
 
-        return basAccounts; //Always return the list, even if empty
+        return basAccounts;
     }
 
     private string LoadAssistantDirectives()
@@ -119,31 +166,36 @@ public class AssistantService : IAssistantService
         return File.ReadAllText(_directivesFilePath);
     }
 
-
-    private async Task<string> FetchUserInfoAsync(string userId)
+    private async Task<string> HandleGetCompanyBasAccounts(string[] args)
     {
-        var user = await _dbContext.Users
-            .Where(u => u.Id == userId)
-            .FirstOrDefaultAsync();
+        if (args.Length < 1 || !int.TryParse(args[0], out int companyId))
+        {
+            return "Please provide a valid company ID. Usage: GetCompanyBasAccounts [companyId]";
+        }
 
-        if (user == null)
-            return "User not found.";
-
-        return $"Name: {user.FirstName} {user.LastName}, Email: {user.Email}";
+        return await FetchCompanyBasAccountsAsync(companyId);
     }
 
-    private async Task<string> FetchUserInvoicesAsync(string userId)
+    private async Task<string> FetchCompanyBasAccountsAsync(int companyId)
     {
-        var invoices = await _ingoingInvoiceService.GetAllIngoingInvoicesAsync();
-        var userInvoices = invoices.Where(i => i.CustomerId == userId).OrderByDescending(i => i.InvoiceDate).Take(5).ToList();
+        var company = await _dbContext.Companies
+            .Include(c => c.BasAccounts)
+            .FirstOrDefaultAsync(c => c.Id == companyId);
 
-        if (!userInvoices.Any())
-            return "No invoices found for the authenticated user.";
+        if (company == null)
+        {
+            return $"Company with ID {companyId} not found.";
+        }
 
-        var invoiceDetails = userInvoices.Select(i =>
-            $"Invoice Number: {i.InvoiceNumber}, Date: {i.InvoiceDate.ToShortDateString()}, Total: {i.InvoiceTotal}, Due Date: {i.DueDate.ToShortDateString()}, Vendor: {i.VendorName}"
-        ).ToList();
+        if (company.BasAccounts == null || !company.BasAccounts.Any())
+        {
+            return $"No BAS accounts found for company '{company.CompanyName}'.";
+        }
 
-        return string.Join("\n\n", invoiceDetails);
+        var basAccountsInfo = company.BasAccounts.Select(b =>
+            $"Account {b.AccountNumber} ({b.Description}): Debit = {b.Debit}, Credit = {b.Credit}, Year = {b.Year}"
+        );
+
+        return $"BAS Accounts for company '{company.CompanyName}':\n" + string.Join("\n", basAccountsInfo);
     }
 }
