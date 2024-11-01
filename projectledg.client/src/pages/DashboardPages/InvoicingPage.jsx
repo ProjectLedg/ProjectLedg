@@ -1,14 +1,17 @@
-import React, { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PlusCircle, Trash2 } from "lucide-react"
+import React, { useState } from "react";
+import axiosConfig from '/axiosconfig'
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InvoiceDetails } from "./InvoicingPageComp/InvoiceDetails";
+import { CustomerInfo } from "./InvoicingPageComp/CustomerInfo";
+import { InvoiceItems } from "./InvoicingPageComp/InvoiceItems";
+import { InvoiceSummary } from "./InvoicingPageComp/InvoiceSummary";
+import { useParams } from "react-router-dom";
+import { Loader2, Check, FileText, Download, RefreshCw, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function InvoicingPage() {
+  const { companyId } = useParams();
   const [invoice, setInvoice] = useState({
     invoiceNumber: "",
     invoiceDate: "",
@@ -20,339 +23,345 @@ export default function InvoicingPage() {
     customerName: "",
     customerAddress: "",
     customerAddressRecipient: "",
-    vendorName: "",
-    vendorAddress: "",
-    vendorAddressRecipient: "",
-    vendorTaxId: "",
-  })
+    customerOrgNumber: "",
+    customerTaxId: "",
+  });
+  const [outgoingInvoiceId, setOutgoingInvoiceId] = useState(null);
+  const [saveStatus, setSaveStatus] = useState("idle"); // "idle", "saving", "saved", "error"
+  const [generatePdfStatus, setGeneratePdfStatus] = useState("idle"); // "idle", "generating", "generated", "error"
+  const [pdfBlob, setPdfBlob] = useState(null);
+  const [formErrors, setFormErrors] = useState([]);
+ 
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setInvoice(prev => ({
       ...prev,
       [name]: value
-    }))
-  }
+    }));
+  };
 
   const handleItemChange = (index, field, value) => {
-    const newItems = [...invoice.items]
+    const newItems = [...invoice.items];
     if (field === "description") {
-      newItems[index][field] = value
+      newItems[index][field] = value;
     } else {
-      // Remove leading zeros and handle decimal input
-      const formattedValue = value.replace(/^0+(?=\d)/, '').replace(/^\./, '0.')
-      newItems[index][field] = formattedValue
+      const formattedValue = value.replace(/^0+(?=\d)/, '').replace(/^\./, '0.');
+      newItems[index][field] = formattedValue;
       
-      // Ensure non-negative values for calculations
-      const numericValue = parseFloat(formattedValue) || 0
-      if (field === "quantity") newItems[index].quantity = Math.max(0, numericValue).toString()
-      if (field === "unitPrice") newItems[index].unitPrice = Math.max(0, numericValue).toString()
-      if (field === "taxPercentage") newItems[index].taxPercentage = Math.min(100, Math.max(0, numericValue)).toString()
+      const numericValue = parseFloat(formattedValue) || 0;
+      if (field === "quantity") newItems[index].quantity = Math.max(0, numericValue).toString();
+      if (field === "unitPrice") newItems[index].unitPrice = Math.max(0, numericValue).toString();
+      if (field === "taxPercentage") newItems[index].taxPercentage = Math.min(100, Math.max(0, numericValue)).toString();
     }
     
-    // Recalculate amount and tax
-    const quantity = parseFloat(newItems[index].quantity) || 0
-    const unitPrice = parseFloat(newItems[index].unitPrice) || 0
-    const taxPercentage = parseFloat(newItems[index].taxPercentage) || 0
+    const quantity = parseFloat(newItems[index].quantity) || 0;
+    const unitPrice = parseFloat(newItems[index].unitPrice) || 0;
+    const taxPercentage = parseFloat(newItems[index].taxPercentage) || 0;
     
-    newItems[index].amount = roundToCent(quantity * unitPrice)
-    newItems[index].taxAmount = roundToCent(newItems[index].amount * (taxPercentage / 100))
+    newItems[index].amount = roundToCent(quantity * unitPrice);
+    newItems[index].taxAmount = roundToCent(newItems[index].amount * (taxPercentage / 100));
 
-    const newTotalTax = roundToCent(newItems.reduce((sum, item) => sum + item.taxAmount, 0))
-    const newInvoiceTotal = roundToCent(newItems.reduce((sum, item) => sum + item.amount + item.taxAmount, 0))
+    const newTotalTax = roundToCent(newItems.reduce((sum, item) => sum + item.taxAmount, 0));
+    const newInvoiceTotal = roundToCent(newItems.reduce((sum, item) => sum + item.amount + item.taxAmount, 0));
 
     setInvoice(prev => ({
       ...prev,
       items: newItems,
       totalTax: newTotalTax,
       invoiceTotal: newInvoiceTotal
-    }))
-  }
+    }));
+  };
 
   const addItem = () => {
     setInvoice(prev => ({
       ...prev,
       items: [...prev.items, { description: "", quantity: "1", unitPrice: "0", amount: 0, taxPercentage: "0", taxAmount: 0 }]
-    }))
-  }
+    }));
+  };
 
   const removeItem = (index) => {
-    const newItems = invoice.items.filter((_, i) => i !== index)
-    const newTotalTax = roundToCent(newItems.reduce((sum, item) => sum + item.taxAmount, 0))
-    const newInvoiceTotal = roundToCent(newItems.reduce((sum, item) => sum + item.amount + item.taxAmount, 0))
+    const newItems = invoice.items.filter((_, i) => i !== index);
+    const newTotalTax = roundToCent(newItems.reduce((sum, item) => sum + item.taxAmount, 0));
+    const newInvoiceTotal = roundToCent(newItems.reduce((sum, item) => sum + item.amount + item.taxAmount, 0));
     setInvoice(prev => ({
       ...prev,
       items: newItems,
       totalTax: newTotalTax,
       invoiceTotal: newInvoiceTotal
-    }))
-  }
+    }));
+  };
 
-  // Function to round to nearest cent
   const roundToCent = (amount) => {
-    return Math.round(amount * 100) / 100
-  }
+    return Math.round(amount * 100) / 100;
+  };
+
+  const validateForm = () => {
+    const errors = [];
+    if (!invoice.invoiceNumber) errors.push("Fakturanummer krävs");
+    if (!invoice.invoiceDate) errors.push("Fakturadatum krävs");
+    if (!invoice.dueDate) errors.push("Förfallodatum krävs");
+    if (!invoice.paymentDetails) errors.push("Betalningsdetaljer krävs");
+    if (!invoice.customerName) errors.push("Kundnamn krävs");
+    if (!invoice.customerAddress) errors.push("Kundadress krävs");
+    if(!invoice.customerOrgNumber) errors.push("Organisationsnummer krävs");
+    if(!invoice.customerTaxId) errors.push("Momsregistreringsnummer krävs");
+    if (invoice.items.length === 0) errors.push("Åtminstone en artikel krävs");
+    invoice.items.forEach((item, index) => {
+      if (!item.description) errors.push(`Item ${index + 1} Beskrivning krävs`);
+      if (parseFloat(item.quantity) <= 0) errors.push(`Item ${index + 1} Kvantitet måste vara större än 0`);
+      if (parseFloat(item.unitPrice) <= 0) errors.push(`Item ${index + 1} Styckpris måste vara större än 0`);
+    });
+    setFormErrors(errors);
+    return errors.length === 0;
+  };
+
+  const saveInvoice = async () => {
+    if (!validateForm()) {
+      
+      return;
+    }
+
+    setSaveStatus("saving");
+    try {
+      const subtotal = roundToCent(invoice.items.reduce((sum, item) => sum + item.amount, 0));
+      const formattedInvoice = {
+        invoiceNumber: invoice.invoiceNumber,
+        invoiceDate: new Date(invoice.invoiceDate).toISOString(),
+        dueDate: new Date(invoice.dueDate).toISOString(),
+        invoiceTotal: subtotal, // Use subtotal as invoiceTotal
+        items: invoice.items.map(item => ({
+          description: item.description,
+          quantity: parseFloat(item.quantity),
+          unitPrice: parseFloat(item.unitPrice),
+          amount: item.amount
+        })),
+        paymentDetails: invoice.paymentDetails,
+        totalTax: invoice.totalTax,
+        customerName: invoice.customerName,
+        customerAddress: invoice.customerAddress,
+        customerOrgNumber: invoice.customerOrgNumber,
+        customerTaxId: invoice.customerTaxId
+      };
+      
+      console.log("formattedInvoice:", formattedInvoice);
+      const response = await axiosConfig.post(`/OutgoingInvoice/create/${companyId}`, formattedInvoice);
+      setOutgoingInvoiceId(response.data.outgoingInvoiceId);
+      setSaveStatus("saved");
+      
+
+      // Reset the button to "Save Invoice" after 3 seconds
+      setTimeout(() => {
+        setSaveStatus("idle");
+        
+      }, 3000);
+    } catch (error) {
+      console.error("Error saving invoice:", error);
+      setSaveStatus("error");
+      
+
+      // Reset the button to "Save Invoice" after 3 seconds
+      setTimeout(() => {
+        setSaveStatus("idle");
+        
+      }, 3000);
+    }
+  };
+
+  const generatePdf = async () => {
+    if (!outgoingInvoiceId) return;
+
+    setGeneratePdfStatus("generating");
+    setPdfBlob(null);
+
+    try {
+      const response = await axiosConfig.post("/PDF/generate-invoice-pdf", {
+        companyId: parseInt(companyId),
+        outgoingInvoiceId: outgoingInvoiceId
+      }, {
+        responseType: 'blob' // Important: tells axios to expect binary data
+      });
+
+      // Create blob from response
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      setPdfBlob(blob);
+      setGeneratePdfStatus("ready");
+      
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      setGeneratePdfStatus("error");
+      setPdfBlob(null);
+      
+
+      setTimeout(() => {
+        setGeneratePdfStatus("idle");
+        
+      }, 3000);
+    }
+  };
+
+  const downloadPdf = () => {
+    if (!pdfBlob) return;
+
+    // Create a URL for the blob
+    const url = window.URL.createObjectURL(pdfBlob);
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${outgoingInvoiceId}_Invoice.pdf`;
+    
+    // Append to document, click, and clean up
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Release the blob URL
+    window.URL.revokeObjectURL(url);
+
+    // Reset the status after download
+    setTimeout(() => {
+      setGeneratePdfStatus("idle");
+      setPdfBlob(null);
+      
+    }, 1000);
+  };
+
+  const resetForm = () => {
+    setInvoice({
+      invoiceNumber: "",
+      invoiceDate: "",
+      dueDate: "",
+      invoiceTotal: 0,
+      items: [{ description: "", quantity: "1", unitPrice: "0", amount: 0, taxPercentage: "0", taxAmount: 0 }],
+      paymentDetails: "",
+      totalTax: 0,
+      customerName: "",
+      customerAddress: "",
+      customerAddressRecipient: "",
+      customerOrgNumber: "",
+      customerTaxId: "",
+    });
+    setOutgoingInvoiceId(null);
+    setSaveStatus("idle");
+    setGeneratePdfStatus("idle");
+    setPdfBlob(null);
+    setFormErrors([]);
+    
+    
+  };
 
   return (
     <div className="container mx-auto p-6">
       <style jsx global>{`
-        /* Remove spinner for webkit browsers */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
           -webkit-appearance: none; 
           margin: 0; 
         }
-        /* Remove spinner for Firefox */
         input[type=number] {
           -moz-appearance: textfield;
         }
       `}</style>
-      <h1 className="text-3xl font-bold mb-6">Create Invoice</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Fakturering</h1>
+        <Button variant="outline" onClick={resetForm}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Återställ formulär
+        </Button>
+      </div>
+      
+      {formErrors.length > 0 && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Fel</AlertTitle>
+          <AlertDescription>
+            <ul className="list-disc list-inside">
+              {formErrors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      
       
       <Tabs defaultValue="details" className="mb-6">
         <TabsList>
-          <TabsTrigger value="details">Invoice Details</TabsTrigger>
-          <TabsTrigger value="customer">Customer Info</TabsTrigger>
-          <TabsTrigger value="vendor">Vendor Info</TabsTrigger>
+          <TabsTrigger value="details">Innehåll</TabsTrigger>
+          <TabsTrigger value="customer">Kundinformation</TabsTrigger>
         </TabsList>
         
         <TabsContent value="details">
-          <Card>
-            <CardHeader>
-              <CardTitle>Invoice Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="invoiceNumber">Invoice Number</Label>
-                  <Input 
-                    id="invoiceNumber" 
-                    name="invoiceNumber"
-                    value={invoice.invoiceNumber}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="invoiceDate">Invoice Date</Label>
-                  <Input 
-                    id="invoiceDate" 
-                    name="invoiceDate"
-                    type="date" 
-                    value={invoice.invoiceDate}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="dueDate">Due Date</Label>
-                  <Input 
-                    id="dueDate" 
-                    name="dueDate"
-                    type="date" 
-                    value={invoice.dueDate}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="paymentDetails">Payment Details</Label>
-                  <Input 
-                    id="paymentDetails" 
-                    name="paymentDetails"
-                    value={invoice.paymentDetails}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <InvoiceDetails invoice={invoice} handleInputChange={handleInputChange} />
         </TabsContent>
         
         <TabsContent value="customer">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="customerName">Customer Name</Label>
-                  <Input 
-                    id="customerName" 
-                    name="customerName"
-                    value={invoice.customerName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="customerAddress">Customer Address</Label>
-                  <Textarea 
-                    id="customerAddress" 
-                    name="customerAddress"
-                    value={invoice.customerAddress}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="customerAddressRecipient">Customer Address Recipient</Label>
-                  <Input 
-                    id="customerAddressRecipient" 
-                    name="customerAddressRecipient"
-                    value={invoice.customerAddressRecipient}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="vendor">
-          <Card>
-            <CardHeader>
-              <CardTitle>Vendor Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="vendorName">Vendor Name</Label>
-                  <Input 
-                    id="vendorName" 
-                    name="vendorName"
-                    value={invoice.vendorName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="vendorAddress">Vendor Address</Label>
-                  <Textarea 
-                    id="vendorAddress" 
-                    name="vendorAddress"
-                    value={invoice.vendorAddress}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="vendorAddressRecipient">Vendor Address Recipient</Label>
-                  <Input 
-                    id="vendorAddressRecipient" 
-                    name="vendorAddressRecipient"
-                    value={invoice.vendorAddressRecipient}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="vendorTaxId">Vendor Tax ID</Label>
-                  <Input 
-                    id="vendorTaxId" 
-                    name="vendorTaxId"
-                    value={invoice.vendorTaxId}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <CustomerInfo invoice={invoice} handleInputChange={handleInputChange} />
         </TabsContent>
       </Tabs>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Invoice Items</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Description</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Unit Price</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Tax %</TableHead>
-                <TableHead>Tax Amount</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoice.items.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Input 
-                      placeholder="Item description" 
-                      value={item.description}
-                      onChange={(e) => handleItemChange(index, "description", e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input 
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input 
-                      type="text"
-                      inputMode="decimal"
-                      pattern="[0-9]*\.?[0-9]*"
-                      value={item.unitPrice}
-                      onChange={(e) => handleItemChange(index, "unitPrice", e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell>${item.amount.toFixed(2)}</TableCell>
-                  <TableCell>
-                    <Input 
-                      type="text"
-                      inputMode="decimal"
-                      pattern="[0-9]*\.?[0-9]*"
-                      value={item.taxPercentage}
-                      onChange={(e) => handleItemChange(index, "taxPercentage", e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell>${item.taxAmount.toFixed(2)}</TableCell>
-                  <TableCell>${(item.amount + item.taxAmount).toFixed(2)}</TableCell>
-                  <TableCell>
-                    <Button variant="destructive" size="icon" onClick={() => removeItem(index)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Button className="mt-4" onClick={addItem}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Add Item
-          </Button>
-        </CardContent>
-      </Card>
+      <InvoiceItems 
+        items={invoice.items}
+        handleItemChange={handleItemChange}
+        addItem={addItem}
+        removeItem={removeItem}
+      />
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Invoice Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span>${invoice.items.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Total Tax:</span>
-              <span>${invoice.totalTax.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between font-bold">
-              <span>Invoice Total:</span>
-              <span>${invoice.invoiceTotal.toFixed(2)}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <InvoiceSummary 
+        items={invoice.items}
+        totalTax={invoice.totalTax}
+        invoiceTotal={invoice.invoiceTotal}
+      />
 
       <div className="flex justify-end">
-        <Button className="mr-2">Save Invoice</Button>
-        <Button variant="outline">Generate PDF</Button>
+        <Button 
+          className="mr-2" 
+          onClick={saveInvoice} 
+          disabled={saveStatus === "saving" || saveStatus === "saved"}
+        >
+          {saveStatus === "saving" && (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sparar...
+            </>
+          )}
+          {saveStatus === "saved" && (
+            <>
+              <Check className="mr-2 h-4 w-4" />
+              Sparad
+            </>
+          )}
+          {saveStatus === "error" && "Error"}
+          {saveStatus === "idle" && "Save Invoice"}
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={generatePdfStatus === "ready" ? downloadPdf : generatePdf}
+          disabled={!outgoingInvoiceId || generatePdfStatus === "generating"}
+        >
+          {generatePdfStatus === "generating" && (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Genererar...
+            </>
+          )}
+          {generatePdfStatus === "ready" && (
+            <>
+              <Download className="mr-2 h-4 w-4" />
+              Ladda ned PDF
+            </>
+          )}
+          {generatePdfStatus === "error" && "Error"}
+          {generatePdfStatus === "idle" && (
+            <>
+              <FileText className="mr-2 h-4 w-4" />
+              Generera PDF
+            </>
+          )}
+        </Button>
       </div>
     </div>
-  )
+  );
 }

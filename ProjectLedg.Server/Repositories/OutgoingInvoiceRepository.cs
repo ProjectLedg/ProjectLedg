@@ -16,7 +16,14 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<OutgoingInvoice?> GetOutgoingInvoiceByIdAsync(int invoiceId)
         {
-            return await _context.OutgoingInvoices.FindAsync(invoiceId);
+            var invoice = await _context.OutgoingInvoices
+        .Include(o => o.Items) // Eager load the InvoiceItems
+        .FirstOrDefaultAsync(o => o.Id == invoiceId);
+            if (invoice == null)
+            {
+                return null;
+            }
+            return invoice;
         }
 
         public async Task<IEnumerable<OutgoingInvoice>> GetAllOutgoingInvoicesAsync()
@@ -39,10 +46,6 @@ namespace ProjectLedg.Server.Repositories
         public async Task<bool> DeleteOutgoingInvoiceAsync(int invoiceId)
         {
             var invoice = await _context.OutgoingInvoices.FindAsync(invoiceId);
-            if (invoice == null)
-            {
-                return false;
-            }
 
             _context.OutgoingInvoices.Remove(invoice);
             return await _context.SaveChangesAsync() > 0;

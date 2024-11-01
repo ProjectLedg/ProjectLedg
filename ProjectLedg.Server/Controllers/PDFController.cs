@@ -12,9 +12,9 @@ namespace ProjectLedg.Server.Controllers
     public class PDFController : ControllerBase
     {
         private readonly IPDFService _pdfService;
-        private readonly FormRecognizerService _formService;
+        private readonly IFormRecognizerService _formService;
 
-        public PDFController(IPDFService pdfService, FormRecognizerService formService)
+        public PDFController(IPDFService pdfService, IFormRecognizerService formService)
         {
             _pdfService = pdfService;
             _formService = formService;
@@ -79,19 +79,16 @@ namespace ProjectLedg.Server.Controllers
             return Ok(extractedData);
         }
 
-        [HttpPost("Generate-Invoice-Pdf")]
-        public IActionResult GenerateInvoicePdf([FromBody] InvoiceDTO invoice)
+        [HttpPost("generate-invoice-pdf")]
+        public async Task<IActionResult> GenerateInvoicePdf([FromBody] OutgoingInvoiceGenerationDTO request)
         {
-            if (invoice == null)
-            {
-                return BadRequest("Invoice data is required.");
-            }
+            
 
             try
             {
-                var pdfBytes = _pdfService.GenerateInvoicePdf(invoice);
+                var pdfBytes = await _pdfService.GenerateInvoicePdf(request);
 
-                return File(pdfBytes, "application/pdf", $"{invoice.InvoiceNumber}_Invoice.pdf");
+                return File(pdfBytes, "application/pdf", $"{request.OutgoingInvoiceId}_Invoice.pdf");
             }
             catch (Exception ex)
             {

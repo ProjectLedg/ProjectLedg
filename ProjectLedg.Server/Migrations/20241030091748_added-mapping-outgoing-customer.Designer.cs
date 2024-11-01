@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241030091748_added-mapping-outgoing-customer")]
+    partial class addedmappingoutgoingcustomer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -877,7 +880,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "c84d6a1c-49a3-47e4-8a69-bda6bfb2e8fd",
+                            ConcurrencyStamp = "54296b91-324a-49e0-b8cf-7f237a2c0119",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -885,9 +888,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEApBzng1a3y/xrfgyRFxS6d22dMF+NzHzm9wlML18mtB5XJaeHnU3b8zcc4d9A1TfA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEF9PVXe2jC0f8gjtG3kgMNz593XPgxcw7IOyBG/A/nj92A2mCbZhkYLg7M4AqEUV+g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1e85e01a-ec25-44e7-9cc1-c785efa62765",
+                            SecurityStamp = "58fe77f4-281d-45b8-bca2-1d6ea00ceb3a",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });

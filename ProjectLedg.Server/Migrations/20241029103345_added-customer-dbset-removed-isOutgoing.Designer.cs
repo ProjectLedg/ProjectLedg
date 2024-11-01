@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241029103345_added-customer-dbset-removed-isOutgoing")]
+    partial class addedcustomerdbsetremovedisOutgoing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -877,7 +880,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "c84d6a1c-49a3-47e4-8a69-bda6bfb2e8fd",
+                            ConcurrencyStamp = "f6a0afd8-59bf-4aa1-bcd6-3200f88c5192",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -885,9 +888,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEApBzng1a3y/xrfgyRFxS6d22dMF+NzHzm9wlML18mtB5XJaeHnU3b8zcc4d9A1TfA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDLHOTEwamZCIchQMI/tsDbhPagC12HwUDriwMa26wtbL1Mnw8Gi52AbAnqhzAKFbA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1e85e01a-ec25-44e7-9cc1-c785efa62765",
+                            SecurityStamp = "4a98e2db-e443-4beb-92cb-49cce65344fd",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
@@ -1003,11 +1006,9 @@ namespace ProjectLedg.Server.Migrations
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
                 {
-                    b.HasOne("ProjectLedg.Server.Data.Models.Customer", "Customer")
+                    b.HasOne("ProjectLedg.Server.Data.Models.Customer", null)
                         .WithMany("OutgoingInvoices")
                         .HasForeignKey("CustomerId");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
