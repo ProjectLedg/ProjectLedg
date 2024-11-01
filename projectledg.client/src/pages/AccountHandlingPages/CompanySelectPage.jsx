@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard from './CompanySelectPageComponents/CompanyCard'
 import { useNavigate } from 'react-router-dom'
-import axiosConfig from '/axiosconfig'
+import {axiosConfig} from '/axiosconfig'
 import { Progress } from "@/components/ui/progress"
 
 export default function CompanySelectPage() {
