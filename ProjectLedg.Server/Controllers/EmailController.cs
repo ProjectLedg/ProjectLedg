@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.IdentityModel.Tokens;
 using ProjectLedg.Server.Data.Models.DTOs.Email;
 using ProjectLedg.Server.Services.IServices;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using System.Text;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -95,6 +100,77 @@ namespace ProjectLedg.Server.Controllers
                 return StatusCode(500, "An Error occured while trying to add email to list");
             }
         }
+        [HttpGet("Unsubscribe")]
+        public async Task<IActionResult> Unsubscribe([FromQuery] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Content("Token is missing");
+            }
 
+            var cleanToken = token.Split('&')[0];
+
+            // Decode the token (this helps in case URL encoding happens)
+            var decodedToken = Uri.UnescapeDataString(token);
+         
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET"));
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.FromMinutes(5),
+                }, out SecurityToken validatedToken);
+
+                //Extract the email from the token claims
+                var email = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                if (email == null)
+                {
+                    return BadRequest("Invalid token.");
+                }
+
+                //Proceed with email removal
+                var response = await _emailService.UnsubscribeEmailAsync(email);
+                if (response)
+                {
+                    return Ok("Successfully unsubscribed from the newsletter.");
+                }
+                else
+                {
+                    return NotFound("E-mail adress not found.");
+                }
+            }
+            catch (SecurityTokenExpiredException ex)
+            {
+                Console.WriteLine($"Token expired: {ex.Message}");
+                return BadRequest("Token has expired.");
+            }
+            catch (SecurityTokenSignatureKeyNotFoundException ex)
+            {
+                Console.WriteLine($"Signing key not found: {ex.Message}");
+                return BadRequest("Invalid signing key.");
+            }
+            catch (SecurityTokenInvalidSignatureException ex)
+            {
+                Console.WriteLine($"Invalid token signature: {ex.Message}");
+                return BadRequest("Invalid token signature.");
+            }
+            catch (SecurityTokenValidationException ex)
+            {
+                Console.WriteLine($"Token validation failed: {ex.Message}");
+                return BadRequest($"Token validation failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return BadRequest("Invalid token.");
+            }
+        }
     }
 }

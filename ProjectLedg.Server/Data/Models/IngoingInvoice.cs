@@ -15,7 +15,6 @@ namespace ProjectLedg.Server.Data.Models
         public string? PaymentDetails { get; set; }
         public decimal TotalTax { get; set; }
         public bool IsPaid { get; set; }
-        public bool IsOutgoing { get; set; }
         public bool IsBooked { get; set; } // If invoice is "bokförd" 
 
         //Customer Related queries  
@@ -33,7 +32,7 @@ namespace ProjectLedg.Server.Data.Models
         //Saves the SASed URL of the invoice to the Database
         public string? InvoiceFilePath { get; set; }
 
-        public List<InvoiceItems> Items { get; set; } = new List<InvoiceItems>();
+        public virtual List<InvoiceItems> Items { get; set; } = new List<InvoiceItems>();
 
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
