@@ -40,7 +40,7 @@ namespace ProjectLedg.Server
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromHours(3);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
@@ -237,8 +237,11 @@ namespace ProjectLedg.Server
             var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             var openAiClient = new OpenAIClient(new OpenAIAuthentication(apiKey: openAiApiKey));
 
-            builder.Services.AddSingleton(openAiClient);
-            builder.Services.AddScoped<IAssistantService, AssistantService>();
+            services.AddSingleton(openAiClient);
+            services.AddScoped<IAssistantService, AssistantService>();
+
+            //BasAccount
+            services.AddScoped<IBasAccountService, BasAccountService>();
 
             var app = builder.Build();
 

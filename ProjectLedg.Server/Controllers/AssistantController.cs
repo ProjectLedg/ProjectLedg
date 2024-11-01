@@ -10,8 +10,9 @@ namespace ProjectLedg.Server.Controllers
     public class AssistantController : ControllerBase
     {
         private readonly IAssistantService _assistantService;
+        private readonly IBasAccountService _basAccountService;
 
-        public AssistantController(IAssistantService assistantService)
+        public AssistantController(IAssistantService assistantService, IBasAccountService basAccountService)
         {
             _assistantService = assistantService;
         }
