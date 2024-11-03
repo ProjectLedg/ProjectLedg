@@ -37,6 +37,7 @@ namespace ProjectLedg.Server.Data.Models
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
 
+        [NotMapped] //Not Mapped so no Database change will be needed.
         public virtual Company Company { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
