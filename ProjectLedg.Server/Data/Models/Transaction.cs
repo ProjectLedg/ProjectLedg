@@ -1,4 +1,6 @@
-﻿namespace ProjectLedg.Server.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProjectLedg.Server.Data.Models
 {
     public class Transaction
     {
@@ -11,6 +13,9 @@
         public int? IngoingInvoiceId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
         public int? OutgoingInvoiceId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
         public int? BasAccountId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
+
+        [ForeignKey("Company")]
+        public int? CompanyId { get; set; }
 
         public virtual IngoingInvoice? IngoingInvoice { get; set; }
         public virtual OutgoingInvoice? OutgoingInvoice { get; set; }
