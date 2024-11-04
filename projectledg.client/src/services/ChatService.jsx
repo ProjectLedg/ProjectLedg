@@ -20,6 +20,7 @@ export default function ChatService({ onClose, mobile }) {
             throw error; // Rethrow the error if you want to handle it further up
         }
     }
+    
 
     return mobile ? (
         <ChatWindowMobile onClose={onClose} onSendMessage={sendMessage} />
