@@ -34,7 +34,7 @@ const navItems = [
 
 
 
-const NavItem = ({ icon: Icon, label, path }) => {
+const NavItem = ({ icon: Icon, label, path, onClick }) => {
   const { companyId } = useParams();
   const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
@@ -44,6 +44,13 @@ const NavItem = ({ icon: Icon, label, path }) => {
   const baseStyle = "flex items-center space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
   const selectedStyle = "font-bold relative bg-accent";
   const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+
+  const handleClick = () => {
+    // Delay closing the mobile nav by 200 milliseconds
+    setTimeout(() => {
+      if (onClick) onClick();
+    }, 300);
+  };
 
   const barStyle = {
     content: "''",
@@ -71,6 +78,7 @@ const NavItem = ({ icon: Icon, label, path }) => {
       to={fullPath}
       className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
       style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
+      onClick={handleClick}
     >
       <Icon className="h-5 w-5" strokeWidth={isSelected ? 2 : 1} />
       <span>{label}</span>
@@ -188,7 +196,7 @@ const Sidebar = ({ isChatOpen }) => (
               console.log("Switched to:", company.name);
             }}
             isChatOpen={isChatOpen}
-            />
+          />
 
           {navItems.filter(item => item.position === "top").map((item, index) => (
             !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
@@ -200,7 +208,7 @@ const Sidebar = ({ isChatOpen }) => (
     <div className="mt-auto border-t">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          !isChatOpen ? <NavItem key={index} {...item}  /> : <NavItemSmall key={index} {...item} />
+          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
         ))}
       </div>
     </div>
@@ -208,36 +216,64 @@ const Sidebar = ({ isChatOpen }) => (
 );
 
 
-const MobileNav = ({ navItems }) => (
-  <Sheet>
-    <SheetTrigger asChild>
-      <Button variant="outline" size="icon" className="md:hidden bg-transparent border-0">
-        <Menu className="h-6 w-6" />
-        <span className="sr-only">Open menu</span>
-      </Button>
-    </SheetTrigger>
-    <SheetContent side="left" className="w-60 p-0">
-      <div className="flex flex-col h-full py-4">
-        <div className="flex-grow space-y-4">
-          <div className="px-3 py-2">
-            <div className="space-y-1">
-              {navItems.filter(item => item.position === "top").map((item, index) => (
-                <NavItem key={index} {...item} />
+const MobileNav = ({ navItems }) => {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  return (
+
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="icon" className="md:hidden bg-transparent border-0 ">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-60 p-0">
+        <div className="flex flex-col h-full py-4">
+          <div className="flex-grow ">
+
+            <UserDropdown
+              user={{
+                name: "John Doe",
+                email: "john@example.com",
+                avatarUrl: "https://example.com/avatar.jpg"
+              }}
+              companies={[
+                { id: "1", name: "Company A" },
+                { id: "2", name: "Company B" },
+                { id: "3", name: "Company C" }
+              ]}
+              currentCompany={{ id: "1", name: "Company A" }}
+              onCompanyChange={(company) => {
+                // Handle company change here
+                console.log("Switched to:", company.name);
+              }}
+            />
+
+            <div >
+              <div>
+                {navItems.filter(item => item.position === "top").map((item, index) => (
+                  <NavItem key={index} {...item} onClick={handleClose}/>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="mt-auto  border-t">
+            <div>
+              {navItems.filter(item => item.position === "bottom").map((item, index) => (
+                <NavItem key={index} {...item} onClick={handleClose}/>
               ))}
             </div>
           </div>
         </div>
-        <div className="mt-auto px-3 py-2 border-t">
-          <div className="space-y-1">
-            {navItems.filter(item => item.position === "bottom").map((item, index) => (
-              <NavItem key={index} {...item} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </SheetContent>
-  </Sheet>
-);
+      </SheetContent>
+    </Sheet>
+  )
+};
 
 
 export default function DashboardLayout() {
