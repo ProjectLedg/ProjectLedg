@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectLedg.Server.Data.Models.DTOs.Finance;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
@@ -21,41 +22,44 @@ namespace ProjectLedg.Server.Controllers
         }
 
         //GET request to generate a simple annual report PDF and return the file for download
-        [HttpGet("generatepdf")]
-        public IActionResult GenerateAnnualReportPdf()
+        [HttpPost("generate-annual-report")]
+        public async Task<IActionResult> GenerateAnnualReportPdf([FromBody] AnualReportRequestDTO request)
         {
             //generate the PDF bytes using the service
-            var pdf = _pdfService.GenerateAnnualReportPdf();
+            var pdf = await _pdfService.GenerateAnnualReportPdf(request);
+            var currentYear = System.DateTime.Now.Year;
 
             //return the generated PDF as a file
-            return File(pdf, "application/pdf", "AnnualReport.pdf");
+            return File(pdf, "application/pdf", $"{currentYear}AnnualReport.pdf");
         }
 
-        //POST request to generate the PDF and store it on the server
-        [HttpPost("generatepdf/{fileName}")]
-        public async Task<IActionResult> GenerateAndSavePdf(string fileName)
-        {
-            //generate the PDF
-            var pdfBytes = _pdfService.GenerateAnnualReportPdf();
+        ////POST request to generate the PDF and store it on the server
+        //[HttpPost("generatepdf/{fileName}")]
+        //public async Task<IActionResult> GenerateAndSavePdf(string fileName)
+        //{
+        //    var temprequest = new FinanceRequestDTO { CompanyId = 1, Year = 2021 };
 
-            //define the directory path for saving the PDF
-            var pdfDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pdfs");
-            var pdfFileName = $"{fileName}.pdf";  // Use the provided fileName
-            var filePath = Path.Combine(pdfDirectory, pdfFileName);
+        //    //generate the PDF
+        //    var pdfBytes = await _pdfService.GenerateAnnualReportPdf(temprequest);
 
-            //ensure the directory exists
-            if (!Directory.Exists(pdfDirectory))
-            {
-                Directory.CreateDirectory(pdfDirectory);
-            }
+        //    //define the directory path for saving the PDF
+        //    var pdfDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pdfs");
+        //    var pdfFileName = $"{fileName}.pdf";  // Use the provided fileName
+        //    var filePath = Path.Combine(pdfDirectory, pdfFileName);
 
-            //save the PDF file
-            await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
+        //    //ensure the directory exists
+        //    if (!Directory.Exists(pdfDirectory))
+        //    {
+        //        Directory.CreateDirectory(pdfDirectory);
+        //    }
 
-            //return the URL to the saved PDF
-            var pdfUrl = $"{Request.Scheme}://{Request.Host}/pdfs/{pdfFileName}";
-            return Ok(new { pdfUrl });
-        }
+        //    //save the PDF file
+        //    await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
+
+        //    //return the URL to the saved PDF
+        //    var pdfUrl = $"{Request.Scheme}://{Request.Host}/pdfs/{pdfFileName}";
+        //    return Ok(new { pdfUrl });
+        //}
 
         [HttpPost("analyze")]
         public async Task<IActionResult> AnalyzeForm(IFormFile file)

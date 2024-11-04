@@ -1,5 +1,6 @@
 ﻿    using Microsoft.EntityFrameworkCore;
-    using ProjectLedg.Server.Data;
+using Org.BouncyCastle.Ocsp;
+using ProjectLedg.Server.Data;
     using ProjectLedg.Server.Data.Models;
     using ProjectLedg.Server.Data.Models.DTOs.Finance;
     using ProjectLedg.Server.Repositories.IRepositories;
@@ -31,9 +32,19 @@ using System.Globalization;
                     .SumAsync(ba => ba.Credit - ba.Debit); // Credit for account class 3
             }
 
+            public async Task<decimal> GetYearToDateMomsAsync(int companyId, int year)
+            {
+                return await _context.Companies
+                    .Where(c => c.Id == companyId)
+                    .SelectMany(c => c.BasAccounts)
+                    .Where(ba =>
+                        ba.Year == year &&
+                        EF.Functions.Like(ba.AccountNumber, "26%")) // Filter "Konto klass 26" credit is for revenue
+                    .SumAsync(ba => ba.Credit - ba.Debit); // Credit for account class 26
+            }
 
-            // Get YTD expenses
-            public async Task<decimal> GetYearToDateExpensesAsync(int companyId, int year)
+        // Get YTD expenses
+        public async Task<decimal> GetYearToDateExpensesAsync(int companyId, int year)
             {
                 return await _context.Companies
                      .Where(c => c.Id == companyId)
@@ -48,8 +59,49 @@ using System.Globalization;
                      .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
             }
 
-            // Get YTD profit
-            public async Task<decimal> GetYearToDateProfitAsync(int companyId, int year)
+            public async Task<decimal> GetYearToDateExternalExpensesAsync(int companyId, int year)
+            {
+            return await _context.Companies
+                  .Where(c => c.Id == companyId)
+                  .SelectMany(c => c.BasAccounts)
+                  .Where(ba =>
+                      ba.Year == year && (
+                      // "Konto klass" 4, 5 , 6 & 7 is" is for expenses
+                       
+                      EF.Functions.Like(ba.AccountNumber, "5%") || // For "övriga kostnader" 
+                      EF.Functions.Like(ba.AccountNumber, "6%"))) // For "personalkostnader´"
+                  .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
+            }
+
+
+        public async Task<decimal> GetFinancialPostsAsync(int companyId, int year)
+        {
+            // Hämta summan av finansiella poster (intäkter minus kostnader)
+            var financialIncome = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "83%")) // Finansiella intäkter
+                .SumAsync(ba => ba.Debit); // Summa av debet för finansiella intäkter
+
+            var financialExpenses = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "84%")) // Finansiella kostnader
+                .SumAsync(ba => ba.Credit); // Summa av kredit för finansiella kostnader
+
+            // Returnera skillnaden mellan intäkter och kostnader
+            return financialIncome - financialExpenses;
+        }
+
+
+
+
+        // Get YTD profit
+        public async Task<decimal> GetYearToDateProfitAsync(int companyId, int year)
             {
                 var revenue = await GetYearToDateRevenueAsync(companyId, year);
                 var expenses = await GetYearToDateExpensesAsync(companyId, year);
@@ -391,6 +443,175 @@ using System.Globalization;
 
             return result;
         }
+
+        public async Task<decimal> GetYearToDateStaffExpensesAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                  .Where(c => c.Id == companyId)
+                  .SelectMany(c => c.BasAccounts)
+                  .Where(ba =>
+                      ba.Year == year && (
+                     
+                      EF.Functions.Like(ba.AccountNumber, "6%"))) // For "personalkostnader´"
+                  .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
+        }
+
+        public async Task<decimal> GetYearToDateIntangibleAssetsAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                  .Where(c => c.Id == companyId)
+                  .SelectMany(c => c.BasAccounts)
+                  .Where(ba =>
+                      ba.Year == year && (
+
+                      EF.Functions.Like(ba.AccountNumber, "10%"))) // For "Imateriella tillgångar"
+                  .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
+        }
+
+        public async Task<decimal> GetYearToDateTangibleAssetsAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                  .Where(c => c.Id == companyId)
+                  .SelectMany(c => c.BasAccounts)
+                  .Where(ba =>
+                      ba.Year == year && (
+
+                      EF.Functions.Like(ba.AccountNumber, "11%"))) // For "Materiella tillgångar"
+                  .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
+        }
+
+        public async Task<decimal> GetYearToDateFinacialAssetsAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                  .Where(c => c.Id == companyId)
+                  .SelectMany(c => c.BasAccounts)
+                  .Where(ba =>
+                      ba.Year == year && (
+
+                      EF.Functions.Like(ba.AccountNumber, "12%"))) // For "Finansiella tillgångar"
+                  .SumAsync(ba => ba.Debit - ba.Credit); // Debit for account classes above
+        }
+
+
+        public async Task<CurrentAssetsDTO> GetYearToDateCurrentAssetsAsync(int companyId, int year)
+        {
+            // Hämta debitering för varje kategori av omsättningstillgångar
+            var stock = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "14%")) // Lager
+                .SumAsync(ba => ba.Debit - ba.Credit); // Debet för lager
+
+            var accountsReceivable = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "15%")) // Kundfordringar
+                .SumAsync(ba => ba.Debit - ba.Credit); // Debet för kundfordringar
+
+            var bankKassa = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "19%")) // Kassa och bank
+                .SumAsync(ba => ba.Debit - ba.Credit); // Debet för kassa och bank
+
+            var shortTermReceivables = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "16%")) // Kortfristiga fordringar
+                .SumAsync(ba => ba.Debit - ba.Credit); // Debet för kortfristiga fordringar
+
+            // Skapa och returnera DTO med hämtade värden
+            return new CurrentAssetsDTO
+            {
+                Stock = stock,
+                AccountsReceivable = accountsReceivable,
+                BankKassa = bankKassa,
+                ShortTermReceivables = shortTermReceivables
+            };
+        }
+
+        public async Task<CapitalEqutityDTO> GetYearToDateCapitalEqutityAsync(int companyId, int year)
+        {
+            var stock = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "2081")) // AktieKapital
+                .SumAsync(ba => ba.Credit - ba.Debit); // Credit för Aktiekapital
+
+            var balancedResult = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "2099")) // Kassa och bank
+                .SumAsync(ba => ba.Credit - ba.Debit); // Credit för kassa och bank
+
+            var yearResult = await GetYearToDateProfitAsync(companyId, year);
+
+            return new CapitalEqutityDTO
+            {
+                StockCapital = stock,
+                BalancedResult = balancedResult,
+                YearResult = yearResult
+            };
+        }
+
+        public async Task<decimal> GetYearToDateLongTermLiabilitiesAsync(int companyId, int year)
+        {
+            return await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "23%")) // Kassa och bank
+                .SumAsync(ba => ba.Credit - ba.Debit); // Debet för kassa och bank
+        }
+
+        public async Task<ShortTermLiabilitiesDTO> GetYearToDateShortTermLiabilitiesAsync(int companyId, int year)
+        {
+            var accountPayable = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    EF.Functions.Like(ba.AccountNumber, "244%")) // Leverantörsskulder
+                .SumAsync(ba => ba.Credit - ba.Debit); // Credit för leverantörsskulder
+
+            var shortLoans = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                  ba.Year == year &&
+                  EF.Functions.Like(ba.AccountNumber, "284%")) // Kortfristiga lån
+                .SumAsync(ba => ba.Credit - ba.Debit); // Credit för kortfristiga lån
+
+            var taxFees = await _context.Companies
+                .Where(c => c.Id == companyId)
+                .SelectMany(c => c.BasAccounts)
+                .Where(ba =>
+                    ba.Year == year &&
+                    (EF.Functions.Like(ba.AccountNumber, "26%") ||
+                     EF.Functions.Like(ba.AccountNumber, "27%")))
+                .SumAsync(ba => ba.Credit - ba.Debit);
+
+            return new ShortTermLiabilitiesDTO
+            {
+                AccountsPayable = accountPayable,
+                ShortTermLoans = shortLoans,
+                TaxesAndFees = taxFees
+            };
+        }
+
 
 
 
