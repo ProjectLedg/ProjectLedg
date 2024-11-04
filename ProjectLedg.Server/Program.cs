@@ -24,6 +24,10 @@ using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using System.ClientModel.Primitives;
 using OpenAI;
+using iTextSharp.text.pdf;
+using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
+using ProjectLedg.Server.Functions.AssistantFunctions;
+using ProjectLedg.Server.Services.AssistantFunctions;
 
 namespace ProjectLedg.Server
 {
@@ -36,6 +40,14 @@ namespace ProjectLedg.Server
             Env.Load();
 
             //Creating a Session for the temporary files to exist within.
+
+            //Load AES Key and IV for Encryption
+
+            var aesKey = Enumerable.Range(0, Environment.GetEnvironmentVariable("AES_KEY").Length)
+               .Where(x => x % 2 == 0)
+               .Select(x => Convert.ToByte(Environment.GetEnvironmentVariable("AES_KEY").Substring(x, 2), 16))
+               .ToArray();
+            var aesIV = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV"));
 
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
@@ -182,6 +194,9 @@ namespace ProjectLedg.Server
 
             //Service Registrations
 
+            //EncryptionHelper
+            services.AddSingleton(new EncryptionHelper(aesKey, aesIV));
+
             //User
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
@@ -236,12 +251,21 @@ namespace ProjectLedg.Server
             //OpenAI
             var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             var openAiClient = new OpenAIClient(new OpenAIAuthentication(apiKey: openAiApiKey));
-
+            //AssistantService
             services.AddSingleton(openAiClient);
             services.AddScoped<IAssistantService, AssistantService>();
 
             //BasAccount
             services.AddScoped<IBasAccountService, BasAccountService>();
+
+            //Functions:
+            services.AddScoped<IBasAccountFunctions, BasAccountFunctions>();
+            services.AddScoped<IIngoingInvoiceFunctions, IngoingInvoiceFunctions>();
+            services.AddScoped<IOutgoingInvoiceFunctions, OutgoingInvoiceFunctions>();
+            services.AddScoped<ITransactionFunctions, TransactionFunctions>();
+
+
+
 
             var app = builder.Build();
 

@@ -8,6 +8,8 @@ using System.Text.Json;
 using ProjectLedg.Server.Data.Models;
 using System.Security.Cryptography;
 using System.Text;
+using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
+using ProjectLedg.Server.Functions.AssistantFunctions;
 
 public class AssistantService : IAssistantService
 {
@@ -16,17 +18,20 @@ public class AssistantService : IAssistantService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IIngoingInvoiceService _ingoingInvoiceService;
     private readonly IBasAccountService _basAccountService;
+    private readonly EncryptionHelper _encryptionHelper;
     private readonly string _csvFilePath;
     private readonly string _directivesFilePath;
-    private readonly byte[] _aesKey = Enumerable.Range(0, Environment.GetEnvironmentVariable("AES_KEY").Length)
-        .Where(x => x % 2 == 0)
-        .Select(x => Convert.ToByte(Environment.GetEnvironmentVariable("AES_KEY").Substring(x, 2), 16))
-        .ToArray();
-    private readonly byte[] _aesIV = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV"));
+
+    //Functions
+    private readonly IBasAccountFunctions _basAccountFunctions;
+    private readonly IIngoingInvoiceFunctions _ingoingInvoiceFunctions;
+    private readonly ITransactionFunctions _transactionFunctions;
+    private readonly IOutgoingInvoiceFunctions _outgoingInvoiceFunctions;
+
 
     private readonly Dictionary<string, Func<string[], Task<string>>> _commandHandlers;
 
-    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService)
+    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService, EncryptionHelper encryptionHelper, IBasAccountFunctions basAccountFunctions, IIngoingInvoiceFunctions ingoingInvoiceFunctions, ITransactionFunctions transactionFunctions, IOutgoingInvoiceFunctions outgoingInvoiceFunctions)
     {
         _openAiClient = openAiClient;
         _dbContext = dbContext;
@@ -35,24 +40,38 @@ public class AssistantService : IAssistantService
         _basAccountService = basAccountService;
         _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
         _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
+        _encryptionHelper = encryptionHelper;
+
+        //Functions
+        _ingoingInvoiceFunctions = ingoingInvoiceFunctions;
+        _transactionFunctions = transactionFunctions;
+        _basAccountFunctions = basAccountFunctions;
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
 
         _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
         {
-            { "GetCompanyBasAccounts", async args => await HandleGetCompanyBasAccounts(args) }
+            { "GetCompanyBasAccounts", async args => await _basAccountFunctions.GetCompanyBasAccounts(int.Parse(args[0])) },
+            { "GetPopularBasAccounts", async args => await _basAccountFunctions.GetPopularBasAccountsForCompany(int.Parse(args[0])) },
+            { "GetLatestTransactions", async args => await _transactionFunctions.GetLatestTransactionsForCompany(int.Parse(args[0])) },
+            { "GetHighProfileTransactions", async args => await _transactionFunctions.GetHighProfileTransactionsForCompany(int.Parse(args[0]), decimal.Parse(args[1])) },
+            { "GetUnpaidIngoingInvoices", async args => await _ingoingInvoiceFunctions.GetUnpaidIngoingInvoicesForCompany(int.Parse(args[0])) },
+            { "GetUnpaidOutgoingInvoices", async args => await _outgoingInvoiceFunctions.GetUnpaidOutgoingInvoicesForCompany(int.Parse(args[0])) },
+            { "GetInvoicesByCompanyNameAndYear", async args => await _ingoingInvoiceFunctions.GetInvoices(args[0], int.Parse(args[1])) }
         };
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
     }
 
     public async Task<string> SendMessageToAssistantAsync(string message)
     {
         var session = _httpContextAccessor.HttpContext.Session;
 
-        //Retrieve existing chat history from session, if any
+        // Retrieve existing chat history from session, if any
         var chatHistoryEncrypted = session.GetString("ChatHistory");
         var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
             ? new List<Message>()
-            : JsonSerializer.Deserialize<List<Message>>(DecryptData(chatHistoryEncrypted));
+            : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
 
-        //Ensure system message is added only once per session
+        // Ensure system message is added only once per session
         if (!messages.Any(m => m.Role == Role.System))
         {
             var basAccounts = LoadBasAccounts();
@@ -64,60 +83,25 @@ public class AssistantService : IAssistantService
             messages.Insert(0, systemMessage);
         }
 
-        //Add user's message
+        // Add user's message
         var userMessage = new Message(Role.User, message);
         messages.Add(userMessage);
 
-        //Limit to recent messages
+        // Limit to recent messages
         var recentMessages = messages.TakeLast(10).ToList();
         var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
 
-        //Process with OpenAI
+        // Process with OpenAI
         var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
         var assistantResponse = response.FirstChoice?.Message?.Content.GetString() ?? "No valid response from assistant.";
         messages.Add(new Message(Role.Assistant, assistantResponse));
 
-        var encryptedChatHistory = EncryptData(JsonSerializer.Serialize(messages));
-        //Encrypt and store in session
+        // Encrypt and store in session
+        var encryptedChatHistory = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
         session.SetString("ChatHistory", encryptedChatHistory);
 
         Console.WriteLine($"Encrypted Chat History: {encryptedChatHistory}");
         return assistantResponse;
-    }
-
-    //Encrypts the chat history directly
-    private string EncryptData(string data)
-    {
-        using var aes = Aes.Create();
-        aes.Key = _aesKey;
-        aes.IV = _aesIV;
-
-        using var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-        using var ms = new MemoryStream();
-        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-        using (var sw = new StreamWriter(cs))
-        {
-            sw.Write(data);
-        }
-
-        return Convert.ToBase64String(ms.ToArray());
-    }
-
-    //Decrypts the chat history directly
-    private string DecryptData(string encryptedData)
-    {
-        var encryptedBytes = Convert.FromBase64String(encryptedData);
-
-        using var aes = Aes.Create();
-        aes.Key = _aesKey;
-        aes.IV = _aesIV;
-
-        using var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-        using var ms = new MemoryStream(encryptedBytes);
-        using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
-        using var sr = new StreamReader(cs);
-
-        return sr.ReadToEnd();
     }
 
     private List<BasAccount> LoadBasAccounts()
@@ -164,38 +148,5 @@ public class AssistantService : IAssistantService
             throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
         }
         return File.ReadAllText(_directivesFilePath);
-    }
-
-    private async Task<string> HandleGetCompanyBasAccounts(string[] args)
-    {
-        if (args.Length < 1 || !int.TryParse(args[0], out int companyId))
-        {
-            return "Please provide a valid company ID. Usage: GetCompanyBasAccounts [companyId]";
-        }
-
-        return await FetchCompanyBasAccountsAsync(companyId);
-    }
-
-    private async Task<string> FetchCompanyBasAccountsAsync(int companyId)
-    {
-        var company = await _dbContext.Companies
-            .Include(c => c.BasAccounts)
-            .FirstOrDefaultAsync(c => c.Id == companyId);
-
-        if (company == null)
-        {
-            return $"Company with ID {companyId} not found.";
-        }
-
-        if (company.BasAccounts == null || !company.BasAccounts.Any())
-        {
-            return $"No BAS accounts found for company '{company.CompanyName}'.";
-        }
-
-        var basAccountsInfo = company.BasAccounts.Select(b =>
-            $"Account {b.AccountNumber} ({b.Description}): Debit = {b.Debit}, Credit = {b.Credit}, Year = {b.Year}"
-        );
-
-        return $"BAS Accounts for company '{company.CompanyName}':\n" + string.Join("\n", basAccountsInfo);
     }
 }
