@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
+import { useParams, Link, Outlet, useOutletContext, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
@@ -34,28 +34,110 @@ const navItems = [
 ];
 
 
+
 const NavItem = ({ icon: Icon, label, path }) => {
-  const { companyId } = useParams(); // Get companyId from the route params
+  const { companyId } = useParams(); 
+  const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
+
+  const isSelected = location.pathname === fullPath;
+
+  const baseStyle = "flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-500";
+  const selectedStyle = "font-bold relative bg-accent";
+  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+
+  const barStyle = {
+    content: "''",
+    position: "absolute",
+    top: "0",
+    right: "0",
+    height: "100%",
+    width: "4px",  
+    backgroundColor: "#22c55e",  
+    borderRadius: "9999px",  
+  };
+
+  const barVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: "100%" },
+    exit: { opacity: 0, height: 0 }, 
+  };
+
   if (label === "Logga ut") {
     return handleLogout({ icon: Icon, label, path });
   }
+
   return (
-    <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
-      <Icon className="h-5 w-5" />
+    <Link
+      to={fullPath}
+      className={`${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      style={isSelected ? { position: "relative" } : {}}
+    >
+      <Icon className="h-5 w-5" strokeWidth={isSelected ? 2 : 1} />
       <span>{label}</span>
+      {isSelected && (
+        <motion.span 
+          style={barStyle}
+          variants={barVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{ duration: 0.3 }} 
+        />
+      )}
     </Link>
   );
 };
 
 
+
+
+
 const NavItemSmall = ({ icon: Icon, path }) => {
-  const { companyId } = useParams(); // Get companyId from the route params
+  const { companyId } = useParams();
+  const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
 
+  const isSelected = location.pathname === fullPath;
+
+  const baseStyle = "flex items-center justify-around space-x-2 px-3 py-2 rounded-lg transition-colors duration-500";
+  const selectedStyle = "font-bold bg-accent text-accent-foreground";
+  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+
+  const barStyle = {
+    content: "''",
+    position: "absolute",
+    top: "0",
+    right: "0",
+    height: "100%",
+    width: "4px",
+    backgroundColor: "#22c55e",
+    borderRadius: "9999px",
+  };
+
+  const barVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: "100%" },
+    exit: { opacity: 0, height: 0 },
+  };
+
   return (
-    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+    <Link
+      to={fullPath}
+      className={`${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      style={isSelected ? { position: "relative" } : {}}
+    >
       <Icon className="h-6 w-6" />
+      {isSelected && (
+        <motion.span
+          style={barStyle}
+          variants={barVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{ duration: 0.3 }}
+        />
+      )}
     </Link>
   );
 };
@@ -70,7 +152,7 @@ const handleLogout = ({ icon: Icon, label, path }) => {
   };
 
   return (
-    <a href={path} onClick={handleClick} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+    <a href={path} onClick={handleClick} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500 ">
       <Icon className="h-5 w-5" />
       <span>{label}</span>
     </a>
