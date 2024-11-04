@@ -54,9 +54,10 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
                             animate="visible"
                             variants={buttonVariants}
                         >
-                            <Button variant="outline" className="ml-auto border-0 ">
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            <Button variant="outline" className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative">
+                                <ChevronsUpDown className="absolute inset-0 h-4 w-4 m-auto opacity-50" />
                             </Button>
+
                         </motion.div>
                     </DropdownMenuTrigger>
                 )}
