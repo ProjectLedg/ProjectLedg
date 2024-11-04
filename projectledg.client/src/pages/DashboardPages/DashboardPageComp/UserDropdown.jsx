@@ -33,13 +33,13 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
             <div className={`flex items-center space-x-4 ${isChatOpen ? 'ml-3' : ''}`}>
                 <Avatar className="p-[0.125rem] border-2 border-green-500 rounded-full">
                     <AvatarImage src={user.avatarUrl} alt={user.name} />
-                    <AvatarFallback className="bg-green-100 text-green-500 font-semibold">{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-green-50 text-green-500 font-semibold">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <motion.div
                     initial="hidden"
                     animate={isChatOpen ? "hidden" : "visible"}
                     variants={textVariants}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.3 }}
                 >
                     <h2 className="text-md font-semibold">{user.name}</h2>
                     <p className="text-xs text-muted-foreground">{currentCompany.name}</p>
