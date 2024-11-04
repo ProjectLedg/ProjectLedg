@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
+import ReactMarkdown from "react-markdown"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -6,19 +7,123 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+import Switch from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Check, X, FileText, Send } from "lucide-react"
+import { Check, X, FileText, Send, Paperclip, Bot } from "lucide-react"
+import ChatWindow from "../DashboardPageComp/ChatWindow"
+import Typewriter from "@/Typewriter"
+import ChatLoader from "@/ChatLoader"
 
 export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const scrollAreaRef = useRef(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showPreviewAnimation, setShowPreviewAnimation] = useState(false);
+  const [isOn, setIsOn] = useState(false)
+
+  // Modal chat 
+  const [input, setInput] = useState('');
+
+  const [messages, setMessages] = useState(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    return savedMessages ? JSON.parse(savedMessages) : [];
+  });
+  const [hasMessages, setHasMessages] = useState(messages.length > 0);
+  const [loading, setLoading] = useState(false);
+
+
+
+
+
+
+  useEffect(() => {
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+  }, [messages]);
+
+  const handleChatSubmit = async (e, inputText = input) => {
+    if (e) e.preventDefault();
+    if (inputText.trim()) {
+      const newMessage = { text: inputText, type: 'sent' };
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setHasMessages(true);
+      setInput('');
+
+      setLoading(true);
+
+      const response = await handleSend(inputText);
+
+      const responseMessage = { text: response, type: 'received', isTyping: true };
+      setMessages((prevMessages) => [...prevMessages, responseMessage]);
+      setLoading(false);
+    }
+  };
+
+  const handleSend = async (input) => {
+    try {
+      const response = await sendMessage(input);
+      console.log('Response from server:', response);
+      return response || 'No response received';
+    } catch (error) {
+      console.error("Error while sending message:", error);
+      return 'Error occurred while sending message';
+    }
+  };
+
+  const sendMessage = async (input) => {
+    try {
+      const response = await axios.post(
+        'https://projectledg.azurewebsites.net/api/Assistant/chat',
+        JSON.stringify(input),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data; // Return the response data
+    } catch (error) {
+      console.error("Failed to send message", error);
+      throw error; // Rethrow the error if you want to handle it further up
+    }
+  }
+
+  const renderedMessages = messages.map((message, index) => (
+    <div
+      key={index}
+      className={`mb-12 flex items-start ${message.type === 'sent' ? 'self-end' : 'self-start'}`}
+    >
+      {message.type === 'received' && (
+        <div className='p-2 mt-1 border-2 rounded-full '>
+          <Bot className="w-4 h-4 " />
+        </div>
+      )}
+      <div
+        className={`${message.type === 'sent'
+          ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-xl ml-auto max-w-64 text-white break-words whitespace-normal'
+          : 'prose bg-gray-100 p-2 rounded-3xl  max-w-[100%] text-black'
+          }`}
+      >
+        {message.type === 'sent' || !message.isTyping ? (
+          <ReactMarkdown>{message.text}</ReactMarkdown>
+        ) : (
+          <Typewriter text={message.text} delay={5} onComplete={() => {
+            setMessages((prevMessages) =>
+              prevMessages.map((msg, i) =>
+                i === index ? { ...msg, isTyping: false } : msg
+              )
+            );
+          }} />
+
+        )}
+      </div>
+    </div>
+  ));
+
+
 
   // Sets state for showing preview fade in animation when upload invoice is loading
   useEffect(() => {
@@ -97,6 +202,9 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
 
     setIsModalOpen(false)
   }
+  
+  // Temp to populate modal popup table
+  const rows = Array(12).fill(null)
 
   // Loading skeleton animation while wating for invoice to upload
   if (isUploadLoading) {
@@ -481,158 +589,132 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
 
       {/* Modal popup to display invoice and to confirm and save it to the database */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-[70vw] h-[80vh] grid grid-cols-2 grid-rows gap-16 overflow-hidden">
-          <div className="grid grid-rows-8 col-start-1 ">
-            <DialogHeader className="row-start-1">
-              <DialogTitle className="text-2xl font-bold text-green-600">Verifikation</DialogTitle>
-            </DialogHeader>
-            {invoice && (
-              <div className="row-start-2 row-span-6 space-y-4  ">
+        <DialogContent className="max-w-[70vw] h-[80vh] flex flex-col ">
+          <DialogHeader >
+            <DialogTitle className="text-2xl font-bold text-green-600 ">Verifikation</DialogTitle>
+          </DialogHeader>
+
+          <div className="GridContainer grid grid-cols-2 gap-16 h-[70vh]">
+            {/* <ScrollArea className="h-[90%] px-4" ref={scrollAreaRef}> */}
+            <DialogDescription className="ColOne p-2 h-full ">
+
+              <div className="FakturaInfo space-y-2 ">
                 <h3 className="font-semibold text-lg mb-4">Fakturainfo</h3>
-                <ScrollArea className="h-[90%] px-4" ref={scrollAreaRef}>
-                  <DialogDescription className="grid grid-rows-2 h-full ">
+                <div className="Fakturanummer grid grid-cols-2 gap-4">
 
-                    <div className="row-start-1 space-y-2">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="font-semibold text-gray-600">Fakturanummer:</p>
-                          <p>{invoice.InvoiceNumber}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-600">Datum:</p>
-                          <p>{new Date(invoice.invoiceDate).toLocaleDateString()}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-600">Belopp:</p>
-                          <p className="font-bold text-green-600">{invoice.invoiceTotal}kr</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-600">Kund:</p>
-                          <p>{invoice.customerName}</p>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <p className="font-semibold text-gray-600">Beskrivning:</p>
-                        <p>{invoice.description}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="paid-status" className="font-semibold text-gray-600">Betalnings status:</Label>
-                        <Switch
-                          id="paid-status"
-                          checked={invoice.isPaid}
-                          onCheckedChange={() => handleStatusChange('isPaid')}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="booked-status" className="font-semibold text-gray-600">Bokförnings status:</Label>
-                        <Badge variant={invoice.isBooked ? "success" : "destructive"}>
-                          {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                          <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej bokförd"}</span>
-                        </Badge>
-                      </div>
-                    </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Fakturanummer:</p>
+                    <p>{invoice.InvoiceNumber}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Datum:</p>
+                    <p>{new Date(invoice.invoiceDate).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Belopp:</p>
+                    <p className="font-bold text-green-600">{invoice.invoiceTotal}kr</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-600">Kund:</p>
+                    <p>{invoice.customerName}</p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="font-semibold text-gray-600">Beskrivning:</p>
+                  <p>{invoice.description}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="paid-status" className="font-semibold text-gray-600">Betalnings status:</Label>
 
-                    <div className="row-start-2 mt-10" >
-                      {/* Put chat component here to handle promting the AI */}
-                      <div className="space-y-4 row-start-8">
-                        {!invoice.isBooked && (
-                          <div>
-                            <Label htmlFor="additional-info" className="font-semibold text-gray-600">Ytterliggare information:</Label>
-                            <Textarea
-                              id="additional-info"
-                              placeholder="Lägg till ev information till Ledge för att hjälpa till med automatisk bokföring...  "
-                              // value={selectedInvoice.additionalInfo}
-                              // onChange={handleAdditionalInfoChange}
-                              className="mt-2"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                  <Switch isOn={isOn} setIsOn={setIsOn}
+                    id="paid-status"
+                    checked={invoice.isPaid}
+                    onCheckedChange={() => handleStatusChange('isPaid')} />
+                </div>
 
-
-                  </DialogDescription>
-                  
-                </ScrollArea>
-                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="booked-status" className="font-semibold text-gray-600">Bokförnings status:</Label>
+                  <Badge variant={invoice.isBooked ? "success" : "destructive"}>
+                    {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                    <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej bokförd"}</span>
+                  </Badge>
+                </div>
               </div>
-            )}
-            {/* <Button onClick={handleSaveChanges} className="bg-green-500 hover:bg-green-600 text-white">
-              Bekräfta och bokför
-            </Button> */}
-          </div>
 
-          <div className="grid grid-rows-8 col-start-2 overflow-hidden">
-            <div className="row-start-2 row-span-6">
-              <DialogDescription className="h-full">
+              <div className="ChatSection bg-gray-500/15 pt-1 mt-4 border-1 border-gray-300 shadow-inner shadow-gray-500/60 rounded-md">
+                <div className=" flex flex-col py-4 px-2 overflow-y-auto flex-grow mb-2 max-h-[35.5vh]">
+                  {renderedMessages}
+                  {loading && <ChatLoader className="mb-12" />}
+                </div>
+                <form onSubmit={handleSubmit} className="bg-transparent">
+                  <div className="flex flex-row w-[100%] justify-between items-center space-x-2 border-gray-300 border-2 rounded-b-md ">
+                    <div className="flex-grow p-4 h-auto flex items-center bg-gray-100/80 rounded-b-md">
+                      <textarea
+                        value={input}
+                        onChange={(e) => {
+                          setInput(e.target.value);
+                          e.target.style.height = "auto";
+                          e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault(); // Prevent default behavior (new line)
+                            handleChatSubmit(); // Call the submit handler
+                          }
+                        }}
+                        placeholder="Fråga Ledge..."
+                        className="flex-grow text-base p-2 bg-transparent focus:outline-none resize-none overflow-hidden "
+                        rows="1"
+                      />
+                      <button
+                        type="submit"
+                        className="p-[0.75rem] bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
+                      >
+                        <Send size={20} />
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </DialogDescription>
+
+            {/* Booking suggestion - right column */}
+            <div className="RightColumn p-2 max-h-[70vh]">
+              <div className="p-0 h-full " >
                 <h3 className="font-semibold text-lg">Bokföringsförslag</h3>
-                <ScrollArea className="h-[90%]" ref={scrollAreaRef}>
-                  <Table>
-                    <TableHeader >
+                <ScrollArea ref={scrollAreaRef} className="max-h-[60vh] w-full overflow-y-auto border-t-2">
+
+                  <Table className="Scroll table overflow-y-auto overflow-x-hidden w-full  " >
+                    <TableHeader className="border-2 bg-gray-100">
                       <TableRow>
-                        <TableHead>Konto</TableHead>
-                        <TableHead>Beskrivning</TableHead>
-                        <TableHead>Debet</TableHead>
-                        <TableHead>Kredit</TableHead>
+                        <TableHead className="w-8 border-2">Konto</TableHead>
+                        <TableHead className="w-18 border-2">Beskrivning</TableHead>
+                        <TableHead className="border-2">Debet</TableHead>
+                        <TableHead className="border-2">Kredit</TableHead>
                       </TableRow>
                     </TableHeader>
 
                     <TableBody >
-                      <TableRow>
-                        <TableCell>1000</TableCell>
-                        <TableCell>Pågående nyanläggningar och förskott
-                          för byggnader och mark
-                        </TableCell>
-                        <TableCell> 128 </TableCell>
-                        <TableCell></TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>1000</TableCell>
-                        <TableCell>Pågående nyanläggningar och förskott
-                          för byggnader och mark
-                        </TableCell>
-                        <TableCell> 128 </TableCell>
-                        <TableCell></TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>1000</TableCell>
-                        <TableCell>Pågående nyanläggningar och förskott
-                          för byggnader och mark
-                        </TableCell>
-                        <TableCell>64</TableCell>
-                        <TableCell>256</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>1000</TableCell>
-                        <TableCell>Pågående nyanläggningar och förskott
-                          för byggnader och mark
-                        </TableCell>
-                        <TableCell> 128 </TableCell>
-                        <TableCell></TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>1000</TableCell>
-                        <TableCell>Pågående nyanläggningar och förskott
-                          för byggnader och mark
-                        </TableCell>
-                        <TableCell></TableCell>
-                        <TableCell>2256</TableCell>
-                      </TableRow>
+                      {rows.map((_, index) => (
 
-
-
-
-
-
+                        <TableRow >
+                          <TableCell className="border-2  w-8">1000</TableCell>
+                          <TableCell className="w-18 border-2">Pågående nyanläggningar och förskott
+                            för byggnader och mark
+                          </TableCell>
+                          <TableCell className="text-center border-2"> 128 </TableCell>
+                          <TableCell className="text-center border-2"> 123 </TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </ScrollArea>
-              </DialogDescription>
-              <DialogFooter className=" px-2">
-                <Button onClick={handleSaveChanges} className="bg-green-500 hover:bg-green-600 text-white">
-                  Bekräfta och bokför
-                </Button>
-              </DialogFooter>
+                <DialogFooter className="mt-4">
+                  <Button onClick={handleSaveChanges} className="bg-green-500 mb-14 hover:bg-green-600 text-white">
+                    Bekräfta och bokför
+                  </Button>
+                </DialogFooter>
+              </div>
             </div>
           </div>
         </DialogContent>
