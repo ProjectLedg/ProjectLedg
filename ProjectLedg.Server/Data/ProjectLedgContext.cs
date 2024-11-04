@@ -58,6 +58,7 @@ namespace ProjectLedg.Server.Data
                 .HasForeignKey(t => t.BasAccountId)
                 .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on BasAccount
 
+
             // Seed User data
             modelBuilder.Entity<User>().HasData(
                 new User
