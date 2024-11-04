@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
 import ChatService from "@/services/ChatService";
-import ChatWindow from "./ChatWindow";
 import { axiosConfig } from '/axiosconfig'
-import ChatWindowMobile from "./ChatWindowMobile";
+import UserDropdown from "./UserDropdown";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
 import {
@@ -36,13 +35,13 @@ const navItems = [
 
 
 const NavItem = ({ icon: Icon, label, path }) => {
-  const { companyId } = useParams(); 
+  const { companyId } = useParams();
   const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
 
   const isSelected = location.pathname === fullPath;
 
-  const baseStyle = "flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-500";
+  const baseStyle = "flex items-center space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
   const selectedStyle = "font-bold relative bg-accent";
   const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
 
@@ -52,15 +51,15 @@ const NavItem = ({ icon: Icon, label, path }) => {
     top: "0",
     right: "0",
     height: "100%",
-    width: "4px",  
-    backgroundColor: "#22c55e",  
-    borderRadius: "9999px",  
+    width: "4px",
+    backgroundColor: "#22c55e",
+    borderRadius: "9999px",
   };
 
   const barVariants = {
     hidden: { opacity: 0, height: 0 },
     visible: { opacity: 1, height: "100%" },
-    exit: { opacity: 0, height: 0 }, 
+    exit: { opacity: 0, height: 0 },
   };
 
   if (label === "Logga ut") {
@@ -70,19 +69,19 @@ const NavItem = ({ icon: Icon, label, path }) => {
   return (
     <Link
       to={fullPath}
-      className={`${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
-      style={isSelected ? { position: "relative" } : {}}
+      className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
     >
       <Icon className="h-5 w-5" strokeWidth={isSelected ? 2 : 1} />
       <span>{label}</span>
       {isSelected && (
-        <motion.span 
+        <motion.span
           style={barStyle}
           variants={barVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
-          transition={{ duration: 0.3 }} 
+          transition={{ duration: 0.3 }}
         />
       )}
     </Link>
@@ -100,7 +99,7 @@ const NavItemSmall = ({ icon: Icon, path }) => {
 
   const isSelected = location.pathname === fullPath;
 
-  const baseStyle = "flex items-center justify-around space-x-2 px-3 py-2 rounded-lg transition-colors duration-500";
+  const baseStyle = "flex items-center justify-around space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
   const selectedStyle = "font-bold bg-accent text-accent-foreground";
   const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
 
@@ -124,8 +123,8 @@ const NavItemSmall = ({ icon: Icon, path }) => {
   return (
     <Link
       to={fullPath}
-      className={`${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
-      style={isSelected ? { position: "relative" } : {}}
+      className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
     >
       <Icon className="h-6 w-6" />
       {isSelected && (
@@ -152,7 +151,7 @@ const handleLogout = ({ icon: Icon, label, path }) => {
   };
 
   return (
-    <a href={path} onClick={handleClick} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500 ">
+    <a href={path} onClick={handleClick} className="flex items-center  space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500 ">
       <Icon className="h-5 w-5" />
       <span>{label}</span>
     </a>
@@ -169,18 +168,39 @@ const Sidebar = ({ isChatOpen }) => (
   >
 
     <div className="flex-grow space-y-4 py-4">
-      <div className="px-3 py-2">
-        <div className={`space-y-1 ${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
+      <div className="py-2 h-full">
+        <div className={`h-full${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
+
+          <UserDropdown
+            user={{
+              name: "John Doe",
+              email: "john@example.com",
+              avatarUrl: "https://example.com/avatar.jpg"
+            }}
+            companies={[
+              { id: "1", name: "Company A" },
+              { id: "2", name: "Company B" },
+              { id: "3", name: "Company C" }
+            ]}
+            currentCompany={{ id: "1", name: "Company A" }}
+            onCompanyChange={(company) => {
+              // Handle company change here
+              console.log("Switched to:", company.name);
+            }}
+            isChatOpen={isChatOpen}
+            />
+
           {navItems.filter(item => item.position === "top").map((item, index) => (
             !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
           ))}
+
         </div>
       </div>
     </div>
-    <div className="mt-auto px-3 py-2 border-t">
-      <div className={`space-y-1 ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
+    <div className="mt-auto border-t">
+      <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
+          !isChatOpen ? <NavItem key={index} {...item}  /> : <NavItemSmall key={index} {...item} />
         ))}
       </div>
     </div>
@@ -242,10 +262,10 @@ export default function DashboardLayout() {
   useEffect(() => {
     fetchCompanyData();
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); 
+      setIsMobile(window.innerWidth < 768);
     };
 
-    handleResize(); 
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
@@ -254,7 +274,7 @@ export default function DashboardLayout() {
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
-  
+
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a more sophisticated loading component
@@ -292,7 +312,7 @@ export default function DashboardLayout() {
             <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
-                <ChatService onClose={toggleChat} mobile/>
+                <ChatService onClose={toggleChat} mobile />
               ) : (
                 <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
                   <motion.div
