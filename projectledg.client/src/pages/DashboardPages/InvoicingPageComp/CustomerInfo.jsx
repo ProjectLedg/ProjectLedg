@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axiosConfig from '/axiosconfig';
+import {axiosConfig} from '/axiosconfig';
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
