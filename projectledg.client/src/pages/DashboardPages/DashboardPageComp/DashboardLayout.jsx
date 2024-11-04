@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
 import ChatService from "@/services/ChatService";
 import ChatWindow from "./ChatWindow";
-import axiosConfig from "/axiosconfig";
+import { axiosConfig } from '/axiosconfig'
 import ChatWindowMobile from "./ChatWindowMobile";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";

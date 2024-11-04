@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
+import Switch from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -34,6 +34,9 @@ export default function InvoiceLogger() {
   const totalInvoices = invoices.length; // TODO: Change this to the api variable when endpoint is finished
   const totalPages = Math.ceil(invoices.length / pagination);
   
+  // Button toggle
+  const [isOn, setIsOn] = useState(false)
+
 
   useEffect(() => {
     // TODO: Fetch all ingoing invoices for this company and set invoices & ingoingInvoices
@@ -207,7 +210,7 @@ export default function InvoiceLogger() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="paid-status" className="font-semibold text-gray-600">Betalnings status:</Label>
-                  <Switch
+                  <Switch isOn={isOn} setIsOn={setIsOn}
                     id="paid-status"
                     checked={selectedInvoice.isPaid}
                     onCheckedChange={() => handleStatusChange('isPaid')}

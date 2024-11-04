@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookie from 'js-cookie';
 
+// Json config 
 const axiosConfig = axios.create({
     baseURL: "https://localhost:7223/api",
     headers: {
@@ -9,19 +10,30 @@ const axiosConfig = axios.create({
     withCredentials: true,
 });
 
+// Multipart config
+const axiosConfigMultipart = axios.create({
+    baseURL: "https://localhost:7223/api",
+    withCredentials: true,
+});
 
-axiosConfig.interceptors.request.use(
-    (config) => {
-        const jwtToken = Cookie.get("JWTToken");
-        if (jwtToken) {
-            config.headers.Authorization = `Bearer ${jwtToken}`;
+// JWT Interceptor that adds JWT token to the auth bearer for the axios calls
+const attachJwtInterceptor = (instance) => {
+    instance.interceptors.request.use(
+        (config) => {
+            const jwtToken = Cookie.get("JWTToken");
+            if (jwtToken) {
+                config.headers.Authorization = `Bearer ${jwtToken}`;
+            }
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
         }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+    );
+};
 
-export default axiosConfig;
-        
+// Add the JWT to each axios call
+attachJwtInterceptor(axiosConfig)
+attachJwtInterceptor(axiosConfigMultipart)
+
+export { axiosConfig, axiosConfigMultipart};
