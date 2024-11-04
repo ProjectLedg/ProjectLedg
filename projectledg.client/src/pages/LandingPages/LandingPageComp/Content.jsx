@@ -11,7 +11,7 @@ export default function Content() {
       </h1>
 
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-        Bättre än Visma och Fortnox
+        Få full kontroll över ditt företags ekonomi med Ledge
       </h3>
 
       <div className="flex pt-8 flex-row w-[70vw] md:w-[20vw] justify-around">

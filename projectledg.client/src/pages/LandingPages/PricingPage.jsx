@@ -38,9 +38,9 @@ const PricingPage = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
       <main className="container mx-auto px-4 py-16 max-w-7xl">
-        <h1 className="text-4xl font-bold text-center mb-4 text-green-500">Choose Your Plan</h1>
+        <h1 className="text-4xl font-bold text-center mb-4 text-green-500">Välj din plan</h1>
         <p className="text-center mb-12 text-gray-600">
-          We're currently in alpha. More options coming soon!
+          Vi är just nu i beta och erbjuder en gratis plan för att hjälpa dig komma igång och testa Ledge.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
           {tiers.map((tier, index) => (

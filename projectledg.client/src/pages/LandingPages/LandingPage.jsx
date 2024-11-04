@@ -11,7 +11,7 @@ return (
     <>
         
         <Navbar />
-        <div className="w-[100vw] flex flex-col items-center justify-center space-y-10">
+        <div className="w-[100vw] flex flex-col items-center justify-center space-y-5">
             <Content />
         </div>
         <div className="w-[100vw] overflow-auto">
