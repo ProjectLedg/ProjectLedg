@@ -15,12 +15,15 @@ return (
             <Content />
         </div>
         <div className="w-[100vw] overflow-auto">
-            <section id="why" className="scroll-mt-32">
+            
                 <CardShow />
-            </section>     
+              
         </div>
         <div className="flex flex-col items-center pb-36">
+            
+            <section id="why" className="scroll-mt-32">
             <CallToAction />
+            </section>
         </div>
         <div className="flex flex-col items-center pb-36">
             <NewsletterSignup />
