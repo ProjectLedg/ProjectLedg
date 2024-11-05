@@ -44,7 +44,7 @@ public class AssistantService : IAssistantService
         _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
         _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
         _mapDirectivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantBasAccMapDirectives.txt");
-        _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccTestContext.txt");
+        _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccContext.txt");
         _encryptionHelper = encryptionHelper;
 
         //Functions
