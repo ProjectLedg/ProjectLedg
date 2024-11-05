@@ -97,7 +97,7 @@ const SignUpPage = () => {
   }
 
   const features = [
-    'Lägg upp obegränsat med faktorur',
+    'Lägg upp obegränsat med fakturor',
     'Översikt på din ekonomi',
     'Årsredovisning',
     'Balansrapport & Resultatrapport',
@@ -109,7 +109,7 @@ const SignUpPage = () => {
         <div className='pt-40 pl-11'>
           <div className="w-10 h-10 bg-gray-800 rounded-lg mb-8"></div>
           <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-green-500">Plan inkluderar</h2>
+            <h2 className="text-3xl font-bold mb-4">Plan inkluderar</h2>
             <ul className="space-y-2">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center">
@@ -204,7 +204,7 @@ const SignUpPage = () => {
                     <Input
                       type="email"
                       name="emailConfirmed"
-                      placeholder="Confirm Email"
+                      placeholder="Bekräfta Email"
                       value={userDetails.emailConfirmed}
                       onChange={handleInputChange}
                       className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -216,7 +216,7 @@ const SignUpPage = () => {
                     <Input
                       type="password"
                       name="password"
-                      placeholder="Password"
+                      placeholder="Lösenord"
                       value={userDetails.password}
                       onChange={handleInputChange}
                       className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -228,7 +228,7 @@ const SignUpPage = () => {
                     <Input
                       type="password"
                       name="passwordConfirmed"
-                      placeholder="Confirm Password"
+                      placeholder="Bekräfta Lösenord"
                       value={userDetails.passwordConfirmed}
                       onChange={handleInputChange}
                       className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -239,7 +239,7 @@ const SignUpPage = () => {
                   <Input
                     type="text"
                     name="firstName"
-                    placeholder="First Name"
+                    placeholder="Förnamn"
                     value={userDetails.firstName}
                     onChange={handleInputChange}
                     required
@@ -247,7 +247,7 @@ const SignUpPage = () => {
                   <Input
                     type="text"
                     name="lastName"
-                    placeholder="Last Name"
+                    placeholder="Efternamn"
                     value={userDetails.lastName}
                     onChange={handleInputChange}
                     required
@@ -272,10 +272,8 @@ const SignUpPage = () => {
             </form>
           </div>
           <CardFooter className="flex flex-col items-center space-y-2 pt-0 px-4 sm:px-6">
-            <p className="text-xs text-gray-500 text-center mt-4">
-              This site is protected by reCAPTCHA and the Google Privacy Policy.
-            </p>
-            <p className="text-sm text-gray-500 mt-2 sm:mt-0">
+            
+            <p className="text-sm text-gray-500 pt-4 sm:mt-0">
               Har redan konto?{" "}
               <Link to="/login" className="text-blue-600 hover:underline">
                 Logga in

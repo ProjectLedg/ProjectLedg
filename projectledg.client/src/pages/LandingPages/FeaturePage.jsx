@@ -10,7 +10,7 @@ export default function FeaturePage() {
         <>
             <Navbar />
             <div className="w-[100vw] flex flex-col justify-center px-8 md:px-12 lg:px-24
-            bg-gradient-to-b from-white to-gray-400">
+            bg-gradient-to-b from-white to-gray-200">
                 <FeatureContentTitle />
                 <FeatureContentImage />
                 <FeatureContentBody />
