@@ -4,6 +4,8 @@ import ChatLoader from '@/ChatLoader';
 import Typewriter from '@/Typewriter';
 import ReactMarkdown from 'react-markdown';
 
+
+
 export default function ChatWindowMobile({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {

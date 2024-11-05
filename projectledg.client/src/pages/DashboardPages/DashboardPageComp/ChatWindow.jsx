@@ -4,6 +4,13 @@ import Typewriter from '@/Typewriter';
 import ReactMarkdown from 'react-markdown';
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip, Bot } from 'lucide-react'
 
+import {
+    TooltipShad,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 export default function ChatWindow({ onClose, onSendMessage }) {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {
@@ -94,9 +101,18 @@ export default function ChatWindow({ onClose, onSendMessage }) {
         <div className="chatWindow flex flex-col  right-0 p-2 w-[30vw] h-[80vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl max-w-[720px]">
             <div className="bg-gray-100 rounded-xl overflow-hidden h-[100%]">
                 <div className="flex justify-between items-center p-4 shadow-sm">
-                    <button onClick={handleNewChat} className="text-gray-500  hover:text-gray-700">
-                        <SquarePen size={25} />
-                    </button>
+                    
+                    <TooltipProvider>
+                        <TooltipShad>
+                            <TooltipTrigger>
+                                <button onClick={handleNewChat} className="text-gray-500  hover:text-gray-700">
+                                    <SquarePen size={25} />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent>Ny chatt</TooltipContent>
+                        </TooltipShad>
+                    </TooltipProvider>
+
                     <button onClick={onClose} className="text-gray-500 bg-gray-200 p-1 rounded-full hover:text-gray-700">
                         <X size={20} />
                     </button>
