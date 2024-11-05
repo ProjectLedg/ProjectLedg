@@ -61,7 +61,7 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
                         </motion.div>
                     </DropdownMenuTrigger>
                 )}
-                <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuContent align="end" className="w-[15rem]">
                     {companies.map((company) => (
                         <DropdownMenuItem
                             key={company.id}
