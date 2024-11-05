@@ -38,7 +38,7 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Items Section */}
-        <div className="hidden md:block rounded-full px-2 py-1 flex-grow flex justify-center">
+        <div className=" md:block rounded-full px-2 py-1 flex-grow flex justify-center">
           <div className="flex justify-around text-black">
             <NavItem to="/why" className="mx-2">Varför Ledge?</NavItem>
             <NavItem to="/features" className="mx-2">Tjänster</NavItem>
