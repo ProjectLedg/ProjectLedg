@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
 using ProjectLedg.Server.Functions.AssistantFunctions;
+using ProjectLedg.Server.Data.Models.DTOs;
 
 public class AssistantService : IAssistantService
 {
@@ -21,6 +22,8 @@ public class AssistantService : IAssistantService
     private readonly EncryptionHelper _encryptionHelper;
     private readonly string _csvFilePath;
     private readonly string _directivesFilePath;
+    private readonly string _mapDirectivesFilePath;
+    private readonly string _basAccContextFilePath;
 
     //Functions
     private readonly IBasAccountFunctions _basAccountFunctions;
@@ -40,6 +43,8 @@ public class AssistantService : IAssistantService
         _basAccountService = basAccountService;
         _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
         _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
+        _mapDirectivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantBasAccMapDirectives.txt");
+        _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccTestContext.txt");
         _encryptionHelper = encryptionHelper;
 
         //Functions
@@ -104,6 +109,124 @@ public class AssistantService : IAssistantService
         return assistantResponse;
     }
 
+    public async Task<string> MapInvoiceToBasAccountsAsync(InvoiceMapDTO invoice)
+    {
+        // Load context and necessary info for the AI
+        var basAccContext = LoadAssistantBasAccountContext();
+        var basAccDict = ParseBasAccountContext(basAccContext);
+
+        // Extract invoice item descriptions
+        var itemDescriptions = invoice.Items.Select(i => i.Description).ToList();
+
+        // Determine relevant BasAccounts by connecting keywords with descriptions
+        var relevantBasAccs = FilterRelevantBasAccounts(basAccDict, itemDescriptions);
+
+        // Create message list
+        var messages = new List<Message>();
+
+        // Load context and necessary info for the AI and give insructions
+        var assistantDirectives = LoadAssistantMapDirectives();
+        var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\n Here is a reference BAS Account chart for categorization:\n{basAccContext}");
+        messages.Add(systemMessage);
+
+
+        // Extract invoice item descriptions and amounts in a readable format
+        var invoiceDetails = $"{{ \"invoiceNumber\": \"{invoice.InvoiceNumber}\", \"invoiceTotal\": {invoice.InvoiceTotal}, \"totalTax\": {invoice.TotalTax}, \"Items\": [\n";
+
+        foreach (var item in invoice.Items)
+        {
+            invoiceDetails += $"  {{ \"Description\": \"{item.Description}\", \"Quantity\": {item.Quantity}, \"UnitPrice\": {item.UnitPrice}, \"Amount\": {item.Amount} }},\n";
+        }
+        invoiceDetails += "] }";
+
+
+        var mappingPromt = new Message(
+            Role.User,
+            $"Using the BAS Account chart with descriptions and keywords, categorize each invoice item to the most relevant BAS account. The invoice details are:\n\n{invoiceDetails}.\n\n"
+        );
+
+        messages.Add(mappingPromt);
+
+        // Proccess request
+        var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini", temperature: 0.2, responseFormat: ChatResponseFormat.Json);
+        var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+        var assistantResponse = response.Choices[0].Message.Content.GetString() ?? "No valid response from the assistant.";
+
+        return assistantResponse;
+    }
+
+
+    // Helper methods
+
+    // Parse BAS account context from UTF-8 string into a dictionary
+    private Dictionary<string, (string description, List<string> keywords)> ParseBasAccountContext(string basAccContext)
+    {
+        var basAccDict = new Dictionary<string, (string description, List<string> keywords)>();
+
+        // Split lines and handle UTF-8 specifically in parsing
+        var lines = basAccContext.Split('\n');
+        foreach (var line in lines)
+        {
+            // Ensure line is processed as UTF-8
+            var utf8Line = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(line));
+
+            var parts = utf8Line.Split(" - keywords: ");
+            if (parts.Length == 2)
+            {
+                var accountParts = parts[0].Split(": ");
+                var accountNumber = accountParts[0].Trim();
+                var description = accountParts[1].Trim();
+                var keywords = parts[1].Split(", ").Select(k => k.Trim()).ToList();
+
+                basAccDict[accountNumber] = (description, keywords);
+            }
+        }
+        return basAccDict;
+    }
+
+    private List<string> FilterRelevantBasAccounts(Dictionary<string, (string description, List<string> keywords)> basAccountDict, List<string> itemDescriptions)
+    {
+        var relevantAccs = new HashSet<string>();
+
+        foreach (var description in itemDescriptions)
+        {
+            // Ensure UTF-8 processing in descriptions
+            var utf8Description = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(description));
+
+            foreach (var account in basAccountDict)
+            {
+                if (account.Value.keywords.Any(keyword => utf8Description.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
+                {
+                    relevantAccs.Add(account.Key);
+                }
+            }
+        }
+
+        return relevantAccs.ToList();
+    }
+
+
+    // Not used atm, uneccessary?
+    // Creates a filtered BAS account context based on the relevant accounts for this invoice.
+    private string CreateFilteredBasAccountContext(List<string> relevantBasAccs, Dictionary<string, (string description, List<string> keywords)> basAccDict)
+    {
+        var filteredContext = new StringBuilder();
+
+        foreach (var accountNumber in relevantBasAccs)
+        {
+            (string description, List<string> keywords) = basAccDict[accountNumber];
+
+            // Build UTF-8 encoded string and append it
+            var contextLine = $"{accountNumber}: {description} - keywords: {string.Join(", ", keywords)}\n";
+            filteredContext.Append(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(contextLine)));
+        }
+
+        return filteredContext.ToString();
+    }
+
+
+    // Load files methods
     private List<BasAccount> LoadBasAccounts()
     {
         var basAccounts = new List<BasAccount>();
@@ -147,6 +270,25 @@ public class AssistantService : IAssistantService
         {
             throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
         }
-        return File.ReadAllText(_directivesFilePath);
+        return File.ReadAllText(_directivesFilePath, Encoding.UTF8);
     }
+
+    private string LoadAssistantMapDirectives()
+    {
+        if (!File.Exists(_mapDirectivesFilePath))
+        {
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _mapDirectivesFilePath);
+        }
+        return File.ReadAllText(_mapDirectivesFilePath, Encoding.UTF8);
+    }
+
+    private string LoadAssistantBasAccountContext()
+    {
+        if (!File.Exists(_basAccContextFilePath))
+        {
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _basAccContextFilePath);
+        }
+        return File.ReadAllText(_basAccContextFilePath, Encoding.UTF8);
+    }
+
 }
