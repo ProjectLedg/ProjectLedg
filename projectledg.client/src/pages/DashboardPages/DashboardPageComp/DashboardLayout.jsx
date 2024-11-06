@@ -362,21 +362,22 @@ export default function DashboardLayout() {
             </header>
 
             {/* Main Content or Chat Window Mobile */}
-            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
+            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} >
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
                 <ChatService onClose={toggleChat} mobile />
               ) : (
-                <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
+                <div className="mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
                   <motion.div
-                    className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8"
+                      className="HÄR chart-content-box rounded-[1.5rem]  bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8"
+                    
                     animate={{
                       width: isChatOpen ? '67%' : '100%',
                     }}
                     initial={{ width: '100%' }}
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   >
-                    <Outlet context={{ isChatOpen }} />
+                      <Outlet context={{ isChatOpen }} />
                   </motion.div>
 
                   <AnimatePresence>
