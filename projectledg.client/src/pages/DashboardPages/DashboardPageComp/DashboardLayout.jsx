@@ -20,16 +20,25 @@ import {
   FileText,
 } from "lucide-react";
 
+import {
+  TooltipShad,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+
 
 const navItems = [
-  { icon: Home, label: "Hem", path: "", position: "top" },
-  { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top" },
-  { icon: BookCheck, label: "Bokför", path: "/book", position: "top" },
-  { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top" },
-  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" },
-  { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
-  { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom" },
-  { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
+
+  { icon: Home, label: "Hem", path: "", position: "top", tooltipText: "Hem" },
+  { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top", tooltipText: "Finansiell rapport" },
+  { icon: BookCheck, label: "Bokför", path: "/book", position: "top", tooltipText: "Bokför" },
+  { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top", tooltipText: "Årsredovisning" },
+  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top", tooltipText: "Fakturering" },
+  { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom", tooltipText: "Inställningar" },
+  { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom", tooltipText: "Hjälp" },
+  { icon: LogOut, label: "Logga ut", path: "/", position: "bottom", tooltipText: "Logga ut" },
 ];
 
 
@@ -100,7 +109,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
 
 
 
-const NavItemSmall = ({ icon: Icon, path }) => {
+const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
   const { companyId } = useParams();
   const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
@@ -134,7 +143,16 @@ const NavItemSmall = ({ icon: Icon, path }) => {
       className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
       style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
     >
-      <Icon className="h-6 w-6" />
+
+      <TooltipProvider>
+        <TooltipShad>
+          <TooltipTrigger>
+            <Icon className="h-6 w-6" />
+          </TooltipTrigger>
+          <TooltipContent>{tooltipText}</TooltipContent>
+        </TooltipShad>
+      </TooltipProvider>
+
       {isSelected && (
         <motion.span
           style={barStyle}
@@ -199,7 +217,7 @@ const Sidebar = ({ isChatOpen }) => (
           />
 
           {navItems.filter(item => item.position === "top").map((item, index) => (
-            !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
+            !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
           ))}
 
         </div>
@@ -208,7 +226,7 @@ const Sidebar = ({ isChatOpen }) => (
     <div className="mt-auto border-t">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
+          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
         ))}
       </div>
     </div>
@@ -257,7 +275,7 @@ const MobileNav = ({ navItems }) => {
             <div >
               <div>
                 {navItems.filter(item => item.position === "top").map((item, index) => (
-                  <NavItem key={index} {...item} onClick={handleClose}/>
+                  <NavItem key={index} {...item} onClick={handleClose} />
                 ))}
               </div>
             </div>
@@ -265,7 +283,7 @@ const MobileNav = ({ navItems }) => {
           <div className="mt-auto  border-t">
             <div>
               {navItems.filter(item => item.position === "bottom").map((item, index) => (
-                <NavItem key={index} {...item} onClick={handleClose}/>
+                <NavItem key={index} {...item} onClick={handleClose} />
               ))}
             </div>
           </div>
