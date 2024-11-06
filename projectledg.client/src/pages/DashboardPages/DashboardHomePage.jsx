@@ -214,14 +214,14 @@ const DashboardHomePage = () => {
         <MetricGraph
           metricFilter={topMetricFilter}
           setMetricFilter={setTopMetricFilter}
-          title="Data Graf"
+          title=""
           metricsData={filterGraphsData}
           metricOptions={metricOptions}
         />
         <MetricGraph
           metricFilter={bottomMetricFilter}
           setMetricFilter={setBottomMetricFilter}
-          title="Data Graf"
+          title=""
           metricsData={filterGraphsData}
           metricOptions={metricOptions}
         />
