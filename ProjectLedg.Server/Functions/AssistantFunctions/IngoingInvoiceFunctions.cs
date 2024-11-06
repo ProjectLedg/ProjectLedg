@@ -20,22 +20,26 @@ namespace ProjectLedg.Server.Services.AssistantFunctions
         {
             var invoices = await _context.IngoingInvoices
                 .Where(i => i.CompanyId == companyId && !i.IsPaid)
+                .Include(i => i.Company)
                 .ToListAsync();
 
             if (!invoices.Any())
-                return $"Jag hittade inga fakturor för företaget med företags Id: {companyId}.";
+            {
+                return $"Jag hittade inga obetalda fakturor för företaget med företags Id: {companyId}.";
+            }
 
             var invoicesInfo = invoices.Select(i =>
-                $"Fakturanummer: {i.InvoiceNumber}: Betala senast: = {i.DueDate}, Total: = {i.InvoiceTotal}");
+                $"Fakturanummer: {i.InvoiceNumber}, Betala senast: {i.DueDate.ToShortDateString()}, Total: {i.InvoiceTotal}");
 
-            return $"Obetalda fakturor för företaget med ID: {companyId}:\n" + string.Join("\n", invoicesInfo);
+            return $"Obetalda fakturor för företaget '{invoices.First().Company.CompanyName}' med ID: {companyId}:\n" +
+                   string.Join("\n", invoicesInfo);
         }
 
         public async Task<string> GetInvoices(string companyName, int? year = null, int? month = null)
         {
             var invoicesQuery = _context.IngoingInvoices
                 .Include(i => i.Company)
-                .Where(i => i.Company.CompanyName == companyName);
+                .Where(i => i.Company.CompanyName.ToLower() == companyName.ToLower());
 
             // Apply year filter if specified
             if (year.HasValue)
@@ -54,20 +58,20 @@ namespace ProjectLedg.Server.Services.AssistantFunctions
             if (!invoices.Any())
             {
                 var filterDescription = $"För företaget: '{companyName}'";
-                if (year.HasValue) filterDescription += $" under Året: {year}";
-                if (month.HasValue) filterDescription += $" och Månad: {month}";
+                if (year.HasValue) filterDescription += $" under året: {year}";
+                if (month.HasValue) filterDescription += $" och månaden: {month}";
 
                 return $"Dessvärre hittades inga fakturor {filterDescription}.";
             }
 
             var invoicesInfo = invoices.Select(i =>
-                $"Fakturanummer: {i.InvoiceNumber}: Datum: {i.InvoiceDate.ToShortDateString()}, Total: {i.InvoiceTotal}");
+                $"Fakturanummer: {i.InvoiceNumber}, Datum: {i.InvoiceDate.ToShortDateString()}, Total: {i.InvoiceTotal}");
 
-            var filterDescriptionSuccess = $"För företaget: '{companyName}'";
-            if (year.HasValue) filterDescriptionSuccess += $" under Året: {year}";
-            if (month.HasValue) filterDescriptionSuccess += $" och Månad: {month}";
+            var filterDescriptionSuccess = $"för företaget: '{companyName}'";
+            if (year.HasValue) filterDescriptionSuccess += $" under året: {year}";
+            if (month.HasValue) filterDescriptionSuccess += $" och månaden: {month}";
 
-            return $"Fakturor: {filterDescriptionSuccess}:\n" + string.Join("\n", invoicesInfo);
+            return $"Fakturor {filterDescriptionSuccess}:\n" + string.Join("\n", invoicesInfo);
         }
     }
 }
