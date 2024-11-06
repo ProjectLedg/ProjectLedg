@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
 using ProjectLedg.Server.Functions.AssistantFunctions;
+using ProjectLedg.Server.Helpers.Commands;
 
 public class AssistantService : IAssistantService
 {
@@ -21,6 +22,7 @@ public class AssistantService : IAssistantService
     private readonly EncryptionHelper _encryptionHelper;
     private readonly string _csvFilePath;
     private readonly string _directivesFilePath;
+    private readonly CommandHelper _commandHelper;
 
     //Functions
     private readonly IBasAccountFunctions _basAccountFunctions;
@@ -48,16 +50,19 @@ public class AssistantService : IAssistantService
         _basAccountFunctions = basAccountFunctions;
         _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
 
+        _commandHelper = new CommandHelper();
+
         _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
         {
-            { "GetCompanyBasAccounts", async args => await _basAccountFunctions.GetCompanyBasAccounts(int.Parse(args[0])) },
-            { "GetPopularBasAccounts", async args => await _basAccountFunctions.GetPopularBasAccountsForCompany(int.Parse(args[0])) },
-            { "GetLatestTransactions", async args => await _transactionFunctions.GetLatestTransactionsForCompany(int.Parse(args[0])) },
-            { "GetHighProfileTransactions", async args => await _transactionFunctions.GetHighProfileTransactionsForCompany(int.Parse(args[0]), decimal.Parse(args[1])) },
-            { "GetUnpaidIngoingInvoices", async args => await _ingoingInvoiceFunctions.GetUnpaidIngoingInvoicesForCompany(int.Parse(args[0])) },
-            { "GetUnpaidOutgoingInvoices", async args => await _outgoingInvoiceFunctions.GetUnpaidOutgoingInvoicesForCompany(int.Parse(args[0])) },
-            { "GetInvoicesByCompanyNameAndYear", async args => await _ingoingInvoiceFunctions.GetInvoices(args[0], int.Parse(args[1])) }
+            { "visa alla bas konton", async args => await _basAccountFunctions.GetCompanyBasAccounts(int.Parse(args[0])) },
+            { "visa mest populära bas konton", async args => await _basAccountFunctions.GetPopularBasAccountsForCompany(int.Parse(args[0])) },
+            { "visa senaste transaktionerna", async args => await _transactionFunctions.GetLatestTransactionsForCompany(int.Parse(args[0])) },
+            { "visa högprofilerade transaktioner", async args => await _transactionFunctions.GetHighProfileTransactionsForCompany(int.Parse(args[0]), decimal.Parse(args[1])) },
+            { "visa obetalda inkommande fakturor", async args => await _ingoingInvoiceFunctions.GetUnpaidIngoingInvoicesForCompany(int.Parse(args[0])) },
+            { "visa obetalda utgående fakturor", async args => await _outgoingInvoiceFunctions.GetUnpaidOutgoingInvoicesForCompany(int.Parse(args[0])) },
+            { "hämta fakturor", async args => await _ingoingInvoiceFunctions.GetInvoices(args[0], int.Parse(args[1])) }
         };
+
         _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
     }
 
@@ -70,6 +75,27 @@ public class AssistantService : IAssistantService
         var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
             ? new List<Message>()
             : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
+
+        // Clear chat history if it exceeds the maximum allowed size
+        const int MaxMessages = 20;
+        if (messages.Count > MaxMessages)
+        {
+            messages = messages.TakeLast(MaxMessages).ToList();
+        }
+
+        // Check if the message is a command
+        var commandResult = await ProcessCommandAsync(message);
+        if (commandResult != null)
+        {
+            // If a command was processed, return the command result directly
+            messages.Add(new Message(Role.Assistant, commandResult));
+
+            // Encrypt and store updated chat history in session
+            chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+            session.SetString("ChatHistory", chatHistoryEncrypted);
+
+            return commandResult;
+        }
 
         // Ensure system message is added only once per session
         if (!messages.Any(m => m.Role == Role.System))
@@ -87,7 +113,7 @@ public class AssistantService : IAssistantService
         var userMessage = new Message(Role.User, message);
         messages.Add(userMessage);
 
-        // Limit to recent messages
+        // Limit to recent messages again before sending
         var recentMessages = messages.TakeLast(10).ToList();
         var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
 
@@ -97,11 +123,78 @@ public class AssistantService : IAssistantService
         messages.Add(new Message(Role.Assistant, assistantResponse));
 
         // Encrypt and store in session
-        var encryptedChatHistory = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-        session.SetString("ChatHistory", encryptedChatHistory);
+        chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+        session.SetString("ChatHistory", chatHistoryEncrypted);
 
-        Console.WriteLine($"Encrypted Chat History: {encryptedChatHistory}");
         return assistantResponse;
+    }
+
+    public void ClearChatHistory()
+    {
+        var session = _httpContextAccessor.HttpContext.Session;
+        session.Remove("ChatHistory");
+    }
+
+
+    private async Task<string> ProcessCommandAsync(string message)
+    {
+        foreach (var command in _commandHandlers)
+        {
+            if (message.Contains(command.Key, StringComparison.OrdinalIgnoreCase))
+            {
+                // Extract arguments using the updated method
+                var args = ExtractArguments(message, command.Key);
+
+                // Handle company name or ID dynamically
+                if (int.TryParse(args[0], out int companyId))
+                {
+                    // Company ID is provided, call the command directly
+                    return await command.Value(new[] { companyId.ToString() });
+                }
+                else
+                {
+                    // Company name is provided; lookup the company by name with case-insensitivity
+                    var companyName = args[0].ToLower();
+                    var company = await _dbContext.Companies
+                        .FirstOrDefaultAsync(c => c.CompanyName.ToLower() == companyName);
+
+                    if (company == null)
+                    {
+                        var allCompanies = await _dbContext.Companies
+                            .Select(c => c.CompanyName)
+                            .ToListAsync();
+
+                        return $"Företaget med namnet '{args[0]}' hittades inte. Tillgängliga företag är: {string.Join(", ", allCompanies)}.";
+                    }
+
+                    return await command.Value(new[] { company.Id.ToString() });
+                }
+            }
+        }
+        return null; // Return null if no command matches
+    }
+
+
+    private string[] ExtractArguments(string message, string commandKeyword)
+    {
+        // Find the position of the command keyword in the message
+        int keywordPosition = message.IndexOf(commandKeyword, StringComparison.OrdinalIgnoreCase);
+        if (keywordPosition == -1)
+        {
+            return Array.Empty<string>();
+        }
+
+        // Extract everything after the command keyword
+        string arguments = message.Substring(keywordPosition + commandKeyword.Length).Trim();
+
+        // Remove the "för" keyword and any extra spaces that may follow it
+        if (arguments.StartsWith("för ", StringComparison.OrdinalIgnoreCase))
+        {
+            arguments = arguments.Substring(4).Trim();
+        }
+
+        // Return the cleaned-up argument as a single-element array
+        return new[] { arguments };
     }
 
     private List<BasAccount> LoadBasAccounts()

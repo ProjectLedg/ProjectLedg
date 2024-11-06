@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ProjectLedg.Server.Helpers
+namespace ProjectLedg.Server.Helpers.Hashing
 {
     public static class AuthenticatorHelper
     {

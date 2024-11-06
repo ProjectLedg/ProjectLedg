@@ -17,7 +17,8 @@ export default function ChatService({ onClose, mobile }) {
             return response.data; // Return the response data
         } catch (error) {
             console.error("Failed to send message", error);
-            throw error; // Rethrow the error if you want to handle it further up
+            const response = ("Något gick tyvärr fel när jag försökte skicka meddelandet. Försök gärna igen om en stund!")
+            return response;
         }
     }
     
