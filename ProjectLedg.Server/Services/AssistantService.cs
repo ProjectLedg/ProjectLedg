@@ -76,6 +76,13 @@ public class AssistantService : IAssistantService
             ? new List<Message>()
             : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
 
+        // Clear chat history if it exceeds the maximum allowed size
+        const int MaxMessages = 20;
+        if (messages.Count > MaxMessages)
+        {
+            messages = messages.TakeLast(MaxMessages).ToList();
+        }
+
         // Check if the message is a command
         var commandResult = await ProcessCommandAsync(message);
         if (commandResult != null)
@@ -84,8 +91,8 @@ public class AssistantService : IAssistantService
             messages.Add(new Message(Role.Assistant, commandResult));
 
             // Encrypt and store updated chat history in session
-            var encryptedChatHistory = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-            session.SetString("ChatHistory", encryptedChatHistory);
+            chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+            session.SetString("ChatHistory", chatHistoryEncrypted);
 
             return commandResult;
         }
@@ -106,22 +113,28 @@ public class AssistantService : IAssistantService
         var userMessage = new Message(Role.User, message);
         messages.Add(userMessage);
 
-        // Limit to recent messages for context in the chat model
+        // Limit to recent messages again before sending
         var recentMessages = messages.TakeLast(10).ToList();
         var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
 
         // Process with OpenAI
         var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
-        var assistantResponse = response.FirstChoice?.Message?.Content ?? "No valid response from assistant.";
+        var assistantResponse = response.FirstChoice?.Message?.Content.GetString() ?? "No valid response from assistant.";
         messages.Add(new Message(Role.Assistant, assistantResponse));
 
-        // Encrypt and store updated chat history in session
-        var encryptedChatHistoryFinal = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-        session.SetString("ChatHistory", encryptedChatHistoryFinal);
+        // Encrypt and store in session
+        chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+        session.SetString("ChatHistory", chatHistoryEncrypted);
 
-        Console.WriteLine($"Encrypted Chat History: {encryptedChatHistoryFinal}");
         return assistantResponse;
     }
+
+    public void ClearChatHistory()
+    {
+        var session = _httpContextAccessor.HttpContext.Session;
+        session.Remove("ChatHistory");
+    }
+
 
     private async Task<string> ProcessCommandAsync(string message)
     {
