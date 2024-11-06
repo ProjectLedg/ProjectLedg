@@ -55,16 +55,40 @@ export default {
     				'5': 'hsl(var(--chart-5))'
     			}
     		},
-            keyframes: {
-				'bg-fade': {
-					'0%': { backgroundColor: 'rgba(243, 244, 246, 1)' }, // bg-gray-100
-					'10%': { backgroundColor: 'rgba(255, 255, 255, 1)' }, // white
-					'100%': { backgroundColor: 'rgba(243, 244, 246, 1)' }, // back to bg-gray-100
-				},
-			},
-			animation: {
-				'bg-fade': 'bg-fade 4s cubic-bezier(0.25, 1, 0.5, 1)',
-			},
+    		keyframes: {
+    			'bg-fade': {
+    				'0%': {
+    					backgroundColor: 'rgba(243, 244, 246, 1)'
+    				},
+    				'10%': {
+    					backgroundColor: 'rgba(255, 255, 255, 1)'
+    				},
+    				'100%': {
+    					backgroundColor: 'rgba(243, 244, 246, 1)'
+    				}
+    			},
+    			'accordion-down': {
+    				from: {
+    					height: '0'
+    				},
+    				to: {
+    					height: 'var(--radix-accordion-content-height)'
+    				}
+    			},
+    			'accordion-up': {
+    				from: {
+    					height: 'var(--radix-accordion-content-height)'
+    				},
+    				to: {
+    					height: '0'
+    				}
+    			}
+    		},
+    		animation: {
+    			'bg-fade': 'bg-fade 4s cubic-bezier(0.25, 1, 0.5, 1)',
+    			'accordion-down': 'accordion-down 0.2s ease-out',
+    			'accordion-up': 'accordion-up 0.2s ease-out'
+    		}
     	}
     },
 	plugins: [

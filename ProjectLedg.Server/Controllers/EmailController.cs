@@ -21,6 +21,28 @@ namespace ProjectLedg.Server.Controllers
             _emailService = emailService;
         }
 
+
+        [HttpPost("create-help-message")]
+        public async Task<IActionResult> CreateHelpMessage([FromBody] EmailDTO dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _emailService.CreateHelpMessageAsync(dto);
+
+            if (response)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(500, "An error occurred while sending the help message");
+            }
+        }
+
+
         [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailDTO emailDto)
         {

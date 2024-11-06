@@ -16,6 +16,7 @@ import FinancialStatementPage from './pages/DashboardPages/FinancialStatementPag
 import SettingsPage from './pages/DashboardPages/SettingsPage'
 import BookingPage from './pages/DashboardPages/BookingPage'
 import InvoicingPage from './pages/DashboardPages/InvoicingPage';
+import HelpPage from './pages/DashboardPages/HelpPage';
 
 function App() {
     return (
@@ -33,6 +34,7 @@ function App() {
                     <Route path="financial-statement" element={<FinancialStatementPage />} />
                     <Route path="invoicing" element={<InvoicingPage />} />
                     <Route path="settings" element={<SettingsPage />} />
+                    <Route path="help" element={<HelpPage />} />
                 </Route>
                 <Route path="/why" element={<WhyPage/>}/>
                 <Route path="/features" element={<FeaturePage/>}/>

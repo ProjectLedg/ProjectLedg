@@ -10,5 +10,6 @@ namespace ProjectLedg.Server.Services.IServices
         Task<bool> SendMassEmailAsync(string subject, string htmlMessage);
         Task<bool> AddEmailAsync(SubscriptionEmailDTO subscriptionEmailDto);
         Task<bool> UnsubscribeEmailAsync(string email);
+        Task<bool> CreateHelpMessageAsync(EmailDTO dto);
     }
 }
