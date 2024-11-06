@@ -106,7 +106,7 @@ public class AssistantService : IAssistantService
         var userMessage = new Message(Role.User, message);
         messages.Add(userMessage);
 
-        // Limit to recent messages for context in the chat model
+        // Limit to recent messages for context in the chat models
         var recentMessages = messages.TakeLast(10).ToList();
         var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
 
