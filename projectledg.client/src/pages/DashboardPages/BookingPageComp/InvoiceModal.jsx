@@ -1,20 +1,12 @@
 import { useState, useEffect, useRef } from "react"
 import ReactMarkdown from "react-markdown"
-import { motion } from "framer-motion"
-import { axiosConfig } from '/axiosconfig'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Switch from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Check, X, FileText, Send, Paperclip, Bot } from "lucide-react"
+import { Send, Bot } from "lucide-react"
 import Typewriter from "@/Typewriter"
 import ChatLoader from "@/ChatLoader"
 
@@ -29,9 +21,6 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
         return savedMessages ? JSON.parse(savedMessages) : [];
     });
     const [hasMessages, setHasMessages] = useState(messages.length > 0);
-
-    // Temp to populate modal popup table
-    const rows = Array(12).fill(null)
 
     useEffect(() => {
         localStorage.setItem('chatMessages', JSON.stringify(messages));

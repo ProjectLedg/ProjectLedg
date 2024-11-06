@@ -1,24 +1,16 @@
 import { useState, useEffect, useRef } from "react"
-import ReactMarkdown from "react-markdown"
 import { motion } from "framer-motion"
 import { axiosConfig } from '/axiosconfig'
 import InvoiceModal from "./InvoiceModal"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import Switch from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Check, X, FileText, Send, Paperclip, Bot } from "lucide-react"
-import ChatWindow from "../DashboardPageComp/ChatWindow"
-import Typewriter from "@/Typewriter"
-import ChatLoader from "@/ChatLoader"
+import { FileText } from "lucide-react"
+
 
 export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
