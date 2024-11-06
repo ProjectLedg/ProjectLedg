@@ -113,14 +113,15 @@ public class AssistantService : IAssistantService
         // Process with OpenAI
         var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
         var assistantResponse = response.FirstChoice?.Message?.Content ?? "No valid response from assistant.";
-        messages.Add(new Message(Role.Assistant, assistantResponse));
+        string assistantResponseString = assistantResponse?.GetString() ?? "No valid response from assistant.";
 
+        messages.Add(new Message(Role.Assistant, (string)assistantResponseString));
         // Encrypt and store updated chat history in session
         var encryptedChatHistoryFinal = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
         session.SetString("ChatHistory", encryptedChatHistoryFinal);
 
         Console.WriteLine($"Encrypted Chat History: {encryptedChatHistoryFinal}");
-        return assistantResponse;
+        return assistantResponseString;
     }
 
     private async Task<string> ProcessCommandAsync(string message)
