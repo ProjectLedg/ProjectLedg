@@ -8,44 +8,41 @@ namespace ProjectLedg.Server.Repositories
 {
     public class AdminRepository : IAdminRepository
     {
-        public Task<IdentityResult> CreateAdminAsync(User user, string password)
+        private readonly UserManager<User> _userManager;
+
+        public AdminRepository(UserManager<User> userManager)
         {
-            throw new NotImplementedException();
+            _userManager = userManager;
         }
 
-        public Task<IdentityResult> DeleteAdminAsync(string password, ClaimsPrincipal currentUser)
+        public async Task<IdentityResult> CreateAdminAsync(User user, string password)
         {
-            throw new NotImplementedException();
+            var result = await _userManager.CreateAsync(user, password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Admin");
+            }
+            return result;
         }
 
-        public Task<User> GetAdminByEmailAsync(string email)
+        public async Task<IdentityResult> UpdateAdminAsync(User user)
         {
-            throw new NotImplementedException();
+            return await _userManager.UpdateAsync(user);
         }
 
-        public Task<User> GetAdminsById(string id)
+        public async Task<IdentityResult> DeleteAdminAsync(User user)
         {
-            throw new NotImplementedException();
+            return await _userManager.DeleteAsync(user);
         }
 
-        public Task<IEnumerable<User>> GetAllAdminsAsync()
+        public async Task<User> GetAdminByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _userManager.FindByIdAsync(id);
         }
 
-        public Task<LoginResult> LoginAsync(string email, string password)
+        public async Task<IEnumerable<User>> GetAllAdminsAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IdentityResult> SendEmailVerificationAsync(string userId, string code)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IdentityResult> UpdateAdminAsync(User user)
-        {
-            throw new NotImplementedException();
+            return await _userManager.GetUsersInRoleAsync("Admin");
         }
     }
 }
