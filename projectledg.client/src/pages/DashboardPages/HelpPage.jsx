@@ -102,10 +102,10 @@ const HelpPage = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={helpSections[0].id} className="w-full">
-            <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-              <TabsList className="inline-flex w-max p-1 h-auto">
+            <ScrollArea className="w-6/12 whitespace-nowrap rounded-md border">
+              <TabsList className="inline-flex justify-around w-full p-1 h-auto ">
                 {helpSections.map((section) => (
-                  <TabsTrigger key={section.id} value={section.id} className="text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5">
+                  <TabsTrigger key={section.id} value={section.id} className="text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5 bg-green-200">
                     {section.title}
                   </TabsTrigger>
                 ))}
