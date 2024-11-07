@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ProjectLedg.Server.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
+using ProjectLedg.Server.Data.Models.DTOs;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -30,6 +31,16 @@ namespace ProjectLedg.Server.Controllers
             }
 
             var response = await _assistantService.SendMessageToAssistantAsync(message);
+            return Ok(response);
+        }
+
+        [HttpPost("MapInvoiceDataToBasAccount")]
+        public async Task<IActionResult> MapInvoiceDataToBasAccount([FromBody] InvoiceMapDTO invoiceMapData)
+        {
+            // TODO: Add error handling
+
+            var response = await _assistantService.MapInvoiceToBasAccountsAsync(invoiceMapData);
+
             return Ok(response);
         }
     }

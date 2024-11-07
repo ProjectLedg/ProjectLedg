@@ -1,0 +1,461 @@
+1010: Utvecklingsutgifter (development costs) - keywords: "development", "R&D", "product development"
+1020: Koncessioner m.m. - keywords: "licenses", "concessions", "permits"
+1030: Patent - keywords: "patent", "intellectual property"
+1040: Licenser - keywords: "license", "licensing rights"
+1050: Varumärken - keywords: "trademark", "branding"
+1060: Hyresrätter, tomträtter och liknande (leases and similar rights) - keywords: "lease rights", "land leases"
+1070: Goodwill - keywords: "goodwill", "intangible assets"
+1080: Förskott för immateriella anläggningstillgångar (advance payments for intangible assets) - keywords: "advance payment", "prepaid"
+1110: Byggnader (buildings) - keywords: "buildings", "structures", "real estate"
+1120: Förbättringsutgifter på annans fastighet (improvements on third-party property) - keywords: "improvements", "third-party property"
+1130: Mark
+1140: Tomter och obebyggda markområden - keywords: "plots", "undeveloped land"
+1150: Markanläggningar
+1180: Pågående nyanläggningar och förskott för byggnader och mark
+1210: Maskiner och andra tekniska anläggningar (machines and technical installations) - keywords: "machinery", "equipment"
+1220: Inventarier och verktyg (furniture and tools) - keywords: "furniture", "fixtures", "tools"
+1230: Installationer
+1240: Bilar och andra transportmedel (vehicles and other transportation equipment) - keywords: "vehicles", "transportation"
+1250: Datorer (computers) - keywords: "computers", "IT equipment", "technology"
+1260: Leasade tillgångar (leased assets) - keywords: "leased assets", "leases"
+1280: Pågående nyanläggningar och förskott för maskiner och inventarier - keywords: "construction", "machinery", "fixtures"
+1290: Övriga materiella anläggningstillgångar (other tangible fixed assets) - keywords: "fixed assets", "tangible assets"
+1310: Andelar i koncernföretag (shares in group companies) - keywords: "shares", "group companies", "investments"
+1320: Långfristiga fordringar hos koncernföretag
+1330: Andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+1340: Långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+1350: Andelar och värdepapper i andra företag (shares and securities in other companies) - keywords: "shares", "securities", "investments"
+1360: Lån till delägare eller närstående enligt ABL, långfristig del
+1370: Uppskjuten skattefordran
+1380: Andra långfristiga fordringar
+1410: Lager av råvaror (inventory of raw materials) - keywords: "raw materials", "inventory", "stock"
+1420: Lager av tillsatsmaterial och förnödenheter
+1440: Produkter i arbete
+1450: Lager av färdiga varor (inventory of finished goods) - keywords: "finished goods", "inventory", "stock"
+1460: Lager av handelsvaror (inventory of merchandise) - keywords: "merchandise", "inventory", "goods"
+1470: Pågående arbeten
+1480: Förskott för varor och tjänster (advance payments for goods and services) - keywords: "advance payment", "prepaid goods"
+1490: Övriga lagertillgångar
+1510: Kundfordringar
+1520: Växelfordringar
+1530: Kontraktsfordringar
+1550: Konsignationsfordringar
+1560: Kundfordringar hos koncernföretag
+1570: Kundfordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+1580: Fordringar för kontokort och kuponger
+1610: Kortfristiga fordringar hos anställda
+1620: Upparbetad men ej fakturerad intäkt
+1630: Avräkning för skatter och avgifter (skattekonto)
+1640: Skattefordringar
+1650: Momsfordran
+1660: Kortfristiga fordringar hos koncernföretag
+1670: Kortfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+1680: Andra kortfristiga fordringar
+1690: Fordringar för tecknat men ej inbetalt aktiekapital
+1710: Förutbetalda hyreskostnader
+1720: Förutbetalda leasingavgifter
+1730: Förutbetalda försäkringspremier
+1740: Förutbetalda räntekostnader
+1750: Upplupna hyresintäkter
+1760: Upplupna ränteintäkter
+1770: Tillgångar av kostnadsnatur
+1780: Upplupna avtalsintäkter
+1790: Övriga förutbetalda kostnader och upplupna intäkter
+1810: Andelar i börsnoterade företag
+1820: Obligationer
+1830: Konvertibla skuldebrev
+1860: Andelar i koncernföretag, kortfristigt
+1880: Andra kortfristiga placeringar
+1890: Nedskrivning av kortfristiga placeringar
+1910: Kassa - keywords: "cash", "cash on hand"
+1920: PlusGiro
+1930: Företagskonto/checkkonto/affärskonto - keywords: "business account", "current account", "checking"
+1940: Övriga bankkonton
+1950: Bankcertifikat
+1960: Koncernkonto moderföretag
+1970: Särskilda bankkonton
+1980: Valutakonton
+1990: Redovisningsmedel
+2010: Eget kapital
+2020: Eget kapital
+2030: Eget kapital
+2040: Eget kapital
+2050: Avsättning till expansionsfond (allocation to expansion fund) - keywords: "expansion", "reserve fund"
+2060: Eget kapital i ideella föreningar, stiftelser och registrerade trossamfund
+2070: Ändamålsbestämda medel
+2080: Bundet eget kapital (restricted equity) - keywords: "restricted equity", "non-distributable"
+2090: Fritt eget kapital (free equity) - keywords: "free equity", "distributable", "retained earnings"
+2110: Periodiseringsfonder (periodization funds) - keywords: "periodization", "tax reserve"
+2120: Periodiseringsfond 2020
+2130: Periodiseringsfond 2020 – nr 2
+2150: Ackumulerade Överavskrivningar (accumulated depreciation) - keywords: "depreciation", "accumulated", "tax deferral"
+2160: Ersättningsfond (replacement fund) - keywords: "replacement", "reserve"
+2190: Övriga obeskattade reserver (other untaxed reserves) - keywords: "untaxed reserves", "tax deferral"
+2210: Avsättningar för pensioner enligt tryggandelagen (pension provisions per Swedish security act) - keywords: "pensions", "provisions"
+2220: Avsättningar för garantier (warranty provisions) - keywords: "warranty", "guarantee"
+2230: Övriga avsättningar för pensioner och liknande förpliktelser (other provisions for pensions) - keywords: "pensions", "provisions", "liabilities"
+2240: Avsättningar för uppskjutna skatter (deferred tax provisions) - keywords: "deferred tax", "tax provisions"
+2250: Övriga avsättningar för skatter (other tax provisions) - keywords: "tax provisions"
+2290: Övriga avsättningar (other provisions) - keywords: "provisions", "reserves"
+2310: Obligations- och förlagslån (bonds and debenture loans) - keywords: "bonds", "debentures", "loans"
+2320: Konvertibla lån och liknande
+2330: Checkräkningskredit (bank overdraft) - keywords: "overdraft", "bank credit"
+2340: Byggnadskreditiv (construction credit) - keywords: "construction loan", "credit facility"
+2350: Andra långfristiga skulder till kreditinstitut (other long-term liabilities to financial institutions) - keywords: "long-term loans", "financial institutions"
+2360: Långfristiga skulder till koncernföretag (long-term liabilities to group companies) - keywords: "group company loans", "intercompany debt"
+2370: Långfristiga skulder till intresseföretag, gemensamt styrda företag (long-term liabilities to associates and joint ventures) - keywords: "associate loans", "joint ventures"
+2390: Övriga långfristiga skulder (other long-term liabilities) - keywords: "long-term debt", "liabilities"
+2410: Andra kortfristiga låneskulder till kreditinstitut (other short-term loans from financial institutions) - keywords: "short-term loans", "credit"
+2420: Förskott från kunder
+2430: Pågående arbeten
+2440: Leverantörsskulder (accounts payable) - keywords: "accounts payable", "trade creditors"
+2450: Fakturerad men ej upparbetad intäkt
+2460: Leverantörsskulder till koncernföretag (accounts payable to group companies) - keywords: "group company payables", "intercompany payables"
+2470: Leverantörsskulder till intresseföretag (accounts payable to associates) - keywords: "associate payables", "joint venture payables"
+2480: Checkräkningskredit, kortfristig
+2490: Övriga kortfristiga skulder till kreditinstitut, kunder och leverantörer
+2510: Skatteskulder (tax liabilities) - keywords: "tax debt", "tax liability"
+2610: Utgående moms, 25 % (output VAT, 25%) - keywords: "output VAT", "sales tax", "25% VAT"
+2620: Utgående moms, 12 % (output VAT, 12%) - keywords: "output VAT", "sales tax", "12% VAT"
+2630: Utgående moms, 6 % (output VAT, 6%) - keywords: "output VAT", "sales tax", "6% VAT"
+2640: Ingående moms (input VAT on purchases) - keywords: "input VAT", "moms", "tax"
+2650: Redovisningskonto för moms (VAT clearing account) - keywords: "VAT clearing", "moms account"
+2660: Punktskatter
+2670: Utgående moms på försäljning inom EU, OSS
+2710: Personalskatt (employee taxes) - keywords: "employee tax", "personnel tax", "tax withholding"
+2730: Lagstadgade sociala avgifter och särskild löneskatt (statutory social fees and special payroll tax) - keywords: "social fees", "payroll tax", "employer fees"
+2740: Avtalade sociala avgifter
+2750: Utmätning i lön m.m.
+2760: Semestermedel
+2790: Övriga löneavdrag
+2810: Avräkning för factoring och belånade kontraktsfordringar
+2820: Kortfristiga skulder till anställda
+2830: Avräkning för annans räkning
+2840: Kortfristiga låneskulder
+2850: Avräkning för skatter och avgifter (skattekonto)
+2860: Kortfristiga skulder till koncernföretag
+2870: Kortfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+2880: Skuld erhållna bidrag
+2890: Övriga kortfristiga skulder
+2910: Upplupna löner
+2920: Upplupna semesterlöner
+2930: Upplupna pensionskostnader
+2940: Upplupna lagstadgade sociala och andra avgifter
+2950: Upplupna avtalade sociala avgifter
+2960: Upplupna räntekostnader
+2970: Förutbetalda intäkter
+2980: Upplupna avtalskostnader
+2990: Övriga upplupna kostnader och förutbetalda intäkter
+3000: Försäljning inom Sverige (sales within Sweden) - keywords: "domestic sales", "Sweden sales", "local revenue"
+3010: Försäljning tjänster inom Sverige (service sales within Sweden) - keywords: "domestic service sales", "Sweden services"
+3020: Försäljning inom EU
+3030: Försäljning varor EU moms
+3040: Försäljning varor inom Sverige
+3050: Försäljning av varor inom Sverige, ej moms (goods sales within Sweden, non-VAT) - keywords: "goods", "non-VAT", "domestic"
+3100: Försäljning av varor utanför Sverige (goods sales outside Sweden) - keywords: "international sales", "export", "foreign revenue"
+3110: Försäljning tjänster utanför Sverige
+3120: Försäljning inom byggsektorn omvänd moms
+3200: Försäljning VMB och omvänd moms (VMB sales and reverse VAT) - keywords: "VMB", "reverse VAT", "margin scheme"
+3211: Försäljning positiv VMB 25 % (positive VMB sales 25%) - keywords: "positive VMB", "margin scheme 25%"
+3212: Försäljning negativ VMB 25 %
+3213: Försäljning positiv VMB 12 %
+3214: Försäljning negativ VMB 12 %
+3230: Försäljning inom byggsektorn, Sverige
+3231: Försäljning inom byggsektorn, omvänd skattskyldighet (construction sector sales, reverse VAT) - keywords: "construction sales", "reverse VAT", "building industry"
+3300: Försäljning varor utanför EU (sales of goods outside EU) - keywords: "non-EU sales", "exports", "foreign goods sales"
+3310: Försäljning tjänster utanför EU
+3320: Försäljning varor inom EU
+3400: Försäljning tjänster utanför Sverige (service sales outside Sweden) - keywords: "international services", "service exports", "foreign service revenue"
+3500: Fakturerade kostnader, vidarefaktureringar (invoiced costs, rebilling) - keywords: "rebilling", "cost invoicing", "recharge"
+3550: Försäljning av upplåtelse
+3600: Övriga rörelseintäkter (other operating income) - keywords: "operating income", "miscellaneous revenue"
+3700: Övriga verksamhetsintäkter (other activity income) - keywords: "miscellaneous revenue", "activity income"
+3740: Öres- och kronutjämning (rounding differences) - keywords: "rounding", "adjustment", "currency differences"
+3750: Kursdifferenser vid omräkning av kundfordringar (exchange differences on receivables) - keywords: "exchange rate", "currency adjustments", "receivables"
+3760: Realisationsvinst vid avyttring av maskiner (capital gains on machine disposals) - keywords: "capital gains", "machine disposal", "sales profit"
+3790: Övriga intäktskorrigeringar
+3800: Aktiverat arbete för egen räkning (gruppkonto)
+3840: Aktiverat arbete (material)
+3850: Aktiverat arbete (omkostnader)
+3870: Aktiverat arbete (personal)
+3900: Övriga rörelseintäkter (gruppkonto)
+3910: Hyres- och arrendeintäkter
+3920: Provisionsintäkter, licensintäkter och royalties
+3940: Orealiserade negativa/positiva värdeförändringar på säkringsinstrument
+3950: Återvunna, tidigare avskrivna kundfordringar
+3960: Valutakursvinster på fordringar och skulder av rörelsekaraktär
+3970: Vinst vid avyttring av immateriella och materiella anläggningstillgångar
+3980: Erhållna offentliga bidrag
+3990: Övriga ersättningar, bidrag och intäkter
+4000: Inköp av varor från Sverige (purchases of goods within Sweden) - keywords: "purchases", "goods", "Sweden", "domestic"
+4010: Inköp av varor EU (purchases of goods within the EU) - keywords: "EU purchases", "goods", "European Union"
+4020: Inköp varor utanför EU (purchases of goods outside the EU) - keywords: "international purchases", "non-EU", "imports"
+4200: Sålda varor VMB
+4211: Sålda varor positiv VMB 25 %
+4400: Momspliktiga inköp i Sverige
+4415: Inköpta varor i Sverige, omvänd skattskyldighet, 25 % moms
+4425: Inköpta tjänster i Sverige, omvänd skattskyldighet, 25 % moms
+4500: Övriga momspliktiga inköp
+4515: Inköp av varor från annat EU-land, 25 %
+4531: Inköp av tjänster från ett land utanför EU, 25 % moms
+4545: Import av varor, 25 % moms
+4600: Legoarbeten och underentreprenader (subcontracting and outsourced work) - keywords: "subcontracting", "outsourcing", "third-party work"
+4700: Reduktion av inköpspriser (gruppkonto)
+4730: Erhållna rabatter
+4790: Övriga reduktioner av inköpspriser
+4900: Förändring av lager (gruppkonto)
+4910: Förändring av lager av råvaror
+4920: Förändring av lager av tillsatsmaterial och förnödenheter
+4940: Förändring av produkter i arbete
+4950: Förändring av lager av färdiga varor
+4960: Förändring av lager av handelsvaror
+4970: Förändring av pågående arbeten, nedlagda kostnader
+4980: Förändring av lager av värdepapper
+5000: Lokalkostnader (general rental and property expenses) - keywords: "rent", "lease", "property expenses"
+5010: Lokalhyra (office rent) - keywords: "rent", "office", "premises"
+5020: El för belysning (electricity for lighting and general power) - keywords: "electricity", "lighting", "energy"
+5030: Värme (heating expenses) - keywords: "heating", "temperature control", "utilities"
+5040: Vatten och avlopp (water and sewage) - keywords: "water", "sewage", "drainage"
+5050: Lokaltillbehör
+5060: Städning och renhållning (cleaning, waste management and janitorial) - keywords: "cleaning", "maintenance", "garbage"
+5070: Reparation och underhåll av lokaler
+5090: Övriga lokalkostnader
+5100: Reparationer och underhåll (repairs and maintenance) - keywords: "maintenance", "repairs", "upkeep"
+5110: Tomträttsavgäld/arrende
+5120: El för belysning
+5130: Värme
+5140: Vatten och avlopp
+5160: Städning och renhållning (waste management) - keywords: "waste", "trash", "disposal", "recycling"
+5170: Reparation och underhåll av fastighet
+5190: Övriga fastighetskostnader
+5200: Hyra av anläggningstillgångar (gruppkonto)
+5210: Hyra av maskiner och andra tekniska anläggningar
+5220: Hyra av inventarier och verktyg
+5250: Hyra av datorer
+5290: Övriga hyreskostnader för anläggningstillgångar
+5300: Förbrukningsmaterial och inventarier (consumables and small equipment) - keywords: "consumables", "equipment", "supplies"
+5310: El för drift
+5320: Gas
+5330: Eldningsolja
+5340: Stenkol och koks
+5350: Torv, träkol, ved och annat träbränsle
+5360: Bensin, fotogen och motorbrännolja
+5370: Fjärrvärme, kyla och ånga
+5380: Vatten
+5390: Övriga energikostnader
+5400: Förbrukningsinventarier och förbrukningsmaterial (consumables) - keywords: "consumables", "supplies", "disposable items"
+5410: Förbrukningsinventarier
+5420: Programvaror
+5430: Transportinventarier
+5440: Förbrukningsemballage
+5460: Förbrukningsmaterial
+5480: Arbetskläder och skyddsmaterial
+5490: Övriga förbrukningsinventarier och förbrukningsmaterial
+5500: Reparation och underhåll (gruppkonto)
+5510: Reparation och underhåll av maskiner och andra tekniska anläggningar
+5520: Reparation och underhåll av inventarier, verktyg och datorer m.m.
+5530: Reparation och underhåll av installationer
+5550: Reparation och underhåll av förbrukningsinventarier
+5580: Underhåll och tvätt av arbetskläder
+5590: Övriga kostnader för reparation och underhåll
+5600: Konstruktionsmaterial (construction materials) - keywords: "construction", "materials", "building"
+5610: Personbilskostnader
+5620: Lastbilskostnader
+5630: Truckkostnader
+5640: Kostnader för arbetsmaskiner
+5650: Traktorkostnader
+5660: Motorcykel-, moped- och skoterkostnader
+5670: Båt-, flygplans- och helikopterkostnader
+5690: Övriga kostnader för transportmedel
+5700: Förbrukningsmaterial (consumables) - keywords: "consumables", "supplies", "disposable items"
+5710: Frakter, transporter och försäkringar vid varudistribution
+5720: Tull- och speditionskostnader m.m.
+5730: Arbetstransporter
+5790: Övriga kostnader för frakter och transporter
+5800: 5800 Resekostnader (travel expenses) - keywords: "travel", "hotel", "parking"
+5810: Biljetter
+5820: Hyrbilskostnader
+5830: Kost och logi
+5890: Övriga resekostnader
+5900: Övriga materialkostnader (other material costs) - keywords: "miscellaneous materials", "materials", "consumables"
+5910: Annonsering
+5920: Utomhus- och trafikreklam
+5930: Reklamtrycksaker och direktreklam
+5940: Utställningar och mässor
+5950: Butiksreklam och återförsäljarreklam
+5960: Varuprover, reklamgåvor, presentreklam och tävlingar
+5970: Film-, radio-, TV- och Internetreklam
+5980: PR, institutionell reklam och sponsring
+5990: Övriga kostnader för reklam och PR
+6000: Övriga försäljningskostnader (gruppkonto)
+6010: Kataloger, prislistor m.m.
+6020: Egna facktidskrifter
+6030: Speciella orderkostnader
+6040: Kontokortsavgifter
+6050: Försäljningsprovisioner
+6060: Kreditförsäljningskostnader
+6070: Representation
+6080: Bankgarantier
+6090: Övriga försäljningskostnader
+6100: Kontorsmateriel och trycksaker (gruppkonto)
+6110: Kontorsmateriel
+6150: Trycksaker
+6200: Tele och post (gruppkonto)
+6210: Telekommunikation - keywords: "telephone", "internet", "telecom"
+6230: Datakommunikation - keywords: "data communication", "internet services"
+6250: Postbefordran
+6300: Företagsförsäkringar och övriga riskkostnader - keywords: "business insurance", "risk coverage
+6310: Företagsförsäkringar
+6320: Självrisker vid skada
+6330: Förluster i pågående arbeten
+6340: Lämnade skadestånd
+6350: Förluster på kundfordringar
+6360: Garantikostnader
+6370: Kostnader för bevakning och larm
+6380: Förluster på övriga kortfristiga fordringar
+6390: Övriga riskkostnader
+6400: Förvaltningskostnader (gruppkonto)
+6410: Styrelsearvoden som inte är lön
+6420: Ersättningar till revisor
+6430: Management fees
+6440: Årsredovisning och delårsrapporter
+6450: Bolagsstämma/års- eller föreningsstämma
+6490: Övriga förvaltningskostnader
+6500: Övriga externa tjänster (gruppkonto)
+6510: Mätningskostnader
+6520: Ritnings- och kopieringskostnader
+6530: Redovisningstjänster
+6540: IT-tjänster
+6550: Konsultarvoden
+6560: Serviceavgifter till branschorganisationer
+6570: Bankkostnader
+6580: Advokat- och rättegångskostnader
+6590: Övriga externa tjänster
+6800: Inhyrd personal (gruppkonto)
+6810: Inhyrd produktionspersonal
+6820: Inhyrd lagerpersonal
+6830: Inhyrd transportpersonal
+6840: Inhyrd kontors- och ekonomipersonal
+6850: Inhyrd IT-personal
+6860: Inhyrd marknads- och försäljningspersonal
+6870: Inhyrd restaurang- och butikspersonal
+6880: Inhyrda företagsledare
+6890: Övrig inhyrd personal
+6900: Övriga externa kostnader (gruppkonto)
+6910: Licensavgifter och royalties
+6920: Kostnader för egna patent
+6930: Kostnader för varumärken m.m.
+6940: Kontroll-, provnings- och stämpelavgifter
+6950: Tillsynsavgifter myndigheter
+6970: Tidningar, tidskrifter och facklitteratur
+6980: Föreningsavgifter
+6990: Övriga externa kostnader
+7000: Löner till kollektivanställda (gruppkonto)
+7010: Löner till kollektivanställda (salaries for blue-collar employees) - keywords: "blue-collar", "wages", "hourly employees"
+7030: Löner till kollektivanställda (utlandsanställda)
+7080: Löner till kollektivanställda för ej arbetad tid
+7090: Förändring av semesterlöneskuld
+7200: Löner till tjänstemän och företagsledare (gruppkonto)
+7210: Löner till tjänstemän (salaries for white-collar employees) - keywords: "white-collar", "salaries", "monthly employees"
+7220: Löner till företagsledare
+7230: Löner till tjänstemän och ftgsledare (utlandsanställda)
+7240: Styrelsearvoden
+7280: Löner till tjänstemän och företagsledare för ej arbetad tid
+7290: Förändring av semesterlöneskuld
+7300: Kostnadsersättningar och förmåner (gruppkonto)
+7310: Kontanta extraersättningar - keywords: "cash allowances", "additional compensation"
+7320: Traktamenten vid tjänsteresa
+7330: Bilersättningar
+7350: Ersättningar för föreskrivna arbetskläder
+7370: Representationsersättningar
+7380: Kostnader för förmåner till anställda
+7390: Övriga kostnadsersättningar och förmåner
+7410: Pensionsförsäkringspremier (pension insurance premiums) - keywords: "pension", "insurance", "retirement contributions"
+7420: Förändring av pensionsskuld
+7430: Avdrag för räntedel i pensionskostnad
+7440: Förändring av pensionsstiftelsekapital
+7460: Pensionsutbetalningar
+7470: Förvaltnings- och kreditförsäkringsavgifter
+7490: Övriga pensionskostnader
+7500: Sociala och andra avgifter enligt lag och avtal (gruppkonto)
+7510: Arbetsgivaravgifter 31,42 % (employer contributions 31.42%) - keywords: "employer tax", "social security", "contributions"
+7530: Särskild löneskatt (special payroll tax) - keywords: "payroll tax", "special tax", "wages tax"
+7550: Avkastningsskatt på pensionsmedel
+7570: Premier för arbetsmarknadsförsäkringar
+7580: Gruppförsäkringspremier
+7590: Övriga sociala och andra avgifter enligt lag och avtal
+7600: Övriga personalkostnader (other personnel costs) - keywords: "personnel costs", "staff expenses", "HR costs"
+7610: Utbildning (education and training) - keywords: "training", "education", "development"
+7620: Sjuk- och hälsovård (sickness and health care) - keywords: "healthcare", "wellness", "employee benefits"
+7630: Personalrepresentation (employee representation) - keywords: "representation", "staff events", "employee relations"
+7650: Sjuklöneförsäkring
+7670: Förändring av personalstiftelsekapital
+7690: Övriga personalkostnader
+7710: Nedskrivningar av immateriella anläggningstillgångar
+7720: Nedskrivningar av byggnader och mark
+7730: Nedskrivningar av maskiner och inventarier
+7740: Nedskrivningar av vissa omsättningstillgångar
+7760: Återföring av nedskrivningar av immateriella anläggningstillgångar
+7770: Återföring av nedskrivningar av byggnader och mark
+7780: Återföring av nedskrivningar av maskiner och inventarier
+7790: Återföring av nedskrivningar av vissa omsättningstillgångar
+7810: Avskrivningar på immateriella anläggningstillgångar
+7820: Avskrivningar på byggnader och markanläggningar
+7830: Avskrivningar på maskiner och inventarier
+7840: Avskrivningar på förbättringsutgifter på annans fastighet
+7940: Orealiserade positiva/negativa värdeförändringar på säkringsinstrument
+7960: Valutakursförluster på fordringar och skulder av rörelsekaraktär
+7970: Förlust vid avyttring av immateriella och materiella anläggningstillgångar
+7990: Övriga rörelsekostnader
+8010: Utdelning på andelar i koncernföretag (dividends from group companies) - keywords: "dividends", "group companies", "returns"
+8020: Resultat vid försäljning av andelar i koncernföretag
+8030: Resultatandelar från handelsbolag (dotterföretag)
+8060: Övriga ränteintäkter från koncernföretag (other interest income from group companies) - keywords: "interest income", "group companies"
+8070: Nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag
+8080: Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag
+8110: Utdelningar på andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+8120: Resultat vid försäljning av andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+8130: Resultatandelar från handelsbolag (intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i)
+8170: Nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i
+8180: Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag
+8210: Utdelningar på andelar i andra företag
+8220: Resultat vid försäljning av värdepapper i och långfristiga fordringar hos andra företag
+8230: Valutakursdifferenser på långfristiga fordringar
+8240: Resultatandelar från handelsbolag (andra företag)
+8250: Ränteintäkter från långfristiga fordringar hos och värdepapper i andra företag
+8260: Ränteintäkter från långfristiga fordringar hos koncernföretag
+8270: Nedskrivningar av innehav av andelar i och långfristiga fordringar hos andra företag
+8280: Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos andra företag
+8290: Värdering till verkligt värde, anläggningstillgångar
+8310: Räntekostnader (interest expenses) - keywords: "interest expense", "loans", "financial costs"
+8320: Valutakursdifferenser (exchange rate differences) - keywords: "currency exchange", "FX gain/loss", "exchange rate adjustment"
+8330: Kreditförluster (credit losses) - keywords: "bad debt", "credit losses", "unpaid invoices"
+8340: Utdelningar på kortfristiga placeringar
+8350: Resultat vid försäljning av kortfristiga placeringar
+8360: Övrigna ränteintäkter från koncernföretag (interest income from group companies) - keywords: "interest income", "group companies", "intragroup"
+8363: Ränteintäkter från andra företag (interest income from other companies) - keywords: "interest income", "external companies"
+8370: Nedskrivningar av kortfristiga placeringar
+8380: Återföringar av nedskrivningar av kortfristiga placeringar
+8390: Övriga finansiella intäkter
+8400: Räntekostnader - keywords: "interest expenses", "loan interest"
+8410: Resultat vid avyttring av anläggningstillgångar (profit on sale of fixed assets) - keywords: "capital gains", "asset sale", "disposal profit"
+8420: Förlust vid avyttring av anläggningstillgångar (loss on sale of fixed assets) - keywords: "capital loss", "asset sale", "disposal loss"
+8430: Valutakursdifferenser på skulder
+8440: Erhållna räntebidrag
+8450: Orealiserade värdeförändringar på skulder
+8460: Räntekostnader till koncernföretag
+8480: Aktiverade ränteutgifter
+8490: Övriga skuldrelaterade poster
+8810: Förändring av periodiseringsfond
+8820: Mottagna koncernbidrag
+8830: Lämnade koncernbidrag
+8840: Lämnade gottgörelser
+8850: Förändring av överavskrivningar
+8860: Förändring av ersättningsfond
+8890: Övriga bokslutsdispositioner
+8910: Skatt på årets resultat (tax on profit for the year) - keywords: "income tax", "profit tax", "corporate tax"
+8920: Skatt på grund av ändrad beskattning
+8930: Restituerad skatt
+8940: Uppskjuten skatt
+8980: Övriga skatter
+8990: Övriga skatter och avgifter (other taxes and fees) - keywords: "miscellaneous taxes", "fees", "tax expenses"
