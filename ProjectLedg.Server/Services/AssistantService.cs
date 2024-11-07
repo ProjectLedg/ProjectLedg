@@ -43,7 +43,7 @@
             _ingoingInvoiceService = invoiceService;
             _basAccountService = basAccountService;
             _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
-            _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
+            _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "assistantDirectives.env");
             _encryptionHelper = encryptionHelper;
 
             //Functions
@@ -261,12 +261,15 @@
             return basAccounts;
         }
 
-        private string LoadAssistantDirectives()
+    private string LoadAssistantDirectives()
+    {
+        if (!File.Exists(_directivesFilePath))
         {
-            if (!File.Exists(_directivesFilePath))
-            {
-                throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
-            }
-            return File.ReadAllText(_directivesFilePath);
+            _logger.LogError("Assistant directives file not found at path: {FilePath}", _directivesFilePath);
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
         }
+
+        _logger.LogInformation("Loading assistant directives from {FilePath}", _directivesFilePath);
+        return File.ReadAllText(_directivesFilePath);
     }
+}
