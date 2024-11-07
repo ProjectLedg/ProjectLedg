@@ -142,7 +142,7 @@ const Problems = () => {
         </h2>
       </div>
 
-      <div className="flex flex-col relative w-screen min-h-screen items-center">
+      <div className="flex flex-col relative w-screen max-h-screen items-center">
         <div className="max-w-7xl py-12 flex flex-col justify-center w-screen items-center">
           <div className="grid grid-cols-2 md:grid-cols-8 gap-4 w-[100vw] md:w-[110vw]">
             <div>

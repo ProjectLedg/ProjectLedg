@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 export default function Content() {
   const navigate = useNavigate();
 
+  const handleNavigate = () => {
+    window.location.hash = "#why";
+  };
+
   return (
     <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24">
       <h1 className="py-10 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -11,11 +15,11 @@ export default function Content() {
       </h1>
 
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-        Bättre än Visma och Fortnox
+        Få full kontroll över ditt företags ekonomi med Ledge
       </h3>
 
       <div className="flex pt-8 flex-row w-[70vw] md:w-[20vw] justify-around">
-        <Button className="w-32" onClick={() => navigate("/signup")}>
+        <Button className="w-32" onClick={handleNavigate}>
           Läs mer
         </Button>
         <button 

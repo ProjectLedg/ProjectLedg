@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.User;
-using ProjectLedg.Server.Helpers;
+using ProjectLedg.Server.Helpers.Hashing;
 using QRCoder;
 
 namespace ProjectLedg.Server.Controllers
