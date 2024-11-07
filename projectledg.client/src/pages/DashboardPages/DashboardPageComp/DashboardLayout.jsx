@@ -175,7 +175,7 @@ const handleLogout = ({ icon: Icon, label, path }) => {
     // Ta bort JWT-token från cookies
     Cookies.remove('JWTToken');
 
-    
+
 
     // Lägg till eventuella andra utloggningslogik här
 
