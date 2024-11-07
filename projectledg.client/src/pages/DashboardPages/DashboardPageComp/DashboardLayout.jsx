@@ -30,13 +30,14 @@ import {
 
 
 const navItems = [
+
   { icon: Home, label: "Hem", path: "", position: "top", tooltipText: "Hem" },
   { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top", tooltipText: "Finansiell rapport" },
   { icon: BookCheck, label: "Bokför", path: "/book", position: "top", tooltipText: "Bokför" },
   { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top", tooltipText: "Årsredovisning" },
   { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top", tooltipText: "Fakturering" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom", tooltipText: "Inställningar" },
-  { icon: HelpCircle, label: "Hjälp", path: "/", position: "bottom", tooltipText: "Hjälp" },
+  { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom", tooltipText: "Hjälp" },
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom", tooltipText: "Logga ut" },
 ];
 

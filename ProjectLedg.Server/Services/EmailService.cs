@@ -85,6 +85,17 @@ namespace ProjectLedg.Server.Services
 
         }
 
+        public Task<bool> CreateHelpMessageAsync(EmailDTO dto)
+        {
+            var emailToSave = new EmailList
+            {
+                Email = dto.Email,
+                Name = dto.Name,
+                Message = dto.Message
+            };
+            return _emailRepository.CreateEmailAsync(emailToSave);
+        }
+
         public async Task<bool> DeleteEmailAsync(int emailId)
         {
             var response = await _emailRepository.DeleteEmailListAsync(emailId);
