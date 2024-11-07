@@ -94,18 +94,18 @@ const HelpPage = () => {
   )
 
   return (
-    <div className="container px-2 sm:px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
-      <Card className="w-full mx-auto">
+    <div className="container ">
+      <Card className="w-full">
         <CardHeader className="space-y-1 sm:space-y-2">
           <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold">Hjälp</CardTitle>
           <CardDescription className="text-sm sm:text-base">Välkommen till hjälp centralen, Här finns svar & frågor samt möjlighet att lämna in en förfrågning</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={helpSections[0].id} className="w-full">
-            <ScrollArea className="w-6/12 whitespace-nowrap rounded-md border">
-              <TabsList className="inline-flex justify-around w-full p-1 h-auto ">
+            <ScrollArea className=" whitespace-nowrap rounded-md border">
+              <TabsList className="inline-flex justify-between w-full p-1 h-auto ">
                 {helpSections.map((section) => (
-                  <TabsTrigger key={section.id} value={section.id} className="text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5 bg-green-200">
+                  <TabsTrigger key={section.id} value={section.id} className="text-xs min-w-36 sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5 dark:bg-gray-800">
                     {section.title}
                   </TabsTrigger>
                 ))}

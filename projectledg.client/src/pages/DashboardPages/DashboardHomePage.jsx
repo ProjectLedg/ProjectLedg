@@ -79,7 +79,7 @@ const LoadingSpinner = () => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-gray-300 rounded shadow">
+      <div className="bg-white p-2 border border-gray-300 rounded shadow dark:bg-gray-700">
         <p className="text-xs sm:text-sm">{`${label} : ${payload[0].value.toLocaleString()} kr`}</p>
       </div>
     );

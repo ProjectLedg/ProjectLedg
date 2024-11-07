@@ -212,7 +212,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
       <Card
         className="w-full h-[600px] flex flex-col shadow-lg border">
         <CardHeader className="border-b">
-          <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white ">Förhandsgranska faktura</CardTitle>
         </CardHeader>
 
         {/* Fade in for skeleton loader */}
@@ -252,7 +252,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     return (
       <Card className="w-full h-[600px] flex flex-col shadow-lg">
         <CardHeader className="border-b">
-          <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
         </CardHeader>
         <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
           <h3 className="text-xl text-gray-400">Ladda upp en faktura för att förhandsgranska</h3>
@@ -266,7 +266,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
   return (
     <Card className="w-full h-[600px] flex flex-col justify-between shadow-lg">
       <CardHeader className="border-b">
-        <CardTitle className="text-2xl font-bold text-gray-800 ">Förhandsgranska faktura</CardTitle>
+        <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
       </CardHeader>
 
       <div className="flex flex-grow flex-col overflow-hidden">
