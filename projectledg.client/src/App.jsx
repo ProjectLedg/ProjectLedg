@@ -17,6 +17,7 @@ import SettingsPage from './pages/DashboardPages/SettingsPage'
 import BookingPage from './pages/DashboardPages/BookingPage'
 import InvoicingPage from './pages/DashboardPages/InvoicingPage';
 import HelpPage from './pages/DashboardPages/HelpPage';
+import AdminLoginPage from './pages/Admin/AdminLoginPage';
 
 function App() {
     return (
@@ -40,7 +41,8 @@ function App() {
                 <Route path="/features" element={<FeaturePage/>}/>
                 <Route path="/pricing" element={<PricingPage/>}/>
                 <Route path="/contact" element={<ContactPage/>}/>
-                <Route path="/company-create" element={<CompanyCreatePage/>}/>      
+                <Route path="/company-create" element={<CompanyCreatePage/>}/>  
+                <Route path="/admin-login" element={<AdminLoginPage />}/>
             </Routes>
         </Router>
     );    
