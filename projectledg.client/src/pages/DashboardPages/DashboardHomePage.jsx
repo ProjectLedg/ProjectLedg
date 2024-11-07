@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
-import { axiosConfig } from '/axiosconfig'
+import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from '@/components/ui/progress'
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
@@ -109,10 +109,18 @@ const DashboardHomePage = () => {
           year: currentYear
         };
         
+        const axiosConfig = axios.create({
+          baseURL: 'https://projectledg.azurewebsites.net/api/',
+          headers: {
+            'Content-Type': 'application/json',
+            // Include additional headers if needed
+          },
+          withCredentials: false, // Ensure this is false unless you specifically need credentials
+        });
 
         const [topGraphsResponse, filterGraphsResponse] = await Promise.all([
-          axiosConfig.post('/Finance/dashboardtopgraphs', payload),
-          axiosConfig.post('/Finance/dashboardbottomgraphs', payload)
+          axiosConfig.post('Finance/dashboardtopgraphs', payload),
+          axiosConfig.post('Finance/dashboardbottomgraphs', payload)
         ]);
 
         setTopGraphsData(topGraphsResponse.data);
