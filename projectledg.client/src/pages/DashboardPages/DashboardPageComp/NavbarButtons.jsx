@@ -19,15 +19,15 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
   const newNotificationsCount = notifications.filter(n => n.isNew).length
 
   return (
-    <div className="flex items-center space-x-2 sm:space-x-4">
+    <div className="flex items-center space-x-2 sm:space-x-4 ">
       <Button
         variant="outline"
         onClick={toggleChat}
         className={`
           relative overflow-hidden transition-all duration-300 ease-in-out
-          px-4 py-2 font-medium text-sm rounded-full
+          px-4 py-2 font-medium text-sm rounded-full dark:bg-white
           ${isChatOpen
-            ? 'bg-green-500 text-white border-green-500'
+            ? 'bg-green-500 text-white border-green-500 dark:bg-green-500'
             : 'bg-transparent text-gray-700 border-none hover:bg-green-50'}
         `}
       >
