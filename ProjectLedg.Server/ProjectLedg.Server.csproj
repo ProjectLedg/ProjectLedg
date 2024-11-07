@@ -53,4 +53,13 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+	<ItemGroup>
+		<None Update="Assets\assistantDirectives.env">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\BasKontoPlan.csv">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>
