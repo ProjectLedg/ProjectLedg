@@ -25,7 +25,7 @@ const navItems = [
   { icon: Home, label: "Hem", path: "", position: "top" },
   { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top" },
   { icon: BookCheck, label: "Bokför", path: "/book", position: "top" },
-  { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top" },
+  { icon: BookDown, label: "Årsredovisning", path: "/annual-report", position: "top" },
   { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
   { icon: HelpCircle, label: "Hjälp", path: "/", position: "bottom" },
@@ -159,10 +159,10 @@ export default function DashboardLayout() {
   useEffect(() => {
     fetchCompanyData();
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); 
+      setIsMobile(window.innerWidth < 768);
     };
 
-    handleResize(); 
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
