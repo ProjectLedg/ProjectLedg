@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import axios from "axios"
+import { axiosConfigMultipart } from '/axiosconfig'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,11 +8,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Upload, FileText } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export default function InvoiceUploader({ setInvoice }) {
+export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [additionalInfo, setAdditionalInfo] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
   const scrollAreaRef = useRef(null)
 
   // TEMP TEST DATA - REMOVE WHEN API WORKS
@@ -46,6 +46,7 @@ export default function InvoiceUploader({ setInvoice }) {
     if (file) {
       setSelectedFile(file);
 
+      // Create preview url so user can open file and preview it
       const reader = new FileReader();
       reader.onload = (event) => {
         setPreviewUrl(event.target.result);
@@ -54,6 +55,7 @@ export default function InvoiceUploader({ setInvoice }) {
     }
   }
 
+  // Open open file with preview url in new window
   const openFileInNewWindow = () => {
     if (previewUrl) {
       const newWindow = window.open();
@@ -64,36 +66,32 @@ export default function InvoiceUploader({ setInvoice }) {
   }
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    setIsLoading(true)
+    event.preventDefault();
+    setIsUploadLoading(true);
 
     try {
-      const formData = new FormData()
-      formData.append('invoice', selectedFile)
-      formData.append('additionalInfo', additionalInfo)
+      // Create formData from file
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      // formData.append("additionalInfo", additionalInfo);
 
-      // Update invoice state and send back to BookingPage
+      // Send formData to API endpoint
+      const response = await axiosConfigMultipart.post("/IngoingInvoice/Analyze", formData);
 
-      // TODO: Change to axios config when endpoint is fixed in backend
-      // const response = await axios.post('/api/upload-invoice', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data'
-      //   }
-      // })
-
-      // setInvoice(response.data); // - UNCOMMENT WHEN API WORKS
-
-
-      // Temp to see if flow works in the meantime - REMOVE WHEN API WORKS
-      setInvoice(invoiceTestData);
-
-      // console.log('Upload successful:', response.data)
-      // Here you might want to show a success message to the user
+      // Update state with response data
+      setInvoice(response.data);
+      console.log("Request successful:", response);
+      console.log("response data:", response.data);
     } catch (error) {
-      console.error('Upload failed:', error)
-      // Here you might want to show an error message to the user
+      // Handle specific error cases
+      if (error.response && error.response.status === 400) {
+        console.error("400 Bad Request:", error.response.data);
+      } else {
+        console.error("Request failed:", error);
+      }
     } finally {
-      setIsLoading(false)
+      // Ensure loading state is reset
+      setIsUploadLoading(false);
     }
   }
 
@@ -164,15 +162,15 @@ export default function InvoiceUploader({ setInvoice }) {
       <CardFooter className="border-t p-4">
         <Button
           onClick={handleSubmit}
-          disabled={!selectedFile || isLoading}
+          disabled={!selectedFile || isUploadLoading}
           className="w-full bg-green-500 hover:bg-green-600 text-white"
         >
-          {isLoading ? (
+          {isUploadLoading ? (
             <span className="animate-spin mr-2">⏳</span>
           ) : (
             <FileText className="w-4 h-4 mr-2" />
           )}
-          {isLoading ? 'Laddar upp...' : 'Ladda upp'}
+          {isUploadLoading ? 'Laddar upp...' : 'Ladda upp'}
         </Button>
       </CardFooter>
     </Card>

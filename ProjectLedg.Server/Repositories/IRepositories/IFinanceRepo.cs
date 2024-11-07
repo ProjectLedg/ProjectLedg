@@ -10,6 +10,21 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         public Task<decimal> GetYearToDateRevenueAsync(int companyId, int year);
 
         public Task<decimal> GetYearToDateExpensesAsync(int companyId, int year);
+        public Task<decimal> GetYearToDateMomsAsync(int companyId, int year);
+        public Task<CapitalEqutityDTO> GetYearToDateCapitalEqutityAsync(int companyId, int year);
+
+        public Task<ShortTermLiabilitiesDTO> GetYearToDateShortTermLiabilitiesAsync(int companyId, int year);
+
+        public Task<decimal> GetYearToDateLongTermLiabilitiesAsync(int companyId, int year);
+
+        public Task<decimal> GetYearToDateExternalExpensesAsync(int companyId, int year);
+        public Task<decimal> GetYearToDateStaffExpensesAsync(int companyId, int year);
+        public Task<decimal> GetFinancialPostsAsync(int companyId, int year);
+
+        public Task<decimal> GetYearToDateIntangibleAssetsAsync(int companyId, int year);
+        public Task<decimal> GetYearToDateTangibleAssetsAsync(int companyId, int year);
+        public Task<decimal> GetYearToDateFinacialAssetsAsync(int companyId, int year);
+        public Task<CurrentAssetsDTO> GetYearToDateCurrentAssetsAsync(int companyId, int year);
 
         public Task<List<MonthlyTotalDTO>> GetProfitHistoryAsync(int companyId, int year);
 

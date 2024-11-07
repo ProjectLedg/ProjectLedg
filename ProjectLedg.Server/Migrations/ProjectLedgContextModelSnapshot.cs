@@ -595,7 +595,10 @@ namespace ProjectLedg.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DueDate")
@@ -628,6 +631,8 @@ namespace ProjectLedg.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("CustomerId");
 
                     b.ToTable("OutgoingInvoices");
@@ -645,6 +650,9 @@ namespace ProjectLedg.Server.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("BasAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<int?>("IngoingInvoiceId")
@@ -877,7 +885,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "c84d6a1c-49a3-47e4-8a69-bda6bfb2e8fd",
+                            ConcurrencyStamp = "552bc731-2408-4e3b-b320-cfefee157c0d",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -885,9 +893,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEApBzng1a3y/xrfgyRFxS6d22dMF+NzHzm9wlML18mtB5XJaeHnU3b8zcc4d9A1TfA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKmbUHNuvMIDfMew6oav5F85aOzzQAiuoto/vWzPgZLLr9VBdIhLswhKUcinn8LKLA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1e85e01a-ec25-44e7-9cc1-c785efa62765",
+                            SecurityStamp = "1fb732ad-52dc-42dc-b382-45197bdcea9b",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
@@ -977,11 +985,13 @@ namespace ProjectLedg.Server.Migrations
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.IngoingInvoice", b =>
                 {
-                    b.HasOne("ProjectLedg.Server.Data.Models.Company", null)
+                    b.HasOne("ProjectLedg.Server.Data.Models.Company", "Company")
                         .WithMany("IngoingInvoices")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.InvoiceItems", b =>
@@ -1003,9 +1013,17 @@ namespace ProjectLedg.Server.Migrations
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
                 {
+                    b.HasOne("ProjectLedg.Server.Data.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ProjectLedg.Server.Data.Models.Customer", "Customer")
                         .WithMany("OutgoingInvoices")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("Customer");
                 });

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, Outlet, useOutletContext } from "react-router-dom";
+import { useParams, Link, Outlet, useOutletContext, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
-import ChatWindow from "./ChatWindow";
-import axiosConfig from "/axiosconfig";
-import ChatWindowMobile from "./ChatWindowMobile";
+import ChatService from "@/services/ChatService";
+import { axiosConfig } from '/axiosconfig'
+import UserDropdown from "./UserDropdown";
 import { motion, AnimatePresence } from "framer-motion"
 import Cookies from "js-cookie";
 import {
@@ -18,8 +18,16 @@ import {
   BookDown,
   LogOut,
   FileText,
-  SquarePen,
 } from "lucide-react";
+
+import {
+  TooltipShad,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+
 
 const navItems = [
   { icon: Home, label: "Hem", path: "", position: "top" },
@@ -32,16 +40,128 @@ const navItems = [
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
 ];
 
-const NavItem = ({ icon: Icon, label, path }) => {
-  const { companyId } = useParams(); // Get companyId from the route params
+
+
+const NavItem = ({ icon: Icon, label, path, onClick }) => {
+  const { companyId } = useParams();
+  const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
+
+  const isSelected = location.pathname === fullPath;
+
+  const baseStyle = "flex items-center space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
+  const selectedStyle = "font-bold relative bg-accent";
+  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+
+  const handleClick = () => {
+    // Delay closing the mobile nav by 200 milliseconds
+    setTimeout(() => {
+      if (onClick) onClick();
+    }, 300);
+  };
+
+  const barStyle = {
+    content: "''",
+    position: "absolute",
+    top: "0",
+    right: "0",
+    height: "100%",
+    width: "4px",
+    backgroundColor: "#22c55e",
+    borderRadius: "9999px",
+  };
+
+  const barVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: "100%" },
+    exit: { opacity: 0, height: 0 },
+  };
+
   if (label === "Logga ut") {
     return handleLogout({ icon: Icon, label, path });
   }
+
   return (
-    <Link to={fullPath} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
-      <Icon className="h-5 w-5" />
+    <Link
+      to={fullPath}
+      className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
+      onClick={handleClick}
+    >
+      <Icon className="h-5 w-5" strokeWidth={isSelected ? 2 : 1} />
       <span>{label}</span>
+      {isSelected && (
+        <motion.span
+          style={barStyle}
+          variants={barVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{ duration: 0.3 }}
+        />
+      )}
+    </Link>
+  );
+};
+
+
+
+
+
+const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
+  const { companyId } = useParams();
+  const location = useLocation();
+  const fullPath = `/dashboard/${companyId}${path}`;
+
+  const isSelected = location.pathname === fullPath;
+
+  const baseStyle = "flex items-center justify-around space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
+  const selectedStyle = "font-bold bg-accent text-accent-foreground";
+  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+
+  const barStyle = {
+    content: "''",
+    position: "absolute",
+    top: "0",
+    right: "0",
+    height: "100%",
+    width: "4px",
+    backgroundColor: "#22c55e",
+    borderRadius: "9999px",
+  };
+
+  const barVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: "100%" },
+    exit: { opacity: 0, height: 0 },
+  };
+
+  return (
+    <Link
+      to={fullPath}
+      className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
+    >
+
+      <TooltipProvider>
+        <TooltipShad>
+          <TooltipTrigger>
+            <Icon className="h-6 w-6" />
+          </TooltipTrigger>
+          <TooltipContent>{tooltipText}</TooltipContent>
+        </TooltipShad>
+      </TooltipProvider>
+
+      {isSelected && (
+        <motion.span
+          style={barStyle}
+          variants={barVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{ duration: 0.3 }}
+        />
+      )}
     </Link>
   );
 };
@@ -56,22 +176,10 @@ const handleLogout = ({ icon: Icon, label, path }) => {
   };
 
   return (
-    <a href={path} onClick={handleClick} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
+    <a href={path} onClick={handleClick} className="flex items-center  space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500 ">
       <Icon className="h-5 w-5" />
       <span>{label}</span>
     </a>
-  );
-};
-
-
-const NavItemSmall = ({ icon: Icon, path }) => {
-  const { companyId } = useParams(); // Get companyId from the route params
-  const fullPath = `/dashboard/${companyId}${path}`;
-
-  return (
-    <Link to={fullPath} className="flex items-center justify-around space-x-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground">
-      <Icon className="h-6 w-6" />
-    </Link>
   );
 };
 
@@ -85,18 +193,39 @@ const Sidebar = ({ isChatOpen }) => (
   >
 
     <div className="flex-grow space-y-4 py-4">
-      <div className="px-3 py-2">
-        <div className={`space-y-1 ${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
+      <div className="py-2 h-full">
+        <div className={`h-full${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
+
+          <UserDropdown
+            user={{
+              name: "John Doe",
+              email: "john@example.com",
+              avatarUrl: "https://example.com/avatar.jpg"
+            }}
+            companies={[
+              { id: "1", name: "Company A" },
+              { id: "2", name: "Company B" },
+              { id: "3", name: "Company C" }
+            ]}
+            currentCompany={{ id: "1", name: "Company A" }}
+            onCompanyChange={(company) => {
+              // Handle company change here
+              console.log("Switched to:", company.name);
+            }}
+            isChatOpen={isChatOpen}
+          />
+
           {navItems.filter(item => item.position === "top").map((item, index) => (
-            !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
+            !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
           ))}
+
         </div>
       </div>
     </div>
-    <div className="mt-auto px-3 py-2 border-t">
-      <div className={`space-y-1 ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
+    <div className="mt-auto border-t">
+      <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} />
+          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
         ))}
       </div>
     </div>
@@ -104,38 +233,65 @@ const Sidebar = ({ isChatOpen }) => (
 );
 
 
+const MobileNav = ({ navItems }) => {
 
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
-const MobileNav = ({ navItems }) => (
-  <Sheet>
-    <SheetTrigger asChild>
-      <Button variant="outline" size="icon" className="md:hidden bg-transparent border-0">
-        <Menu className="h-6 w-6" />
-        <span className="sr-only">Open menu</span>
-      </Button>
-    </SheetTrigger>
-    <SheetContent side="left" className="w-60 p-0">
-      <div className="flex flex-col h-full py-4">
-        <div className="flex-grow space-y-4">
-          <div className="px-3 py-2">
-            <div className="space-y-1">
-              {navItems.filter(item => item.position === "top").map((item, index) => (
-                <NavItem key={index} {...item} />
+  return (
+
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="icon" className="md:hidden bg-transparent border-0 ">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-60 p-0">
+        <div className="flex flex-col h-full py-4">
+          <div className="flex-grow ">
+
+            <UserDropdown
+              user={{
+                name: "John Doe",
+                email: "john@example.com",
+                avatarUrl: "https://example.com/avatar.jpg"
+              }}
+              companies={[
+                { id: "1", name: "Company A" },
+                { id: "2", name: "Company B" },
+                { id: "3", name: "Company C" }
+              ]}
+              currentCompany={{ id: "1", name: "Company A" }}
+              onCompanyChange={(company) => {
+                // Handle company change here
+                console.log("Switched to:", company.name);
+              }}
+            />
+
+            <div >
+              <div>
+                {navItems.filter(item => item.position === "top").map((item, index) => (
+                  <NavItem key={index} {...item} onClick={handleClose} />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="mt-auto  border-t">
+            <div>
+              {navItems.filter(item => item.position === "bottom").map((item, index) => (
+                <NavItem key={index} {...item} onClick={handleClose} />
               ))}
             </div>
           </div>
         </div>
-        <div className="mt-auto px-3 py-2 border-t">
-          <div className="space-y-1">
-            {navItems.filter(item => item.position === "bottom").map((item, index) => (
-              <NavItem key={index} {...item} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </SheetContent>
-  </Sheet>
-);
+      </SheetContent>
+    </Sheet>
+  )
+};
+
 
 export default function DashboardLayout() {
   const { companyId } = useParams();
@@ -171,6 +327,7 @@ export default function DashboardLayout() {
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
+
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a more sophisticated loading component
@@ -208,7 +365,7 @@ export default function DashboardLayout() {
             <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
-                <ChatWindowMobile onClose={toggleChat} />
+                <ChatService onClose={toggleChat} mobile />
               ) : (
                 <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
                   <motion.div
@@ -231,7 +388,7 @@ export default function DashboardLayout() {
                         transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
                         className="inherit w-[30vw] fixed right-0"
                       >
-                        <ChatWindow onClose={toggleChat} />
+                        <ChatService onClose={toggleChat} />
                       </motion.div>
                     )}
                   </AnimatePresence>

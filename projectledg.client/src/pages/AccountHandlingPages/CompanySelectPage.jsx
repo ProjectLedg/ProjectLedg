@@ -2,8 +2,9 @@ import { useRef, useEffect, useState } from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard from './CompanySelectPageComponents/CompanyCard'
 import { useNavigate } from 'react-router-dom'
-import axiosConfig from '/axiosconfig'
+import {axiosConfig} from '/axiosconfig'
 import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button"
 
 export default function CompanySelectPage() {
   const companyIcons = [
@@ -18,7 +19,7 @@ export default function CompanySelectPage() {
 
   const infoText = {
     sectionTitle: "Välj företag",
-    sectionDescription: ""
+    sectionDescription: "Välj ett företag för att fortsätta eller lägg till ett nytt"
   }
 
   const scrollContainerRef = useRef(null);
@@ -35,17 +36,13 @@ export default function CompanySelectPage() {
   useEffect(() => {
     const getUserCompanies = async () => {
       try {
-        // Start progress
         setProgress(0);
-        
-        // Simulate initial delay
         await new Promise(resolve => setTimeout(resolve, 500));
         setProgress(20);
 
         const response = await axiosConfig.get("/Company/getUserCompanies");
         setProgress(60);
 
-        // Simulate processing delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         setProgress(80);
 
@@ -58,10 +55,7 @@ export default function CompanySelectPage() {
           navigate(`/dashboard/${companiesData[0].id}`)
         }
 
-        // Final progress
         setProgress(100);
-
-        // Delay to show 100% progress
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (error) {
         console.error("An error occurred retrieving companies:", error);
@@ -130,30 +124,32 @@ export default function CompanySelectPage() {
   }
  
   return ( 
-    <section className="bg-white min-h-screen flex items-center justify-center p-4 overflow-x-hidden">
-      <div className="bg-green-500 rounded-xl p-8 shadow-lg max-w-5xl w-full">
-        <h1 className="text-2xl font-bold text-center mb-2">{infoText.sectionTitle}</h1>
+    <section className="bg-gradient-to-bl from-blue-700/40 to-gray-200 min-h-screen flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl p-8 shadow-lg max-w-5xl w-full">
+        <h1 className="text-3xl font-bold text-center mb-2 text-green-700">{infoText.sectionTitle}</h1>
         <p className="text-gray-600 text-center mb-8">
           {infoText.sectionDescription}
         </p>
         <div className='relative'>
           {showLeftArrow && (
-            <button
+            <Button
               onClick={() => scroll('left')}
-              className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10'
-              aria-label="Scroll left"
+              className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10'
+              size="icon"
+              variant="ghost"
             >
-              <ChevronLeft size={24}/>
-            </button>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
           )}
           {showRightArrow && (
-            <button
+            <Button
               onClick={() => scroll('right')}
-              className='absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10'
-              aria-label='Scroll right'
+              className='absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10'
+              size="icon"
+              variant="ghost"
             >
-              <ChevronRight size={24}/>
-            </button>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           )}
 
           <div
@@ -176,20 +172,20 @@ export default function CompanySelectPage() {
                 companyId={company.id}
                 companyName={company.companyName}
                 orgNumber={company.orgNumber}
-                imageUrl={companyIcons[i]}
+                imageUrl={companyIcons[i % companyIcons.length]}
                 handleCompanySelect={handleCompanySelect}
               />
             ))}
-            <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-gray-200 transition-colors duration-300'>
-              <PlusCircle size={48} className='text-gray-400 mb-2' />
-              <span className="sr-only">Lägg till nytt företag</span>
+            <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 h-48 bg-green-50 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-green-100 transition-colors duration-300 border-2 border-dashed border-green-300'>
+              <PlusCircle size={48} className='text-green-500 mb-2' />
+              <span className="text-green-700 font-medium">Lägg till nytt företag</span>
             </button>
           </div>
           {showLeftArrow && (
-            <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-green-300 to-transparent pointer-events-none"></div>
+            <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
           )}
           {showRightArrow && (
-            <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-green-300 to-transparent pointer-events-none"></div>
+            <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
           )}
         </div>
       </div>

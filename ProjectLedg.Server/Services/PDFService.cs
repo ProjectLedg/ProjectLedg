@@ -6,6 +6,7 @@ using ProjectLedg.Server.Data.Models.DTOs.PDF;
 using System;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Repositories.IRepositories;
+using ProjectLedg.Server.Data.Models.DTOs.Finance;
 
 namespace ProjectLedg.Server.Services
 {
@@ -15,110 +16,175 @@ namespace ProjectLedg.Server.Services
         private readonly IOutgoingInvoiceRepository _invoiceRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly ICustomerRepository _customerRepository;
-        public PDFService(IConverter converter, IOutgoingInvoiceRepository invoiceRepository, ICompanyRepository companyRepository, ICustomerRepository customerRepository)
+        private readonly IFinanceRepo _financeRepository;
+        public PDFService(IConverter converter, IOutgoingInvoiceRepository invoiceRepository, ICompanyRepository companyRepository, ICustomerRepository customerRepository, IFinanceRepo financeRepository)
         {
             _converter = converter;
             _invoiceRepository = invoiceRepository;
             _companyRepository = companyRepository;
             _customerRepository = customerRepository;
+            _financeRepository = financeRepository;
         }
 
-        public byte[] GenerateAnnualReportPdf()
+        public async Task<byte[]> GenerateAnnualReportPdf(AnualReportRequestDTO dto)
         {
+            decimal companyTaxRate = 0.22m;
+
+            // Get the company by ID
+            var company = await _companyRepository.GetCompanyByIdAsync(dto.CompanyId);
+
+            // Get the current date
+            var currentDate = new DateOnly(2023, DateTime.Now.Month, DateTime.Now.Day); // Test for mock data
+
+
+            // Get year to date profit
+            var profit = await _financeRepository.GetYearToDateProfitAsync(dto.CompanyId, currentDate.Year);
+
+            // Get year to date revenue
+            var reveune = await _financeRepository.GetYearToDateRevenueAsync(dto.CompanyId, currentDate.Year);
+
+            //Get year to date Moms
+            var moms = await _financeRepository.GetYearToDateMomsAsync(dto.CompanyId, currentDate.Year);
+
+            // Get external expenses
+            var externalExpenses = await _financeRepository.GetYearToDateExternalExpensesAsync(dto.CompanyId, currentDate.Year);
+
+            //Get staff expenses
+            var staffExpenses = await _financeRepository.GetYearToDateStaffExpensesAsync(dto.CompanyId, currentDate.Year);
+
+            // Get Financial Posts
+            var financialPost = await _financeRepository.GetFinancialPostsAsync(dto.CompanyId, currentDate.Year);
+
+            //Get Intangible Assets
+            var intangibleAssets = await _financeRepository.GetYearToDateIntangibleAssetsAsync(dto.CompanyId, currentDate.Year);
+
+            //Get Tangible Assets
+            var tangibleAssets = await _financeRepository.GetYearToDateTangibleAssetsAsync(dto.CompanyId, currentDate.Year);
+
+            //Get Financial Assets
+            var financialAssets = await _financeRepository.GetYearToDateFinacialAssetsAsync(dto.CompanyId, currentDate.Year);
+
+            //Get Current Assets
+            var currentAssets = await _financeRepository.GetYearToDateCurrentAssetsAsync(dto.CompanyId, currentDate.Year);
+
+            // Get equity capital
+            var equityCapital = await _financeRepository.GetYearToDateCapitalEqutityAsync(dto.CompanyId, currentDate.Year);
+
+            //Get Long Term Liabilities
+            var longTermLiabilities = await _financeRepository.GetYearToDateLongTermLiabilitiesAsync(dto.CompanyId, currentDate.Year);
+
+            //Get ShortTerm Liabilities
+            var shortTermLiabilities = await _financeRepository.GetYearToDateShortTermLiabilitiesAsync(dto.CompanyId, currentDate.Year);
+
             var sb = new StringBuilder();
 
             // Page 1: Title and Certification (centered)
             sb.Append("<div style='text-align: center; margin-top: 150px;'>");
             sb.Append("<h1>Årsredovisning</h1>");
             sb.Append("<h4>för</h4>");
-            sb.Append("<h1>Samuel Hesser AB</h1>");  // Correct name
-            sb.Append("<h3>Org.nr 559321-2961</h3>");  // Correct org number
-            sb.Append("<h3>Räkenskapsåret 2022</h3>");
+            sb.Append($"<h1>{company.CompanyName}</h1>");  // Correct name
+            sb.Append($"<h3>Org.nr {company.OrgNumber}</h3>");  // Correct org number
+            sb.Append($"<h3>Räkenskapsåret {currentDate.Year}</h3>");
             sb.Append("<h3 style='margin-top: 50px;'>Fastställelseintyg</h3>");
-            sb.Append("<p style='text-align: justify;'>Jag intygar att resultaträkningen och balansräkningen har fastställts på årsstämma 2023-06-30.</p>");
+            sb.Append($"<p style='text-align: justify;'>Jag intygar att resultaträkningen och balansräkningen har fastställts på årsstämma {currentDate}.</p>");
             sb.Append("<p style='text-align: justify;'>Årsstämman beslöt att godkänna styrelsens förslag till vinstdisposition.</p>");
             sb.Append("<p style='text-align: justify;'>Jag intygar att innehållet i dessa elektroniska handlingar överensstämmer med originalen och att originalen undertecknats av samtliga personer som enligt lag ska underteckna dessa.</p>");
-            sb.Append("<p style='text-align: left;'>Elektroniskt underskriven av: <br/>Samuel Hesser, Styrelseledamot<br/>2023-07-26</p>");
+            sb.Append("<p style='text-align: justify;'>Årsredovisningen är upprättad i svenska kronor, SEK. Om inte annat särskilt anges, redovisas alla belopp i hela kronor (kr). Uppgifter inom parentes avser föregående år</p>");
+            sb.Append($"<p style='text-align: left;'>Elektroniskt underskriven av: <br/>{dto.Signature}, {dto.SignatureRole}<br/>{currentDate}</p>");
             sb.Append("</div>");
 
             // Page 2: Management Report
-            sb.Append("<div style='page-break-before: always;'>");
+            sb.Append("<div>");
             sb.Append("<h2>Förvaltningsberättelse</h2>");
             sb.Append("<h3>Verksamheten</h3>");
-            sb.Append("<p><strong>Allmänt om verksamheten:</strong> Bolagets verksamhet innefattar träningsverksamhet.</p>");
-            sb.Append("<p>Företaget har sitt säte i Orust.</p>");
-            sb.Append("<p>Väsentliga händelser under räkenskapsåret: Inget extraordinärt har inträffat.</p>");
-            sb.Append("<h3>Flerårsöversikt (Tkr)</h3>");
-            sb.Append("<table style='width: 100%; border-collapse: collapse;'>");
-            sb.Append("<tr><th>2022</th><th>2021 (7 mån)</th></tr>");
-            sb.Append("<tr><td>Nettoomsättning: 141</td><td>137</td></tr>");
-            sb.Append("<tr><td>Resultat efter finansiella poster: 7</td><td>-4</td></tr>");
-            sb.Append("<tr><td>Soliditet (%): 26,5</td><td>87,5</td></tr>");
-            sb.Append("</table>");
+            sb.Append($"<p><strong>Allmänt om verksamheten:</strong> {company.CompanyDescription}.</p>");
+            sb.Append($"<p>Företaget har sitt säte i {company.Address}.</p>");
+            sb.Append("<p>Väsentliga händelser under räkenskapsåret presenteras i noterna.</p>");
             sb.Append("</div>");
 
-            // Page 3: Changes in Equity
-            sb.Append("<div style='page-break-before: always;'>");
-            sb.Append("<h2>Förändringar i eget kapital</h2>");
-            sb.Append("<table style='width: 100%; border-collapse: collapse;'>");
-            sb.Append("<tr><th>Aktiekapital</th><th>Balanserat resultat</th><th>Årets resultat</th><th>Totalt</th></tr>");
-            sb.Append("<tr><td>25 000</td><td>0</td><td>-4 466</td><td>20 534</td></tr>");
-            sb.Append("<tr><td></td><td>-4 466</td><td>4 466</td><td>0</td></tr>");
-            sb.Append("<tr><td></td><td></td><td>6 531</td><td>6 531</td></tr>");
-            sb.Append("<tr><td>25 000</td><td>-4 466</td><td>6 531</td><td>27 065</td></tr>");
-            sb.Append("</table>");
-            sb.Append("</div>");
+            
 
             // Page 4: Result Disposition
             sb.Append("<div style='page-break-before: always;'>");
             sb.Append("<h2>Resultatdisposition</h2>");
-            sb.Append("<p>Styrelsen föreslår att till förfogande stående vinstmedel (kronor):</p>");
+            sb.Append("<p>Styrelsen föreslår att vinstmedlen disponeras enligt följande:</p>");
             sb.Append("<ul>");
-            sb.Append("<li>Ansamlad förlust: -4 466</li>");
-            sb.Append("<li>Årets vinst: 6 531</li>");
+            sb.Append($"<li>Årets resultat:{profit} kr</li>");
             sb.Append("</ul>");
-            sb.Append("<p>Summa disponeras så att i ny räkning överföres: 2 065 kr</p>");
+            sb.Append($"<p>Summa disponeras så att i ny räkning överföres: {Math.Round(profit * ((100 - dto.profitPercentageToKeep)/100),2)} kr</p>");
+            sb.Append($"<p>Summa disponeras till aktieägare: {Math.Round(profit * ((dto.profitPercentageToKeep) / 100),2)} kr</p>");
             sb.Append("<p>Företagets resultat och ställning i övrigt framgår av efterföljande resultat- och balansräkning med noter.</p>");
             sb.Append("</div>");
 
             // Page 5: Income Statement
             sb.Append("<div style='page-break-before: always;'>");
             sb.Append("<h2>Resultaträkning</h2>");
-            sb.Append("<p>Nettoomsättning: 140 538 kr</p>");
-            sb.Append("<p>Övriga externa kostnader: -54 520 kr</p>");
-            sb.Append("<p>Personalkostnader: -78 991 kr</p>");
-            sb.Append("<p>Rörelseresultat: 7 027 kr</p>");
-            sb.Append("<p>Finansiella poster: 39 kr</p>");
-            sb.Append("<p>Resultat efter finansiella poster: 7 066 kr</p>");
-            sb.Append("<p>Skatt på årets resultat: -535 kr</p>");
-            sb.Append("<p>Årets resultat: 6 531 kr</p>");
+            sb.Append($"<p>Nettoomsättning: {(reveune - moms)} kr</p>");
+            sb.Append($"<p>Övriga externa kostnader: - {externalExpenses} kr</p>");
+            sb.Append($"<p>Personalkostnader: -{staffExpenses} kr</p>");
+            sb.Append($"<p>Rörelseresultat: {profit} kr</p>");
+            sb.Append($"<p>Finansiella poster: {financialPost} kr</p>");
+            sb.Append($"<p>Resultat efter finansiella poster: {(financialPost - profit)} kr</p>");
+            sb.Append($"<p>Skatt på årets resultat: -{(profit * companyTaxRate)} kr</p>");
+            sb.Append($"<p>Årets resultat: {profit + financialPost - (profit * companyTaxRate)} kr</p>");
             sb.Append("</div>");
 
             // Page 6: Balance Sheet (Assets)
             sb.Append("<div style='page-break-before: always;'>");
             sb.Append("<h2>Balansräkning - Tillgångar</h2>");
-            sb.Append("<ul><li>Kortfristiga fordringar: 1 306 kr</li><li>Kassa och bank: 81 034 kr</li></ul>");
-            sb.Append("<p>Summa omsättningstillgångar: 102 085 kr</p>");
+            sb.Append("<h3>Anläggningstillgångar:</h3>");
+            sb.Append($"<ul><li>Immanteriella tillgångar: {intangibleAssets} kr</li><li>Materiella tillgångar: {tangibleAssets} kr</li><li>Finansiella tillgångar: {financialAssets} kr</li></ul>");
+            sb.Append($"<p>Summa anläggningstillgånar: {(intangibleAssets + tangibleAssets + financialAssets)} kr</p>");            
+            sb.Append("<h3>Omsättningstillgångar:</h3>");
+            sb.Append($"<ul><li>Lager: {currentAssets.Stock} kr</li><li>Kundfordringar: {currentAssets.AccountsReceivable} kr</li><li>Kassa och Bank: {currentAssets.BankKassa} kr</li><li>Kortfristiga fordringar: {currentAssets.ShortTermReceivables} kr</li></ul>");
+            sb.Append($"<p>Summa omsättningstillgångar: {(currentAssets.Stock + currentAssets.AccountsReceivable + currentAssets.BankKassa + currentAssets.ShortTermReceivables)} kr</p>");
+            sb.Append($"<p><strong>Summa tillgångar:</strong> {(currentAssets.Stock + currentAssets.AccountsReceivable + currentAssets.BankKassa + currentAssets.ShortTermReceivables) + (intangibleAssets + tangibleAssets + financialAssets)} kr.</p>");
             sb.Append("</div>");
 
-            // Page 7: Balance Sheet (Liabilities and Equity)
-            sb.Append("<div style='page-break-before: always;'>");
+            // Page 7: Balance Sheet (Liabilities and Equity) EGET KAPITAL
+            sb.Append("<div>");
             sb.Append("<h2>Balansräkning - Eget Kapital och Skulder</h2>");
-            sb.Append("<p>Aktiekapital: 25 000 kr</p>");
-            sb.Append("<p>Årets resultat: 6 531 kr</p>");
-            sb.Append("<p>Summa eget kapital: 27 065 kr</p>");
-            sb.Append("<p>Skatteskulder: 535 kr</p>");
-            sb.Append("<p>Upplupna kostnader: 53 355 kr</p>");
-            sb.Append("<p>Summa eget kapital och skulder: 102 085 kr</p>");
+            sb.Append("<h3>Eget kapital:</h3>");
+            sb.Append($"<p>Aktiekapital: {equityCapital.StockCapital} kr</p>");
+            sb.Append($"<p>Balanserat resultat: {equityCapital.BalancedResult}kr</p>");
+            sb.Append($"<p>Årets resultat: {equityCapital.YearResult} kr</p>");
+            sb.Append($"<p>Summa Eget kapital:{(equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult)} kr.</p>");
+            // Långfristiga skulder
+            sb.Append("<h3>Långfristiga skulder:</h3>");
+            sb.Append($"<p>Summa långfristiga skulder:{longTermLiabilities} kr.</p>");
+            //Kortfristiga skulder
+            sb.Append("<h3>Kortfristiga skulder:</h3>");
+            sb.Append($"<p>Leveranstörsskulder: {shortTermLiabilities.AccountsPayable} kr</p>");
+            sb.Append($"<p>Kortfristiga lån: {shortTermLiabilities.ShortTermLoans} kr</p>");
+            sb.Append($"<p>Skatter och avgifter: {shortTermLiabilities.TaxesAndFees} kr</p>");
+            sb.Append($"<p>Summa kortfristiga skulder:{(shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr.</p>");
+            sb.Append($"<p><strong>Summa Eget kapital och Skulder:</strong> {(equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult) + longTermLiabilities + (shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr.</p>");
+
             sb.Append("</div>");
+
+            
+
 
             // Page 8: Notes
             sb.Append("<div style='page-break-before: always;'>");
             sb.Append("<h2>Noter</h2>");
-            sb.Append("<h3>Not 1: Redovisningsprinciper</h3>");
+            sb.Append("<h3>Not 1: Redovisningsprinciper:</h3>");
             sb.Append("<p>Årsredovisningen är upprättad i enlighet med årsredovisningslagen och Bokföringsnämndens allmänna råd (BFNAR 2016:10) om årsredovisning i mindre företag.</p>");
-            sb.Append("<h3>Not 2: Medelantalet anställda</h3>");
-            sb.Append("<p>Antal anställda under året: 1</p>");
+            sb.Append("<h3>Not 2: Medelantalet anställda:</h3>");
+            sb.Append($"<p>Antal anställda under året:{company.AmountOfEmployees}. </p>");
+            sb.Append("<h3>Not 3: Intäkter och kostnader:</h3>");
+            sb.Append($"<p>Årets omsättning uppgår till {reveune} kr, med övriga kostnader på {externalExpenses} kr och personkostnader på {staffExpenses} kr. </p>");
+            sb.Append("<h3>Not 4: Avskrivningar på anläggningstillgångar: </h3>");
+            sb.Append($"<p>Avskrivningar under året uppgick till {intangibleAssets} kr för immateriella tillgångar, {tangibleAssets}kr för materiella tillgångar, och {financialAssets} kr för finansiella tillgångar. </p>");
+            sb.Append("<h3>Not 5: Skulder och eget kapital:</h3>");
+            sb.Append($"<p>Långfristiga skulder uppgår till {longTermLiabilities} kr, medan kortfristiga skulder uppgår till {(shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr, Det egna kapitalet uppgår till {equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult} kr, vilket inkluderar akitekapital och balanserat resultat. </p>");
+            sb.Append("</div>");
+
+            // Page 9: Signatures
+            sb.Append("<div style='page-break-before: always;'>");
+            sb.Append("<h2>Underskrifter</h2>");
+            sb.Append("<p>Styrelsen intygar härmed att årsredovisningen upprättad i enlighet med årsredovisningslagen och ger en rättvisande bild av företagets ställning och resultat.</p>");
+            sb.Append($"<p>{dto.Signature}</p>");
             sb.Append("</div>");
 
             var headerHtml = @"
@@ -155,6 +221,15 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
         public async Task<byte[]> GenerateInvoicePdf(OutgoingInvoiceGenerationDTO dto)
         {
 

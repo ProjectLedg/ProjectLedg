@@ -5,6 +5,12 @@ using ProjectLedg.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
+using ProjectLedg.Server.Data.Models;
+using System.Security.Cryptography;
+using System.Text;
+using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
+using ProjectLedg.Server.Functions.AssistantFunctions;
+using ProjectLedg.Server.Helpers.Commands;
 
 public class AssistantService : IAssistantService
 {
@@ -12,82 +18,230 @@ public class AssistantService : IAssistantService
     private readonly ProjectLedgContext _dbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IIngoingInvoiceService _ingoingInvoiceService;
+    private readonly IBasAccountService _basAccountService;
+    private readonly EncryptionHelper _encryptionHelper;
+    private readonly string _csvFilePath;
+    private readonly string _directivesFilePath;
+    private readonly CommandHelper _commandHelper;
 
-    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService)
+    //Functions
+    private readonly IBasAccountFunctions _basAccountFunctions;
+    private readonly IIngoingInvoiceFunctions _ingoingInvoiceFunctions;
+    private readonly ITransactionFunctions _transactionFunctions;
+    private readonly IOutgoingInvoiceFunctions _outgoingInvoiceFunctions;
+
+
+    private readonly Dictionary<string, Func<string[], Task<string>>> _commandHandlers;
+
+    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService, EncryptionHelper encryptionHelper, IBasAccountFunctions basAccountFunctions, IIngoingInvoiceFunctions ingoingInvoiceFunctions, ITransactionFunctions transactionFunctions, IOutgoingInvoiceFunctions outgoingInvoiceFunctions)
     {
         _openAiClient = openAiClient;
         _dbContext = dbContext;
         _httpContextAccessor = httpContextAccessor;
         _ingoingInvoiceService = invoiceService;
+        _basAccountService = basAccountService;
+        _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
+        _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantDirectives.txt");
+        _encryptionHelper = encryptionHelper;
+
+        //Functions
+        _ingoingInvoiceFunctions = ingoingInvoiceFunctions;
+        _transactionFunctions = transactionFunctions;
+        _basAccountFunctions = basAccountFunctions;
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
+
+        _commandHelper = new CommandHelper();
+
+        _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
+        {
+            { "visa alla bas konton", async args => await _basAccountFunctions.GetCompanyBasAccounts(int.Parse(args[0])) },
+            { "visa mest populära bas konton", async args => await _basAccountFunctions.GetPopularBasAccountsForCompany(int.Parse(args[0])) },
+            { "visa senaste transaktionerna", async args => await _transactionFunctions.GetLatestTransactionsForCompany(int.Parse(args[0])) },
+            { "visa högprofilerade transaktioner", async args => await _transactionFunctions.GetHighProfileTransactionsForCompany(int.Parse(args[0]), decimal.Parse(args[1])) },
+            { "visa obetalda inkommande fakturor", async args => await _ingoingInvoiceFunctions.GetUnpaidIngoingInvoicesForCompany(int.Parse(args[0])) },
+            { "visa obetalda utgående fakturor", async args => await _outgoingInvoiceFunctions.GetUnpaidOutgoingInvoicesForCompany(int.Parse(args[0])) },
+            { "hämta fakturor", async args => await _ingoingInvoiceFunctions.GetInvoices(args[0], int.Parse(args[1])) }
+        };
+
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
     }
 
     public async Task<string> SendMessageToAssistantAsync(string message)
     {
-        // Commenting out authentication part for testing without login
-        /*
-        var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-                            ?? _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var session = _httpContextAccessor.HttpContext.Session;
 
-        if (string.IsNullOrEmpty(currentUserId))
+        // Retrieve existing chat history from session, if any
+        var chatHistoryEncrypted = session.GetString("ChatHistory");
+        var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
+            ? new List<Message>()
+            : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
+
+        // Clear chat history if it exceeds the maximum allowed size
+        const int MaxMessages = 20;
+        if (messages.Count > MaxMessages)
         {
-            var claims = _httpContextAccessor.HttpContext?.User?.Claims
-                .Select(c => $"{c.Type}: {c.Value}")
-                .ToList() ?? new List<string> { "No claims found" };
-
-            return $"User is not authenticated. Claims available: {string.Join(", ", claims)}";
+            messages = messages.TakeLast(MaxMessages).ToList();
         }
-        */
 
-        var systemMessage = new Message(Role.System, "This GPT is a Swedish accounting expert designed to assist users with categorizing invoices according to the BAS Chart of Accounts. It focuses on business expenses, revenue recognition, VAT handling, and provides guidance within Swedish BAS accounting standards. It can retrieve and display the authenticated user’s information if requested with 'fetch my info' or 'user info' and display the last 5 invoices with 'show my invoices'.");
+        // Check if the message is a command
+        var commandResult = await ProcessCommandAsync(message);
+        if (commandResult != null)
+        {
+            // If a command was processed, return the command result directly
+            messages.Add(new Message(Role.Assistant, commandResult));
+
+            // Encrypt and store updated chat history in session
+            chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+            session.SetString("ChatHistory", chatHistoryEncrypted);
+
+            return commandResult;
+        }
+
+        // Ensure system message is added only once per session
+        if (!messages.Any(m => m.Role == Role.System))
+        {
+            var basAccounts = LoadBasAccounts();
+            var basContext = string.Join("\n", basAccounts.Select(a =>
+                $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
+            var assistantDirectives = LoadAssistantDirectives();
+
+            var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
+            messages.Insert(0, systemMessage);
+        }
+
+        // Add user's message
         var userMessage = new Message(Role.User, message);
+        messages.Add(userMessage);
 
-        var messages = new List<Message> { systemMessage, userMessage };
-        var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini");
+        // Limit to recent messages again before sending
+        var recentMessages = messages.TakeLast(10).ToList();
+        var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
 
+        // Process with OpenAI
         var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+        var assistantResponse = response.FirstChoice?.Message?.Content ?? "No valid response from assistant.";
+        string assistantResponseString = assistantResponse?.GetString() ?? "No valid response from assistant.";
 
-        if (message.Contains("fetch my info", StringComparison.OrdinalIgnoreCase) ||
-            message.Contains("user info", StringComparison.OrdinalIgnoreCase))
-        {
-            // Passing a test user ID for non-authenticated testing
-            var userInfo = await FetchUserInfoAsync("test-user-id");
-            return userInfo ?? "User not found.";
-        }
-        else if (message.Contains("show my invoices", StringComparison.OrdinalIgnoreCase))
-        {
-            // Passing a test user ID for non-authenticated testing
-            var invoices = await FetchUserInvoicesAsync("test-user-id");
-            return invoices ?? "No invoices found for the authenticated user.";
-        }
+        messages.Add(new Message(Role.Assistant, (string)assistantResponseString));
+        // Encrypt and store updated chat history in session
+        var encryptedChatHistoryFinal = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+        session.SetString("ChatHistory", encryptedChatHistoryFinal);
 
-        var content = response.FirstChoice?.Message?.Content;
-        return content.ValueKind == JsonValueKind.String ? content.GetString() : "No valid response from assistant.";
+        Console.WriteLine($"Encrypted Chat History: {encryptedChatHistoryFinal}");
+        return assistantResponseString;
     }
 
-    private async Task<string> FetchUserInfoAsync(string userId)
+    public void ClearChatHistory()
     {
-        var user = await _dbContext.Users
-            .Where(u => u.Id == userId)
-            .FirstOrDefaultAsync();
-
-        if (user == null)
-            return "User not found.";
-
-        return $"Name: {user.FirstName} {user.LastName}, Email: {user.Email}";
+        var session = _httpContextAccessor.HttpContext.Session;
+        session.Remove("ChatHistory");
     }
 
-    private async Task<string> FetchUserInvoicesAsync(string userId)
+
+    private async Task<string> ProcessCommandAsync(string message)
     {
-        var invoices = await _ingoingInvoiceService.GetAllIngoingInvoicesAsync();
-        var userInvoices = invoices.Where(i => i.CustomerId == userId).OrderByDescending(i => i.InvoiceDate).Take(5).ToList();
+        foreach (var command in _commandHandlers)
+        {
+            if (message.Contains(command.Key, StringComparison.OrdinalIgnoreCase))
+            {
+                // Extract arguments using the updated method
+                var args = ExtractArguments(message, command.Key);
 
-        if (!userInvoices.Any())
-            return "No invoices found for the authenticated user.";
+                // Handle company name or ID dynamically
+                if (int.TryParse(args[0], out int companyId))
+                {
+                    // Company ID is provided, call the command directly
+                    return await command.Value(new[] { companyId.ToString() });
+                }
+                else
+                {
+                    // Company name is provided; lookup the company by name with case-insensitivity
+                    var companyName = args[0].ToLower();
+                    var company = await _dbContext.Companies
+                        .FirstOrDefaultAsync(c => c.CompanyName.ToLower() == companyName);
 
-        var invoiceDetails = userInvoices.Select(i =>
-            $"Invoice Number: {i.InvoiceNumber}, Date: {i.InvoiceDate.ToShortDateString()}, Total: {i.InvoiceTotal}, Due Date: {i.DueDate.ToShortDateString()}, Vendor: {i.VendorName}"
-        ).ToList();
+                    if (company == null)
+                    {
+                        var allCompanies = await _dbContext.Companies
+                            .Select(c => c.CompanyName)
+                            .ToListAsync();
 
-        return string.Join("\n\n", invoiceDetails);
+                        return $"Företaget med namnet '{args[0]}' hittades inte. Tillgängliga företag är: {string.Join(", ", allCompanies)}.";
+                    }
+
+                    return await command.Value(new[] { company.Id.ToString() });
+                }
+            }
+        }
+        return null; // Return null if no command matches
+    }
+
+
+    private string[] ExtractArguments(string message, string commandKeyword)
+    {
+        // Find the position of the command keyword in the message
+        int keywordPosition = message.IndexOf(commandKeyword, StringComparison.OrdinalIgnoreCase);
+        if (keywordPosition == -1)
+        {
+            return Array.Empty<string>();
+        }
+
+        // Extract everything after the command keyword
+        string arguments = message.Substring(keywordPosition + commandKeyword.Length).Trim();
+
+        // Remove the "för" keyword and any extra spaces that may follow it
+        if (arguments.StartsWith("för ", StringComparison.OrdinalIgnoreCase))
+        {
+            arguments = arguments.Substring(4).Trim();
+        }
+
+        // Return the cleaned-up argument as a single-element array
+        return new[] { arguments };
+    }
+
+    private List<BasAccount> LoadBasAccounts()
+    {
+        var basAccounts = new List<BasAccount>();
+
+        try
+        {
+            if (!File.Exists(_csvFilePath))
+            {
+                Console.WriteLine($"BAS chart CSV file not found at path: {_csvFilePath}");
+                return basAccounts;
+            }
+
+            var lines = File.ReadAllLines(_csvFilePath);
+            foreach (var line in lines.Skip(1))
+            {
+                var fields = line.Split(',');
+                if (fields.Length >= 4)
+                {
+                    basAccounts.Add(new BasAccount
+                    {
+                        AccountNumber = fields[0].Trim(),
+                        Description = fields[1].Trim(),
+                        Debit = decimal.TryParse(fields[2], out var debit) ? debit : 0,
+                        Credit = decimal.TryParse(fields[3], out var credit) ? credit : 0,
+                        Year = int.TryParse(fields[4], out var year) ? year : 0
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading BAS accounts: {ex.Message}");
+        }
+
+        return basAccounts;
+    }
+
+    private string LoadAssistantDirectives()
+    {
+        if (!File.Exists(_directivesFilePath))
+        {
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
+        }
+        return File.ReadAllText(_directivesFilePath);
     }
 }

@@ -58,6 +58,7 @@ namespace ProjectLedg.Server.Data
                 .HasForeignKey(t => t.BasAccountId)
                 .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on BasAccount
 
+
             // Seed User data
             modelBuilder.Entity<User>().HasData(
                 new User
@@ -172,24 +173,24 @@ namespace ProjectLedg.Server.Data
 
             // Updated Seed Transaction data over several months
             modelBuilder.Entity<Transaction>().HasData(
-                new Transaction { Id = 2001, Amount = 5000.00m, TransactionDate = new DateTime(2023, 01, 05), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 1 },
-                new Transaction { Id = 2003, Amount = 750.00m, TransactionDate = new DateTime(2023, 01, 15), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 1 },
-                new Transaction { Id = 2006, Amount = 2500.00m, TransactionDate = new DateTime(2023, 03, 01), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 2 },
-                new Transaction { Id = 2008, Amount = 3000.00m, TransactionDate = new DateTime(2023, 04, 10), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 2 },
-                new Transaction { Id = 2012, Amount = 1500.00m, TransactionDate = new DateTime(2023, 06, 01), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 1 },
+                new Transaction { Id = 2001, Amount = 5000.00m, TransactionDate = new DateTime(2023, 01, 05), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2003, Amount = 750.00m, TransactionDate = new DateTime(2023, 01, 15), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2006, Amount = 2500.00m, TransactionDate = new DateTime(2023, 03, 01), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2008, Amount = 3000.00m, TransactionDate = new DateTime(2023, 04, 10), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2012, Amount = 1500.00m, TransactionDate = new DateTime(2023, 06, 01), IsDebit = true, BasAccountId = 1, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
 
-                new Transaction { Id = 2002, Amount = 1500.00m, TransactionDate = new DateTime(2023, 02, 01), IsDebit = true, BasAccountId = 2, IngoingInvoiceId = 2 },
-                new Transaction { Id = 2004, Amount = 3000.00m, TransactionDate = new DateTime(2023, 02, 15), IsDebit = false, BasAccountId = 2, IngoingInvoiceId = 2 },
+                new Transaction { Id = 2002, Amount = 1500.00m, TransactionDate = new DateTime(2023, 02, 01), IsDebit = true, BasAccountId = 2, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2004, Amount = 3000.00m, TransactionDate = new DateTime(2023, 02, 15), IsDebit = false, BasAccountId = 2, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
 
-                new Transaction { Id = 2007, Amount = 9000.00m, TransactionDate = new DateTime(2023, 03, 15), IsDebit = false, BasAccountId = 3, IngoingInvoiceId = 1 },
-                new Transaction { Id = 2011, Amount = 8250.00m, TransactionDate = new DateTime(2023, 05, 15), IsDebit = false, BasAccountId = 3, IngoingInvoiceId = 2 },
+                new Transaction { Id = 2007, Amount = 9000.00m, TransactionDate = new DateTime(2023, 03, 15), IsDebit = false, BasAccountId = 3, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2011, Amount = 8250.00m, TransactionDate = new DateTime(2023, 05, 15), IsDebit = false, BasAccountId = 3, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
 
-                new Transaction { Id = 2014, Amount = 4300.00m, TransactionDate = new DateTime(2023, 03, 01), IsDebit = true, BasAccountId = 4, IngoingInvoiceId = 1 },
-                new Transaction { Id = 2015, Amount = 2200.00m, TransactionDate = new DateTime(2023, 03, 15), IsDebit = true, BasAccountId = 5, IngoingInvoiceId = 2 },
+                new Transaction { Id = 2014, Amount = 4300.00m, TransactionDate = new DateTime(2023, 03, 01), IsDebit = true, BasAccountId = 4, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2015, Amount = 2200.00m, TransactionDate = new DateTime(2023, 03, 15), IsDebit = true, BasAccountId = 5, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
 
-                new Transaction { Id = 2016, Amount = 2000.00m, TransactionDate = new DateTime(2023, 04, 01), IsDebit = true, BasAccountId = 6, IngoingInvoiceId = 1 },
-                new Transaction { Id = 2017, Amount = 1000.00m, TransactionDate = new DateTime(2023, 05, 10), IsDebit = true, BasAccountId = 7, IngoingInvoiceId = 2 },
-                new Transaction { Id = 2018, Amount = 500.00m, TransactionDate = new DateTime(2023, 06, 15), IsDebit = true, BasAccountId = 8, IngoingInvoiceId = 1 }
+                new Transaction { Id = 2016, Amount = 2000.00m, TransactionDate = new DateTime(2023, 04, 01), IsDebit = true, BasAccountId = 6, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2017, Amount = 1000.00m, TransactionDate = new DateTime(2023, 05, 10), IsDebit = true, BasAccountId = 7, IngoingInvoiceId = 2 , OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2018, Amount = 500.00m, TransactionDate = new DateTime(2023, 06, 15), IsDebit = true, BasAccountId = 8, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 }
             );
 
         }

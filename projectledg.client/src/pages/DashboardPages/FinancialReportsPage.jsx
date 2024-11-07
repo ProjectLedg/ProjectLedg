@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axiosConfig from '/axiosconfig'
+import { axiosConfig } from '/axiosconfig'
 import { useParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
