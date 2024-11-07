@@ -11,53 +11,69 @@ namespace ProjectLedg.Server.Services
     public class FinanceService : IFinanceService
     {
         private readonly IFinanceRepo _financeRepo;
+        private readonly ILogger<FinanceService> _logger;
 
-        public FinanceService(IFinanceRepo financeRepo)
+        public FinanceService(IFinanceRepo financeRepo, ILogger<FinanceService> logger)
         {
             _financeRepo = financeRepo;
+            _logger = logger;
         }
 
         // Get YTD profit, revenue & expenses 
         public async Task<FinanceFiscalYearDTO> GetYearToDateFinancesAsync(FinanceRequestDTO financeDto)
         {
-            // Get fiscal year for the company
-            //var fiscalYear = await _financeRepo.GetFiscalYearAsync(financeDto.CompanyId, financeDto.StartDate, financeDto.EndDate);
-
-            // Gather monthly finances
-            var monthlyProfit = await _financeRepo.GetProfitHistoryAsync(financeDto.CompanyId, financeDto.Year);
-            var monthlyRevenue = await _financeRepo.GetRevenueHistoryAsync(financeDto.CompanyId, financeDto.Year);
-            var monthlyExpenses = await _financeRepo.GetExpensesHistoryAsync(financeDto.CompanyId, financeDto.Year);
-
-            var runwayScore = await CalculateRunway(financeDto.CompanyId,financeDto.Year);
-
-
-            return new FinanceFiscalYearDTO
+            try
             {
-                Revenue = new RevenueDTO
+                _logger.LogInformation("Starting GetYearToDateFinancesAsync for CompanyId: {CompanyId}, Year: {Year}", financeDto.CompanyId, financeDto.Year);
+
+                var monthlyProfit = await _financeRepo.GetProfitHistoryAsync(financeDto.CompanyId, financeDto.Year);
+                _logger.LogInformation("Retrieved monthly profit data for CompanyId: {CompanyId}", financeDto.CompanyId);
+
+                var monthlyRevenue = await _financeRepo.GetRevenueHistoryAsync(financeDto.CompanyId, financeDto.Year);
+                _logger.LogInformation("Retrieved monthly revenue data for CompanyId: {CompanyId}", financeDto.CompanyId);
+
+                var monthlyExpenses = await _financeRepo.GetExpensesHistoryAsync(financeDto.CompanyId, financeDto.Year);
+                _logger.LogInformation("Retrieved monthly expenses data for CompanyId: {CompanyId}", financeDto.CompanyId);
+
+                var runwayScore = await CalculateRunway(financeDto.CompanyId, financeDto.Year);
+                _logger.LogInformation("Calculated runway score: {RunwayScore}", runwayScore);
+
+                var result = new FinanceFiscalYearDTO
                 {
-                    TotalRevenue = await _financeRepo.GetYearToDateRevenueAsync(financeDto.CompanyId, financeDto.Year),
-                    RevenueHistory = monthlyRevenue,
-                    ChangePercentage = ValueChangeMonthOverMonth(monthlyRevenue),
-                },
-                Profit = new ProfitDTO
-                {
-                    TotalProfit = await _financeRepo.GetYearToDateProfitAsync(financeDto.CompanyId, financeDto.Year),
-                    ProfitHistory = monthlyProfit,
-                    ChangePercentage = ValueChangeMonthOverMonth(monthlyProfit),
-                },
-                Expenses = new ExpensesDTO
-                {
-                    TotalExpenses = await _financeRepo.GetYearToDateExpensesAsync(financeDto.CompanyId, financeDto.Year),
-                    ExpensesHistory = monthlyExpenses,
-                    ChangePercentage = ValueChangeMonthOverMonth(monthlyExpenses),
-                },
-                Runway = new RunwayDTO
-                {
-                    Message = runwayScore.Message,
-                    Percentage = runwayScore.Percentage,
-                    Months = runwayScore.Months,
-                }
-            };
+                    Revenue = new RevenueDTO
+                    {
+                        TotalRevenue = await _financeRepo.GetYearToDateRevenueAsync(financeDto.CompanyId, financeDto.Year),
+                        RevenueHistory = monthlyRevenue,
+                        ChangePercentage = ValueChangeMonthOverMonth(monthlyRevenue),
+                    },
+                    Profit = new ProfitDTO
+                    {
+                        TotalProfit = await _financeRepo.GetYearToDateProfitAsync(financeDto.CompanyId, financeDto.Year),
+                        ProfitHistory = monthlyProfit,
+                        ChangePercentage = ValueChangeMonthOverMonth(monthlyProfit),
+                    },
+                    Expenses = new ExpensesDTO
+                    {
+                        TotalExpenses = await _financeRepo.GetYearToDateExpensesAsync(financeDto.CompanyId, financeDto.Year),
+                        ExpensesHistory = monthlyExpenses,
+                        ChangePercentage = ValueChangeMonthOverMonth(monthlyExpenses),
+                    },
+                    Runway = new RunwayDTO
+                    {
+                        Message = runwayScore.Message,
+                        Percentage = runwayScore.Percentage,
+                        Months = runwayScore.Months,
+                    }
+                };
+
+                _logger.LogInformation("Successfully created FinanceFiscalYearDTO for CompanyId: {CompanyId}", financeDto.CompanyId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in GetYearToDateFinancesAsync for CompanyId: {CompanyId}", financeDto.CompanyId);
+                throw; // Re-throw to preserve the stack trace for handling at a higher level
+            }
         }
 
         // Get YTD profit
