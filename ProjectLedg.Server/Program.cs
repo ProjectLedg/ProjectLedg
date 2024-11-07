@@ -33,13 +33,11 @@ namespace ProjectLedg.Server
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var services = builder.Services;
             Env.Load();
-
-            //Creating a Session for the temporary files to exist within.
 
             //Load AES Key and IV for Encryption
 
@@ -49,6 +47,8 @@ namespace ProjectLedg.Server
                .ToArray();
             var aesIV = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV"));
 
+
+            //Creating a Session for the temporary files to exist within.
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -81,8 +81,8 @@ namespace ProjectLedg.Server
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
             // Add services to the container.
@@ -130,18 +130,23 @@ namespace ProjectLedg.Server
 
 
                 });
-                //Add Microsoft account authentication
-                //.AddMicrosoftAccount(options =>
-                //{
-                //    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
-                //    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
+            //Add Microsoft account authentication
+            //.AddMicrosoftAccount(options =>
+            //{
+            //    options.ClientId = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID");
+            //    options.ClientSecret = Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET");
 
-                //    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                //    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
-                //    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-                //});
+            //    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+            //    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
+            //    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+            //});
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ManagerPolicy", policy => policy.RequireRole("Manager"));
+                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+            });
 
             services.AddControllers();
 
@@ -200,6 +205,10 @@ namespace ProjectLedg.Server
             //User
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+
+            //Admin
+            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IAdminService, AdminService>();
             //Email
             services.AddScoped<IEmailSender, EmailSender>();
             //JWT
@@ -247,7 +256,7 @@ namespace ProjectLedg.Server
             //Outgoing Invoices
             services.AddScoped<IOutgoingInvoiceRepository, OutgoingInvoiceRepository>();
             services.AddScoped<IOutgoingInvoiceService, OutgoingInvoiceService>();
-          
+
             //OpenAI
             var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             var openAiClient = new OpenAIClient(new OpenAIAuthentication(apiKey: openAiApiKey));
@@ -273,6 +282,20 @@ namespace ProjectLedg.Server
 
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var roles = new[] { "Manager", "Admin", "User" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    
+                }
+            }
 
             app.UseStaticFiles();
             app.UseSession();
