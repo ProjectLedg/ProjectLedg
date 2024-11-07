@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      const response = await axios.post('https://localhost:7223/api/Admin/Login', { email, password }, {
+      const response = await axios.post('https://localhost:7223/api/User/Login', { email, password }, {
         withCredentials: true
       });
 
