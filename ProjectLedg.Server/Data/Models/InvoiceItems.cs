@@ -12,7 +12,7 @@ namespace ProjectLedg.Server.Data.Models
         public decimal Amount { get; set; }
         public int? OutgoingInvoiceId { get; set; } // FK to the Invoice model
         public int? IngoingInvoiceId { get; set; } // FK to the Invoice model
-        public virtual IngoingInvoice IngoingInvoice { get; set; } // Nav property to Invoice
-        public virtual OutgoingInvoice OutgoingInvoice { get; set; } // Nav property to Invoice
+        public virtual IngoingInvoice? IngoingInvoice { get; set; } // Nav property to Invoice
+        public virtual OutgoingInvoice? OutgoingInvoice { get; set; } // Nav property to Invoice
     }
 }
