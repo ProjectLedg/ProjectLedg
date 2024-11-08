@@ -1,8 +1,10 @@
 import React from "react";
 import ReportCheck from "./AnnualReportComp/ReportCheck";
-import YearTag from "./AnnualReportComp/YearTag";
+import { useParams } from "react-router-dom";
+
 
 export default function AnnualReportPage() {
+    const { companyId } = useParams();
     return (
         <div className="container mx-auto">
             <div className="grid grid-cols-1 gap-6">
@@ -11,7 +13,7 @@ export default function AnnualReportPage() {
                         Årsredovisning
                     </h1>
                     <div className="flex flex-col ">
-                        <ReportCheck className="w-full" />
+                        <ReportCheck companyId={companyId} className="w-full" />
                     </div>
 
                 </div>
