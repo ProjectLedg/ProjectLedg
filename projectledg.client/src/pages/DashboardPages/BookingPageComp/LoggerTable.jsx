@@ -36,7 +36,7 @@ const [sortOrder, setSortOrder] = useState("asc") // Default sort order ascendin
 return (
     <Table>
         <TableHeader>
-            <TableRow className="bg-gray-100">
+            <TableRow className="bg-gray-100 dark:bg-black">
                 <DropdownMenu className="flex flex-row justify-around">
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("id")}>Fakturanummer {sortBy === "id" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("date")}>Fakturadatum {sortBy === "date" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>

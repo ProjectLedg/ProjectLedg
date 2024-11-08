@@ -98,7 +98,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
   return (
     <Card className="w-half h-[600px] flex flex-col shadow-lg">
       <CardHeader className="border-b">
-        <CardTitle className="text-2xl font-bold text-gray-800">Ladda upp faktura</CardTitle>
+        <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Ladda upp faktura</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-y-auto p-0">
         <ScrollArea className="h-full p-4" ref={scrollAreaRef}>
@@ -106,7 +106,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
             <div className="relative flex items-center justify-center w-full">
               <Label
                 htmlFor="dropzone-file"
-                className="flex flex-col text-center items-center justify-center w-full h-56 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                className="flex flex-col text-center items-center justify-center w-full h-56 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700"
               >
                 {selectedFile && selectedFile.type.startsWith('image') && previewUrl && (
                   <img
@@ -118,9 +118,9 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
                 <div className="flex flex-col items-center justify-center pt-5 pb-6 px-1 relative z-10">
                   <Upload className={"w-8 h-8 mb-4 text-gray-500"} />
                   <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Klicka för att ladda upp</span> eller släpp filen här
+                    <span className="font-semibold dark:text-white">Klicka för att ladda upp eller släpp filen här</span>
                   </p>
-                  <p className="text-xs text-gray-500">SVG, PNG, JPG eller GIF (MAX. 800x400px)</p>
+                  <p className="text-xs text-gray-500 dark:text-white">SVG, PNG, JPG eller GIF (MAX. 800x400px)</p>
                 </div>
                 <Input
                   id="dropzone-file"
