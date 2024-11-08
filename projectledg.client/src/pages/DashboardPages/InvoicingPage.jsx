@@ -31,7 +31,7 @@ export default function InvoicingPage() {
   const [generatePdfStatus, setGeneratePdfStatus] = useState("idle"); // "idle", "generating", "generated", "error"
   const [pdfBlob, setPdfBlob] = useState(null);
   const [formErrors, setFormErrors] = useState([]);
- 
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,17 +48,17 @@ export default function InvoicingPage() {
     } else {
       const formattedValue = value.replace(/^0+(?=\d)/, '').replace(/^\./, '0.');
       newItems[index][field] = formattedValue;
-      
+
       const numericValue = parseFloat(formattedValue) || 0;
       if (field === "quantity") newItems[index].quantity = Math.max(0, numericValue).toString();
       if (field === "unitPrice") newItems[index].unitPrice = Math.max(0, numericValue).toString();
       if (field === "taxPercentage") newItems[index].taxPercentage = Math.min(100, Math.max(0, numericValue)).toString();
     }
-    
+
     const quantity = parseFloat(newItems[index].quantity) || 0;
     const unitPrice = parseFloat(newItems[index].unitPrice) || 0;
     const taxPercentage = parseFloat(newItems[index].taxPercentage) || 0;
-    
+
     newItems[index].amount = roundToCent(quantity * unitPrice);
     newItems[index].taxAmount = roundToCent(newItems[index].amount * (taxPercentage / 100));
 
@@ -104,8 +104,8 @@ export default function InvoicingPage() {
     if (!invoice.paymentDetails) errors.push("Betalningsdetaljer krävs");
     if (!invoice.customerName) errors.push("Kundnamn krävs");
     if (!invoice.customerAddress) errors.push("Kundadress krävs");
-    if(!invoice.customerOrgNumber) errors.push("Organisationsnummer krävs");
-    if(!invoice.customerTaxId) errors.push("Momsregistreringsnummer krävs");
+    if (!invoice.customerOrgNumber) errors.push("Organisationsnummer krävs");
+    if (!invoice.customerTaxId) errors.push("Momsregistreringsnummer krävs");
     if (invoice.items.length === 0) errors.push("Åtminstone en artikel krävs");
     invoice.items.forEach((item, index) => {
       if (!item.description) errors.push(`Item ${index + 1} Beskrivning krävs`);
@@ -118,7 +118,7 @@ export default function InvoicingPage() {
 
   const saveInvoice = async () => {
     if (!validateForm()) {
-      
+
       return;
     }
 
@@ -143,27 +143,27 @@ export default function InvoicingPage() {
         customerOrgNumber: invoice.customerOrgNumber,
         customerTaxId: invoice.customerTaxId
       };
-      
+
       console.log("formattedInvoice:", formattedInvoice);
       const response = await axiosConfig.post(`/OutgoingInvoice/create/${companyId}`, formattedInvoice);
       setOutgoingInvoiceId(response.data.outgoingInvoiceId);
       setSaveStatus("saved");
-      
+
 
       // Reset the button to "Save Invoice" after 3 seconds
       setTimeout(() => {
         setSaveStatus("idle");
-        
+
       }, 3000);
     } catch (error) {
       console.error("Error saving invoice:", error);
       setSaveStatus("error");
-      
+
 
       // Reset the button to "Save Invoice" after 3 seconds
       setTimeout(() => {
         setSaveStatus("idle");
-        
+
       }, 3000);
     }
   };
@@ -186,16 +186,16 @@ export default function InvoicingPage() {
       const blob = new Blob([response.data], { type: 'application/pdf' });
       setPdfBlob(blob);
       setGeneratePdfStatus("ready");
-      
+
     } catch (error) {
       console.error("Error generating PDF:", error);
       setGeneratePdfStatus("error");
       setPdfBlob(null);
-      
+
 
       setTimeout(() => {
         setGeneratePdfStatus("idle");
-        
+
       }, 3000);
     }
   };
@@ -205,17 +205,17 @@ export default function InvoicingPage() {
 
     // Create a URL for the blob
     const url = window.URL.createObjectURL(pdfBlob);
-    
+
     // Create a temporary link element
     const link = document.createElement('a');
     link.href = url;
     link.download = `${outgoingInvoiceId}_Invoice.pdf`;
-    
+
     // Append to document, click, and clean up
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     // Release the blob URL
     window.URL.revokeObjectURL(url);
 
@@ -223,7 +223,7 @@ export default function InvoicingPage() {
     setTimeout(() => {
       setGeneratePdfStatus("idle");
       setPdfBlob(null);
-      
+
     }, 1000);
   };
 
@@ -247,22 +247,13 @@ export default function InvoicingPage() {
     setGeneratePdfStatus("idle");
     setPdfBlob(null);
     setFormErrors([]);
-    
-    
+
+
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <style jsx global>{`
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-          -webkit-appearance: none; 
-          margin: 0; 
-        }
-        input[type=number] {
-          -moz-appearance: textfield;
-        }
-      `}</style>
+    <div className="w-[92vw] sm:w-auto">
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Fakturering</h1>
         <Button variant="outline" onClick={resetForm}>
@@ -270,7 +261,7 @@ export default function InvoicingPage() {
           Återställ formulär
         </Button>
       </div>
-      
+
       {formErrors.length > 0 && (
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
@@ -285,40 +276,40 @@ export default function InvoicingPage() {
         </Alert>
       )}
 
-      
-      
+
+
       <Tabs defaultValue="details" className="mb-6">
         <TabsList>
           <TabsTrigger value="details">Innehåll</TabsTrigger>
           <TabsTrigger value="customer">Kundinformation</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="details">
           <InvoiceDetails invoice={invoice} handleInputChange={handleInputChange} />
         </TabsContent>
-        
+
         <TabsContent value="customer">
           <CustomerInfo invoice={invoice} handleInputChange={handleInputChange} />
         </TabsContent>
       </Tabs>
 
-      <InvoiceItems 
+      <InvoiceItems
         items={invoice.items}
         handleItemChange={handleItemChange}
         addItem={addItem}
         removeItem={removeItem}
       />
 
-      <InvoiceSummary 
+      <InvoiceSummary
         items={invoice.items}
         totalTax={invoice.totalTax}
         invoiceTotal={invoice.invoiceTotal}
       />
 
-      <div className="flex justify-end">
-        <Button 
-          className="mr-2" 
-          onClick={saveInvoice} 
+      <div className="flex justify-around sm:justify-end">
+        <Button
+          className="mr-2 w-48"
+          onClick={saveInvoice}
           disabled={saveStatus === "saving" || saveStatus === "saved"}
         >
           {saveStatus === "saving" && (
@@ -333,13 +324,14 @@ export default function InvoicingPage() {
               Sparad
             </>
           )}
-          {saveStatus === "error" && "Error"}
-          {saveStatus === "idle" && "Save Invoice"}
+          {saveStatus === "error" && "error"}
+          {saveStatus === "idle" && "Spara faktura"}
         </Button>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={generatePdfStatus === "ready" ? downloadPdf : generatePdf}
           disabled={!outgoingInvoiceId || generatePdfStatus === "generating"}
+          className="w-48"
         >
           {generatePdfStatus === "generating" && (
             <>
