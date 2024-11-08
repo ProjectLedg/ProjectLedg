@@ -28,7 +28,7 @@ namespace ProjectLedg.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Define the relationship between User and Company (Many-to-Many)
+            // Define User and Company relationship (Many-to-Many)
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Companies)
                 .WithMany(c => c.Users)
@@ -36,27 +36,35 @@ namespace ProjectLedg.Server.Data
                     new { CompaniesId = 1, UsersId = "1" }
                 ));
 
-            // Define the relationship between IngoingInvoice and InvoiceItems (One-to-Many)
+            // Define relationships for IngoingInvoice and InvoiceItems (One-to-Many)
             modelBuilder.Entity<InvoiceItems>()
-                .HasOne(ii => ii.IngoingInvoice) // Navigation property in InvoiceItems
-                .WithMany(i => i.Items) // Navigation property in IngoingInvoice
+                .HasOne(ii => ii.IngoingInvoice)
+                .WithMany(i => i.Items)
                 .HasForeignKey(ii => ii.IngoingInvoiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Define the relationship between OutgoingInvoice and InvoiceItems (One-to-Many)
+            // Define relationships for OutgoingInvoice and InvoiceItems (One-to-Many)
             modelBuilder.Entity<InvoiceItems>()
-                .HasOne(ii => ii.OutgoingInvoice) // Navigation property in InvoiceItems
-                .WithMany(o => o.Items) // Navigation property in OutgoingInvoice
+                .HasOne(ii => ii.OutgoingInvoice)
+                .WithMany(o => o.Items)
                 .HasForeignKey(ii => ii.OutgoingInvoiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Define relationships for Customer and OutgoingInvoice (One-to-Many)
+            modelBuilder.Entity<Customer>()
+                .HasMany(c => c.OutgoingInvoices)
+                .WithOne(o => o.Customer)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Define the relationship between Transaction and BasAccount (One-to-Many)
+            // Define Transaction and BasAccount relationship (One-to-Many)
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.BasAccount)
                 .WithMany(b => b.Transactions)
                 .HasForeignKey(t => t.BasAccountId)
-                .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on BasAccount
+                .OnDelete(DeleteBehavior.Restrict);
+
+           
 
 
             // Seed User data
@@ -81,6 +89,11 @@ namespace ProjectLedg.Server.Data
                 new Company { Id = 1, CompanyName = "Test Company", OrgNumber = "1234567890", CompanyDescription = "This is a Company", AmountOfEmployees = 10, Address = "Test adress", TaxId = "1231531432" }
             );
 
+            // Seed Customer data first
+            modelBuilder.Entity<Customer>().HasData(
+                new Customer { Id = 1, Name = "Hjalmar Stranninge", Address = "Arenavägen 61", OrganizationNumber = "123456", TaxId = "59315", CompanyId = 1 }
+            );
+
             // Seed Bas Accounts
             modelBuilder.Entity<BasAccount>().HasData(
                 new BasAccount { Id = 1, Debit = 12750, Credit = 0, Description = "Assets", AccountNumber = "1000", Year = 2023, CompanyId = 1 }, // Konto klass 1: Tillgångar
@@ -92,6 +105,8 @@ namespace ProjectLedg.Server.Data
                 new BasAccount { Id = 7, Debit = 1000, Credit = 0, Description = "Personnel Costs", AccountNumber = "7000", Year = 2023, CompanyId = 1 },
                 new BasAccount { Id = 8, Debit = 500, Credit = 0, Description = "Extraordinary Costs", AccountNumber = "8000", Year = 2023, CompanyId = 1 }  // Konto klass 8: Övriga rörelsekostnader
             );
+
+           
 
             // Seed IngoingInvoice data
             modelBuilder.Entity<IngoingInvoice>().HasData(
@@ -140,20 +155,20 @@ namespace ProjectLedg.Server.Data
                 }
             );
 
-                    modelBuilder.Entity<OutgoingInvoice>().HasData(
-            new OutgoingInvoice
-            {
-                Id = 1,
-                InvoiceNumber = "OUT001",
-                InvoiceDate = new DateTime(2023, 01, 05),
-                DueDate = new DateTime(2023, 01, 15),
-                InvoiceTotal = 10000.00m,
-                IsPaid = true,
-                TotalTax = 500.00m,
-                CustomerId = 1, // Assuming you have a customer with this ID
-                CompanyId = 1 // Assuming it links to the seeded company
-            }
-        );
+            modelBuilder.Entity<OutgoingInvoice>().HasData(
+    new OutgoingInvoice
+    {
+        Id = 1,
+        InvoiceNumber = "OUT001",
+        InvoiceDate = new DateTime(2023, 01, 05),
+        DueDate = new DateTime(2023, 01, 15),
+        InvoiceTotal = 10000.00m,
+        IsPaid = true,
+        TotalTax = 500.00m,
+        CustomerId = 1, // Ensure this matches the seeded Customer Id
+        CompanyId = 1
+    }
+);
 
             // Seed InvoiceItems data
             modelBuilder.Entity<InvoiceItems>().HasData(
@@ -204,7 +219,7 @@ namespace ProjectLedg.Server.Data
                 new Transaction { Id = 2015, Amount = 2200.00m, TransactionDate = new DateTime(2023, 03, 15), IsDebit = true, BasAccountId = 5, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
 
                 new Transaction { Id = 2016, Amount = 2000.00m, TransactionDate = new DateTime(2023, 04, 01), IsDebit = true, BasAccountId = 6, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 },
-                new Transaction { Id = 2017, Amount = 1000.00m, TransactionDate = new DateTime(2023, 05, 10), IsDebit = true, BasAccountId = 7, IngoingInvoiceId = 2 , OutgoingInvoiceId = 1, CompanyId = 1 },
+                new Transaction { Id = 2017, Amount = 1000.00m, TransactionDate = new DateTime(2023, 05, 10), IsDebit = true, BasAccountId = 7, IngoingInvoiceId = 2, OutgoingInvoiceId = 1, CompanyId = 1 },
                 new Transaction { Id = 2018, Amount = 500.00m, TransactionDate = new DateTime(2023, 06, 15), IsDebit = true, BasAccountId = 8, IngoingInvoiceId = 1, OutgoingInvoiceId = 1, CompanyId = 1 }
             );
 
