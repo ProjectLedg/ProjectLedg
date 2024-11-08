@@ -13,54 +13,54 @@ namespace ProjectLedg.Server.Services
             _companyRepository = companyRepository;
             _financeRepository = financeRepository;
         }
-        public async Task<AnnualReportContentDTO> GenerateAnnualReportContent(AnualReportRequestDTO dto)
+        public async Task<AnnualReportContentDTO> GenerateAnnualReportContent(int companyId)
         {
             decimal companyTaxRate = 0.22m;
 
-            var company = await _companyRepository.GetCompanyByIdAsync(dto.CompanyId);
+            var company = await _companyRepository.GetCompanyByIdAsync(companyId);
 
             // Get the current date
             var currentDate = new DateOnly(2023, DateTime.Now.Month, DateTime.Now.Day); // Test for mock data
 
 
             // Get year to date profit
-            var profit = await _financeRepository.GetYearToDateProfitAsync(dto.CompanyId, currentDate.Year);
+            var profit = await _financeRepository.GetYearToDateProfitAsync(companyId, currentDate.Year);
 
             // Get year to date revenue
-            var revenue = await _financeRepository.GetYearToDateRevenueAsync(dto.CompanyId, currentDate.Year);
+            var revenue = await _financeRepository.GetYearToDateRevenueAsync(companyId, currentDate.Year);
 
             //Get year to date Moms
-            var moms = await _financeRepository.GetYearToDateMomsAsync(dto.CompanyId, currentDate.Year);
+            var moms = await _financeRepository.GetYearToDateMomsAsync(companyId, currentDate.Year);
 
             // Get external expenses
-            var externalExpenses = await _financeRepository.GetYearToDateExternalExpensesAsync(dto.CompanyId, currentDate.Year);
+            var externalExpenses = await _financeRepository.GetYearToDateExternalExpensesAsync(companyId, currentDate.Year);
 
             //Get staff expenses
-            var staffExpenses = await _financeRepository.GetYearToDateStaffExpensesAsync(dto.CompanyId, currentDate.Year);
+            var staffExpenses = await _financeRepository.GetYearToDateStaffExpensesAsync(companyId, currentDate.Year);
 
             // Get Financial Posts
-            var financialPost = await _financeRepository.GetFinancialPostsAsync(dto.CompanyId, currentDate.Year);
+            var financialPost = await _financeRepository.GetFinancialPostsAsync(companyId, currentDate.Year);
 
             //Get Intangible Assets
-            var intangibleAssets = await _financeRepository.GetYearToDateIntangibleAssetsAsync(dto.CompanyId, currentDate.Year);
+            var intangibleAssets = await _financeRepository.GetYearToDateIntangibleAssetsAsync(companyId, currentDate.Year);
 
             //Get Tangible Assets
-            var tangibleAssets = await _financeRepository.GetYearToDateTangibleAssetsAsync(dto.CompanyId, currentDate.Year);
+            var tangibleAssets = await _financeRepository.GetYearToDateTangibleAssetsAsync(companyId, currentDate.Year);
 
             //Get Financial Assets
-            var financialAssets = await _financeRepository.GetYearToDateFinacialAssetsAsync(dto.CompanyId, currentDate.Year);
+            var financialAssets = await _financeRepository.GetYearToDateFinacialAssetsAsync(companyId, currentDate.Year);
 
             //Get Current Assets
-            var currentAssets = await _financeRepository.GetYearToDateCurrentAssetsAsync(dto.CompanyId, currentDate.Year);
+            var currentAssets = await _financeRepository.GetYearToDateCurrentAssetsAsync(companyId, currentDate.Year);
 
             // Get equity capital
-            var equityCapital = await _financeRepository.GetYearToDateCapitalEqutityAsync(dto.CompanyId, currentDate.Year);
+            var equityCapital = await _financeRepository.GetYearToDateCapitalEqutityAsync(companyId, currentDate.Year);
 
             //Get Long Term Liabilities
-            var longTermLiabilities = await _financeRepository.GetYearToDateLongTermLiabilitiesAsync(dto.CompanyId, currentDate.Year);
+            var longTermLiabilities = await _financeRepository.GetYearToDateLongTermLiabilitiesAsync(companyId, currentDate.Year);
 
             //Get ShortTerm Liabilities
-            var shortTermLiabilities = await _financeRepository.GetYearToDateShortTermLiabilitiesAsync(dto.CompanyId, currentDate.Year);
+            var shortTermLiabilities = await _financeRepository.GetYearToDateShortTermLiabilitiesAsync(companyId, currentDate.Year);
 
             return new AnnualReportContentDTO
             {
