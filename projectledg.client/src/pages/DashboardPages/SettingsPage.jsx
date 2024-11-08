@@ -44,29 +44,29 @@ export default function SettingsPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-none p-4 bg-transparent border-b">
-        <h1 className=" md:pl-px sm:pl-px text-2xl font-bold text-green-500">Account Settings</h1>
+      <div className="flex-none bg-transparent">
+        <h1 className=" text-3xl font-bold text-black dark:text-white">Inställningar</h1>
       </div>
       <ScrollArea className="flex-grow">
         <div className="max-w mx-auto p-4 space-y-6">
           {/* Card for Change Password */}
           <Card className="border-green-500 border-opacity-20">
             <CardHeader>
-              <CardTitle className="text-green-500">Change Password</CardTitle>
-              <CardDescription>Update your password to keep your account secure</CardDescription>
+              <CardTitle className="text-green-500">Byt lösenord</CardTitle>
+              <CardDescription>Uppdatera ditt lösenord för att hålla ditt konto säkert</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordChange} className="space-y-4">
                 <div>
-                  <Label htmlFor="current-password">Current Password</Label>
+                  <Label htmlFor="current-password">Nuvarande lösenord</Label>
                   <Input className="max-w-sm" id="current-password" type="password" required />
                 </div>
                 <div>
-                  <Label htmlFor="new-password">New Password</Label>
+                  <Label htmlFor="new-password">Nytt lösenord</Label>
                   <Input className="max-w-sm" id="new-password" type="password" required />
                 </div>
                 <div>
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
+                  <Label htmlFor="confirm-password">Bekräfta nytt lösenord</Label>
                   <Input className="max-w-sm" id="confirm-password" type="password" required />
                 </div>
                 <Button type="submit" className="bg-green-500 hover:bg-green-600">Change Password</Button>
