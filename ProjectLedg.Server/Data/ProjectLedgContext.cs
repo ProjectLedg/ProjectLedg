@@ -64,7 +64,7 @@ namespace ProjectLedg.Server.Data
                 .HasForeignKey(t => t.BasAccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-           
+
 
 
             // Seed User data
@@ -81,8 +81,53 @@ namespace ProjectLedg.Server.Data
                     AuthenticatorKey = "XYZ12345",
                     EmailConfirmed = true,
                     PasswordHash = new PasswordHasher<User>().HashPassword(null, "Password1!")
+                },
+                new User
+                {
+                    Id = "2", // Normally a GUID for Identity users
+                    UserName = "testuser2@example.com",
+                    NormalizedUserName = "TESTUSER2@EXAMPLE.COM",
+                    Email = "testuser2@example.com",
+                    NormalizedEmail = "TESTUSER2@EXAMPLE.COM",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    AuthenticatorKey = "XYZ12345",
+                    EmailConfirmed = true,
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "Password1!")
+                },
+                new User
+                {
+                    Id = "3", // Normally a GUID for Identity users
+                    UserName = "testuser3@example.com",
+                    NormalizedUserName = "TESTUSER3@EXAMPLE.COM",
+                    Email = "testuser3@example.com",
+                    NormalizedEmail = "TESTUSER3@EXAMPLE.COM",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    AuthenticatorKey = "XYZ12345",
+                    EmailConfirmed = true,
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "Password1!")
                 }
             );
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = "1", // ID of the first user
+                    RoleId = "ed9392d0-3a90-4b8f-bbf8-0e3c33fb48ae"  // ID of the Manager role
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = "2", // ID of the second user
+                    RoleId = "2ffdbddb-c568-4202-97ad-5528663c0ba8"  // ID of the Admin role
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = "3", // ID of the third user
+                    RoleId = "6c752152-45b8-4fe0-af73-d0c64efae165"  // ID of the User role
+                }
+            );
+
 
             // Seed Company data
             modelBuilder.Entity<Company>().HasData(
@@ -106,7 +151,7 @@ namespace ProjectLedg.Server.Data
                 new BasAccount { Id = 8, Debit = 500, Credit = 0, Description = "Extraordinary Costs", AccountNumber = "8000", Year = 2023, CompanyId = 1 }  // Konto klass 8: Övriga rörelsekostnader
             );
 
-           
+
 
             // Seed IngoingInvoice data
             modelBuilder.Entity<IngoingInvoice>().HasData(
