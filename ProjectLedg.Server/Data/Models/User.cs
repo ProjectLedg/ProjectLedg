@@ -6,6 +6,7 @@ namespace ProjectLedg.Server.Data.Models
 {
     public class User : IdentityUser
     {
+        //this is a comment about FirstNames
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
 
