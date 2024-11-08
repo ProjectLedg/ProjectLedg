@@ -239,7 +239,7 @@ const Sidebar = ({ isChatOpen }) => (
         </div>
       </div>
     </div>
-    <div className="mt-auto border-t dark:border-gray-700">
+    <div className="mt-auto border-t dark:border-gray-100">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
           !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
@@ -356,8 +356,8 @@ export default function DashboardLayout() {
       {!isMobile && <Sidebar isChatOpen={isChatOpen} />}
 
       {/* Main Content */}
-      <div className="MAIN CONTENT flex flex-col flex-1  ">
-        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-none dark:bg-gray-800 ">
+      <div className="MAIN CONTENT flex flex-col flex-1 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-none dark:bg-gray-700 ">
           <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8  ">
 
             {/* Navbar */}
