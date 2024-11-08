@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjectLedg.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,8 +80,8 @@ namespace ProjectLedg.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -243,7 +243,7 @@ namespace ProjectLedg.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customer",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -252,17 +252,17 @@ namespace ProjectLedg.Server.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrganizationNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TaxId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    OutgoingInvoiceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Customer_Companies_CompanyId",
+                        name: "FK_Customers_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -278,7 +278,6 @@ namespace ProjectLedg.Server.Migrations
                     PaymentDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TotalTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
-                    IsOutgoing = table.Column<bool>(type: "bit", nullable: false),
                     IsBooked = table.Column<bool>(type: "bit", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -315,20 +314,25 @@ namespace ProjectLedg.Server.Migrations
                     PaymentDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TotalTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
-                    IsOutgoing = table.Column<bool>(type: "bit", nullable: false),
                     IsBooked = table.Column<bool>(type: "bit", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     InvoiceFilePath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OutgoingInvoices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OutgoingInvoices_Customer_CustomerId",
+                        name: "FK_OutgoingInvoices_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OutgoingInvoices_Customers_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "Customer",
+                        principalTable: "Customers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -372,7 +376,8 @@ namespace ProjectLedg.Server.Migrations
                     TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IngoingInvoiceId = table.Column<int>(type: "int", nullable: true),
                     OutgoingInvoiceId = table.Column<int>(type: "int", nullable: true),
-                    BasAccountId = table.Column<int>(type: "int", nullable: false)
+                    BasAccountId = table.Column<int>(type: "int", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -398,7 +403,7 @@ namespace ProjectLedg.Server.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "AuthenticatorKey", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, "XYZ12345", "b4525248-1203-4902-b551-e4d047b7861e", "testuser@example.com", true, "John", "Doe", false, null, "TESTUSER@EXAMPLE.COM", "TESTUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEN6b9Tl1qqxsDbdg/vJeJgR1cyuDQ9IxqJatuibK3PrwXKq6mUDFYgZe/3SHUe4vZQ==", null, false, "b7438e77-ca74-4151-b4ac-4991feca1724", false, "testuser@example.com" });
+                values: new object[] { "1", 0, "XYZ12345", "8f0ef093-7861-4bdb-a07f-bcfb143ba51d", "testuser@example.com", true, "John", "Doe", false, null, "TESTUSER@EXAMPLE.COM", "TESTUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEI7KtXucPol/POaBPJ2DZMR9IuCt9wDu+4/ZqSwIH8uiecy4gENiazOjt+NAvCekfw==", null, false, "f99d5809-4734-48c0-b080-d4e1c9c9bf41", false, "testuser@example.com" });
 
             migrationBuilder.InsertData(
                 table: "Companies",
@@ -426,12 +431,17 @@ namespace ProjectLedg.Server.Migrations
                 values: new object[] { 1, "1" });
 
             migrationBuilder.InsertData(
+                table: "Customers",
+                columns: new[] { "Id", "Address", "CompanyId", "Name", "OrganizationNumber", "OutgoingInvoiceId", "TaxId" },
+                values: new object[] { 1, "Arenavägen 61", 1, "Hjalmar Stranninge", "123456", 0, "59315" });
+
+            migrationBuilder.InsertData(
                 table: "IngoingInvoices",
-                columns: new[] { "Id", "CompanyId", "CustomerAddress", "CustomerAddressRecipient", "CustomerId", "CustomerName", "DueDate", "InvoiceDate", "InvoiceFilePath", "InvoiceNumber", "InvoiceTotal", "IsBooked", "IsOutgoing", "IsPaid", "PaymentDetails", "TotalTax", "VendorAddress", "VendorAddressRecipient", "VendorName", "VendorTaxId" },
+                columns: new[] { "Id", "CompanyId", "CustomerAddress", "CustomerAddressRecipient", "CustomerId", "CustomerName", "DueDate", "InvoiceDate", "InvoiceFilePath", "InvoiceNumber", "InvoiceTotal", "IsBooked", "IsPaid", "PaymentDetails", "TotalTax", "VendorAddress", "VendorAddressRecipient", "VendorName", "VendorTaxId" },
                 values: new object[,]
                 {
-                    { 1, 1, "Arenavägen 61", "Hjalmar Stranninge AB", "CUST001", "Hjalmar Stranninge", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://localhost:7223", "INV001", 5000.00m, true, true, true, null, 50.00m, "Arenavägen 61", "Erkan", "Blues Kök & Bar", "59315" },
-                    { 2, 1, "Arenavägen 61", "Hjalmar Stranninge AB", "CUST002", "Hjalmar Stranninge", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://localhost:7223", "INV002", 5000.00m, true, true, true, "34395139", 50.00m, "Arenavägen 61", "Erkan", "Blues Kök & Bar", "59315" }
+                    { 1, 1, "Arenavägen 61", "Hjalmar Stranninge AB", "CUST001", "Hjalmar Stranninge", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://localhost:7223", "INV001", 5000.00m, true, true, null, 50.00m, "Arenavägen 61", "Erkan", "Blues Kök & Bar", "59315" },
+                    { 2, 1, "Arenavägen 61", "Hjalmar Stranninge AB", "CUST002", "Hjalmar Stranninge", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://localhost:7223", "INV002", 5000.00m, true, true, "34395139", 50.00m, "Arenavägen 61", "Erkan", "Blues Kök & Bar", "59315" }
                 });
 
             migrationBuilder.InsertData(
@@ -445,24 +455,29 @@ namespace ProjectLedg.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "OutgoingInvoices",
+                columns: new[] { "Id", "CompanyId", "CustomerId", "DueDate", "InvoiceDate", "InvoiceFilePath", "InvoiceNumber", "InvoiceTotal", "IsBooked", "IsPaid", "PaymentDetails", "TotalTax" },
+                values: new object[] { 1, 1, 1, new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "OUT001", 10000.00m, false, true, null, 500.00m });
+
+            migrationBuilder.InsertData(
                 table: "Transactions",
-                columns: new[] { "Id", "Amount", "BasAccountId", "IngoingInvoiceId", "IsDebit", "OutgoingInvoiceId", "TransactionDate" },
+                columns: new[] { "Id", "Amount", "BasAccountId", "CompanyId", "IngoingInvoiceId", "IsDebit", "OutgoingInvoiceId", "TransactionDate" },
                 values: new object[,]
                 {
-                    { 2001, 5000.00m, 1, 1, true, null, new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2002, 1500.00m, 2, 2, true, null, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2003, 750.00m, 1, 1, true, null, new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2004, 3000.00m, 2, 2, false, null, new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2006, 2500.00m, 1, 2, true, null, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2007, 9000.00m, 3, 1, false, null, new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2008, 3000.00m, 1, 2, true, null, new DateTime(2023, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2011, 8250.00m, 3, 2, false, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2012, 1500.00m, 1, 1, true, null, new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2014, 4300.00m, 4, 1, true, null, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2015, 2200.00m, 5, 2, true, null, new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2016, 2000.00m, 6, 1, true, null, new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2017, 1000.00m, 7, 2, true, null, new DateTime(2023, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2018, 500.00m, 8, 1, true, null, new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 2001, 5000.00m, 1, 1, 1, true, 1, new DateTime(2023, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2002, 1500.00m, 2, 1, 2, true, 1, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2003, 750.00m, 1, 1, 1, true, 1, new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2004, 3000.00m, 2, 1, 2, false, 1, new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2006, 2500.00m, 1, 1, 2, true, 1, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2007, 9000.00m, 3, 1, 1, false, 1, new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2008, 3000.00m, 1, 1, 2, true, 1, new DateTime(2023, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2011, 8250.00m, 3, 1, 2, false, 1, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2012, 1500.00m, 1, 1, 1, true, 1, new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2014, 4300.00m, 4, 1, 1, true, 1, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2015, 2200.00m, 5, 1, 2, true, 1, new DateTime(2023, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2016, 2000.00m, 6, 1, 1, true, 1, new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2017, 1000.00m, 7, 1, 2, true, 1, new DateTime(2023, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2018, 500.00m, 8, 1, 1, true, 1, new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -515,8 +530,8 @@ namespace ProjectLedg.Server.Migrations
                 column: "UsersId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customer_CompanyId",
-                table: "Customer",
+                name: "IX_Customers_CompanyId",
+                table: "Customers",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
@@ -533,6 +548,11 @@ namespace ProjectLedg.Server.Migrations
                 name: "IX_InvoiceItems_OutgoingInvoiceId",
                 table: "InvoiceItems",
                 column: "OutgoingInvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutgoingInvoices_CompanyId",
+                table: "OutgoingInvoices",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutgoingInvoices_CustomerId",
@@ -601,7 +621,7 @@ namespace ProjectLedg.Server.Migrations
                 name: "OutgoingInvoices");
 
             migrationBuilder.DropTable(
-                name: "Customer");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Companies");

@@ -365,6 +365,9 @@ namespace ProjectLedg.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("OutgoingInvoiceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TaxId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -374,6 +377,18 @@ namespace ProjectLedg.Server.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "Arenavägen 61",
+                            CompanyId = 1,
+                            Name = "Hjalmar Stranninge",
+                            OrganizationNumber = "123456",
+                            OutgoingInvoiceId = 0,
+                            TaxId = "59315"
+                        });
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.EmailList", b =>
@@ -598,7 +613,7 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DueDate")
@@ -928,7 +943,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "75888c5c-3c4f-4425-ad2e-c40e11c26ea4",
+                            ConcurrencyStamp = "8f0ef093-7861-4bdb-a07f-bcfb143ba51d",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -936,9 +951,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIkCO95hFauLmlCsqcZHJu8OenkowPZAOR5G2OXd4JnQ8MjgQLJW/gb4Ob18Gzu1Ww==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEI7KtXucPol/POaBPJ2DZMR9IuCt9wDu+4/ZqSwIH8uiecy4gENiazOjt+NAvCekfw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d14d851f-b4a9-4d41-ab42-4e9b6749231a",
+                            SecurityStamp = "f99d5809-4734-48c0-b080-d4e1c9c9bf41",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         });
@@ -1063,8 +1078,7 @@ namespace ProjectLedg.Server.Migrations
                     b.HasOne("ProjectLedg.Server.Data.Models.Customer", "Customer")
                         .WithMany("OutgoingInvoices")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Company");
 
