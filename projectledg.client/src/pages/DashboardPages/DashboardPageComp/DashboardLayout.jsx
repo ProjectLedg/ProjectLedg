@@ -379,7 +379,7 @@ export default function DashboardLayout() {
             </header>
 
             {/* Main Content or Chat Window Mobile */}
-            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
+            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} >
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
                 <ChatService onClose={toggleChat} mobile />
@@ -393,7 +393,7 @@ export default function DashboardLayout() {
                     initial={{ width: '100%' }}
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   >
-                    <Outlet context={{ isChatOpen }} />
+                      <Outlet context={{ isChatOpen }} />
                   </motion.div>
 
                   <AnimatePresence>

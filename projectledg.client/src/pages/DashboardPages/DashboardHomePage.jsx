@@ -108,7 +108,7 @@ const DashboardHomePage = () => {
           companyId: parseInt(companyId),
           year: currentYear
         };
-
+        
         const axiosConfig = axios.create({
           baseURL: 'https://projectledg.azurewebsites.net/api/',
           headers: {
