@@ -264,6 +264,8 @@ namespace ProjectLedg.Server
             services.AddScoped<IOutgoingInvoiceFunctions, OutgoingInvoiceFunctions>();
             services.AddScoped<ITransactionFunctions, TransactionFunctions>();
 
+            //AnnualReport:
+            services.AddScoped<IAnnualReportService, AnnualReportService>();
 
 
 
