@@ -64,7 +64,6 @@ namespace ProjectLedg.Server.Services
                 return new LoginResult { Success = false, ErrorMessage = "The Email is not confirmed, please check your email for a confirmation link!" };
             }
 
-            
             var result = await _userRepository.LoginAsync(email, password);
 
             if (!result.Success && !result.Require2FA)
@@ -73,12 +72,14 @@ namespace ProjectLedg.Server.Services
             }
             else if (result.Require2FA)
             {
-                return new LoginResult { Require2FA = true, Token = _authService.GenerateToken(user) };
+                var twoFactorToken = await _authService.GenerateToken(user);  // Await the token generation
+                return new LoginResult { Require2FA = true, Token = twoFactorToken };
             }
-            // Generate JWT token
-            var token = _authService.GenerateToken(user);
 
-            return new LoginResult { Success = true, Token = token };
+            // Generate JWT token
+            var jwtToken = await _authService.GenerateToken(user);  // Await the token generation
+
+            return new LoginResult { Success = true, Token = jwtToken };
         }
 
 
@@ -147,7 +148,7 @@ namespace ProjectLedg.Server.Services
                     "<p>Your user account has been created successfully!</p>");
 
                 // Generate JWT token
-                var token = _authService.GenerateToken(user);
+                var token = await _authService.GenerateToken(user);
 
                 return new AccountCreationResult
                 {

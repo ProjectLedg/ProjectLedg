@@ -131,12 +131,12 @@ namespace ProjectLedg.Server.Repositories
             var loginResult = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: true);
             if (loginResult.Succeeded)
             {
-                string token = _authService.GenerateToken(user);
+                string token = await _authService.GenerateToken(user);
                 return LoginResult.Successful(token);
             }
             else if (loginResult.RequiresTwoFactor)
             {
-                string token = _authService.GenerateToken(user);
+                string token = await _authService.GenerateToken(user);
                 return LoginResult.Requires2FA(token);
             }
             if (loginResult.IsNotAllowed)

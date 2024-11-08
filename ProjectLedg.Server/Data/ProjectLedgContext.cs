@@ -140,6 +140,21 @@ namespace ProjectLedg.Server.Data
                 }
             );
 
+                    modelBuilder.Entity<OutgoingInvoice>().HasData(
+            new OutgoingInvoice
+            {
+                Id = 1,
+                InvoiceNumber = "OUT001",
+                InvoiceDate = new DateTime(2023, 01, 05),
+                DueDate = new DateTime(2023, 01, 15),
+                InvoiceTotal = 10000.00m,
+                IsPaid = true,
+                TotalTax = 500.00m,
+                CustomerId = 1, // Assuming you have a customer with this ID
+                CompanyId = 1 // Assuming it links to the seeded company
+            }
+        );
+
             // Seed InvoiceItems data
             modelBuilder.Entity<InvoiceItems>().HasData(
                 new InvoiceItems

@@ -27,7 +27,7 @@ public class AssistantService : IAssistantService
     private readonly string _basAccContextFilePath;
     private readonly CommandHelper _commandHelper;
 
-      private readonly ILogger<AssistantService> _logger;
+    private readonly ILogger<AssistantService> _logger;
 
     //Functions
     private readonly IBasAccountFunctions _basAccountFunctions;
@@ -50,36 +50,30 @@ public class AssistantService : IAssistantService
         _mapDirectivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantBasAccMapDirectives.txt");
         _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccContext.txt");
         _encryptionHelper = encryptionHelper;
+    }
+
+
+
+    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService, EncryptionHelper encryptionHelper, IBasAccountFunctions basAccountFunctions, IIngoingInvoiceFunctions ingoingInvoiceFunctions, ITransactionFunctions transactionFunctions, IOutgoingInvoiceFunctions outgoingInvoiceFunctions, ILogger<AssistantService> logger)
+    {
+        _openAiClient = openAiClient;
+        _dbContext = dbContext;
+        _httpContextAccessor = httpContextAccessor;
+        _ingoingInvoiceService = invoiceService;
+        _basAccountService = basAccountService;
+        _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
+        _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "assistantDirectives.env");
+        _encryptionHelper = encryptionHelper;
 
         //Functions
-        private readonly IBasAccountFunctions _basAccountFunctions;
-        private readonly IIngoingInvoiceFunctions _ingoingInvoiceFunctions;
-        private readonly ITransactionFunctions _transactionFunctions;
-        private readonly IOutgoingInvoiceFunctions _outgoingInvoiceFunctions;
+        _ingoingInvoiceFunctions = ingoingInvoiceFunctions;
+        _transactionFunctions = transactionFunctions;
+        _basAccountFunctions = basAccountFunctions;
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
 
+        _commandHelper = new CommandHelper();
 
-        private readonly Dictionary<string, Func<string[], Task<string>>> _commandHandlers;
-
-        public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService, EncryptionHelper encryptionHelper, IBasAccountFunctions basAccountFunctions, IIngoingInvoiceFunctions ingoingInvoiceFunctions, ITransactionFunctions transactionFunctions, IOutgoingInvoiceFunctions outgoingInvoiceFunctions, ILogger<AssistantService> logger)
-        {
-            _openAiClient = openAiClient;
-            _dbContext = dbContext;
-            _httpContextAccessor = httpContextAccessor;
-            _ingoingInvoiceService = invoiceService;
-            _basAccountService = basAccountService;
-            _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
-            _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "assistantDirectives.env");
-            _encryptionHelper = encryptionHelper;
-
-            //Functions
-            _ingoingInvoiceFunctions = ingoingInvoiceFunctions;
-            _transactionFunctions = transactionFunctions;
-            _basAccountFunctions = basAccountFunctions;
-            _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
-
-            _commandHelper = new CommandHelper();
-
-            _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
+        _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
             {
                 { "visa alla bas konton", async args => await _basAccountFunctions.GetCompanyBasAccounts(int.Parse(args[0])) },
                 { "visa mest populära bas konton", async args => await _basAccountFunctions.GetPopularBasAccountsForCompany(int.Parse(args[0])) },
@@ -90,9 +84,9 @@ public class AssistantService : IAssistantService
                 { "hämta fakturor", async args => await _ingoingInvoiceFunctions.GetInvoices(args[0], int.Parse(args[1])) }
             };
 
-            _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
-            _logger = logger;
-        }
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
+        _logger = logger;
+    }
 
     public async Task<string> SendMessageToAssistantAsync(string message)
     {
@@ -297,116 +291,111 @@ public class AssistantService : IAssistantService
     }
 
 
-    // Load files methods
+    public void ClearChatHistory()
+    {
+        var session = _httpContextAccessor.HttpContext.Session;
+        session.Remove("ChatHistory");
+    }
+
+
+
+    private async Task<string> ProcessCommandAsync(string message)
+    {
+        foreach (var command in _commandHandlers)
+        {
+            if (message.Contains(command.Key, StringComparison.OrdinalIgnoreCase))
+            {
+                // Extract arguments using the updated method
+                var args = ExtractArguments(message, command.Key);
+
+                // Handle company name or ID dynamically
+                if (int.TryParse(args[0], out int companyId))
+                {
+                    // Company ID is provided, call the command directly
+                    return await command.Value(new[] { companyId.ToString() });
+                }
+                else
+                {
+                    // Company name is provided; lookup the company by name with case-insensitivity
+                    var companyName = args[0].ToLower();
+                    var company = await _dbContext.Companies
+                        .FirstOrDefaultAsync(c => c.CompanyName.ToLower() == companyName);
+
+                    if (company == null)
+                    {
+                        var allCompanies = await _dbContext.Companies
+                            .Select(c => c.CompanyName)
+                            .ToListAsync();
+
+                        return $"Företaget med namnet '{args[0]}' hittades inte. Tillgängliga företag är: {string.Join(", ", allCompanies)}.";
+                    }
+
+                    return await command.Value(new[] { company.Id.ToString() });
+                }
+            }
+        }
+        return null; // Return null if no command matches
+    }
+
+
+    private string[] ExtractArguments(string message, string commandKeyword)
+    {
+        // Find the position of the command keyword in the message
+        int keywordPosition = message.IndexOf(commandKeyword, StringComparison.OrdinalIgnoreCase);
+        if (keywordPosition == -1)
+        {
+            return Array.Empty<string>();
+        }
+
+        // Extract everything after the command keyword
+        string arguments = message.Substring(keywordPosition + commandKeyword.Length).Trim();
+
+        // Remove the "för" keyword and any extra spaces that may follow it
+        if (arguments.StartsWith("för ", StringComparison.OrdinalIgnoreCase))
+        {
+            arguments = arguments.Substring(4).Trim();
+        }
+
+        // Return the cleaned-up argument as a single-element array
+        return new[] { arguments };
+    }
+
     private List<BasAccount> LoadBasAccounts()
     {
         var basAccounts = new List<BasAccount>();
 
-
-    public void ClearChatHistory()
+        try
         {
-            var session = _httpContextAccessor.HttpContext.Session;
-            session.Remove("ChatHistory");
-        }
-
-
-        private async Task<string> ProcessCommandAsync(string message)
-        {
-            foreach (var command in _commandHandlers)
+            if (!File.Exists(_csvFilePath))
             {
-                if (message.Contains(command.Key, StringComparison.OrdinalIgnoreCase))
+                Console.WriteLine($"BAS chart CSV file not found at path: {_csvFilePath}");
+                return basAccounts;
+            }
+
+            var lines = File.ReadAllLines(_csvFilePath);
+            foreach (var line in lines.Skip(1))
+            {
+                var fields = line.Split(',');
+                if (fields.Length >= 4)
                 {
-                    // Extract arguments using the updated method
-                    var args = ExtractArguments(message, command.Key);
-
-                    // Handle company name or ID dynamically
-                    if (int.TryParse(args[0], out int companyId))
+                    basAccounts.Add(new BasAccount
                     {
-                        // Company ID is provided, call the command directly
-                        return await command.Value(new[] { companyId.ToString() });
-                    }
-                    else
-                    {
-                        // Company name is provided; lookup the company by name with case-insensitivity
-                        var companyName = args[0].ToLower();
-                        var company = await _dbContext.Companies
-                            .FirstOrDefaultAsync(c => c.CompanyName.ToLower() == companyName);
-
-                        if (company == null)
-                        {
-                            var allCompanies = await _dbContext.Companies
-                                .Select(c => c.CompanyName)
-                                .ToListAsync();
-
-                            return $"Företaget med namnet '{args[0]}' hittades inte. Tillgängliga företag är: {string.Join(", ", allCompanies)}.";
-                        }
-
-                        return await command.Value(new[] { company.Id.ToString() });
-                    }
+                        AccountNumber = fields[0].Trim(),
+                        Description = fields[1].Trim(),
+                        Debit = decimal.TryParse(fields[2], out var debit) ? debit : 0,
+                        Credit = decimal.TryParse(fields[3], out var credit) ? credit : 0,
+                        Year = int.TryParse(fields[4], out var year) ? year : 0
+                    });
                 }
             }
-            return null; // Return null if no command matches
         }
-
-
-        private string[] ExtractArguments(string message, string commandKeyword)
+        catch (Exception ex)
         {
-            // Find the position of the command keyword in the message
-            int keywordPosition = message.IndexOf(commandKeyword, StringComparison.OrdinalIgnoreCase);
-            if (keywordPosition == -1)
-            {
-                return Array.Empty<string>();
-            }
-
-            // Extract everything after the command keyword
-            string arguments = message.Substring(keywordPosition + commandKeyword.Length).Trim();
-
-            // Remove the "för" keyword and any extra spaces that may follow it
-            if (arguments.StartsWith("för ", StringComparison.OrdinalIgnoreCase))
-            {
-                arguments = arguments.Substring(4).Trim();
-            }
-
-            // Return the cleaned-up argument as a single-element array
-            return new[] { arguments };
+            Console.WriteLine($"Error loading BAS accounts: {ex.Message}");
         }
 
-        private List<BasAccount> LoadBasAccounts()
-        {
-            var basAccounts = new List<BasAccount>();
-
-            try
-            {
-                if (!File.Exists(_csvFilePath))
-                {
-                    Console.WriteLine($"BAS chart CSV file not found at path: {_csvFilePath}");
-                    return basAccounts;
-                }
-
-                var lines = File.ReadAllLines(_csvFilePath);
-                foreach (var line in lines.Skip(1))
-                {
-                    var fields = line.Split(',');
-                    if (fields.Length >= 4)
-                    {
-                        basAccounts.Add(new BasAccount
-                        {
-                            AccountNumber = fields[0].Trim(),
-                            Description = fields[1].Trim(),
-                            Debit = decimal.TryParse(fields[2], out var debit) ? debit : 0,
-                            Credit = decimal.TryParse(fields[3], out var credit) ? credit : 0,
-                            Year = int.TryParse(fields[4], out var year) ? year : 0
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading BAS accounts: {ex.Message}");
-            }
-
-            return basAccounts;
-        }
+        return basAccounts;
+    }
 
     private string LoadAssistantDirectives()
     {
@@ -426,7 +415,7 @@ public class AssistantService : IAssistantService
             _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
             throw new FileNotFoundException("Assistant directives file not found at path: " + _mapDirectivesFilePath);
         }
-        
+
         _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
         return File.ReadAllText(_mapDirectivesFilePath, Encoding.UTF8);
     }
@@ -440,7 +429,7 @@ public class AssistantService : IAssistantService
         }
 
         _logger.LogInformation("Loading assistant directives from {FilePath}", _basAccContextFilePath);
-        return File.ReadAllText(_basAccContextFilePath, Encoding.UTF8);    
+        return File.ReadAllText(_basAccContextFilePath, Encoding.UTF8);
     }
 
 }
