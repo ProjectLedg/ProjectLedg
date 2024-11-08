@@ -21,7 +21,7 @@ const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metric
         ? `${value.toFixed(1)}%`
         : value.toLocaleString();
       return (
-        <div className="bg-white p-2 border border-gray-300 rounded shadow">
+        <div className="bg-white p-2 border border-gray-300 rounded shadow dark:bg-gray-700">
           <p className="text-sm">{`${label}: ${formattedValue}`}</p>
         </div>
       );

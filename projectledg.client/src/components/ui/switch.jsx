@@ -12,7 +12,7 @@ export default function Switch ({isOn, setIsOn}) {
     <div
       data-isOn={isOn}
       onClick={toggleSwitch}
-      className={`flex ${isOn ? "justify-end bg-green-600" : "justify-start  bg-red-600"}  p-1 w-10 h-6 cursor-pointer  rounded-3xl `}
+      className={`flex ${isOn ? "justify-end bg-green-500" : "justify-start  bg-black"}  p-1 w-10 h-6 cursor-pointer  rounded-3xl `}
       style={{
         transition: "background-color 0.3s ease"
       }}>

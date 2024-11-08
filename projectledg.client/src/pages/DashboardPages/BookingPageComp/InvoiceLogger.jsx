@@ -102,7 +102,7 @@ export default function InvoiceLogger() {
     return (
       <Card className="w-full h-[600px] flex flex-col shadow-lg">
         <CardHeader className="flex flex-row justify-between border-b">
-          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
             <FileText className="mr-2 text-green-500" />
             Fakturor
           </CardTitle>
@@ -128,7 +128,7 @@ export default function InvoiceLogger() {
     <Card className="w-full h-[40rem] flex flex-col shadow-lg">
       <Tabs defaultValue="ingoing" className="flex flex-col h-full overflow-hidden">
        <CardHeader className="flex flex-row justify-between border-b">
-        <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+        <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
           <FileText className="mr-2 text-green-500" />
           Fakturor
         </CardTitle>
