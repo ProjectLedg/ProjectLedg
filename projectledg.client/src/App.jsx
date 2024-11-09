@@ -13,6 +13,7 @@ import DashboardLayout from './pages/DashboardPages/DashboardPageComp/DashboardL
 import DashboardHomePage from './pages/DashboardPages/DashboardHomePage';
 import FinancialReportsPage from './pages/DashboardPages/FinancialReportsPage';
 import FinancialStatementPage from './pages/DashboardPages/FinancialStatementPage';
+import TicketPage from './pages/DashboardPages/TicketPage';
 import SettingsPage from './pages/DashboardPages/SettingsPage';
 import BookingPage from './pages/DashboardPages/BookingPage';
 import InvoicingPage from './pages/DashboardPages/InvoicingPage';
@@ -22,7 +23,7 @@ import AdminLoginPage from './pages/Admin/AdminLoginPage';
 import AdminDashboardHomePage from './pages/Admin/AdminDashboards/AdminDashboardHomePage';
 import AdminDashboardLayout from './pages/Admin/AdminDashboards/AdminDashboardLayout'
 import ProtectedRoute from './pages/Admin/ProtectedRouteComp/ProtectedRoute';
-import UserTickets from './pages/Admin/AdminDashboards/UserTickets'
+import AdminTickets from './pages/Admin/AdminDashboards/AdminTickets'
 import AdminSettingsPage from './pages/Admin/AdminDashboards/AdminSettingsPage'
 import UserManagementPage from './pages/Admin/AdminDashboards/UserManagementPage'
 import { ThemeProvider } from './components/ThemeProvider';
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignupPage />} />
                     <Route path="/company-select" element={<CompanySelectPage />} />
+                    <Route path="ticket" element={<TicketPage />} />
                     <Route path="/dashboard/:companyId" element={<DashboardLayout />}>
                         <Route index element={<DashboardHomePage />} />
                         <Route path="financial-reports" element={<FinancialReportsPage />} />
@@ -55,14 +57,14 @@ function App() {
                     {/* Protected Routes for Admin and Manager roles */}
                     <Route path="/admin/dashboard"
                         element={
-                            <ProtectedRoute requiredRoles={["Admin", "Manager"]}>
+                            
                             <AdminDashboardLayout />
-                            </ProtectedRoute>
+                            
                         } >
                         <Route index element={<AdminDashboardHomePage />} />
                         <Route path="settings" element={<AdminSettingsPage />} />
-                        <Route path="tickets" element={<UserTickets />} />
-                        <Route path="usermanagement" element={<UserManagementPage />} />
+                        <Route path="tickets" element={<AdminTickets />} />
+                        <Route path="user-management" element={<UserManagementPage />} />
                         </Route>
                 </Routes>
             </Router>
