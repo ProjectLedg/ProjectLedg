@@ -14,19 +14,21 @@ namespace ProjectLedg.Server.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly string _baseUrl = "https://localhost:7294";
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly AuthenticationService _authService;
         private readonly IEmailSender _emailSender;
         private readonly ProjectLedgContext _context;
 
-        public UserRepository(UserManager<User> userManager, SignInManager<User> signInManager, AuthenticationService authService, IEmailSender emailSender, ProjectLedgContext context)
+        public UserRepository(UserManager<User> userManager, SignInManager<User> signInManager, AuthenticationService authService, IEmailSender emailSender, ProjectLedgContext context, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _authService = authService;
             _emailSender = emailSender;
             _context = context;
+            _roleManager = roleManager;
         }
 
         // CreateUserAsync - updated to match IUserRepository
@@ -129,23 +131,50 @@ namespace ProjectLedg.Server.Repositories
                 return LoginResult.Failed("No User found.");
 
             var loginResult = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: true);
+
             if (loginResult.Succeeded)
             {
                 string token = await _authService.GenerateToken(user);
-                return LoginResult.Successful(token);
+
+                // Retrieve the user's roles
+                var roles = await _userManager.GetRolesAsync(user);
+
+                return LoginResult.Successful(token, roles.ToList()); // Pass roles to Successful result
             }
             else if (loginResult.RequiresTwoFactor)
             {
                 string token = await _authService.GenerateToken(user);
                 return LoginResult.Requires2FA(token);
             }
+
             if (loginResult.IsNotAllowed)
                 return LoginResult.Failed("You must confirm your account to log in. Please check your email for a verification link.");
+
             if (loginResult.IsLockedOut)
                 return LoginResult.Failed("The account is locked due to multiple failed attempts. Try again in a few minutes.");
 
             return LoginResult.Failed("Invalid login attempt.");
         }
+
+        public async Task<List<string>> GetUserRolesAsync(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList();
+        }
+
+        public async Task<IdentityResult> AddUserToRoleAsync(User user, string role)
+        {
+            // Ensure the role exists
+            var roleExists = await _roleManager.RoleExistsAsync(role);
+            if (!roleExists)
+            {
+                throw new InvalidOperationException($"Role '{role}' does not exist.");
+            }
+
+            // Add the user to the role
+            return await _userManager.AddToRoleAsync(user, role);
+        }
+
 
         // Send email verification logic
         public async Task<IdentityResult> SendEmailVerificationAsync(string userId, string code)
