@@ -66,6 +66,7 @@ namespace ProjectLedg.Server.Controllers
         public async Task<IActionResult> AdminLogin([FromBody] LoginRequestDTO request)
         {
             var result = await _adminService.AdminLoginAsync(request.Email, request.Password);
+            var roles = result.Roles;
             if (result.Success)
             {
                 // Set secure, HTTP-only cookie for the JWT token
@@ -78,7 +79,7 @@ namespace ProjectLedg.Server.Controllers
                 };
                 Response.Cookies.Append("AdminToken", result.Token, cookieOptions);
 
-                return Ok(new { Message = "Login successful" });
+                return Ok(new { Message = "Login successful", Token = result.Token, Roles = roles });
             }
             return Unauthorized(result.ErrorMessage);
         }
