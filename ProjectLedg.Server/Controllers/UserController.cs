@@ -101,34 +101,33 @@ namespace ProjectLedg.Server.Controllers
             var result = await _userService.LoginAsync(email, password);
             if (result.Success)
             {
-                // Create a cookie for the JWT token
+                var roles = result.Roles;
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false, 
-                    Secure = true, 
+                    HttpOnly = false,
+                    Secure = true,
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddHours(1)
                 };
                 Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
 
-                return Ok(new { Message = "Login successful", token = result.Token });
+                return Ok(new { Message = "Login successful", Token = result.Token, Roles = roles });
             }
             else if (result.Require2FA)
             {
-                // Create a cookie for the JWT token
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false, 
-                    Secure = true, 
-                    SameSite = SameSiteMode.Strict, 
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddHours(1)
                 };
                 Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
-                return Unauthorized(new { Message = "Requires Two Factor Authentication", token = result.Token });
+                return Unauthorized(new { Message = "Requires Two Factor Authentication", Token = result.Token });
             }
             else
             {
-                return Unauthorized(new { message = result.ErrorMessage });
+                return Unauthorized(new { Message = result.ErrorMessage });
             }
         }
 
