@@ -69,6 +69,26 @@ namespace ProjectLedg.Server.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "fda748ef-79a4-43a1-ab27-f630b2787818",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "d186da3d-43f6-4fa5-aa10-0fe6e3115173",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -161,7 +181,7 @@ namespace ProjectLedg.Server.Migrations
                         new
                         {
                             UserId = "1",
-                            RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"
+                            RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"
                         },
                         new
                         {
@@ -171,7 +191,7 @@ namespace ProjectLedg.Server.Migrations
                         new
                         {
                             UserId = "3",
-                            RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"
+                            RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"
                         });
                 });
 
@@ -685,6 +705,53 @@ namespace ProjectLedg.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.SupportTicket", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("SupportTickets");
+                });
+
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
                 {
                     b.Property<int>("Id")
@@ -960,7 +1027,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "d969370f-4f96-4d77-a587-fa949f20c90a",
+                            ConcurrencyStamp = "9cc5db8a-667c-4f90-a9ab-af6cd11b77ae",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -968,9 +1035,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDlwqdXDfH+3YLcf23vEes5v9RsEgBTtt2EUiL0uR218EvCXDIyZrPDFRoUTYY/Opg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJS+n1ABiWUfNJRwYfmVsXmn3EMI7KKa5NSV7YV+z00YfhEKVWp5wsgGVVD/QNtHQw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5cd8a40e-c4f1-402d-a9fc-b32a80edf3cc",
+                            SecurityStamp = "7e50dca2-4533-428b-9c6e-e17f3affff2e",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         },
@@ -979,7 +1046,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "2",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "e952c90c-8736-45b3-a6c4-7f40021af844",
+                            ConcurrencyStamp = "8c15ea3a-30af-4f09-bb57-98f5bd1a41fd",
                             Email = "testuser2@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -987,9 +1054,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER2@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER2@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFkTV39T0WpNlIgMx1b+fhFteTU5iSmb0CwztAfdCxfvOHWQ9Tb22mUZt0xaqfFxFw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELCzMMNKLcEap7usdOCVVkE1LuZjPLWWM3PJUnXoskzZ5smcFeq7k9q1tV6Qzpyc4g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a919e83e-e75e-4486-9c6f-c3387092eda9",
+                            SecurityStamp = "28cde7b7-fe87-49c8-a45a-da8ca3548cf7",
                             TwoFactorEnabled = false,
                             UserName = "testuser2@example.com"
                         },
@@ -998,7 +1065,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "3",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "36428ea3-2533-43df-a476-539a0c789d00",
+                            ConcurrencyStamp = "be8b4c64-b0b8-4e4b-8c42-dbeeff8ad8a8",
                             Email = "testuser3@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1006,9 +1073,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER3@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER3@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOamnNeo4mwy+DAB0o65PxUdM1+g6zTcyIWD16AIXvrMWBXIUzvgRjtnorDs+ulqkA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECan288oIQtaPTwqFpAD2d/b27mxkbLfu7UJ/D2Po60XhYRi+yMXsBf96L98r8Iidg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "614e3c40-708e-454e-94f4-a78c50eebef3",
+                            SecurityStamp = "09178a02-6cc8-4aa1-9344-e81e049895d0",
                             TwoFactorEnabled = false,
                             UserName = "testuser3@example.com"
                         });
@@ -1138,6 +1205,17 @@ namespace ProjectLedg.Server.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.SupportTicket", b =>
+                {
+                    b.HasOne("ProjectLedg.Server.Data.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
