@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
               }
           );
   
-          console.log("Login response:", response.data);
+          /* console.log("Login response:", response.data); */
   
           // Destructure token and roles from response
           const { token, roles } = response.data;
