@@ -108,9 +108,11 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
         </div>
     ));
 
+    // Temp to populate modal popup table
+    // const rows = Array(12).fill(null)
 
     // Displayed while AI is mapping bas invoice to bas accs
-    if(!basAccounts){
+    if(basAccounts.length === 0){
         return (
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} className="focus:outline-none">
                 <DialogContent className="max-w-[70vw] h-[80vh] flex flex-col ">
@@ -135,9 +137,9 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
                     <DialogTitle className="text-2xl font-bold text-green-600 ">Verifikation</DialogTitle>
                 </DialogHeader>
 
-                <div className="GridContainer grid grid-cols-2 h-full">
+                <div className="GridContainer grid grid-cols-2 h-full ">
                     {/* <ScrollArea className="h-[90%] px-4" ref={scrollAreaRef}> */}
-                    <div className="LeftColumn p-2 mb-4 h-full flex flex-col justify-between border-r-4 border-gray-100 pr-4 ">
+                    <div className="LeftColumn p-2 mb-4 h-full flex flex-col justify-between border-gray-100 pr-4 ">
 
                         <div className="FakturaInfo space-y-2">
                             {/* <h3 className="font-semibold text-lg mb-4">{invoice.VendorAddressRecipient} </h3> */}
@@ -178,7 +180,7 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
                         </div>
 
                         <div className="ChatSection  bg-gray-500/15 border-1 border-gray-300 shadow-inner shadow-gray-500/60 rounded-md h-auto">
-                            <div className=" flex flex-col pt-4 px-2 overflow-y-auto flex-grow    min-h-[20vh]">
+                            <div className=" flex flex-col pt-4 px-2 overflow-y-auto flex-grow h-[40vh]">
                                 {/* Put placeholder if messages are null */}
                                 {renderedMessages}
                                 {loading && <ChatLoader className="mb-12" />}
@@ -216,11 +218,11 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
                     </div>
 
                         {/* Booking suggestion - right column */}
-                    <div className="RightColumn p-2 flex flex-col pl-4">
+                    <div className="RightColumn p-2 flex flex-col pl-4 ">
                         <div className="p-0 h-full flex flex-col justify-between">
                             <div>
                                 <h3 className="font-semibold text-lg mb-2">Bokföringsförslag</h3>
-                                <ScrollArea ref={scrollAreaRef} className="max-h-[95%] w-full overflow-y-auto border-t-2 border-b-2">
+                                <ScrollArea ref={scrollAreaRef} className="max-h-[65vh] w-full overflow-y-auto border-t-2 border-b-2 ">
                                     <Table className="Scroll table overflow-y-auto overflow-x-hidden w-full">
                                         <TableHeader className="border-2 bg-gray-100">
                                             <TableRow>
@@ -232,14 +234,27 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
                                         </TableHeader>
 
                                         <TableBody>
-                                            {basAccounts.map((account, index) => (
+                                            {basAccounts.accounts.map((account, index) => (
                                                 <TableRow key={index}>
                                                     <TableCell className="border-2 w-8">{account.BasAccount}</TableCell>
                                                     <TableCell className="w-18 border-2">{account.Description}</TableCell>
                                                     <TableCell className="text-center border-2">{account.Debit}</TableCell>
                                                     <TableCell className="text-center border-2">{account.Credit}</TableCell>
                                                 </TableRow>
-                                            ))}
+                                            ))} 
+
+                                            {/* Test data to populate the table with more data  */}
+                                            {/* {rows.map((_, index) => (
+
+                                                <TableRow >
+                                                    <TableCell className="border-2  w-8">1000</TableCell>
+                                                    <TableCell className="w-18 border-2">Pågående nyanläggningar och förskott
+                                                        för byggnader och mark
+                                                    </TableCell>
+                                                    <TableCell className="text-center border-2"> 128 </TableCell>
+                                                    <TableCell className="text-center border-2"> 123 </TableCell>
+                                                </TableRow>
+                                            ))} */}
                                         </TableBody>
                                     </Table>
                                 </ScrollArea>
