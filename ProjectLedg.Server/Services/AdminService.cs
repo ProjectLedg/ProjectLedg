@@ -12,17 +12,41 @@ namespace ProjectLedg.Server.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly UserManager<User> _userManager;
+        private readonly AuthenticationService _authenticationService;
 
-        public AdminService(IAdminRepository adminRepository, UserManager<User> userManager)
+        public AdminService(IAdminRepository adminRepository, UserManager<User> userManager, AuthenticationService authenticationService)
         {
             _adminRepository = adminRepository;
             _userManager = userManager;
+            _authenticationService = authenticationService;
         }
 
         public async Task<LoginResult> AdminLoginAsync(string email, string password)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return LoginResult.Failed("Invalid email or password.");
+            }
+
+            var loginResult = await _userManager.CheckPasswordAsync(user, password);
+            if (!loginResult)
+            {
+                return LoginResult.Failed("Invalid email or password.");
+            }
+
+            // Ensure user has either "Admin" or "Manager" role
+            var roles = await _userManager.GetRolesAsync(user);
+            if (!roles.Any(r => r == "Admin" || r == "Manager"))
+            {
+                return LoginResult.Failed("Access denied. Only Admins and Managers can log in.");
+            }
+
+            // Generate JWT token for the admin user
+            var token = await _authenticationService.GenerateToken(user);
+            return LoginResult.Successful(token, roles.ToList());
         }
+
 
         public async Task<AccountCreationResult> CreateAdminsAsync(CreateAccountRequestDTO request, ClaimsPrincipal currentUser)
         {
