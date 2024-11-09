@@ -60,5 +60,27 @@ namespace ProjectLedg.Server.Controllers
             var result = await _adminService.DeleteAdminsAsync(id, User);
             return result.Succeeded ? Ok() : BadRequest();
         }
+
+        [AllowAnonymous]
+        [HttpPost("admin-login")]
+        public async Task<IActionResult> AdminLogin([FromBody] LoginRequestDTO request)
+        {
+            var result = await _adminService.AdminLoginAsync(request.Email, request.Password);
+            if (result.Success)
+            {
+                // Set secure, HTTP-only cookie for the JWT token
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.UtcNow.AddHours(1) // Set expiry as needed
+                };
+                Response.Cookies.Append("AdminToken", result.Token, cookieOptions);
+
+                return Ok(new { Message = "Login successful" });
+            }
+            return Unauthorized(result.ErrorMessage);
+        }
     }
 }
