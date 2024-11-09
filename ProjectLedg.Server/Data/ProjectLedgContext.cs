@@ -18,6 +18,7 @@ namespace ProjectLedg.Server.Data
         public DbSet<BasAccount> BasAccounts { get; set; }
         public DbSet<EmailList> Emails { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<SupportTicket> SupportTickets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -110,11 +111,32 @@ namespace ProjectLedg.Server.Data
                 }
             );
 
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd",
+                    Name = "User",
+                    NormalizedName = "USER"
+                },
+                new IdentityRole
+                {
+                    Id = "fda748ef-79a4-43a1-ab27-f630b2787818",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Id = "d186da3d-43f6-4fa5-aa10-0fe6e3115173",
+                    Name = "Manager",
+                    NormalizedName = "MANAGER"
+                }
+            );
+
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>
                 {
                     UserId = "1", // ID of the first user
-                    RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"  // ID of the Manager role
+                    RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"  // ID of the User role
                 },
                 new IdentityUserRole<string>
                 {
@@ -124,7 +146,7 @@ namespace ProjectLedg.Server.Data
                 new IdentityUserRole<string>
                 {
                     UserId = "3", // ID of the third user
-                    RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"  // ID of the User role
+                    RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"  // ID of the Manager role
                 }
             );
 
