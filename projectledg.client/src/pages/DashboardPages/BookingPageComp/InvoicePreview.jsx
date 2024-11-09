@@ -161,6 +161,8 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
 
 
 
+
+
   function transformInvoiceData(invoiceData) {
     return {
       AdditionalContext: invoiceData.AdditionalContext || null,
@@ -201,11 +203,8 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
       const response = await axiosConfig.post("/Assistant/MapInvoiceDataToBasAccount", transformedInvoice);
       // console.log(response);
       // console.log(response.data);
-      console.log(response.data.response)
-      setBasAccounts(response.data.response);
-
-;
-
+      console.log("response basacc: ", response.data)
+      setBasAccounts(response.data)
 
       // Turn off loading animation
       // setIsBasAccLoading(false);
