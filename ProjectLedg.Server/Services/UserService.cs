@@ -56,31 +56,36 @@ namespace ProjectLedg.Server.Services
 
             if (user == null)
             {
-                return new LoginResult { Success = false, ErrorMessage = "Invalid email or password." };
+                return LoginResult.Failed("Invalid email or password.");
             }
 
             if (!user.EmailConfirmed)
             {
-                return new LoginResult { Success = false, ErrorMessage = "The Email is not confirmed, please check your email for a confirmation link!" };
+                return LoginResult.Failed("The Email is not confirmed, please check your email for a confirmation link!");
             }
 
             var result = await _userRepository.LoginAsync(email, password);
 
             if (!result.Success && !result.Require2FA)
             {
-                return new LoginResult { Success = false, ErrorMessage = "Invalid email or password." };
+                return LoginResult.Failed("Invalid email or password.");
             }
             else if (result.Require2FA)
             {
-                var twoFactorToken = await _authService.GenerateToken(user);  // Await the token generation
-                return new LoginResult { Require2FA = true, Token = twoFactorToken };
+                var twoFactorToken = await _authService.GenerateToken(user);
+                return LoginResult.Requires2FA(twoFactorToken);
             }
 
             // Generate JWT token
-            var jwtToken = await _authService.GenerateToken(user);  // Await the token generation
+            var jwtToken = await _authService.GenerateToken(user);
 
-            return new LoginResult { Success = true, Token = jwtToken };
+            // Retrieve roles from the user
+            var roles = await _userRepository.GetUserRolesAsync(user); // Assuming GetUserRolesAsync returns a list of roles
+
+            return LoginResult.Successful(jwtToken, roles.ToList());
         }
+
+
 
 
         public async Task<AccountCreationResult> CreateUserAsync(CreateAccountRequestDTO request)
@@ -133,7 +138,8 @@ namespace ProjectLedg.Server.Services
             var user = new User
             {
                 Email = request.Email,
-                // Set other properties as needed
+                UserName = request.Email, // Set email as the username
+                                          // Set other properties as needed
             };
 
             // Save the new user to the database
@@ -141,6 +147,17 @@ namespace ProjectLedg.Server.Services
 
             if (result.Succeeded)
             {
+                // Assign "User" role to the newly created user
+                var roleResult = await _userRepository.AddUserToRoleAsync(user, "User");
+                if (!roleResult.Succeeded)
+                {
+                    return new AccountCreationResult
+                    {
+                        Success = false,
+                        Errors = roleResult.Errors.Select(e => e.Description).ToList()
+                    };
+                }
+
                 // Send confirmation email
                 var emailResult = await _emailSender.SendEmailAsync(
                     request.Email,
@@ -164,6 +181,7 @@ namespace ProjectLedg.Server.Services
                 Errors = result.Errors.Select(e => e.Description)
             };
         }
+
 
 
 
