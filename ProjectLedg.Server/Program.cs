@@ -229,6 +229,9 @@ namespace ProjectLedg.Server
             //Customer
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+            //Support Tickets
+            services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
+            services.AddScoped<ISupportTicketService, SupportTicketService>();
 
 
             //EmailList
