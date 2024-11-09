@@ -114,17 +114,17 @@ namespace ProjectLedg.Server.Data
                 new IdentityUserRole<string>
                 {
                     UserId = "1", // ID of the first user
-                    RoleId = "ed9392d0-3a90-4b8f-bbf8-0e3c33fb48ae"  // ID of the Manager role
+                    RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"  // ID of the Manager role
                 },
                 new IdentityUserRole<string>
                 {
                     UserId = "2", // ID of the second user
-                    RoleId = "2ffdbddb-c568-4202-97ad-5528663c0ba8"  // ID of the Admin role
+                    RoleId = "fda748ef-79a4-43a1-ab27-f630b2787818"  // ID of the Admin role
                 },
                 new IdentityUserRole<string>
                 {
                     UserId = "3", // ID of the third user
-                    RoleId = "6c752152-45b8-4fe0-af73-d0c64efae165"  // ID of the User role
+                    RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"  // ID of the User role
                 }
             );
 
