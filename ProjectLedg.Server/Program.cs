@@ -257,6 +257,8 @@ namespace ProjectLedg.Server
 
             //BasAccount
             services.AddScoped<IBasAccountService, BasAccountService>();
+            services.AddScoped<IBasAccountRepo, BasAccountRepo>();
+
 
             //Functions:
             services.AddScoped<IBasAccountFunctions, BasAccountFunctions>();
