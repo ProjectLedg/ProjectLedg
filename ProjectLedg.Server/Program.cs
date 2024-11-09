@@ -52,7 +52,7 @@ namespace ProjectLedg.Server
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromHours(3);
+                options.IdleTimeout = TimeSpan.FromMinutes(3);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
@@ -81,8 +81,8 @@ namespace ProjectLedg.Server
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
-                options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
             // Add services to the container.
@@ -265,6 +265,11 @@ namespace ProjectLedg.Server
             services.AddScoped<IIngoingInvoiceFunctions, IngoingInvoiceFunctions>();
             services.AddScoped<IOutgoingInvoiceFunctions, OutgoingInvoiceFunctions>();
             services.AddScoped<ITransactionFunctions, TransactionFunctions>();
+
+            //enable logging:
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddAzureWebAppDiagnostics();
 
 
 

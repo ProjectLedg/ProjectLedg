@@ -14,12 +14,14 @@ namespace ProjectLedg.Server.Controllers
         private readonly IIngoingInvoiceService _invoiceService;
         private readonly IFormRecognizerService _formService;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly ILogger<IngoingInvoiceController> _logger;
 
-        public IngoingInvoiceController(IIngoingInvoiceService invoiceService, IFormRecognizerService formService, IBlobStorageService blobStorageService)
+        public IngoingInvoiceController(IIngoingInvoiceService invoiceService, IFormRecognizerService formService, IBlobStorageService blobStorageService, ILogger<IngoingInvoiceController> logger)
         {
             _invoiceService = invoiceService;
             _formService = formService;
             _blobStorageService = blobStorageService;
+            _logger = logger;
         }
 
         [HttpPost("analyze")]
@@ -81,6 +83,9 @@ namespace ProjectLedg.Server.Controllers
         public async Task<IActionResult> GetAllInvoices()
         {
             var invoices = await _invoiceService.GetAllIngoingInvoicesAsync();
+
+            var testValue = Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING");
+            _logger.LogCritical($"Test value: {testValue}");
             return Ok(invoices);
         }
 

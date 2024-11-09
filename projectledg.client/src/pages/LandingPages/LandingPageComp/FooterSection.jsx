@@ -31,18 +31,8 @@ export default function Component() {
   const currentYear = new Date().getFullYear()
 
   const footerSections = [
-    {
-      title: "Företag",
-      links: ["Om oss", "Karriär", "Press"],
-    },
-    {
-      title: "Resurser",
-      links: ["Blogg", "Hjälpcenter", "Kontakta oss"],
-    },
-    {
-      title: "Följ oss",
-      links: ["Facebook", "Instagram", "Linkedin"],
-    },
+    
+    
   ]
 
   const socialLinks = [Facebook, Twitter, Instagram, Linkedin]
@@ -77,11 +67,7 @@ export default function Component() {
             <div className="text-sm text-black">
               © {currentYear} Ledge AB. Alla rättigheter förbehållna.
             </div>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              {socialLinks.map((Icon, index) => (
-                <SocialIcon key={index} Icon={Icon} />
-              ))}
-            </div>
+            
           </div>
         </div>
       </footer>
