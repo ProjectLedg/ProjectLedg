@@ -1,4 +1,5 @@
 ﻿using ProjectLedg.Server.Data.Models;
+using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Linq;
 public class BasAccountService : IBasAccountService
 {
     private readonly string _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
+    private readonly IBasAccountRepository _basAccountRepository;
 
     public List<BasAccount> GetBasAccounts()
     {
@@ -36,5 +38,10 @@ public class BasAccountService : IBasAccountService
         }
 
         return basAccounts;
+    }
+
+    public async Task<KeyValuePair<string, int>> GetMostPopularBasAccountAsync()
+    {
+        return await _basAccountRepository.GetMostUsedBasAccountAsync();
     }
 }
