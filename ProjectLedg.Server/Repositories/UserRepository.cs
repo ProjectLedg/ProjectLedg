@@ -68,7 +68,7 @@ namespace ProjectLedg.Server.Repositories
         }
 
         // Get a specific User by ID
-        public async Task<User> GetUserById(string id)
+        public async Task<User> GetUserByIdAsync(string id)
         {
             return await _context.Users.FindAsync(id);
         }
@@ -206,6 +206,13 @@ namespace ProjectLedg.Server.Repositories
         public async Task<int> CountUsersAsync()
         {
             return await _context.Users.CountAsync();
+        }
+
+        public async Task<List<User>> GetUsersByIdsAsync(List<string> userIds)
+        {
+            return await _context.Users
+                .Where(user => userIds.Contains(user.Id))
+                .ToListAsync();
         }
     }
 }
