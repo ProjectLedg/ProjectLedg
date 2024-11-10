@@ -11,5 +11,12 @@ namespace ProjectLedg.Server.Services.IServices
         Task<bool> UpdateIngoingInvoiceAsync(int invoiceId, InvoiceDTO invoiceDto);
         Task<bool> DeleteIngoingInvoiceAsync(int invoiceId);
         Task<bool> SaveIngoingInvoiceAsync(InvoiceDTO invoiceDto, string tempFilePath, string userId);
+
+
+        //statistics
+
+        Task<int> GetIngoingInvoicesTodayAsync();
+        Task<int> GetIngoingInvoicesThisWeekAsync();
+        Task<int> GetIngoingInvoicesThisYearAsync();
     }
 }
