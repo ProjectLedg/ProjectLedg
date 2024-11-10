@@ -29,6 +29,7 @@ namespace ProjectLedg.Server.Data.Models
         public string Priority { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
 
         public string Status { get; set; } = "Open";
 
