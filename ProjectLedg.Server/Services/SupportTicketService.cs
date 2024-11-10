@@ -60,5 +60,30 @@ namespace ProjectLedg.Server.Services
                 throw new ArgumentException("Invalid status");
             }
         }
+        public async Task<int> GetOpenTicketsCountAsync()
+        {
+            return await _supportTicketRepository.CountTicketsByStatusAsync("Open");
+        }
+
+        public async Task<int> GetInProgressTicketsCountAsync()
+        {
+            return await _supportTicketRepository.CountTicketsByStatusAsync("In Progress");
+        }
+
+        public async Task<int> GetClosedTicketsCountAsync(TimeSpan timeSpan)
+        {
+            var sinceDate = DateTime.UtcNow - timeSpan;
+            return await _supportTicketRepository.CountClosedTicketsSinceAsync(sinceDate);
+        }
+
+        public async Task<Dictionary<Category, int>> GetMostCommonCategoryAsync()
+        {
+            return await _supportTicketRepository.GetCategoryCountsAsync();
+        }
+
+        public async Task<Dictionary<string, int>> GetTicketsCountByPriorityAsync(string status)
+        {
+            return await _supportTicketRepository.GetTicketsCountByPriorityAsync(status);
+        }
     }
 }

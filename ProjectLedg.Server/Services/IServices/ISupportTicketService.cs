@@ -10,5 +10,12 @@ namespace ProjectLedg.Server.Services.IServices
         Task<IEnumerable<SupportTicket>> GetAllTicketsAsync();
         Task<SupportTicket> GetTicketByIdAsync(int ticketId);
         Task UpdateTicketStatusAsync(int ticketId, string status);
+
+        //Statistics
+        Task<int> GetOpenTicketsCountAsync();
+        Task<int> GetInProgressTicketsCountAsync();
+        Task<int> GetClosedTicketsCountAsync(TimeSpan timeSpan);
+        Task<Dictionary<Category, int>> GetMostCommonCategoryAsync();
+        Task<Dictionary<string, int>> GetTicketsCountByPriorityAsync(string status);
     }
 }
