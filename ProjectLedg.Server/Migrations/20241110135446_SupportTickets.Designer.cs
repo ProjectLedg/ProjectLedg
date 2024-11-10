@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectLedg.Server.Data;
 
@@ -11,9 +12,11 @@ using ProjectLedg.Server.Data;
 namespace ProjectLedg.Server.Migrations
 {
     [DbContext(typeof(ProjectLedgContext))]
-    partial class ProjectLedgContextModelSnapshot : ModelSnapshot
+    [Migration("20241110135446_SupportTickets")]
+    partial class SupportTickets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -976,9 +979,6 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("LastLoginDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1033,7 +1033,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "042e5485-741a-47c3-aff1-0fd77500920b",
+                            ConcurrencyStamp = "8b7b3b7e-dc0b-4e87-834e-63fe5ecd2771",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1041,9 +1041,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDwJNZzHLHCfhXqX9Z7VZ+rKvUgoSulzzTAvZU/KQCwvBckY2gBhIOz+fSr42cPhqg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJ4KXfFrx1DJn3vk7wTCb3jlUJfIIXosnkyr7k1HBitfuCAiwVDaqdomuDxDGlszfw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "627813b7-75e4-4874-81e1-8f24a99ff0b1",
+                            SecurityStamp = "9ad209f7-ac11-47fa-9211-500ffd7cacc3",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         },
@@ -1052,7 +1052,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "2",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "1b9ff5b8-7db5-4f86-aa10-6a431f26b024",
+                            ConcurrencyStamp = "51d2a97b-4c68-48fd-807e-ecc20b34c847",
                             Email = "testuser2@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1060,9 +1060,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER2@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER2@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAw/ssij2v6XntxtMMuPJnw+xV0e7YuDcXOQrvtt2104Kd1qjD9ir1BnVSQ74ZuuKQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOIj0mX7dv71P065Ps2LqLYwe6Zyo4CDUgj2cPNNYzx87hSdUamgScxl4sM0gCwDPA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a161d5d2-e063-4a50-9e8c-008374d16082",
+                            SecurityStamp = "dccd1051-1c8e-4079-8051-5aa2de8cad9a",
                             TwoFactorEnabled = false,
                             UserName = "testuser2@example.com"
                         },
@@ -1071,7 +1071,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "3",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "284a6f8a-8ec0-479c-acb8-316778c16dd5",
+                            ConcurrencyStamp = "c860cb37-447f-41dd-ab39-4d80ce40d64d",
                             Email = "testuser3@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1079,9 +1079,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER3@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER3@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJ0ZD/pgw3UsQhLFrfS8cimdeMHA+U4dBdMc8oywaDl8WFllv311N7bDeIra0WyrPg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKE7l8WoeDkV8ukH7S70U9d0O4ssBBtuXarOHau+2j9GMwsD8zdkIIhzk/WCBDgDEg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "75cbbb70-7140-47dd-b5c8-f606d56c2db9",
+                            SecurityStamp = "8df15bc3-9048-4ac6-81f2-ee427d065fc3",
                             TwoFactorEnabled = false,
                             UserName = "testuser3@example.com"
                         });
