@@ -50,5 +50,12 @@ namespace ProjectLedg.Server.Repositories
             _context.OutgoingInvoices.Remove(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<int> CountOutgoingInvoicesSinceAsync(DateTime startDate)
+        {
+            return await _context.OutgoingInvoices
+                .Where(invoice => invoice.InvoiceDate >= startDate)
+                .CountAsync();
+        }
     }
 }
