@@ -117,5 +117,47 @@ namespace ProjectLedg.Server.Controllers
 
             return Ok(ticket);
         }
+
+        [HttpGet("statistics/open")]
+        public async Task<IActionResult> GetOpenTicketsCount()
+        {
+            var count = await _supportTicketService.GetOpenTicketsCountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("statistics/in-progress")]
+        public async Task<IActionResult> GetInProgressTicketsCount()
+        {
+            var count = await _supportTicketService.GetInProgressTicketsCountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("statistics/closed")]
+        public async Task<IActionResult> GetClosedTicketsCount([FromQuery] string timeframe)
+        {
+            TimeSpan timeSpan = timeframe.ToLower() switch
+            {
+                "24h" => TimeSpan.FromHours(24),
+                "week" => TimeSpan.FromDays(7),
+                "month" => TimeSpan.FromDays(30),
+                _ => throw new ArgumentException("Invalid timeframe. Use '24h', 'week', or 'month'.")
+            };
+            var count = await _supportTicketService.GetClosedTicketsCountAsync(timeSpan);
+            return Ok(count);
+        }
+
+        [HttpGet("statistics/most-common-category")]
+        public async Task<IActionResult> GetMostCommonCategory()
+        {
+            var categories = await _supportTicketService.GetMostCommonCategoryAsync();
+            return Ok(categories);
+        }
+
+        [HttpGet("statistics/priority")]
+        public async Task<IActionResult> GetTicketsCountByPriority([FromQuery] string status)
+        {
+            var priorityCounts = await _supportTicketService.GetTicketsCountByPriorityAsync(status);
+            return Ok(priorityCounts);
+        }
     }
 }
