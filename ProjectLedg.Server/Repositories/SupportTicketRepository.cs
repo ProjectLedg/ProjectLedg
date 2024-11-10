@@ -43,5 +43,29 @@ namespace ProjectLedg.Server.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<int> CountTicketsByStatusAsync(string status)
+        {
+            return await _context.SupportTickets.CountAsync(t => t.Status == status);
+        }
+
+        public async Task<int> CountClosedTicketsSinceAsync(DateTime sinceDate)
+        {
+            return await _context.SupportTickets.CountAsync(t => t.Status == "Closed" && t.UpdatedAt >= sinceDate);
+        }
+
+        public async Task<Dictionary<Category, int>> GetCategoryCountsAsync()
+        {
+            return await _context.SupportTickets
+                .GroupBy(t => t.Category)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+        }
+
+        public async Task<Dictionary<string, int>> GetTicketsCountByPriorityAsync(string status)
+        {
+            return await _context.SupportTickets
+                .Where(t => t.Status == status)
+                .GroupBy(t => t.Priority)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+        }
     }
 }
