@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ProjectLedg.Options.Email.IEmail;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Model.DTOs.User;
 using ProjectLedg.Server.Options;
+using ProjectLedg.Server.Options.Email;
+using ProjectLedg.Server.Repositories;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
 using System.Security.Claims;
@@ -13,12 +16,16 @@ namespace ProjectLedg.Server.Services
         private readonly IAdminRepository _adminRepository;
         private readonly UserManager<User> _userManager;
         private readonly AuthenticationService _authenticationService;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailSender _emailSender;
 
-        public AdminService(IAdminRepository adminRepository, UserManager<User> userManager, AuthenticationService authenticationService)
+        public AdminService(IAdminRepository adminRepository, UserManager<User> userManager, AuthenticationService authenticationService, IUserRepository userRepository, IEmailSender emailSender)
         {
             _adminRepository = adminRepository;
             _userManager = userManager;
             _authenticationService = authenticationService;
+            _userRepository = userRepository;
+            _emailSender = emailSender;
         }
 
         public async Task<LoginResult> AdminLoginAsync(string email, string password)
@@ -91,6 +98,44 @@ namespace ProjectLedg.Server.Services
         public async Task<User> GetUserById(string id)
         {
             return await _adminRepository.GetAdminByIdAsync(id);
+        }
+
+        public async Task<EmailResult> SendNewsletterToAllUsersAsync(string subject, string content)
+        {
+            var allUsers = await _userRepository.GetAllUsersAsync();
+            var failedEmails = new List<string>();
+
+            foreach (var user in allUsers)
+            {
+                var result = await _emailSender.SendEmailAsync(user.Email, subject, content);
+                if (!result.Success)
+                {
+                    failedEmails.Add(user.Email);
+                }
+            }
+
+            return failedEmails.Any()
+                ? new EmailResult { Success = false, ErrorMessage = "Failed to send emails to some users." }
+                : new EmailResult { Success = true };
+        }
+
+        public async Task<EmailResult> SendTargetedEmailAsync(List<string> userIds, string subject, string content)
+        {
+            var users = await _userRepository.GetUsersByIdsAsync(userIds);
+            var failedEmails = new List<string>();
+
+            foreach (var user in users)
+            {
+                var result = await _emailSender.SendEmailAsync(user.Email, subject, content);
+                if (!result.Success)
+                {
+                    failedEmails.Add(user.Email);
+                }
+            }
+
+            return failedEmails.Any()
+                ? new EmailResult { Success = false, ErrorMessage = "Failed to send emails to some users." }
+                : new EmailResult { Success = true };
         }
     }
 }
