@@ -17,5 +17,8 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<User> GetUserByEmailAsync(string email);
         Task<List<string>> GetUserRolesAsync(User user);
         Task<IdentityResult> AddUserToRoleAsync(User user, string role);
+        Task<int> CountUsersAsync();
+
+        Task<int> CountLoginsSinceAsync(DateTime startDate);
     }
 }

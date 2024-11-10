@@ -82,9 +82,9 @@ namespace ProjectLedg.Server.Repositories
         // Update an existing User
         public async Task<IdentityResult> UpdateUserAsync(User user)
         {
-            var result = await _userManager.UpdateAsync(user);
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return result;
+            return IdentityResult.Success;
         }
 
         // Delete an User
@@ -194,6 +194,18 @@ namespace ProjectLedg.Server.Repositories
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<int> CountLoginsSinceAsync(DateTime startDate)
+        {
+            return await _context.Users
+                .Where(user => user.LastLoginDate >= startDate)
+                .CountAsync();
+        }
+
+        public async Task<int> CountUsersAsync()
+        {
+            return await _context.Users.CountAsync();
         }
     }
 }
