@@ -45,9 +45,9 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        public async Task<User> GetUserById(string id)
+        public async Task<User> GetUserByIdAsync(string id)
         {
-            return await _userRepository.GetUserById(id);
+            return await _userRepository.GetUserByIdAsync(id);
         }
 
         public async Task<LoginResult> LoginAsync(string email, string password)
