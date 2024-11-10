@@ -15,5 +15,13 @@ namespace ProjectLedg.Server.Services.IServices
         Task<IdentityResult> DeleteUserAsync(string password, ClaimsPrincipal currentUser);
         Task<LoginResult> LoginAsync(string email, string password);
         Task<IdentityResult> SendEmailVerificationAsync(string userId, string code);
+
+
+        //statistics
+
+        Task<int> GetTotalUsersAsync();
+        Task<int> GetLoginsTodayAsync();
+        Task<int> GetLoginsThisWeekAsync();
+        Task<int> GetLoginsThisYearAsync();
     }
 }

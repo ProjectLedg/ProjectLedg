@@ -80,7 +80,11 @@ namespace ProjectLedg.Server.Services
             var jwtToken = await _authService.GenerateToken(user);
 
             // Retrieve roles from the user
-            var roles = await _userRepository.GetUserRolesAsync(user); // Assuming GetUserRolesAsync returns a list of roles
+            var roles = await _userRepository.GetUserRolesAsync(user);
+
+            // Update LastLoginDate on successful login
+            user.LastLoginDate = DateTime.UtcNow;
+            await _userRepository.UpdateUserAsync(user); // Make sure this method saves changes to the database
 
             return LoginResult.Successful(jwtToken, roles.ToList());
         }
@@ -199,6 +203,28 @@ namespace ProjectLedg.Server.Services
         public async Task<IdentityResult> SendEmailVerificationAsync(string userId, string code)
         {
             return await _userRepository.SendEmailVerificationAsync(userId, code);
+        }
+
+        public async Task<int> GetTotalUsersAsync()
+        {
+            return await _userRepository.CountUsersAsync();
+        }
+
+        public async Task<int> GetLoginsTodayAsync()
+        {
+            return await _userRepository.CountLoginsSinceAsync(DateTime.UtcNow.Date);
+        }
+
+        public async Task<int> GetLoginsThisWeekAsync()
+        {
+            var startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
+            return await _userRepository.CountLoginsSinceAsync(startOfWeek);
+        }
+
+        public async Task<int> GetLoginsThisYearAsync()
+        {
+            var startOfYear = new DateTime(DateTime.UtcNow.Year, 1, 1);
+            return await _userRepository.CountLoginsSinceAsync(startOfYear);
         }
     }
 }
