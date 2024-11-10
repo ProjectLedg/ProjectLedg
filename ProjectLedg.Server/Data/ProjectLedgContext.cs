@@ -19,6 +19,7 @@ namespace ProjectLedg.Server.Data
         public DbSet<EmailList> Emails { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
+        public DbSet<Notice> Notices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
