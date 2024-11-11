@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Button } from "@/components/ui/button"; // Assuming you have a Button component
-import { Input } from "@/components/ui/input";   // Assuming you have an Input component
-import { Mail, Lock, Loader2 } from 'lucide-react'; // Icons for better UX
+import { axiosConfig } from '/axiosconfig'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Mail, Lock, Loader2 } from 'lucide-react';
 import Cookies from 'js-cookie';
 
 export default function AdminLoginPage() {
@@ -14,43 +14,36 @@ export default function AdminLoginPage() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-      e.preventDefault();
-      setIsLoading(true);
-      setError('');
-  
-      try {
-          const response = await axios.post(
-              'https://localhost:7223/api/Admin/admin-login', 
-              { email, password },
-              {
-                  headers: { 'Content-Type': 'application/json' },
-                  withCredentials: true,
-              }
-          );
-  
-          /* console.log("Login response:", response.data); */
-  
-          // Destructure token and roles from response
-          const { token, roles } = response.data;
-  
-          if (token && roles && (roles.includes("Admin") || roles.includes("Manager"))) {
-              // Optional: Store the token in a secure cookie for future requests
-              Cookies.set('JWTToken', token, { secure: true, sameSite: 'strict' });
-  
-              // Navigate to the dashboard
-              navigate('/admin/dashboard');
-          } else {
-              setError('Access denied. You do not have the required role.');
-          }
-      } catch (err) {
-          setError(err.response?.data?.message || 'An error occurred. Please try again later.');
-          console.error('Login error:', err);
-      } finally {
-          setIsLoading(false);
-      }
-  };
-  
-  
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+    
+        try {
+            const response = await axiosConfig.post('/Admin/admin-login', { email, password });
+    
+            console.log("Login response data:", response.data);
+    
+            const { token, roles } = response.data;
+    
+            if (token && roles && (roles.includes("Admin") || roles.includes("Manager"))) {
+                // Store the token in a secure cookie or localStorage
+                Cookies.set('JWTToken', token, { secure: true, sameSite: 'strict' });
+    
+                // Set token as default Authorization header
+                axiosConfig.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    
+                // Navigate to the dashboard
+                navigate('/admin/dashboard');
+            } else {
+                setError('Access denied. You do not have the required role.');
+            }
+        } catch (err) {
+            console.error('Login error:', err.response || err);
+            setError(err.response?.data || 'Invalid email or password.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
