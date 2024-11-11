@@ -34,14 +34,12 @@ namespace ProjectLedg.Server.Controllers
             return Ok(response);
         }
 
-        //[HttpPost("MapInvoiceDataToBasAccount")]
-        //public async Task<IActionResult> MapInvoiceDataToBasAccount([FromBody] InvoiceMapDTO invoiceMapData)
-        //{
-        //    // TODO: Add error handling
+        [HttpPost("MapInvoiceDataToBasAccount")]
+        public async Task<IActionResult> MapInvoiceDataToBasAccount([FromBody] InvoiceMapDTO invoiceMapData)
+        {
+            var response = await _assistantService.MapInvoiceToBasAccountsAsync(invoiceMapData);
 
-        //    var response = await _assistantService.MapInvoiceToBasAccountsAsync(invoiceMapData);
-
-        //    return Ok(response);
-        //}
+            return Ok(response);
+        }
     }
 }
