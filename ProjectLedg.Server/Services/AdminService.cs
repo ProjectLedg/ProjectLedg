@@ -33,23 +33,24 @@ namespace ProjectLedg.Server.Services
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
+                Console.WriteLine("User not found with email: " + email); // Log user lookup failure
                 return LoginResult.Failed("Invalid email or password.");
             }
 
             var loginResult = await _userManager.CheckPasswordAsync(user, password);
             if (!loginResult)
             {
+                Console.WriteLine("Password check failed for user: " + email); // Log password check failure
                 return LoginResult.Failed("Invalid email or password.");
             }
 
-            // Ensure user has either "Admin" or "Manager" role
             var roles = await _userManager.GetRolesAsync(user);
             if (!roles.Any(r => r == "Admin" || r == "Manager"))
             {
+                Console.WriteLine("User does not have the required role."); // Log role failure
                 return LoginResult.Failed("Access denied. Only Admins and Managers can log in.");
             }
 
-            // Generate JWT token for the admin user
             var token = await _authenticationService.GenerateToken(user);
             return LoginResult.Successful(token, roles.ToList());
         }

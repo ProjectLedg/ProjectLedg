@@ -12,7 +12,7 @@ namespace ProjectLedg.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin, Manager")]
+    //[Authorize(Roles = "Admin, Manager")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -82,7 +82,7 @@ namespace ProjectLedg.Server.Controllers
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTimeOffset.UtcNow.AddHours(1) // Set expiry as needed
                 };
-                Response.Cookies.Append("AdminToken", result.Token, cookieOptions);
+                Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
 
                 return Ok(new { Message = "Login successful", Token = result.Token, Roles = roles });
             }
