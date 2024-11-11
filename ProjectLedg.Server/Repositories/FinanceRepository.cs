@@ -9,12 +9,12 @@ using System.Globalization;
 
     namespace ProjectLedg.Server.Repositories
     {
-        public class FinanceRepo : IFinanceRepo
+        public class FinanceRepository : IFinanceRepository
         {
             private readonly ProjectLedgContext _context;
-            private readonly ILogger<FinanceRepo> _logger;
+            private readonly ILogger<FinanceRepository> _logger;
 
-        public FinanceRepo(ProjectLedgContext context, ILogger<FinanceRepo> logger)
+        public FinanceRepository(ProjectLedgContext context, ILogger<FinanceRepository> logger)
             {
                 _context = context;
                 _logger = logger;

@@ -2,7 +2,7 @@
 
 namespace ProjectLedg.Server.Repositories.IRepositories
 {
-    public interface ITransactionRepo
+    public interface ITransactionRepository
     {
         Task CreateTransactionAsync(Transaction transaction);
     }

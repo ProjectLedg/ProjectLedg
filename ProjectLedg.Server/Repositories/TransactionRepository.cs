@@ -3,7 +3,7 @@ using System.Transactions;
 
 namespace ProjectLedg.Server.Repositories
 {
-    public class TransactionRepo : ITransactionRepo
+    public class TransactionRepository : ITransactionRepository
     {
         public Task CreateTransactionAsync(Transaction transaction)
         {
