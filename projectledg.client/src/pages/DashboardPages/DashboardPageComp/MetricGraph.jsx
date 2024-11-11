@@ -22,7 +22,7 @@ const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metric
         ? `${value.toFixed(1)}%`
         : value.toLocaleString();
       return (
-        <div className="bg-white p-2 border border-gray-300 rounded shadow dark:bg-gray-700">
+        <div className="bg-white p-2 border border-gray-300 rounded shadow dark:bg-darkSurface">
           <p className="text-sm">{`${label}: ${formattedValue}`}</p>
         </div>
       );
@@ -31,17 +31,17 @@ const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metric
   };
 
   return (
-    <Card className="overflow-hidden dark:bg-gray-800 ">
+    <Card className="overflow-hidden dark:bg-darkSurface dark:border-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <BarChart2 className="mr-2 h-4 w-4" />
           {title}
         </CardTitle>
         <Select value={metricFilter} onValueChange={setMetricFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] dark:bg-darkBackground dark:border-darkBorder">
             <SelectValue placeholder="Select metric" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="dark:bg-darkBackground dark:border-darkBorder">
             {metricOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
