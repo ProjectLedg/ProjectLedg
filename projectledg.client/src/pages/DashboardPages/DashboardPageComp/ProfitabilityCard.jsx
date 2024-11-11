@@ -22,9 +22,9 @@ const ProfitabilityCard = ({ runway }) => {
   const statusColor = getStatusColor(runway.percentage);
 
   return (
-    <Card className="max-h-64 overflow-hidden flex flex-col pb-4 dark:bg-gray-800">
+    <Card className="max-h-64 overflow-hidden flex flex-col pb-4 dark:bg-darkSurface dark:border-0 ">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 py-2 pt-6">
-        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center dark:text-darkSecondary">
           <PieChart className="mr-2 h-4 w-4" />
           Lönsamhet
         </CardTitle>
@@ -32,9 +32,9 @@ const ProfitabilityCard = ({ runway }) => {
         <TooltipProvider>
           <TooltipShad>
             <TooltipTrigger>
-              <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+              <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground dark:text-darkSecondary" />
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="dark:bg-darkBackground dark:border-darkBorder">
               <p>
                 Lönsamhet räknas utifrån vinstmarginalen på ett normaliserat
                 värde
@@ -80,7 +80,7 @@ const ProfitabilityCard = ({ runway }) => {
             <div className={`text-xl font-bold ${statusColor}`}>
               {runway.message}
             </div>
-            <div className="text-xs text-muted-foreground dark:text-white">
+            <div className="text-xs text-muted-foreground dark:text-darkSecondary">
               Runway: {runway.months} månader
             </div>
           </div>
