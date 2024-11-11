@@ -88,8 +88,8 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
       style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
       onClick={handleClick}
     >
-      <Icon className="h-5 w-5" strokeWidth={isSelected ? 2 : 1} />
-      <span>{label}</span>
+      <Icon className="h-5 w-5 dark:text-gray-300" strokeWidth={isSelected ? 2 : 1} />
+      <span className="dark:text-gray-300">{label}</span>
       {isSelected && (
         <motion.span
           style={barStyle}
@@ -170,13 +170,28 @@ const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
 const handleLogout = ({ icon: Icon, label, path }) => {
   const handleClick = (e) => {
     e.preventDefault();
+
+    // Ta bort JWT-token från cookies
     Cookies.remove('JWTToken');
-    // Add any additional logout logic here
-    window.location.href = path; // Redirect after logout
+
+
+
+    // Lägg till eventuella andra utloggningslogik här
+
+    // Omdirigera till den angivna vägen efter utloggning
+    window.location.href = path;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("vite-ui-theme", "light"); // Återställ till "light" tema i localStorage
+      document.documentElement.classList.remove("dark"); // Ta bort dark class från <html> elementet
+    }
   };
 
   return (
-    <a href={path} onClick={handleClick} className="flex items-center  space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500 ">
+    <a
+      href={path}
+      onClick={handleClick}
+      className="flex items-center space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500"
+    >
       <Icon className="h-5 w-5" />
       <span>{label}</span>
     </a>
@@ -184,16 +199,17 @@ const handleLogout = ({ icon: Icon, label, path }) => {
 };
 
 
+
 const Sidebar = ({ isChatOpen }) => (
   <motion.div
     initial={{ width: isChatOpen ? '5rem' : '15rem' }}
     animate={{ width: isChatOpen ? '5rem' : '15rem' }}
     transition={{ duration: 0.6 }}
-    className="hidden md:flex pb-12 h-full flex-col"
+    className="hidden md:flex pb-12 h-full flex-col dark:bg-black"
   >
 
-    <div className="flex-grow space-y-4 py-4">
-      <div className="py-2 h-full">
+    <div className="flex-grow space-y-4 py-4 ">
+      <div className="py-2 h-full ">
         <div className={`h-full${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
 
           <UserDropdown
@@ -222,7 +238,7 @@ const Sidebar = ({ isChatOpen }) => (
         </div>
       </div>
     </div>
-    <div className="mt-auto border-t">
+    <div className="mt-auto border-t dark:border-gray-100">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
           !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
@@ -339,14 +355,14 @@ export default function DashboardLayout() {
       {!isMobile && <Sidebar isChatOpen={isChatOpen} />}
 
       {/* Main Content */}
-      <div className="MAIN CONTENT flex flex-col flex-1">
-        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200">
-          <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8 ">
+      <div className="MAIN CONTENT flex flex-col flex-1 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-none dark:bg-gray-700 ">
+          <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8  ">
 
             {/* Navbar */}
-            <header className={`NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)] ${isChatOpen && isMobile ? 'hidden' : ''}`}>
-              <div className="mx-auto sm:px-6 md:px-8">
-                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem]">
+            <header className={`NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]  ${isChatOpen && isMobile ? 'hidden' : ''}`}>
+              <div className="mx-auto sm:px-6 md:px-8 ">
+                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem] dark:bg-black dark:bg-none">
                   <div className="flex items-center">
                     {/* Mobile Navigation */}
                     <div className="md:hidden">
@@ -354,7 +370,7 @@ export default function DashboardLayout() {
                     </div>
                     <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">{companyData ? companyData.companyName : 'Company Name'}</h1>
                   </div>
-                  <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4">
+                  <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4 ">
                     <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
                   </div>
                 </div>
@@ -362,21 +378,21 @@ export default function DashboardLayout() {
             </header>
 
             {/* Main Content or Chat Window Mobile */}
-            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
+            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} >
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
                 <ChatService onClose={toggleChat} mobile />
               ) : (
-                <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full ">
+                <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full dark:from-gray-700 dark:to-gray-900">
                   <motion.div
-                    className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8"
+                    className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8 dark:bg-black"
                     animate={{
                       width: isChatOpen ? '67%' : '100%',
                     }}
                     initial={{ width: '100%' }}
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   >
-                    <Outlet context={{ isChatOpen }} />
+                      <Outlet context={{ isChatOpen }} />
                   </motion.div>
 
                   <AnimatePresence>

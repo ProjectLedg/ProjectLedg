@@ -12,10 +12,12 @@ using System.Globalization;
         public class FinanceRepo : IFinanceRepo
         {
             private readonly ProjectLedgContext _context;
+            private readonly ILogger<FinanceRepo> _logger;
 
-            public FinanceRepo(ProjectLedgContext context)
+        public FinanceRepo(ProjectLedgContext context, ILogger<FinanceRepo> logger)
             {
                 _context = context;
+                _logger = logger;
             }
 
 
@@ -180,16 +182,18 @@ using System.Globalization;
 
             public async Task<List<MonthlyTotalDTO>> GetProfitHistoryAsync(int companyId, int year)
             {
+            try
+            {
                 return await _context.Companies
                     .Where(c => c.Id == companyId)
                     .SelectMany(fy => fy.BasAccounts) // Get all BasAccs for this FY
                     .Where(ba => ba.Year == year)
                     .SelectMany(ba => ba.Transactions) // Get all transactions for the BasAccs
-                    .GroupBy(t => new {t.TransactionDate.Year, t.TransactionDate.Month })
+                    .GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month })
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                     .Select(g => new MonthlyTotalDTO
                     {
-                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")), 
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")),
 
                         // Filter the revenue credit posts and subtract the expenses debit posts
                         Amount =
@@ -215,6 +219,13 @@ using System.Globalization;
                             .Sum(t => t.Amount))))
                     })
                     .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An exception has occurred... Oops");
+                return new List<MonthlyTotalDTO>();
+            }
+                
             }
 
             public async Task<List<MonthlyTotalDTO>> GetExpensesHistoryAsync(int companyId, int year)

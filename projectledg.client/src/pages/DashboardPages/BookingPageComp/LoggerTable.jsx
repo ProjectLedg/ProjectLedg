@@ -36,7 +36,7 @@ const [sortOrder, setSortOrder] = useState("asc") // Default sort order ascendin
 return (
     <Table>
         <TableHeader>
-            <TableRow className="bg-gray-100">
+            <TableRow className="bg-gray-100 dark:bg-black">
                 <DropdownMenu className="flex flex-row justify-around">
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("id")}>Fakturanummer {sortBy === "id" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("date")}>Fakturadatum {sortBy === "date" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
@@ -79,7 +79,7 @@ return (
                     className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => handleInvoiceClick(invoice)}
                 >
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium py-4 px-6">
                         {invoice.id}
                     </TableCell>
                     <TableCell >
@@ -93,11 +93,11 @@ return (
                     </TableCell>
                     <TableCell className="w-64">
                         <div className="flex space-x-2">
-                            <Badge className="w-[50%] max-h-5" variant={invoice.isPaid ? "success" : "destructive"}>
+                            <Badge className="w-[45%] max-h-5" variant={invoice.isPaid ? "success" : "destructive"}>
                                 {invoice.isPaid ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                                 <span className="ml-1">{invoice.isPaid ? "Betald" : "Ej betald"}</span>
                             </Badge>
-                            <Badge className="w-[50%] max-h-5" variant={invoice.isBooked ? "success" : "destructive"}>
+                            <Badge className="w-[45%] max-h-5 " variant={invoice.isBooked ? "success" : "destructive"}>
                                 {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                                 <span className="ml-1">{invoice.isBooked ? "Bokförd" : "Ej Bokförd"}</span>
                             </Badge>

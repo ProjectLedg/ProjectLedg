@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
-import { axiosConfig } from '/axiosconfig'
+import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from '@/components/ui/progress'
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
@@ -21,7 +21,7 @@ const tooltipInfo = {
 }
 
 const MetricCard = ({ title, value, change, changeType, toolDescription, chart, icon: Icon }) => (
-  <Card className="overflow-hidden max-h-64">
+  <Card className="overflow-hidden max-h-64 dark:bg-gray-800  ">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center">
         {Icon && <Icon className="mr-2 h-4 w-4" />}
@@ -39,12 +39,12 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
       </TooltipProvider>
     </CardHeader>
     <CardContent>
-      <div className="text-lg sm:text-2xl font-bold">{value}</div>
-      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+      <div className="text-lg sm:text-2xl font-bold ">{value}</div>
+      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${changeType === 'positive' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
         }`}>
         {change}
       </div>
-      <div className="h-[60px] sm:h-[80px] mt-4">
+      <div className="h-[60px] sm:h-[80px] mt-4 ">
         <ResponsiveContainer width="100%" height="100%">
           {chart}
         </ResponsiveContainer>
@@ -79,7 +79,7 @@ const LoadingSpinner = () => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-gray-300 rounded shadow">
+      <div className="bg-white p-2 border border-gray-300 rounded shadow dark:bg-gray-700">
         <p className="text-xs sm:text-sm">{`${label} : ${payload[0].value.toLocaleString()} kr`}</p>
       </div>
     );
@@ -109,10 +109,18 @@ const DashboardHomePage = () => {
           year: currentYear
         };
         
+        const axiosConfig = axios.create({
+          baseURL: 'https://projectledg.azurewebsites.net/api/',
+          headers: {
+            'Content-Type': 'application/json',
+            // Include additional headers if needed
+          },
+          withCredentials: false, // Ensure this is false unless you specifically need credentials
+        });
 
         const [topGraphsResponse, filterGraphsResponse] = await Promise.all([
-          axiosConfig.post('/Finance/dashboardtopgraphs', payload),
-          axiosConfig.post('/Finance/dashboardbottomgraphs', payload)
+          axiosConfig.post('Finance/dashboardtopgraphs', payload),
+          axiosConfig.post('Finance/dashboardbottomgraphs', payload)
         ]);
 
         setTopGraphsData(topGraphsResponse.data);
@@ -133,6 +141,8 @@ const DashboardHomePage = () => {
 
   const { revenue, profit, expenses, runway } = topGraphsData;
 
+  const isDarkMode = document.documentElement.classList.contains('dark'); 
+
   const metricOptions = [
     { value: 'grossProfit', label: 'Total vinst' },
     { value: 'operatingMargin', label: 'Rörelsemarginal' },
@@ -147,6 +157,7 @@ const DashboardHomePage = () => {
       </div>
       <div className={`GRIDCONTAINER flex ${isChatOpen ? 'flex-col' : 'flex-row'}`}>
         <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] pb-4' : 'w-[50%] pr-2'}`}>
+
           <MetricCard
             title="Omsättning"
             value={`${revenue.totalRevenue.toLocaleString()} kr`}
@@ -156,13 +167,23 @@ const DashboardHomePage = () => {
             toolDescription={tooltipInfo.revenue}
             chart={
               <LineChart data={revenue.revenueHistory}>
-                <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+                <XAxis
+                  dataKey="monthName"
+                  tick={{ fontSize: 10 }}
+                  interval={'preserveStartEnd'}
+                  tickLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
+                  axisLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
+                  style={{
+                    fill: isDarkMode ? 'white' : 'grey', 
+                  }}
+                />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="amount" stroke="#10B34A" strokeWidth={2} dot={false} />
               </LineChart>
             }
           />
+
           <MetricCard
             title="Vinst"
             value={`${profit.totalProfit.toLocaleString()} kr`}
@@ -172,12 +193,21 @@ const DashboardHomePage = () => {
             toolDescription={tooltipInfo.income}
             chart={
               <BarChart data={profit.profitHistory}>
-                <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+                <XAxis
+                  dataKey="monthName"
+                  tick={{ fontSize: 10 }}
+                  interval={'preserveStartEnd'}
+                  tickLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
+                  axisLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
+                  style={{
+                    fill: isDarkMode ? 'white' : 'grey', 
+                  }}
+                />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="amount">
                   {profit.profitHistory.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B981" : "#EF4444"} />
+                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B34A" : "#EF4444"} />
                   ))}
                 </Bar>
               </BarChart>
@@ -195,12 +225,21 @@ const DashboardHomePage = () => {
             toolDescription={tooltipInfo.expenses}
             chart={
               <BarChart data={expenses.expensesHistory}>
-                <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
+                <XAxis
+                  dataKey="monthName"
+                  tick={{ fontSize: 10 }}
+                  interval={'preserveStartEnd'}
+                  tickLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
+                  axisLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
+                  style={{
+                    fill: isDarkMode ? 'white' : 'grey', // Apply white color in dark mode
+                  }}
+                />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="amount">
                   {expenses.expensesHistory.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B981" : "#EF4444"} />
+                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B34A" : "#EF4444"} />
                   ))}
                 </Bar>
               </BarChart>
