@@ -98,7 +98,7 @@ public class BasAccountService : IBasAccountService
                         Transactions = new List<Transaction>() // Create as empty list to avoid null ref error
                     };
                 }
-                // Update values if exists
+                // Update values if bas account exists
                 else
                 {
                     existingBasAccount.Credit += accountDto.Credit;
