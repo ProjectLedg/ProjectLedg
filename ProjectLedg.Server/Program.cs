@@ -81,9 +81,16 @@ namespace ProjectLedg.Server
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
+
+            //services.AddDbContext<ProjectLedgContext>(options =>
+            //    options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"),
+            //    sqlOptions => {
+            //        sqlOptions.EnableRetryOnFailure();
+            //        sqlOptions.CommandTimeout(500); // Increase timeout if needed
+            //    }).LogTo(Console.WriteLine, LogLevel.Information));
 
             // Add services to the container.
             services.AddIdentity<User, IdentityRole>(options =>
