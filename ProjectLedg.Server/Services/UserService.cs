@@ -45,9 +45,9 @@ namespace ProjectLedg.Server.Services
             }
         }
 
-        public async Task<User> GetUserById(string id)
+        public async Task<User> GetUserByIdAsync(string id)
         {
-            return await _userRepository.GetUserById(id);
+            return await _userRepository.GetUserByIdAsync(id);
         }
 
         public async Task<LoginResult> LoginAsync(string email, string password)
@@ -56,31 +56,40 @@ namespace ProjectLedg.Server.Services
 
             if (user == null)
             {
-                return new LoginResult { Success = false, ErrorMessage = "Invalid email or password." };
+                return LoginResult.Failed("Invalid email or password.");
             }
 
             if (!user.EmailConfirmed)
             {
-                return new LoginResult { Success = false, ErrorMessage = "The Email is not confirmed, please check your email for a confirmation link!" };
+                return LoginResult.Failed("The Email is not confirmed, please check your email for a confirmation link!");
             }
 
             var result = await _userRepository.LoginAsync(email, password);
 
             if (!result.Success && !result.Require2FA)
             {
-                return new LoginResult { Success = false, ErrorMessage = "Invalid email or password." };
+                return LoginResult.Failed("Invalid email or password.");
             }
             else if (result.Require2FA)
             {
-                var twoFactorToken = await _authService.GenerateToken(user);  // Await the token generation
-                return new LoginResult { Require2FA = true, Token = twoFactorToken };
+                var twoFactorToken = await _authService.GenerateToken(user);
+                return LoginResult.Requires2FA(twoFactorToken);
             }
 
             // Generate JWT token
-            var jwtToken = await _authService.GenerateToken(user);  // Await the token generation
+            var jwtToken = await _authService.GenerateToken(user);
 
-            return new LoginResult { Success = true, Token = jwtToken };
+            // Retrieve roles from the user
+            var roles = await _userRepository.GetUserRolesAsync(user);
+
+            // Update LastLoginDate on successful login
+            user.LastLoginDate = DateTime.UtcNow;
+            await _userRepository.UpdateUserAsync(user); // Make sure this method saves changes to the database
+
+            return LoginResult.Successful(jwtToken, roles.ToList());
         }
+
+
 
 
         public async Task<AccountCreationResult> CreateUserAsync(CreateAccountRequestDTO request)
@@ -133,7 +142,8 @@ namespace ProjectLedg.Server.Services
             var user = new User
             {
                 Email = request.Email,
-                // Set other properties as needed
+                UserName = request.Email, // Set email as the username
+                                          // Set other properties as needed
             };
 
             // Save the new user to the database
@@ -141,6 +151,17 @@ namespace ProjectLedg.Server.Services
 
             if (result.Succeeded)
             {
+                // Assign "User" role to the newly created user
+                var roleResult = await _userRepository.AddUserToRoleAsync(user, "User");
+                if (!roleResult.Succeeded)
+                {
+                    return new AccountCreationResult
+                    {
+                        Success = false,
+                        Errors = roleResult.Errors.Select(e => e.Description).ToList()
+                    };
+                }
+
                 // Send confirmation email
                 var emailResult = await _emailSender.SendEmailAsync(
                     request.Email,
@@ -167,6 +188,7 @@ namespace ProjectLedg.Server.Services
 
 
 
+
         public async Task<IdentityResult> UpdateUserAsync(User user)
         {
             return await _userRepository.UpdateUserAsync(user);
@@ -181,6 +203,28 @@ namespace ProjectLedg.Server.Services
         public async Task<IdentityResult> SendEmailVerificationAsync(string userId, string code)
         {
             return await _userRepository.SendEmailVerificationAsync(userId, code);
+        }
+
+        public async Task<int> GetTotalUsersAsync()
+        {
+            return await _userRepository.CountUsersAsync();
+        }
+
+        public async Task<int> GetLoginsTodayAsync()
+        {
+            return await _userRepository.CountLoginsSinceAsync(DateTime.UtcNow.Date);
+        }
+
+        public async Task<int> GetLoginsThisWeekAsync()
+        {
+            var startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
+            return await _userRepository.CountLoginsSinceAsync(startOfWeek);
+        }
+
+        public async Task<int> GetLoginsThisYearAsync()
+        {
+            var startOfYear = new DateTime(DateTime.UtcNow.Year, 1, 1);
+            return await _userRepository.CountLoginsSinceAsync(startOfYear);
         }
     }
 }

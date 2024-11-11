@@ -18,6 +18,8 @@ namespace ProjectLedg.Server.Data
         public DbSet<BasAccount> BasAccounts { get; set; }
         public DbSet<EmailList> Emails { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<SupportTicket> SupportTickets { get; set; }
+        public DbSet<Notice> Notices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -64,7 +66,7 @@ namespace ProjectLedg.Server.Data
                 .HasForeignKey(t => t.BasAccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-           
+
 
 
             // Seed User data
@@ -81,8 +83,74 @@ namespace ProjectLedg.Server.Data
                     AuthenticatorKey = "XYZ12345",
                     EmailConfirmed = true,
                     PasswordHash = new PasswordHasher<User>().HashPassword(null, "Password1!")
+                },
+                new User
+                {
+                    Id = "2", // Normally a GUID for Identity users
+                    UserName = "testuser2@example.com",
+                    NormalizedUserName = "TESTUSER2@EXAMPLE.COM",
+                    Email = "testuser2@example.com",
+                    NormalizedEmail = "TESTUSER2@EXAMPLE.COM",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    AuthenticatorKey = "XYZ12345",
+                    EmailConfirmed = true,
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "Password1!")
+                },
+                new User
+                {
+                    Id = "3", // Normally a GUID for Identity users
+                    UserName = "testuser3@example.com",
+                    NormalizedUserName = "TESTUSER3@EXAMPLE.COM",
+                    Email = "testuser3@example.com",
+                    NormalizedEmail = "TESTUSER3@EXAMPLE.COM",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    AuthenticatorKey = "XYZ12345",
+                    EmailConfirmed = true,
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "Password1!")
                 }
             );
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd",
+                    Name = "User",
+                    NormalizedName = "USER"
+                },
+                new IdentityRole
+                {
+                    Id = "fda748ef-79a4-43a1-ab27-f630b2787818",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Id = "d186da3d-43f6-4fa5-aa10-0fe6e3115173",
+                    Name = "Manager",
+                    NormalizedName = "MANAGER"
+                }
+            );
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = "1", // ID of the first user
+                    RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"  // ID of the User role
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = "2", // ID of the second user
+                    RoleId = "fda748ef-79a4-43a1-ab27-f630b2787818"  // ID of the Admin role
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = "3", // ID of the third user
+                    RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"  // ID of the Manager role
+                }
+            );
+
 
             // Seed Company data
             modelBuilder.Entity<Company>().HasData(
@@ -106,7 +174,7 @@ namespace ProjectLedg.Server.Data
                 new BasAccount { Id = 8, Debit = 500, Credit = 0, Description = "Extraordinary Costs", AccountNumber = "8000", Year = 2023, CompanyId = 1 }  // Konto klass 8: Övriga rörelsekostnader
             );
 
-           
+
 
             // Seed IngoingInvoice data
             modelBuilder.Entity<IngoingInvoice>().HasData(

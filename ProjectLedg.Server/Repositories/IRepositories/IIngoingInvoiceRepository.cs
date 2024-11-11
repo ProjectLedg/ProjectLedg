@@ -10,5 +10,8 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<bool> UpdateIngoingInvoiceAsync(IngoingInvoice invoice);
         Task<bool> DeleteIngoingInvoiceAsync(int invoiceId);
         Task<bool> SaveIngoingInvoiceAsync(IngoingInvoice invoice);
+
+        //statistics
+        Task<int> CountIngoingInvoicesSinceAsync(DateTime startDate);
     }
 }

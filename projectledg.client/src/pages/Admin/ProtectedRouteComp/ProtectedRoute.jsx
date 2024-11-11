@@ -5,37 +5,47 @@ import Cookies from 'js-cookie';
 const ProtectedRoute = ({ children, requiredRoles }) => {
     const token = Cookies.get('JWTToken');
 
+    // Redirect if no token is present
     if (!token) {
         return <Navigate to="/admin-login" />;
     }
 
-    // Declare state to handle dynamic import of jwt-decode
-    const [jwt_decode, setJwtDecode] = useState(null);
+    const [jwtDecode, setJwtDecode] = useState(null);
 
     useEffect(() => {
+        // Dynamically import jwt-decode
         const loadJwtDecode = async () => {
-            const module = await import('jwt-decode');
-            setJwtDecode(() => module.default || module); // Handle default export or named export
+            try {
+                const module = await import('jwt-decode');
+                setJwtDecode(() => module.jwtDecode); // Set jwtDecode directly if available
+            } catch (error) {
+                console.error('Failed to load jwt-decode:', error);
+            }
         };
 
         loadJwtDecode();
     }, []);
 
-    if (!jwt_decode) {
-        return null; // or a loading spinner if needed
+    // Return loading state if jwtDecode hasn't loaded
+    if (!jwtDecode) {
+        return <div>Loading...</div>;
     }
 
+    // Decode and verify token
     try {
-        const decodedToken = jwt_decode(token);
+        const decodedToken = jwtDecode ? jwtDecode(token) : null;
+        if (!decodedToken) throw new Error("Failed to decode token.");
+
         const userRole = decodedToken.role || decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
+        // Check if user's role is within the required roles
         if (requiredRoles && !requiredRoles.includes(userRole)) {
             return <Navigate to="/unauthorized" />;
         }
 
         return children;
     } catch (error) {
-        console.error('Invalid token', error);
+        console.error('Invalid token:', error);
         return <Navigate to="/admin-login" />;
     }
 };

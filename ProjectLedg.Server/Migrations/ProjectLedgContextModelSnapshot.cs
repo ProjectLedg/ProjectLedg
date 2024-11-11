@@ -69,6 +69,26 @@ namespace ProjectLedg.Server.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "fda748ef-79a4-43a1-ab27-f630b2787818",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "d186da3d-43f6-4fa5-aa10-0fe6e3115173",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -156,6 +176,23 @@ namespace ProjectLedg.Server.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd"
+                        },
+                        new
+                        {
+                            UserId = "2",
+                            RoleId = "fda748ef-79a4-43a1-ab27-f630b2787818"
+                        },
+                        new
+                        {
+                            UserId = "3",
+                            RoleId = "d186da3d-43f6-4fa5-aa10-0fe6e3115173"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -602,6 +639,37 @@ namespace ProjectLedg.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.Notice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notices");
+                });
+
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.OutgoingInvoice", b =>
                 {
                     b.Property<int>("Id")
@@ -666,6 +734,56 @@ namespace ProjectLedg.Server.Migrations
                             IsPaid = true,
                             TotalTax = 500.00m
                         });
+                });
+
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.SupportTicket", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("SupportTickets");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>
@@ -889,6 +1007,9 @@ namespace ProjectLedg.Server.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastLoginDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
@@ -943,7 +1064,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "8f0ef093-7861-4bdb-a07f-bcfb143ba51d",
+                            ConcurrencyStamp = "5a76ed09-cad7-4b1c-866d-426cecd22fd3",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -951,11 +1072,49 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI7KtXucPol/POaBPJ2DZMR9IuCt9wDu+4/ZqSwIH8uiecy4gENiazOjt+NAvCekfw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEF12E+XiHzHk0+jQrse/V9/pJlOs5o1lyYzyW4hOdNVvqtr1Nwdv4iJPdXah0oSNyw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f99d5809-4734-48c0-b080-d4e1c9c9bf41",
+                            SecurityStamp = "dacc36b2-d3cb-4e9b-adbb-f1a2f1c972ef",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            AccessFailedCount = 0,
+                            AuthenticatorKey = "XYZ12345",
+                            ConcurrencyStamp = "0cddac90-d0d9-4023-a32c-7390556ffeba",
+                            Email = "testuser2@example.com",
+                            EmailConfirmed = true,
+                            FirstName = "John",
+                            LastName = "Doe",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "TESTUSER2@EXAMPLE.COM",
+                            NormalizedUserName = "TESTUSER2@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJaMW9xfo7g+4iBFMUkWaWd0hqy1kPsUd9HEvkgcdd5P1DDrGqUroY/u4oTxVhX22A==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "96cf8c46-3455-4d1d-bb76-87cb58f860f1",
+                            TwoFactorEnabled = false,
+                            UserName = "testuser2@example.com"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            AccessFailedCount = 0,
+                            AuthenticatorKey = "XYZ12345",
+                            ConcurrencyStamp = "07ff9740-91e7-43c1-a802-a607525d1703",
+                            Email = "testuser3@example.com",
+                            EmailConfirmed = true,
+                            FirstName = "John",
+                            LastName = "Doe",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "TESTUSER3@EXAMPLE.COM",
+                            NormalizedUserName = "TESTUSER3@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAECEOrlhnluEPKO6CxzpL0N06kJr+0hUbGh2DdRiphn2J6cpYWB1WD++Abpza8Xl7Cw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "66ac6d3c-a46c-48b0-a680-3ba0754dc4f3",
+                            TwoFactorEnabled = false,
+                            UserName = "testuser3@example.com"
                         });
                 });
 
@@ -1083,6 +1242,17 @@ namespace ProjectLedg.Server.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("ProjectLedg.Server.Data.Models.SupportTicket", b =>
+                {
+                    b.HasOne("ProjectLedg.Server.Data.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("ProjectLedg.Server.Data.Models.Transaction", b =>

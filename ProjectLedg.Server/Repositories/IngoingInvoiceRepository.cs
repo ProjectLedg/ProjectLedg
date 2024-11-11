@@ -63,5 +63,12 @@ namespace ProjectLedg.Server.Repositories
                 return false;
             }
         }
+
+        public async Task<int> CountIngoingInvoicesSinceAsync(DateTime startDate)
+        {
+            return await _context.IngoingInvoices
+                .Where(invoice => invoice.InvoiceDate >= startDate)
+                .CountAsync();
+        }
     }
 }

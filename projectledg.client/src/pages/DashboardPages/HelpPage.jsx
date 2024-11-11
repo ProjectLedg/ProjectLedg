@@ -119,7 +119,7 @@ const HelpPage = () => {
           </Tabs>
           
           <section className="mt-6 sm:mt-8">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4">Skicka in en förfrågan?</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4">Skapa ett Supportärende</h2>
             {formStatus && (
               <Alert className={`mb-4 ${formStatus.type === 'success' ? 'bg-green-100' : 'bg-red-100'}`}>
                 <AlertTitle className="text-sm sm:text-base">{formStatus.type === 'success' ? 'Skickat' : 'Fel'}</AlertTitle>
@@ -128,7 +128,7 @@ const HelpPage = () => {
             )}
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="name" className="text-sm sm:text-base">Namn</Label>
+                <Label htmlFor="name" className="text-sm sm:text-base">Kategori</Label>
                 <Input id="name" value={formData.name} onChange={handleInputChange} placeholder="Ditt namn" className="text-sm sm:text-base" />
               </div>
               <div className="space-y-1 sm:space-y-2">

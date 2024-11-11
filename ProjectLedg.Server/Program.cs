@@ -230,6 +230,9 @@ namespace ProjectLedg.Server
             //Customer
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+            //Support Tickets
+            services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
+            services.AddScoped<ISupportTicketService, SupportTicketService>();
 
 
             //EmailList
@@ -267,8 +270,12 @@ namespace ProjectLedg.Server
 
             //BasAccount
             services.AddScoped<IBasAccountService, BasAccountService>();
-            services.AddScoped<IBasAccountRepo, BasAccountRepo>();
+            services.AddScoped<IBasAccountRepository, BasAccountRepository>();
 
+            //Notice
+            services.AddScoped<INoticeRepository, NoticeRepository>();
+            services.AddScoped<INoticeService, NoticeService>();
+            services.AddScoped<IBasAccountRepo, BasAccountRepo>();
 
             //Functions:
             services.AddScoped<IBasAccountFunctions, BasAccountFunctions>();

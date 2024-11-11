@@ -12,6 +12,8 @@ namespace ProjectLedg.Server.Data.Models
 
         public string? AuthenticatorKey { get; set; }
 
+        public DateTime? LastLoginDate { get; set; }
+
         public virtual ICollection <Company>? Companies { get; set; }
     }
 }

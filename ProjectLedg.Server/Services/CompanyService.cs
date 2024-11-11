@@ -30,7 +30,7 @@ namespace ProjectLedg.Server.Services
             if(userId == null)
                 return null;
 
-            var user = await _userService.GetUserById(userId);
+            var user = await _userService.GetUserByIdAsync(userId);
 
             // Create a new company entity from the DTO
             var company = new Company

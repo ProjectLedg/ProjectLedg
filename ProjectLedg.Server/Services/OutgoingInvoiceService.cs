@@ -133,5 +133,22 @@ namespace ProjectLedg.Server.Services
         {
             return await _invoiceRepository.DeleteOutgoingInvoiceAsync(invoiceId);
         }
+
+        public async Task<int> GetOutgoingInvoicesTodayAsync()
+        {
+            return await _invoiceRepository.CountOutgoingInvoicesSinceAsync(DateTime.UtcNow.Date);
+        }
+
+        public async Task<int> GetOutgoingInvoicesThisWeekAsync()
+        {
+            var startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
+            return await _invoiceRepository.CountOutgoingInvoicesSinceAsync(startOfWeek);
+        }
+
+        public async Task<int> GetOutgoingInvoicesThisYearAsync()
+        {
+            var startOfYear = new DateTime(DateTime.UtcNow.Year, 1, 1);
+            return await _invoiceRepository.CountOutgoingInvoicesSinceAsync(startOfYear);
+        }
     }
 }

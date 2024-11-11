@@ -302,6 +302,33 @@ namespace ProjectLedg.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SupportTickets",
+                columns: table => new
+                {
+                    TicketId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SupportTickets", x => x.TicketId);
+                    table.ForeignKey(
+                        name: "FK_SupportTickets_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OutgoingInvoices",
                 columns: table => new
                 {
@@ -401,14 +428,39 @@ namespace ProjectLedg.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd", null, "User", "USER" },
+                    { "d186da3d-43f6-4fa5-aa10-0fe6e3115173", null, "Manager", "MANAGER" },
+                    { "fda748ef-79a4-43a1-ab27-f630b2787818", null, "Admin", "ADMIN" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "AuthenticatorKey", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, "XYZ12345", "8f0ef093-7861-4bdb-a07f-bcfb143ba51d", "testuser@example.com", true, "John", "Doe", false, null, "TESTUSER@EXAMPLE.COM", "TESTUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEI7KtXucPol/POaBPJ2DZMR9IuCt9wDu+4/ZqSwIH8uiecy4gENiazOjt+NAvCekfw==", null, false, "f99d5809-4734-48c0-b080-d4e1c9c9bf41", false, "testuser@example.com" });
+                values: new object[,]
+                {
+                    { "1", 0, "XYZ12345", "9cc5db8a-667c-4f90-a9ab-af6cd11b77ae", "testuser@example.com", true, "John", "Doe", false, null, "TESTUSER@EXAMPLE.COM", "TESTUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEJS+n1ABiWUfNJRwYfmVsXmn3EMI7KKa5NSV7YV+z00YfhEKVWp5wsgGVVD/QNtHQw==", null, false, "7e50dca2-4533-428b-9c6e-e17f3affff2e", false, "testuser@example.com" },
+                    { "2", 0, "XYZ12345", "8c15ea3a-30af-4f09-bb57-98f5bd1a41fd", "testuser2@example.com", true, "John", "Doe", false, null, "TESTUSER2@EXAMPLE.COM", "TESTUSER2@EXAMPLE.COM", "AQAAAAIAAYagAAAAELCzMMNKLcEap7usdOCVVkE1LuZjPLWWM3PJUnXoskzZ5smcFeq7k9q1tV6Qzpyc4g==", null, false, "28cde7b7-fe87-49c8-a45a-da8ca3548cf7", false, "testuser2@example.com" },
+                    { "3", 0, "XYZ12345", "be8b4c64-b0b8-4e4b-8c42-dbeeff8ad8a8", "testuser3@example.com", true, "John", "Doe", false, null, "TESTUSER3@EXAMPLE.COM", "TESTUSER3@EXAMPLE.COM", "AQAAAAIAAYagAAAAECan288oIQtaPTwqFpAD2d/b27mxkbLfu7UJ/D2Po60XhYRi+yMXsBf96L98r8Iidg==", null, false, "09178a02-6cc8-4aa1-9344-e81e049895d0", false, "testuser3@example.com" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Companies",
                 columns: new[] { "Id", "Address", "AmountOfEmployees", "CompanyDescription", "CompanyName", "OrgNumber", "TaxId" },
                 values: new object[] { 1, "Test adress", 10, "This is a Company", "Test Company", "1234567890", "1231531432" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "c97af0ce-ca7b-4a19-9c5e-6d09b85af4dd", "1" },
+                    { "fda748ef-79a4-43a1-ab27-f630b2787818", "2" },
+                    { "d186da3d-43f6-4fa5-aa10-0fe6e3115173", "3" }
+                });
 
             migrationBuilder.InsertData(
                 table: "BasAccounts",
@@ -560,6 +612,11 @@ namespace ProjectLedg.Server.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SupportTickets_CompanyId",
+                table: "SupportTickets",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_BasAccountId",
                 table: "Transactions",
                 column: "BasAccountId");
@@ -601,6 +658,9 @@ namespace ProjectLedg.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "InvoiceItems");
+
+            migrationBuilder.DropTable(
+                name: "SupportTickets");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

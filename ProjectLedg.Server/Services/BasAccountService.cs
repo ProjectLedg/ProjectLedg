@@ -1,3 +1,4 @@
+﻿using ProjectLedg.Server.Data.Models;
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ using System.Security.Claims;
 public class BasAccountService : IBasAccountService
 {
     private readonly string _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
+    private readonly IBasAccountRepository _basAccountRepository;
     private readonly ICompanyService _companyService;
     private readonly IIngoingInvoiceService _ingoingInvoiceService;
     private readonly IBasAccountRepo _basAccountRepo;
@@ -60,6 +62,10 @@ public class BasAccountService : IBasAccountService
         return basAccounts;
     }
 
+    public async Task<KeyValuePair<string, int>> GetMostPopularBasAccountAsync()
+    {
+        return await _basAccountRepository.GetMostUsedBasAccountAsync();
+    }
 
     public async Task<ResultObject> AddBasAccountsToCompanyAsync(List<BasAccountDTO> basAccountsDto, IngoingInvoice invoice, int companyId)
     {
@@ -147,5 +153,4 @@ public class BasAccountService : IBasAccountService
 
         }
     }
-
 }
