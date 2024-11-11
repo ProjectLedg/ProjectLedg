@@ -20,7 +20,7 @@ namespace ProjectLedg.Server.Controllers
 
 
         // TODO: ADD AUTHORIZATION WHEN WERE DONE TESTING
-        [HttpPost("")]
+        [HttpPost("ProcessInvoiceWithBasAccounts")]
         public async Task<IActionResult> ProcessInvoiceWithBasAccounts([FromBody] InvoiceAndBasAccountDto invBaAccDto)
         {
 
@@ -28,7 +28,7 @@ namespace ProjectLedg.Server.Controllers
             if (invoice == null)
                 return BadRequest("Failed to create invoice");
 
-            var basAccountResult = _basAccountService.AddBasAccountsToCompanyAsync(invBaAccDto.Accounts, invoice, invBaAccDto.CompanyId);
+            var basAccountResult = await _basAccountService.AddBasAccountsToCompanyAsync(invBaAccDto.Accounts, invoice, invBaAccDto.CompanyId);
             if (basAccountResult == null)
                 return BadRequest("Failed to create BAS Account");
 
