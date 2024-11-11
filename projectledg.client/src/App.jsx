@@ -12,12 +12,12 @@ import WhyPage from './pages/LandingPages/WhyPage';
 import DashboardLayout from './pages/DashboardPages/DashboardPageComp/DashboardLayout';
 import DashboardHomePage from './pages/DashboardPages/DashboardHomePage';
 import FinancialReportsPage from './pages/DashboardPages/FinancialReportsPage';
-import FinancialStatementPage from './pages/DashboardPages/FinancialStatementPage';
 import TicketPage from './pages/DashboardPages/TicketPage';
 import SettingsPage from './pages/DashboardPages/SettingsPage';
 import BookingPage from './pages/DashboardPages/BookingPage';
 import InvoicingPage from './pages/DashboardPages/InvoicingPage';
 import HelpPage from './pages/DashboardPages/HelpPage';
+import AnnualReportPage from './pages/DashboardPages/AnnualReportPage';
 //Admin
 import AdminLoginPage from './pages/Admin/AdminLoginPage';
 import AdminDashboardHomePage from './pages/Admin/AdminDashboards/AdminDashboardHomePage';
