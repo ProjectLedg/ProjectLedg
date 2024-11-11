@@ -136,9 +136,6 @@ namespace ProjectLedg.Server.Services
 
         }
 
-        public Task<byte[]> GenerateAnnualReportDpf(AnualReportRequestDTO dto)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

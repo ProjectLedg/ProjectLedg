@@ -1,179 +1,313 @@
-import React from 'react'
-import mockAnnualReport from './mockAnnualReport.json'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { axiosConfig } from '/axiosconfig';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ToastProvider, ToastViewport, Toast, ToastTitle, ToastDescription, ToastClose } from '@/components/ui/toast';
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { TooltipProvider, TooltipShad, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 
 export function AnnualReportPreview() {
-    const report = mockAnnualReport.annualReport2023[0];
+  const { companyId } = useParams();
+  const [reportData, setReportData] = useState(null);
+  const [error, setError] = useState(null);
+  const [pdfBlob, setPdfBlob] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toastState, setToastState] = useState({ isLoading: false, pdfLink: null });
+  const [additionalInfo, setAdditionalInfo] = useState({
+    signature: '',
+    signatureRole: '',
+    profitPercentageToKeep: 0,
+    
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const reportDataResponse = await axiosConfig.get(`/AnnualReport/Reportcontent?companyId=${companyId}`);
+        setReportData(reportDataResponse.data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchData();
+  }, [companyId]);
+
+  const handleInputChange = (path, value) => {
+    setReportData(prevData => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      let current = newData;
+      const keys = path.split('.');
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      current[keys[keys.length - 1]] = value;
+      return newData;
+    });
+  };
+
+  const handleAdditionalInfoChange = (field, value) => {
+    setAdditionalInfo(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleConfirmAndContinue = () => {
+    setIsModalOpen(true);
+  };
+
+  
+  
+  
+  
+  const handleSubmit = async () => {
+    setToastState({ isLoading: true, pdfLink: null }); // Show loading toast
+    setIsModalOpen(false);
+    try {
+      const finalData = {
+        ...reportData,
+        anualReportRequest: {
+          companyId: parseInt(companyId),
+          signature: additionalInfo.signature,
+          signatureRole: additionalInfo.signatureRole,
+          profitPercentageToKeep: parseFloat(additionalInfo.profitPercentageToKeep)
+        }
+      };
+      
+      const response = await axiosConfig.post("/PDF/generate-annual-report", finalData, {
+        responseType: 'blob' // Important: tells axios to expect binary data
+      });
+      
+      // Create and set blob for the PDF data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      setPdfBlob(blob);
+      
+      // Update the toast with the PDF download link
+      setToastState({ isLoading: false, pdfLink: url });
+  
+      
+      setIsModalOpen(false);
+    } catch (error) {
+      setPdfBlob(null);
+      setError('Failed to submit annual report. Please try again.');
+      setToastState({ isLoading: false, pdfLink: null }); // Hide toast on error
+    }
+  };
+
+  if (error) {
+    return <div className="p-4 text-red-500">Error: {error}</div>;
+  }
+
+  if (!reportData) {
+    return <div className="p-4">Loading...</div>;
+  }
+
+  const renderInputField = (path, value, label) => {
+    const isNumeric = typeof value === 'number';
     return (
-        <TabsContent value="annualReports">
-            <Card className="rounded-none shadow-none border-none">
-                <CardContent className="">
-                    {/* Title and Certification */}
-                    <div className="text-center mt-3 flex flex-col">
-                        <h1 className="font-bold">Årsredovisning</h1>
-                        <h4>för</h4>
-                        <h1>{company.CompanyName}</h1>
-                        <h3>Org.nr {company.OrgNumber}</h3>
-                        <h3>Räkenskapsåret {currentDate.Year}</h3>
-                        <h3 className="mt-3">Fastställelseintyg</h3>
-                        <p className="text-justify">Jag intygar att resultaträkningen och balansräkningen har fastställts på årsstämma {currentDate}.</p>
-                        <p className="text-justify">Årsstämman beslöt att godkänna styrelsens förslag till vinstdisposition.</p>
-                        <p className="text-justify">Jag intygar att innehållet i dessa elektroniska handlingar överensstämmer med originalen och att originalen undertecknats av samtliga personer som enligt lag ska underteckna dessa.</p>
-                        <p className="text-justify">Årsredovisningen är upprättad i svenska kronor, SEK. Om inte annat särskilt anges, redovisas alla belopp i hela kronor (kr). Uppgifter inom parentes avser föregående år</p>
-                        <p className="text-left">Elektroniskt underskriven av: <br />xxxx, xxxx<br />{currentDate}</p>
-                    </div>
-
-                    {/* Managment Report */}
-                    <div className="text-center mt-3 flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Förvaltningsberättelse</h2>
-                        <h3>Verksamheten</h3>
-                        <div>
-                            <p className="font-bold flex flex-row">Allmänt om verksamheten:</p>
-                            <p>{company.CompanyDescription}.</p>
-                        </div>
-                        <p>Företaget har sitt säte i {company.Address}.</p>
-                        <p>Väsentliga händelser under räkenskapsåret presenteras i noterna.</p>
-                    </div>
-
-                    {/* Result Disposition */}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Resultatdisposition</h2>
-                        <p>Styrelsen föreslår att vinstmedlen disponeras enligt följande</p>
-                        <ul>
-                            <li>Årets resultat: {profit}</li>
-                        </ul>
-                        <p>Summa disponeras så att i ny räkning överföres: xxxxx</p>
-                        <p>Summa disponeras till aktieägare: xxxxxx</p>
-                        <p>Företagets resultat och ställning i övrigt framgår av efterföljande resultat- och balansräkning med noter.</p>
-                    </div>
-
-                    {/* Income Statement */}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Resultaträkning</h2>
-                        <p>Nettoomsättning: {(reveune - moms)} kr</p>
-                        <p>Övriga externa kostnader: - {externalExpenses} kr</p>
-                        <p>Personalkostnader: -{staffExpenses} kr</p>
-                        <p>Rörelseresultat: {profit} kr</p>
-                        <p>Finansiella poster: {financialPost} kr</p>
-                        <p>Resultat efter finansiella poster: {(financialPost - profit)} kr</p>
-                        <p>Skatt på årets resultat: -{(profit * companyTaxRate)} kr</p>
-                        <p>Årets resultat: {profit + financialPost - (profit * companyTaxRate)} kr</p>
-                    </div>
-
-                    {/* Balance sheet  */}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Balansräkning - Tillgångar</h2>
-                        <h3>Anläggningstillgångar:</h3>
-                        <ul>
-                            <li>
-                                Immanteriella tillgångar: {intangibleAssets} kr
-                            </li>
-                            <li>
-                                Materiella tillgångar: {tangibleAssets} kr
-                            </li>
-                            <li>
-                                Finansiella tillgångar: {financialAssets} kr
-                            </li>
-                        </ul>
-                        <p>Summa anläggningstillgånar: {(intangibleAssets + tangibleAssets + financialAssets)} kr</p>
-                        <h3>Omsättningstillgångar:</h3>
-                        <ul>
-                            <li>
-                                Lager: {currentAssets.Stock} kr
-                            </li>
-                            <li>
-                                Kundfordringar: {currentAssets.AccountsReceivable} kr
-                            </li>
-                            <li>
-                                Kassa och Bank: {currentAssets.BankKassa} kr
-                            </li>
-                            <li>
-                                Kortfristiga fordringar: {currentAssets.ShortTermReceivables} kr
-                            </li>
-                            <p>Summa Omsättningstillgångar: kr</p>
-                            <div className="font-bold">Summa tillgångar: kr</div>
-                        </ul>
-                    </div>
-
-                    {/* Balance sheet Assets*/}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Balansräkning - Eget Kapital och Skulder</h2>
-                        <h3>Eget kapital:</h3>
-                        <p>Aktiekapital: {equityCapital.StockCapital} kr</p>
-                        <p>Balanserat resultat: {equityCapital.BalancedResult}kr</p>
-                        <p>Årets resultat: {equityCapital.YearResult} kr</p>
-                        <p>Summa eget kapital: kr</p>
-                    </div>
-
-                    {/* Balance sheet equity */}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Balansräkning - Eget Kapital och Skulder</h2>
-                        <h3>Eget kapital:</h3>
-                        <p>Aktiekapital: {equityCapital.StockCapital} kr</p>
-                        <p>Balanserat resultat: {equityCapital.BalancedResult}kr</p>
-                        <p>Årets resultat: {equityCapital.YearResult} kr</p>
-                        <p>Summa eget kapital: kr</p>
-                    </div>
-
-                    {/* Longterm Liabilities */}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h3>Långfristiga skulder:</h3>
-                        <p>Summa långfristiga skulder:{longTermLiabilities} kr.</p>
-                        <br />
-                        <br />
-                        {/* Shortterm liabilities */}
-                        <h3>Kortfristiga skulder:</h3>
-                        <p>Leveranstörsskulder: {shortTermLiabilities.AccountsPayable} kr</p>
-                        <p>Kortfristiga lån: {shortTermLiabilities.ShortTermLoans} kr</p>
-                        <p>Skatter och avgifter: {shortTermLiabilities.TaxesAndFees} kr</p>
-                        <p>Summa kortfristiga skulder: kr</p>
-                        <p className="font-bold">Summa Eget kapital och skulder: kr</p>
-                    </div>
-
-                    {/* Notes */}
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <p>Noter</p>
-                        <h3>Not 1: Redovisningsprinciper:</h3>
-                        <p>Årsredovisningen är upprättad i enlighet med årsredovisningslagen och Bokföringsnämndens allmänna råd (BFNAR 2016:10) om årsredovisning i mindre företag.</p>
-                        <h3>Not 2: Medelantalet anställda:</h3>
-                        <p>Antal anställda under året:{company.AmountOfEmployees}. </p>
-                        <h3>Not 3: Intäkter och kostnader:</h3>
-                        <p>Årets omsättning uppgår till {reveune} kr, med övriga kostnader på {externalExpenses} kr och personkostnader på {staffExpenses} kr. </p>
-                        <h3>Not 4: Avskrivningar på anläggningstillgångar: </h3>
-                        <p>Avskrivningar under året uppgick till {intangibleAssets} kr för immateriella tillgångar, {tangibleAssets}kr för materiella tillgångar, och {financialAssets} kr för finansiella tillgångar. </p>
-                        <h3>Not 5: Skulder och eget kapital:</h3>
-                        <p>Långfristiga skulder uppgår till {longTermLiabilities} kr, medan kortfristiga skulder uppgår till {(shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr, Det egna kapitalet uppgår till {equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult} kr, vilket inkluderar akitekapital och balanserat resultat. </p>
-                    </div>
-
-                    <div className="flex flex-col">
-                        <br />
-                        <br />
-                        <h2>Underskrifter</h2>
-                        <p>Styrelsen intygar härmed att årsredovisningen upprättad i enlighet med årsredovisningslagen och ger en rättvisande bild av företagets ställning och resultat.</p>
-                        <p>xxxxxx</p>
-                    </div>
-                </CardContent>
-            </Card>
-        </TabsContent>
+      <div key={path} className="space-y-2">
+        <Label htmlFor={path} className="text-sm font-medium">
+          {label || path.split('.').pop().replace(/([A-Z])/g, ' $1').trim()}
+        </Label>
+        <Input
+          id={path}
+          value={value}
+          onChange={(e) => handleInputChange(path, isNumeric ? parseFloat(e.target.value) || 0 : e.target.value)}
+          type={isNumeric ? "number" : "text"}
+          step="any"
+          className="w-full"
+        />
+      </div>
     );
+  };
+
+  const renderSection = (data, basePath = '') => {
+    return Object.entries(data).map(([key, value]) => {
+      const path = basePath ? `${basePath}.${key}` : key;
+      if (typeof value === 'object' && value !== null) {
+        return (
+          <div key={path} className="space-y-4">
+            <h3 className="text-lg font-semibold mt-4">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {renderSection(value, path)}
+            </div>
+          </div>
+        );
+      } else {
+        return renderInputField(path, value);
+      }
+    });
+  };
+
+  return (
+    <>
+    <ToastProvider swipeDirection="right">
+      <TabsContent value="annualReports">
+        <Card className="rounded-none shadow-none border-none">
+          <CardHeader>
+            <CardTitle>Annual Report Preview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[600px] pr-4">
+              <Tabs defaultValue="company" className="w-full">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="company">Company</TabsTrigger>
+                  <TabsTrigger value="resultDisposition">Result Disposition</TabsTrigger>
+                  <TabsTrigger value="financials">Financials</TabsTrigger>
+                  <TabsTrigger value="equityAndLiabilities">Equity & Liabilities</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="company">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {renderSection(reportData.company, 'company')}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="resultDisposition">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {renderSection(reportData.resultDisposition, 'resultDisposition')}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="financials">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Income Statement</h3>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {renderSection(reportData.financials.incomeStatement, 'financials.incomeStatement')}
+                      </div>
+                    </div>
+                    <Separator />
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Balance Sheet</h3>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {renderSection(reportData.financials.balanceSheet, 'financials.balanceSheet')}
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="equityAndLiabilities">
+                  <div className="space-y-6">
+                    {renderSection(reportData.equityAndLiabilities, 'equityAndLiabilities')}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </ScrollArea>
+          </CardContent>
+          <CardFooter>
+            <Button onClick={handleConfirmAndContinue} className="w-full">Confirm and Continue</Button>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Additional Information</DialogTitle>
+            <DialogDescription>
+              Please provide the following information to complete your annual report submission.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="signatureRole" className="text-right">
+                  Your role in the company
+                </Label>
+                <TooltipProvider>
+                  <TooltipShad>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Enter your role in the company, e.g., CEO, CFO, etc., to correctly sign the financial statement</p>
+                    </TooltipContent>
+                  </TooltipShad>
+                </TooltipProvider>
+              </div>
+              <Input
+                id="signatureRole"
+                value={additionalInfo.signatureRole}
+                onChange={(e) => handleAdditionalInfoChange('signatureRole', e.target.value)}
+                placeholder="Enter your role in the company"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="profitPercentageToKeep" className="text-right">
+                  Percentage to transfer to next fiscal year (%)
+                </Label>
+                <TooltipProvider>
+                  <TooltipShad>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Enter the percentage of profit you want to transfer to the next fiscal year</p>
+                    </TooltipContent>
+                  </TooltipShad>
+                </TooltipProvider>
+              </div>
+              <Input
+                id="profitPercentageToKeep"
+                type="number"
+                value={additionalInfo.profitPercentageToKeep}
+                onChange={(e) => handleAdditionalInfoChange('profitPercentageToKeep', e.target.value)}
+                placeholder="Enter percentage"
+                min="0"
+                max="100"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="signature" className="text-right">First Name</Label>
+                <Input
+                  id="signature"
+                  value={additionalInfo.signature}
+                  onChange={(e) => handleAdditionalInfoChange('signature', e.target.value)}
+                  placeholder="Signatur namn"
+                />
+              </div>
+              
+            </div>
+          </div>
+          <Button onClick={handleSubmit} className="w-full">Sign and Submit</Button>
+        </DialogContent>
+      </Dialog>
+      {/* Toast Notifications */}
+            <Toast
+        open={toastState.isLoading || toastState.pdfLink}
+        onOpenChange={() => setToastState({ isLoading: false, pdfLink: null })}
+        >
+        <ToastTitle>Annual Report Submission</ToastTitle>
+        <ToastDescription>
+            {toastState.isLoading ? (
+            <div className="flex items-center space-x-2">
+                <span>Generating your report...</span>
+                <div className="loader" /> {/* Replace with actual loader */}
+            </div>
+            ) : toastState.pdfLink ? (
+            <a href={toastState.pdfLink} download="Annual_Report.pdf" className="text-blue-500 underline">
+                Download PDF
+            </a>
+            ) : null}
+        </ToastDescription>
+        <ToastClose />
+        </Toast>
+        <ToastViewport />
+      </ToastProvider>
+    </>
+    
+  );
 }
-
-
