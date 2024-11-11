@@ -13,7 +13,14 @@ export default {
     			md: 'calc(var(--radius) - 2px)',
     			sm: 'calc(var(--radius) - 4px)'
     		},
+			backgroundImage:{
+				'dark-gradient': 'linear-gradient(to top, #0d0d0f, #1a1a1f)',
+			},
     		colors: {
+				darkBackground: '#121212',
+				darkBorder: '#303030',
+				darkSurface: '#1f1f1f',
+				darkSecondary: '#b0b0b0',
 				text: {
 					DEFAULT: 'hsl(var(--foreground))', // Standard textfärg
 					dark: 'white', // Vit text för mörkt läge
