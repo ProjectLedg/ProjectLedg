@@ -114,7 +114,7 @@ namespace ProjectLedg.Server.Services
             return await _invoiceRepository.GetAllIngoingInvoicesAsync();
         }
 
-        public async Task<bool> CreateIngoingInvoiceAsync(InvoiceDTO invoiceDto)
+        public async Task<IngoingInvoice> CreateIngoingInvoiceAsync(InvoiceDTO invoiceDto)
         {
             var invoice = new IngoingInvoice
             {
@@ -126,13 +126,15 @@ namespace ProjectLedg.Server.Services
                 TotalTax = invoiceDto.TotalTax,
                 IsPaid = invoiceDto.IsPaid,
                 IsBooked = invoiceDto.IsBooked,
+                CustomerId = invoiceDto.CustomerId,
                 CustomerName = invoiceDto.CustomerName,
                 CustomerAddress = invoiceDto.CustomerAddress,
                 CustomerAddressRecipient = invoiceDto.CustomerAddressRecipient,
                 VendorName = invoiceDto.VendorName,
                 VendorAddress = invoiceDto.VendorAddress,
                 VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
-                VendorTaxId = invoiceDto.VendorTaxId
+                VendorTaxId = invoiceDto.VendorTaxId,
+                CompanyId = invoiceDto.CompanyId,
             };
 
             return await _invoiceRepository.CreateIngoingInvoiceAsync(invoice);

@@ -81,9 +81,10 @@ namespace ProjectLedg.Server
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
+
 
             // Add services to the container.
             services.AddIdentity<User, IdentityRole>(options =>
@@ -266,6 +267,8 @@ namespace ProjectLedg.Server
 
             //BasAccount
             services.AddScoped<IBasAccountService, BasAccountService>();
+            services.AddScoped<IBasAccountRepo, BasAccountRepo>();
+
 
             //Functions:
             services.AddScoped<IBasAccountFunctions, BasAccountFunctions>();

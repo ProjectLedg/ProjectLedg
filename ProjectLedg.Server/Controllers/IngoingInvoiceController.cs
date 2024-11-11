@@ -93,7 +93,7 @@ namespace ProjectLedg.Server.Controllers
         public async Task<IActionResult> CreateInvoice([FromBody] InvoiceDTO invoiceDto)
         {
             var result = await _invoiceService.CreateIngoingInvoiceAsync(invoiceDto);
-            if (!result)
+            if (result == null)
             {
                 return StatusCode(500, "An error occurred while creating the invoice.");
             }
