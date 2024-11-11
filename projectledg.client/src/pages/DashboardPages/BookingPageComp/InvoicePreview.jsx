@@ -245,7 +245,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     return (
       <Card
         className="w-full h-[600px] flex flex-col shadow-lg border">
-        <CardHeader className="border-b">
+        <CardHeader className="border-b dark:border-darkBorder">
           <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white ">Förhandsgranska faktura</CardTitle>
         </CardHeader>
 
@@ -285,11 +285,11 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
   if (!invoice) {
     return (
       <Card className="w-full h-[600px] flex flex-col shadow-lg">
-        <CardHeader className="border-b">
+        <CardHeader className="border-b dark:border-darkBorder">
           <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
         </CardHeader>
         <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
-          <h3 className="text-xl text-gray-400">Ladda upp en faktura för att förhandsgranska</h3>
+          <h3 className="text-xl text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
         </CardContent>
       </Card>
     )
