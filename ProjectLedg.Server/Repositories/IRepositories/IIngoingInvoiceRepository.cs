@@ -6,7 +6,7 @@ namespace ProjectLedg.Server.Repositories.IRepositories
     {
         Task<IngoingInvoice?> GetIngoingInvoiceByIdAsync(int invoiceId);
         Task<IEnumerable<IngoingInvoice>> GetAllIngoingInvoicesAsync();
-        Task<bool> CreateIngoingInvoiceAsync(IngoingInvoice invoice);
+        Task<IngoingInvoice> CreateIngoingInvoiceAsync(IngoingInvoice invoice);
         Task<bool> UpdateIngoingInvoiceAsync(IngoingInvoice invoice);
         Task<bool> DeleteIngoingInvoiceAsync(int invoiceId);
         Task<bool> SaveIngoingInvoiceAsync(IngoingInvoice invoice);

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metricOptions }) => {
   const currentMetricData = metricsData[metricFilter] || [];
+  const isDarkMode = document.documentElement.classList.contains('dark');
 
   const formatYAxis = (value) => {
     if (metricFilter === 'operatingMargin' || metricFilter === 'grossMargin') {
@@ -30,7 +31,7 @@ const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metric
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden dark:bg-gray-800 ">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <BarChart2 className="mr-2 h-4 w-4" />
@@ -53,15 +54,29 @@ const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metric
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={currentMetricData}>
-              <XAxis dataKey="monthName" />
-              <YAxis tickFormatter={formatYAxis} />
+              <XAxis
+                dataKey="monthName"
+                tickLine={{ stroke: isDarkMode ? 'white' : 'black' }} // Change tick line color
+                axisLine={{ stroke: isDarkMode ? 'white' : 'black' }} // Change axis line color
+                style={{
+                  fill: isDarkMode ? 'white' : 'black', // Change tick label color
+                }}
+              />
+              <YAxis
+                tickFormatter={formatYAxis}
+                tickLine={{ stroke: isDarkMode ? 'white' : 'black' }} // Change tick line color
+                axisLine={{ stroke: isDarkMode ? 'white' : 'black' }} // Change axis line color
+                style={{
+                  fill: isDarkMode ? 'white' : 'black', // Change tick label color
+                }}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="amount" 
-                stroke="#10B981" 
-                name={metricOptions.find(o => o.value === metricFilter)?.label || metricFilter} 
+              <Line
+                type="monotone"
+                dataKey="amount"
+                stroke="#10B34A"
+                name={metricOptions.find(o => o.value === metricFilter)?.label || metricFilter}
               />
             </LineChart>
           </ResponsiveContainer>

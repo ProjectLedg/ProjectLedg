@@ -85,6 +85,7 @@ namespace ProjectLedg.Server
                 //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
+
             // Add services to the container.
             services.AddIdentity<User, IdentityRole>(options =>
             {
@@ -274,12 +275,17 @@ namespace ProjectLedg.Server
             //Notice
             services.AddScoped<INoticeRepository, NoticeRepository>();
             services.AddScoped<INoticeService, NoticeService>();
+            services.AddScoped<IBasAccountRepo, BasAccountRepo>();
 
             //Functions:
             services.AddScoped<IBasAccountFunctions, BasAccountFunctions>();
             services.AddScoped<IIngoingInvoiceFunctions, IngoingInvoiceFunctions>();
             services.AddScoped<IOutgoingInvoiceFunctions, OutgoingInvoiceFunctions>();
             services.AddScoped<ITransactionFunctions, TransactionFunctions>();
+
+
+            //AnnualReport:
+            services.AddScoped<IAnnualReportService, AnnualReportService>();
 
             //enable logging:
             builder.Logging.ClearProviders();

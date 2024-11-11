@@ -22,7 +22,7 @@ const ProfitabilityCard = ({ runway }) => {
   const statusColor = getStatusColor(runway.percentage);
 
   return (
-    <Card className="max-h-64 overflow-hidden flex flex-col pb-4">
+    <Card className="max-h-64 overflow-hidden flex flex-col pb-4 dark:bg-gray-800">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 py-2 pt-6">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <PieChart className="mr-2 h-4 w-4" />
@@ -80,7 +80,7 @@ const ProfitabilityCard = ({ runway }) => {
             <div className={`text-xl font-bold ${statusColor}`}>
               {runway.message}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-muted-foreground dark:text-white">
               Runway: {runway.months} månader
             </div>
           </div>

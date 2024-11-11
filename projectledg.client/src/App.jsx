@@ -30,6 +30,7 @@ import { ThemeProvider } from './components/ThemeProvider';
 
 function App() {
     return (
+
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <Router>
                 <Routes>
@@ -42,7 +43,7 @@ function App() {
                         <Route index element={<DashboardHomePage />} />
                         <Route path="financial-reports" element={<FinancialReportsPage />} />
                         <Route path="book" element={<BookingPage />} />
-                        <Route path="financial-statement" element={<FinancialStatementPage />} />
+                        <Route path="annual-report" element={<AnnualReportPage />} />
                         <Route path="invoicing" element={<InvoicingPage />} />
                         <Route path="settings" element={<SettingsPage />} />
                         <Route path="help" element={<HelpPage />} />

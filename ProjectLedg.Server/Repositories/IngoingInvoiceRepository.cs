@@ -24,10 +24,12 @@ namespace ProjectLedg.Server.Repositories
             return await _context.IngoingInvoices.ToListAsync();
         }
 
-        public async Task<bool> CreateIngoingInvoiceAsync(IngoingInvoice invoice)
+        public async Task<IngoingInvoice> CreateIngoingInvoiceAsync(IngoingInvoice invoice)
         {
             await _context.IngoingInvoices.AddAsync(invoice);
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+
+            return invoice;
         }
 
         public async Task<bool> UpdateIngoingInvoiceAsync(IngoingInvoice invoice)

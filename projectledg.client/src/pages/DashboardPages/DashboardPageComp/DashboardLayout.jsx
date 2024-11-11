@@ -30,15 +30,14 @@ import {
 
 
 const navItems = [
-
-  { icon: Home, label: "Hem", path: "", position: "top", tooltipText: "Hem" },
-  { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top", tooltipText: "Finansiell rapport" },
-  { icon: BookCheck, label: "Bokför", path: "/book", position: "top", tooltipText: "Bokför" },
-  { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top", tooltipText: "Årsredovisning" },
-  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top", tooltipText: "Fakturering" },
-  { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom", tooltipText: "Inställningar" },
-  { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom", tooltipText: "Hjälp" },
-  { icon: LogOut, label: "Logga ut", path: "/", position: "bottom", tooltipText: "Logga ut" },
+  { icon: Home, label: "Hem", path: "", position: "top" },
+  { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top" },
+  { icon: BookCheck, label: "Bokför", path: "/book", position: "top" },
+  { icon: BookDown, label: "Årsredovisning", path: "/annual-report", position: "top" },
+  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" },
+  { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
+  { icon: HelpCircle, label: "Hjälp", path: "/", position: "bottom" },
+  { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
 ];
 
 
@@ -175,7 +174,7 @@ const handleLogout = ({ icon: Icon, label, path }) => {
     // Ta bort JWT-token från cookies
     Cookies.remove('JWTToken');
 
-    
+
 
     // Lägg till eventuella andra utloggningslogik här
 
@@ -239,7 +238,7 @@ const Sidebar = ({ isChatOpen }) => (
         </div>
       </div>
     </div>
-    <div className="mt-auto border-t dark:border-gray-700">
+    <div className="mt-auto border-t dark:border-gray-100">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
           !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
@@ -356,8 +355,8 @@ export default function DashboardLayout() {
       {!isMobile && <Sidebar isChatOpen={isChatOpen} />}
 
       {/* Main Content */}
-      <div className="MAIN CONTENT flex flex-col flex-1  ">
-        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-none dark:bg-gray-800 ">
+      <div className="MAIN CONTENT flex flex-col flex-1 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-none dark:bg-gray-700 ">
           <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8  ">
 
             {/* Navbar */}
@@ -379,7 +378,7 @@ export default function DashboardLayout() {
             </header>
 
             {/* Main Content or Chat Window Mobile */}
-            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0">
+            <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} >
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
                 <ChatService onClose={toggleChat} mobile />
@@ -393,7 +392,7 @@ export default function DashboardLayout() {
                     initial={{ width: '100%' }}
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   >
-                    <Outlet context={{ isChatOpen }} />
+                      <Outlet context={{ isChatOpen }} />
                   </motion.div>
 
                   <AnimatePresence>
