@@ -9,6 +9,7 @@
         public string TaxId { get; set; }
 
         public int? CompanyId { get; set; }// Just used for on model creating seed data not necessary to use in actual code
+        public int OutgoingInvoiceId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
         public virtual ICollection<OutgoingInvoice>? OutgoingInvoices { get; set; }
 
 

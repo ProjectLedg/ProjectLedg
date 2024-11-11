@@ -17,32 +17,43 @@ import SettingsPage from './pages/DashboardPages/SettingsPage'
 import BookingPage from './pages/DashboardPages/BookingPage'
 import InvoicingPage from './pages/DashboardPages/InvoicingPage';
 import HelpPage from './pages/DashboardPages/HelpPage';
+import AdminLoginPage from './pages/Admin/AdminLoginPage';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import ProtectedRoute from './pages/Admin/ProtectedRouteComp/ProtectedRoute';
+import UserManagement from './pages/Admin/UserManagement';
+import { ThemeProvider } from './components/ThemeProvider';
+
 
 function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<LoginPage/>}/>
-                <Route path="/signup" element={<SignupPage/>}/>
-                <Route path="/company-select" element={<CompanySelectPage/>}/>
-                <Route path="/dashboard/:companyId" element={<DashboardLayout />}>
-                    {/* Nested Routes */}
-                    <Route index element={<DashboardHomePage />} />
-                    <Route path="financial-reports" element={<FinancialReportsPage />} />
-                    <Route path="book" element={<BookingPage />} />
-                    <Route path="financial-statement" element={<FinancialStatementPage />} />
-                    <Route path="invoicing" element={<InvoicingPage />} />
-                    <Route path="settings" element={<SettingsPage />} />
-                    <Route path="help" element={<HelpPage />} />
-                </Route>
-                <Route path="/why" element={<WhyPage/>}/>
-                <Route path="/features" element={<FeaturePage/>}/>
-                <Route path="/pricing" element={<PricingPage/>}/>
-                <Route path="/contact" element={<ContactPage/>}/>
-                <Route path="/company-create" element={<CompanyCreatePage/>}/>      
-            </Routes>
-        </Router>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+            <Router>
+                <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/login" element={<LoginPage/>}/>
+                    <Route path="/signup" element={<SignupPage/>}/>
+                    <Route path="/company-select" element={<CompanySelectPage/>}/>                    
+                    <Route path="/dashboard/:companyId" element={<DashboardLayout />}>
+                        {/* Nested Routes */}
+                        <Route index element={<DashboardHomePage />} />
+                        <Route path="financial-reports" element={<FinancialReportsPage />} />
+                        <Route path="book" element={<BookingPage />} />
+                        <Route path="financial-statement" element={<FinancialStatementPage />} />
+                        <Route path="invoicing" element={<InvoicingPage />} />
+                        <Route path="settings" element={<SettingsPage />} />
+                        <Route path="help" element={<HelpPage />} />
+                    </Route>
+                    <Route path="/why" element={<WhyPage/>}/>
+                    <Route path="/features" element={<FeaturePage/>}/>
+                    <Route path="/pricing" element={<PricingPage/>}/>
+                    <Route path="/contact" element={<ContactPage/>}/>
+                    <Route path="/company-create" element={<CompanyCreatePage/>}/>
+                    <Route path="/admin-login" element={<AdminLoginPage />}/>
+                <Route path="/admin" element={<ProtectedRoute role="Admin,Manager"><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/users" element={<ProtectedRoute role="Admin,Manager"><UserManagement /></ProtectedRoute>} />
+                </Routes>
+            </Router>
+        </ThemeProvider>
     );    
 }
 export default App;

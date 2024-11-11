@@ -8,18 +8,22 @@ namespace ProjectLedg.Server.Repositories
 {
     public class JwtRepository
     {
-        public string GenerateJwt(User user)
+        public string GenerateJwt(User user, List<string> roles)
         {
             try
             {
                 // Create Claims
                 List<Claim> claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),  // Ensure user.Id is a string
-            new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  // JWT Token ID
-            //new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)  // When it was issued; Security thing
-        };
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                };
+
+                // Add role claims
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
 
                 // Configuration of Token settings
                 SymmetricSecurityKey secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")));
@@ -30,7 +34,7 @@ namespace ProjectLedg.Server.Repositories
                     issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
                     audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
                     claims: claims,
-                    expires: DateTime.UtcNow.AddHours(3),  // Use UtcNow for consistency across time zones
+                    expires: DateTime.UtcNow.AddHours(3),
                     signingCredentials: credentials
                 );
 
