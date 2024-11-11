@@ -119,7 +119,7 @@ public class BasAccountService : IBasAccountService
                     IsDebit = transactionIsDebit,
                     TransactionDate = DateTime.Now, // Set transaction date to now (when it is being booked)
 
-                    //CompanyId = companyId,
+                    CompanyId = companyId,
                     BasAccount = basAccount,
                     IngoingInvoice = invoice,
                 };
