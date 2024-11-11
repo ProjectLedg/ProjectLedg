@@ -11,6 +11,6 @@
 
         public int CompanyId { get; set; } // Just used for on model creating seed data not necessary to use in actual code
 
-        public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }
