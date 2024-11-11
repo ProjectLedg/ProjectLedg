@@ -26,55 +26,55 @@ namespace ProjectLedg.Server.Services
             _financeRepository = financeRepository;
         }
 
-        public async Task<byte[]> GenerateAnnualReportPdf(AnualReportRequestDTO dto)
+        public async Task<byte[]> GenerateAnnualReportPdf(AnnualReportGenerateToPdfDTO dto)
         {
             decimal companyTaxRate = 0.22m;
 
             // Get the company by ID
-            var company = await _companyRepository.GetCompanyByIdAsync(dto.CompanyId);
+            var company = dto.Company;
 
             // Get the current date
             var currentDate = new DateOnly(2023, DateTime.Now.Month, DateTime.Now.Day); // Test for mock data
 
 
             // Get year to date profit
-            var profit = await _financeRepository.GetYearToDateProfitAsync(dto.CompanyId, currentDate.Year);
+            var profit = dto.ResultDisposition.Profit;
 
             // Get year to date revenue
-            var reveune = await _financeRepository.GetYearToDateRevenueAsync(dto.CompanyId, currentDate.Year);
+            var reveune = dto.Financials.IncomeStatement.Revenue;
 
             //Get year to date Moms
-            var moms = await _financeRepository.GetYearToDateMomsAsync(dto.CompanyId, currentDate.Year);
+            var moms = await _financeRepository.GetYearToDateMomsAsync(dto.AnualReportRequest.CompanyId, currentDate.Year);
 
             // Get external expenses
-            var externalExpenses = await _financeRepository.GetYearToDateExternalExpensesAsync(dto.CompanyId, currentDate.Year);
+            var externalExpenses = dto.Financials.IncomeStatement.ExternalExpenses;
 
             //Get staff expenses
-            var staffExpenses = await _financeRepository.GetYearToDateStaffExpensesAsync(dto.CompanyId, currentDate.Year);
+            var staffExpenses = dto.Financials.IncomeStatement.StaffExpenses;
 
             // Get Financial Posts
-            var financialPost = await _financeRepository.GetFinancialPostsAsync(dto.CompanyId, currentDate.Year);
+            var financialPost = dto.Financials.IncomeStatement.FinancialItems;
 
             //Get Intangible Assets
-            var intangibleAssets = await _financeRepository.GetYearToDateIntangibleAssetsAsync(dto.CompanyId, currentDate.Year);
+            var intangibleAssets = dto.Financials.BalanceSheet.IntangibleAssets;
 
             //Get Tangible Assets
-            var tangibleAssets = await _financeRepository.GetYearToDateTangibleAssetsAsync(dto.CompanyId, currentDate.Year);
+            var tangibleAssets = dto.Financials.BalanceSheet.TangibeAssets;
 
             //Get Financial Assets
-            var financialAssets = await _financeRepository.GetYearToDateFinacialAssetsAsync(dto.CompanyId, currentDate.Year);
+            var financialAssets = dto.Financials.BalanceSheet.FinancialAssets;
 
             //Get Current Assets
-            var currentAssets = await _financeRepository.GetYearToDateCurrentAssetsAsync(dto.CompanyId, currentDate.Year);
+            var currentAssets = dto.Financials.BalanceSheet.CurrentAssets;
 
             // Get equity capital
-            var equityCapital = await _financeRepository.GetYearToDateCapitalEqutityAsync(dto.CompanyId, currentDate.Year);
+            var equityCapital = dto.EquityAndLiabilities.Equity;
 
             //Get Long Term Liabilities
-            var longTermLiabilities = await _financeRepository.GetYearToDateLongTermLiabilitiesAsync(dto.CompanyId, currentDate.Year);
+            var longTermLiabilities = dto.EquityAndLiabilities.Liabilities;
 
             //Get ShortTerm Liabilities
-            var shortTermLiabilities = await _financeRepository.GetYearToDateShortTermLiabilitiesAsync(dto.CompanyId, currentDate.Year);
+            var shortTermLiabilities = dto.EquityAndLiabilities.Liabilities;
 
             var sb = new StringBuilder();
 
@@ -82,15 +82,15 @@ namespace ProjectLedg.Server.Services
             sb.Append("<div style='text-align: center; margin-top: 150px;'>");
             sb.Append("<h1>Årsredovisning</h1>");
             sb.Append("<h4>för</h4>");
-            sb.Append($"<h1>{company.CompanyName}</h1>");  // Correct name
-            sb.Append($"<h3>Org.nr {company.OrgNumber}</h3>");  // Correct org number
+            sb.Append($"<h1>{company.Name}</h1>");  // Correct name
+            sb.Append($"<h3>Org.nr {company.OrganizationNumber}</h3>");  // Correct org number
             sb.Append($"<h3>Räkenskapsåret {currentDate.Year}</h3>");
             sb.Append("<h3 style='margin-top: 50px;'>Fastställelseintyg</h3>");
             sb.Append($"<p style='text-align: justify;'>Jag intygar att resultaträkningen och balansräkningen har fastställts på årsstämma {currentDate}.</p>");
             sb.Append("<p style='text-align: justify;'>Årsstämman beslöt att godkänna styrelsens förslag till vinstdisposition.</p>");
             sb.Append("<p style='text-align: justify;'>Jag intygar att innehållet i dessa elektroniska handlingar överensstämmer med originalen och att originalen undertecknats av samtliga personer som enligt lag ska underteckna dessa.</p>");
             sb.Append("<p style='text-align: justify;'>Årsredovisningen är upprättad i svenska kronor, SEK. Om inte annat särskilt anges, redovisas alla belopp i hela kronor (kr). Uppgifter inom parentes avser föregående år</p>");
-            sb.Append($"<p style='text-align: left;'>Elektroniskt underskriven av: <br/>{dto.Signature}, {dto.SignatureRole}<br/>{currentDate}</p>");
+            sb.Append($"<p style='text-align: left;'>Elektroniskt underskriven av: <br/>{dto.AnualReportRequest.Signature}, {dto.AnualReportRequest.SignatureRole}<br/>{currentDate}</p>");
             sb.Append("</div>");
 
             // Page 2: Management Report
@@ -111,8 +111,8 @@ namespace ProjectLedg.Server.Services
             sb.Append("<ul>");
             sb.Append($"<li>Årets resultat:{profit} kr</li>");
             sb.Append("</ul>");
-            sb.Append($"<p>Summa disponeras så att i ny räkning överföres: {Math.Round(profit * ((100 - dto.profitPercentageToKeep)/100),2)} kr</p>");
-            sb.Append($"<p>Summa disponeras till aktieägare: {Math.Round(profit * ((dto.profitPercentageToKeep) / 100),2)} kr</p>");
+            sb.Append($"<p>Summa disponeras så att i ny räkning överföres: {Math.Round(profit * ((100 - dto.AnualReportRequest.profitPercentageToKeep)/100),2)} kr</p>");
+            sb.Append($"<p>Summa disponeras till aktieägare: {Math.Round(profit * ((dto.AnualReportRequest.profitPercentageToKeep) / 100),2)} kr</p>");
             sb.Append("<p>Företagets resultat och ställning i övrigt framgår av efterföljande resultat- och balansräkning med noter.</p>");
             sb.Append("</div>");
 
@@ -120,13 +120,13 @@ namespace ProjectLedg.Server.Services
             sb.Append("<div style='page-break-before: always;'>");
             sb.Append("<h2>Resultaträkning</h2>");
             sb.Append($"<p>Nettoomsättning: {(reveune - moms)} kr</p>");
-            sb.Append($"<p>Övriga externa kostnader: - {externalExpenses} kr</p>");
-            sb.Append($"<p>Personalkostnader: -{staffExpenses} kr</p>");
+            sb.Append($"<p>Övriga externa kostnader: {externalExpenses} kr</p>");
+            sb.Append($"<p>Personalkostnader: {staffExpenses} kr</p>");
             sb.Append($"<p>Rörelseresultat: {profit} kr</p>");
             sb.Append($"<p>Finansiella poster: {financialPost} kr</p>");
-            sb.Append($"<p>Resultat efter finansiella poster: {(financialPost - profit)} kr</p>");
-            sb.Append($"<p>Skatt på årets resultat: -{(profit * companyTaxRate)} kr</p>");
-            sb.Append($"<p>Årets resultat: {profit + financialPost - (profit * companyTaxRate)} kr</p>");
+            sb.Append($"<p>Resultat efter finansiella poster: {dto.Financials.IncomeStatement.ResultAfterFinancialItems} kr</p>");
+            sb.Append($"<p>Skatt på årets resultat: {Math.Round((profit * companyTaxRate),2)} kr</p>");
+            sb.Append($"<p>Årets resultat: {dto.Financials.IncomeStatement.AnnualResult} kr</p>");
             sb.Append("</div>");
 
             // Page 6: Balance Sheet (Assets)
@@ -138,7 +138,7 @@ namespace ProjectLedg.Server.Services
             sb.Append("<h3>Omsättningstillgångar:</h3>");
             sb.Append($"<ul><li>Lager: {currentAssets.Stock} kr</li><li>Kundfordringar: {currentAssets.AccountsReceivable} kr</li><li>Kassa och Bank: {currentAssets.BankKassa} kr</li><li>Kortfristiga fordringar: {currentAssets.ShortTermReceivables} kr</li></ul>");
             sb.Append($"<p>Summa omsättningstillgångar: {(currentAssets.Stock + currentAssets.AccountsReceivable + currentAssets.BankKassa + currentAssets.ShortTermReceivables)} kr</p>");
-            sb.Append($"<p><strong>Summa tillgångar:</strong> {(currentAssets.Stock + currentAssets.AccountsReceivable + currentAssets.BankKassa + currentAssets.ShortTermReceivables) + (intangibleAssets + tangibleAssets + financialAssets)} kr.</p>");
+            sb.Append($"<p><strong>Summa tillgångar:</strong> {dto.Financials.BalanceSheet.TotalAssets} kr.</p>");
             sb.Append("</div>");
 
             // Page 7: Balance Sheet (Liabilities and Equity) EGET KAPITAL
@@ -148,17 +148,17 @@ namespace ProjectLedg.Server.Services
             sb.Append($"<p>Aktiekapital: {equityCapital.StockCapital} kr</p>");
             sb.Append($"<p>Balanserat resultat: {equityCapital.BalancedResult}kr</p>");
             sb.Append($"<p>Årets resultat: {equityCapital.YearResult} kr</p>");
-            sb.Append($"<p>Summa Eget kapital:{(equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult)} kr.</p>");
+            sb.Append($"<p>Summa Eget kapital:{equityCapital.TotalEquity} kr.</p>");
             // Långfristiga skulder
             sb.Append("<h3>Långfristiga skulder:</h3>");
-            sb.Append($"<p>Summa långfristiga skulder:{longTermLiabilities} kr.</p>");
+            sb.Append($"<p>Summa långfristiga skulder:{longTermLiabilities.TotalLongTermLiabilities} kr.</p>");
             //Kortfristiga skulder
             sb.Append("<h3>Kortfristiga skulder:</h3>");
             sb.Append($"<p>Leveranstörsskulder: {shortTermLiabilities.AccountsPayable} kr</p>");
             sb.Append($"<p>Kortfristiga lån: {shortTermLiabilities.ShortTermLoans} kr</p>");
             sb.Append($"<p>Skatter och avgifter: {shortTermLiabilities.TaxesAndFees} kr</p>");
-            sb.Append($"<p>Summa kortfristiga skulder:{(shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr.</p>");
-            sb.Append($"<p><strong>Summa Eget kapital och Skulder:</strong> {(equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult) + longTermLiabilities + (shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr.</p>");
+            sb.Append($"<p>Summa kortfristiga skulder:{shortTermLiabilities.TotalShortTermLiabilities} kr.</p>");
+            sb.Append($"<p><strong>Summa Eget kapital och Skulder:</strong> {dto.EquityAndLiabilities.TotalEquityAndLiabilities} kr.</p>");
 
             sb.Append("</div>");
 
@@ -177,14 +177,14 @@ namespace ProjectLedg.Server.Services
             sb.Append("<h3>Not 4: Avskrivningar på anläggningstillgångar: </h3>");
             sb.Append($"<p>Avskrivningar under året uppgick till {intangibleAssets} kr för immateriella tillgångar, {tangibleAssets}kr för materiella tillgångar, och {financialAssets} kr för finansiella tillgångar. </p>");
             sb.Append("<h3>Not 5: Skulder och eget kapital:</h3>");
-            sb.Append($"<p>Långfristiga skulder uppgår till {longTermLiabilities} kr, medan kortfristiga skulder uppgår till {(shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr, Det egna kapitalet uppgår till {equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult} kr, vilket inkluderar akitekapital och balanserat resultat. </p>");
+            sb.Append($"<p>Långfristiga skulder uppgår till {longTermLiabilities.TotalLongTermLiabilities} kr, medan kortfristiga skulder uppgår till {(shortTermLiabilities.AccountsPayable + shortTermLiabilities.ShortTermLoans + shortTermLiabilities.TaxesAndFees)} kr, Det egna kapitalet uppgår till {equityCapital.StockCapital + equityCapital.BalancedResult + equityCapital.YearResult} kr, vilket inkluderar akitekapital och balanserat resultat. </p>");
             sb.Append("</div>");
 
             // Page 9: Signatures
             sb.Append("<div style='page-break-before: always;'>");
             sb.Append("<h2>Underskrifter</h2>");
             sb.Append("<p>Styrelsen intygar härmed att årsredovisningen upprättad i enlighet med årsredovisningslagen och ger en rättvisande bild av företagets ställning och resultat.</p>");
-            sb.Append($"<p>{dto.Signature}</p>");
+            sb.Append($"<p>{dto.AnualReportRequest.Signature}</p>");
             sb.Append("</div>");
 
             var headerHtml = @"

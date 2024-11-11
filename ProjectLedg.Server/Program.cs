@@ -276,6 +276,10 @@ namespace ProjectLedg.Server
             services.AddScoped<IOutgoingInvoiceFunctions, OutgoingInvoiceFunctions>();
             services.AddScoped<ITransactionFunctions, TransactionFunctions>();
 
+
+            //AnnualReport:
+            services.AddScoped<IAnnualReportService, AnnualReportService>();
+
             //enable logging:
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();

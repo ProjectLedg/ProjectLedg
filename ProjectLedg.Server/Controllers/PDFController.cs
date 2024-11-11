@@ -23,7 +23,7 @@ namespace ProjectLedg.Server.Controllers
 
         //GET request to generate a simple annual report PDF and return the file for download
         [HttpPost("generate-annual-report")]
-        public async Task<IActionResult> GenerateAnnualReportPdf([FromBody] AnualReportRequestDTO request)
+        public async Task<IActionResult> GenerateAnnualReportPdf([FromBody] AnnualReportGenerateToPdfDTO request)
         {
             //generate the PDF bytes using the service
             var pdf = await _pdfService.GenerateAnnualReportPdf(request);

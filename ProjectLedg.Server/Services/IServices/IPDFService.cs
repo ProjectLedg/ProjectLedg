@@ -6,7 +6,7 @@ namespace ProjectLedg.Server.Services.IServices
 {
     public interface IPDFService
     {
-        Task<byte[]> GenerateAnnualReportPdf(AnualReportRequestDTO dto);
+        Task<byte[]> GenerateAnnualReportPdf(AnnualReportGenerateToPdfDTO dto);
         Task<byte[]> GenerateInvoicePdf(OutgoingInvoiceGenerationDTO dto);
     }
 }
