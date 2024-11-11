@@ -81,7 +81,7 @@ public class BasAccountService : IBasAccountService
                 BasAccount basAccount;
 
                 // Check if bas account exists (if null it doesn't exist)
-                var existingBasAccount = await _basAccountRepo.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
+                var existingBasAccount = await _basAccountRepository.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
 
                 // Create new if doesn't exist
                 if (existingBasAccount == null)
