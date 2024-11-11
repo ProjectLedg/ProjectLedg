@@ -40,7 +40,7 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<Company> GetCompanyByIdAsync(int id)
         {
-            return await _context.Companies.FindAsync(id);
+            return await _context.Companies.Include(c => c.BasAccounts).FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }
