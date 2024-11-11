@@ -50,7 +50,7 @@ public class AssistantService : IAssistantService
         _mapDirectivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantBasAccMapDirectives.txt");
         _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccContext.txt");
         _encryptionHelper = encryptionHelper;
-    }
+    
 
 
         //Functions
