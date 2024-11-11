@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProjectLedg.Server.Data;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.BasAccount;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
@@ -59,69 +61,91 @@ public class BasAccountService : IBasAccountService
     }
 
 
-    public async Task<ResultObject> AddBasAccountsToCompanyAsync(List<BasAccountDTO> basAccountsDTO, IngoingInvoice invoice, int companyId)
+    public async Task<ResultObject> AddBasAccountsToCompanyAsync(List<BasAccountDTO> basAccountsDto, IngoingInvoice invoice, int companyId)
     {
-        var company = await _companyService.GetCompanyByIdAsync(companyId);
-
-        // TODO: Better error handling
-        if (company == null)
-            return new ResultObject { Message = "Commpany was not found.", Success = false };
-
-
-        // Create BasAccount from data
-        foreach (var account in basAccountsDTO)
+        try
         {
-            // Create BAS account
-            var basAccount = new BasAccount
+
+            var company = await _companyService.GetCompanyByIdAsync(companyId);
+            if (company == null)
+                return new ResultObject { Message = "Commpany was not found.", Success = false };
+
+
+            // Create BasAccounts list to be used to add all accounts to without saving
+            // (to stop data reader error that occured when multiple dbcontexts tried to save changes simultaniously when we're looping and creating multiple BasAccounts)
+            var basAccountsList = new List<BasAccount>();
+
+            // Create BasAccount from data
+            foreach (var accountDto in basAccountsDto)
             {
-                CompanyId = companyId,
-                Year = DateTime.Now.Year,
-                AccountNumber = account.BasAccount,
-                Description = account.Description,
-                Credit = account.Credit,
-                Debit = account.Debit,
-                Transactions = new List<Transaction>() // Create as empty list to avoid null ref error
+                // Create BAS account entity to save new or existing account to
+                BasAccount basAccount;
+
+                // Check if bas account exists (if null it doesn't exist)
+                var existingBasAccount = await _basAccountRepo.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
+
+                // Create new if doesn't exist
+                if (existingBasAccount == null)
+                {
+                    basAccount = new BasAccount
+                    {
+                        CompanyId = companyId,
+                        Year = DateTime.Now.Year, // Set year to now (when it is being booked) as you cant create BasAccounts for past or future years
+                        AccountNumber = accountDto.BasAccount,
+                        Description = accountDto.Description,
+                        Credit = accountDto.Credit,
+                        Debit = accountDto.Debit,
+                        Transactions = new List<Transaction>() // Create as empty list to avoid null ref error
+                    };
+                }
+                // Update values if exists
+                else
+                {
+                    existingBasAccount.Credit += accountDto.Credit;
+                    existingBasAccount.Debit += accountDto.Debit;
+
+                    basAccount = existingBasAccount;
+                }
+               
+
+                // Determine if transaction should be debit or credit
+                decimal transactionAmount = accountDto.Debit > 0 ? accountDto.Debit : accountDto.Credit;
+                bool transactionIsDebit = accountDto.Debit > 0; // Debit more than 0 = true else = false
+
+                // Create transaction 
+                var transaction = new Transaction
+                {
+                    Amount = transactionAmount,
+                    IsDebit = transactionIsDebit,
+                    TransactionDate = DateTime.Now, // Set transaction date to now (when it is being booked)
+
+                    //CompanyId = companyId,
+                    BasAccount = basAccount,
+                    IngoingInvoice = invoice,
+                };
+
+                // Connect bas acc to transaction
+                basAccount.Transactions.Add(transaction);
+
+                // Add the BasAccount to the list if it's new. If it exists add it to update tracking
+                if (existingBasAccount == null)
+                {
+                    basAccountsList.Add(basAccount);
+                }
             };
 
-            // Determine if transaction should be debit or credit
-            decimal transactionAmount = account.Debit > 0 ? account.Debit : account.Credit;
-            bool transactionIsDebit = account.Debit > 0; // Debit more than 0 = true else = false
+                  
+            // Create all bas accounts in the list along with their associated transactions in one process
+            await _basAccountRepo.CreateBasAccountsFromListAsync(basAccountsList);
+         
+            return new ResultObject { Message = "Successfully created BAS Accounts", Success = true };
 
-            // Create transaction 
-            var transaction = new Transaction
-            {
-                Amount = transactionAmount,
-                IsDebit = transactionIsDebit,
-                TransactionDate = DateTime.Now, // Set transaction date to now (when it is being booked)
+        }
+        catch (Exception ex)
+        {
+            return new ResultObject { Message = "An error occurred while processing BAS Accounts", Success = false };
 
-                CompanyId = companyId,
-                BasAccount = basAccount,
-                IngoingInvoice = invoice,
-            };
-
-            // Connect bas acc to transaction
-            basAccount.Transactions.Add(transaction);
-
-            // Create BasAccount along with its associated transaction
-            await _basAccountRepo.CreateBasAccountAsync(basAccount); 
-        };
-
-
-
-
-        // I need bas account to update and or create for the company in the db
-
-        // I need the invoice (id at least) to connect the invoice to the transactions
-        // perhaps the data that the form recognizer spits out, invoice items and date
-
-        // Create transactions for each item on the invoice 
-
-        // Connect the 3 of them invoice -> transactions -> bas account 
-
-        // So take invoice id, check if invoice exists
-
-        return new ResultObject { Message = "Successfully created BAS Accounts", Success = true};
-
+        }
     }
 
 }
