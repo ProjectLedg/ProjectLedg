@@ -36,7 +36,7 @@ const navItems = [
   { icon: BookDown, label: "Årsredovisning", path: "/annual-report", position: "top" },
   { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
-  { icon: HelpCircle, label: "Hjälp", path: "/", position: "bottom" },
+  { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom" },
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
 ];
 

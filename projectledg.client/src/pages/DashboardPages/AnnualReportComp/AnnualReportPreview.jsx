@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { TooltipProvider, TooltipShad, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AnnualReportPreview() {
   const { companyId } = useParams();
@@ -26,12 +27,57 @@ export function AnnualReportPreview() {
     profitPercentageToKeep: 0,
     
   });
+  const customTitles = {
+    "company.name": "Företagsnamn",
+    "company.address": "Företagsadress",
+    "resultDisposition.profit": "Årets vinst",
+    "financials.incomeStatement.revenue": "Intäkter",
+    "financials.incomeStatement.expenses": "Kostnader",
+    "financials.balanceSheet.assets": "Tillgångar",
+    "financials.balanceSheet.liabilities": "Skulder",
+    "company.organizationNumber" : "Org nummer",
+    "company.fiscalYear":"Finansiella året",
+    "company.annualMeetingDate" : "Årsstämma Datum",
+    "company.companyDescription": "Verksamhets Beskrivning",
+    "company.amountOfEmployees" : "Antal anställda",
+    "financials.incomeStatement.netRevenue" : "Netto intäkter",
+    "financials.incomeStatement.externalExpenses": " Externa kostnader",
+    "financials.incomeStatement.staffExpenses" : "Personal kostnader",
+    "financials.incomeStatement.financialItems" : "Finansiella poster",
+    "financials.incomeStatement.resultAfterFinancialItems" : "Resultat efter Finansiella poster",
+    "financials.incomeStatement.taxOnResult" : "Skatt på årets resultat",
+    "financials.incomeStatement.annualResult" : "Årets resultat",
+    "financials.balanceSheet.intangibleAssets" : "Immanteriella tillgångar",
+    "financials.balanceSheet.tangibeAssets" : "Materiella tillgångar",
+    "financials.balanceSheet.financialAssets" : "Finansiella tillgångar",
+    "financials.balanceSheet.totalFixedAssets": "Summa anläggningstillgånar",
+    "equityAndLiabilities.equity.stockCapital": "Aktie kapital",
+    "equityAndLiabilities.equity.balancedResult": "Balanserat Resultat",
+    "equityAndLiabilities.equity.yearResult": "Årets resultat",
+    "equityAndLiabilities.equity.totalEquity": "Summa Kapital",
+    "equityAndLiabilities.liabilities.totalLongTermLiabilities": "Summa långfristiga skulder",
+    "equityAndLiabilities.liabilities.totalShortTermLiabilities": "Summa kortfristiga skulder",
+    "equityAndLiabilities.liabilities.shortTermLoans": "Kortfristiga lån",
+    "equityAndLiabilities.liabilities.taxesAndFees": "Moms och avgifter",
+    "equityAndLiabilities.liabilities.accountsPayable": "Leveranstörs skulder",
+    
+    
+
+    
+
+    
+
+    
+    
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const reportDataResponse = await axiosConfig.get(`/AnnualReport/Reportcontent?companyId=${companyId}`);
         setReportData(reportDataResponse.data);
+        console.log(reportData)
       } catch (error) {
         setError(error.message);
       }
@@ -105,15 +151,51 @@ export function AnnualReportPreview() {
   }
 
   if (!reportData) {
-    return <div className="p-4">Loading...</div>;
+    return(
+        <div className="p-8 space-y-20">
+         
+         <div className='space-y-15'>
+         <Skeleton className="h-8 w-1/5 rounded-lg" /> {/* Titel */}
+         <Skeleton className="h-5 w-2/5 rounded-lg mt-5" /> {/* Underrubrik */}
+         </div>
+         
+         <div className="space-x-4 flex flex-row">
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+        </div>
+
+        <div className="space-x-4 flex flex-row">
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+        </div>
+
+        <div className="space-x-4 flex flex-row">
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+        </div>
+        <div className="space-x-4 flex flex-row">
+                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                
+        </div>
+
+        <div className="space-y-5 flex flex-row">
+                <Skeleton className="h-8 w-full rounded-lg" />
+                
+        </div>
+        
+      </div>
+
+      );
   }
 
   const renderInputField = (path, value, label) => {
     const isNumeric = typeof value === 'number';
+    const customLabel = customTitles[path] || path.split('.').pop().replace(/([A-Z])/g, ' $1').trim();
+  
     return (
       <div key={path} className="space-y-2">
         <Label htmlFor={path} className="text-sm font-medium">
-          {label || path.split('.').pop().replace(/([A-Z])/g, ' $1').trim()}
+          {customLabel}
         </Label>
         <Input
           id={path}
@@ -151,16 +233,16 @@ export function AnnualReportPreview() {
       <TabsContent value="annualReports">
         <Card className="rounded-none shadow-none border-none">
           <CardHeader>
-            <CardTitle>Annual Report Preview</CardTitle>
+            <CardTitle>Generera Årsredovisning</CardTitle>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[600px] pr-4">
               <Tabs defaultValue="company" className="w-full">
                 <TabsList className="mb-4">
-                  <TabsTrigger value="company">Company</TabsTrigger>
-                  <TabsTrigger value="resultDisposition">Result Disposition</TabsTrigger>
-                  <TabsTrigger value="financials">Financials</TabsTrigger>
-                  <TabsTrigger value="equityAndLiabilities">Equity & Liabilities</TabsTrigger>
+                  <TabsTrigger value="company">Företag</TabsTrigger>
+                  <TabsTrigger value="resultDisposition">Resultat disposition</TabsTrigger>
+                  <TabsTrigger value="financials">Balansrapport & Resultaträkning</TabsTrigger>
+                  <TabsTrigger value="equityAndLiabilities">Eget kapital & Skulder</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="company">
@@ -178,14 +260,14 @@ export function AnnualReportPreview() {
                 <TabsContent value="financials">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Income Statement</h3>
+                      <h3 className="text-lg font-semibold mb-2">Resultat räkning</h3>
                       <div className="grid gap-4 sm:grid-cols-2">
                         {renderSection(reportData.financials.incomeStatement, 'financials.incomeStatement')}
                       </div>
                     </div>
                     <Separator />
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Balance Sheet</h3>
+                      <h3 className="text-lg font-semibold mb-2">Balans rapport</h3>
                       <div className="grid gap-4 sm:grid-cols-2">
                         {renderSection(reportData.financials.balanceSheet, 'financials.balanceSheet')}
                       </div>
@@ -202,7 +284,7 @@ export function AnnualReportPreview() {
             </ScrollArea>
           </CardContent>
           <CardFooter>
-            <Button onClick={handleConfirmAndContinue} className="w-full">Confirm and Continue</Button>
+            <Button onClick={handleConfirmAndContinue} className="bg-green-500 ml-auto">Bekräfta och fortsätt</Button>
           </CardFooter>
         </Card>
       </TabsContent>
@@ -210,16 +292,16 @@ export function AnnualReportPreview() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Additional Information</DialogTitle>
+            <DialogTitle>Signering</DialogTitle>
             <DialogDescription>
-              Please provide the following information to complete your annual report submission.
+              Fyll i denna information för att signera och bekräfta Årsredovisning
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="signatureRole" className="text-right">
-                  Your role in the company
+                  Din roll i företaget {reportData?.company.name}
                 </Label>
                 <TooltipProvider>
                   <TooltipShad>
@@ -229,7 +311,7 @@ export function AnnualReportPreview() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Enter your role in the company, e.g., CEO, CFO, etc., to correctly sign the financial statement</p>
+                      <p>Skriv in din roll i företaget exempel. VD, CFO, etc., För att korrekt signera Årsredovisningen</p>
                     </TooltipContent>
                   </TooltipShad>
                 </TooltipProvider>
@@ -238,13 +320,13 @@ export function AnnualReportPreview() {
                 id="signatureRole"
                 value={additionalInfo.signatureRole}
                 onChange={(e) => handleAdditionalInfoChange('signatureRole', e.target.value)}
-                placeholder="Enter your role in the company"
+                placeholder="Skriv in din roll i företaget"
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="profitPercentageToKeep" className="text-right">
-                  Percentage to transfer to next fiscal year (%)
+                Procent av Vinsten ({reportData?.resultDisposition.profit}SEK) till aktieägare
                 </Label>
                 <TooltipProvider>
                   <TooltipShad>
@@ -254,7 +336,7 @@ export function AnnualReportPreview() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Enter the percentage of profit you want to transfer to the next fiscal year</p>
+                      <p>Skriv in procentsats av vinsten som du vill tilldela aktieägare som del av vinsten</p>
                     </TooltipContent>
                   </TooltipShad>
                 </TooltipProvider>
@@ -264,14 +346,14 @@ export function AnnualReportPreview() {
                 type="number"
                 value={additionalInfo.profitPercentageToKeep}
                 onChange={(e) => handleAdditionalInfoChange('profitPercentageToKeep', e.target.value)}
-                placeholder="Enter percentage"
+                placeholder="Skriv en procentsats"
                 min="0"
                 max="100"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="signature" className="text-right">First Name</Label>
+                <Label htmlFor="signature" className="text-right">Signatur</Label>
                 <Input
                   id="signature"
                   value={additionalInfo.signature}
@@ -282,29 +364,38 @@ export function AnnualReportPreview() {
               
             </div>
           </div>
-          <Button onClick={handleSubmit} className="w-full">Sign and Submit</Button>
+          <Button onClick={handleSubmit} className="w-full">Signera och Generera</Button>
         </DialogContent>
       </Dialog>
       {/* Toast Notifications */}
-            <Toast
-        open={toastState.isLoading || toastState.pdfLink}
-        onOpenChange={() => setToastState({ isLoading: false, pdfLink: null })}
+        <Toast
+        open={toastState.isLoading || toastState.pdfLink} // Toasten hålls öppen så länge vi genererar eller har en pdf-länk
+        onOpenChange={(open) => {
+            // Vi tillåter användaren att stänga toasten
+            if (!open) {
+            setToastState({ isLoading: false, pdfLink: null }); // När toasten stängs, resetta state
+            }
+        }}
         >
-        <ToastTitle>Annual Report Submission</ToastTitle>
+        <ToastTitle>Årsredovisning</ToastTitle>
         <ToastDescription>
             {toastState.isLoading ? (
             <div className="flex items-center space-x-2">
-                <span>Generating your report...</span>
-                <div className="loader" /> {/* Replace with actual loader */}
+                <span>Genererar rapport...</span>
+                {/* Loader för när vi genererar rapporten */}
+                <div className="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin" />
             </div>
             ) : toastState.pdfLink ? (
             <a href={toastState.pdfLink} download="Annual_Report.pdf" className="text-blue-500 underline">
-                Download PDF
+                Ladda ner PDF
             </a>
             ) : null}
         </ToastDescription>
-        <ToastClose />
+
+        {/* Stäng-knapp som tillåter användaren att stänga toasten manuellt */}
+        <ToastClose className="absolute top-2 right-2" />
         </Toast>
+
         <ToastViewport />
       </ToastProvider>
     </>
