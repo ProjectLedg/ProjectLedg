@@ -49,5 +49,4 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.ProjectLedg_FDFA }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-      - name: Remove artifacts
-        uses: c-hive/gha-remove-artifacts@v1.4.0
+     
