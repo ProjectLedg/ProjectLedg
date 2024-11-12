@@ -115,8 +115,8 @@ export default function FinancialReportsPage() {
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
             <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0">Balansrapport</CardTitle>
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto">
-              <Download className="mr-2 h-4 w-4" />
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:dark:bg-darkBackground">
+              <Download className="mr-2 h-4 w-4 " />
               Ladda ner
             </Button>
           </CardHeader>
@@ -148,7 +148,7 @@ export default function FinancialReportsPage() {
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
             <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0">Resultatrapport</CardTitle>
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto">
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:dark:bg-darkBackground">
               <Download className="mr-2 h-4 w-4" />
               Ladda ner
             </Button>
