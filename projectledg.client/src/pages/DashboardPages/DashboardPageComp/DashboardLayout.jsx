@@ -50,8 +50,8 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
   const isSelected = location.pathname === fullPath;
 
   const baseStyle = "flex items-center space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
-  const selectedStyle = "font-bold relative bg-accent";
-  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+  const selectedStyle = "font-bold relative bg-accent dark:bg-darkSurface";
+  const hoverStyle = "hover:bg-accent hover:dark:bg-darkSurface hover:text-accent-foreground";
 
   const handleClick = () => {
     // Delay closing the mobile nav by 200 milliseconds
@@ -84,12 +84,12 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
   return (
     <Link
       to={fullPath}
-      className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
+      className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle} dark:border-darkBorder`}
       style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
       onClick={handleClick}
     >
       <Icon className="h-5 w-5 dark:text-gray-300" strokeWidth={isSelected ? 2 : 1} />
-      <span className="dark:text-gray-300">{label}</span>
+      <span className="dark:text-white">{label}</span>
       {isSelected && (
         <motion.span
           style={barStyle}
@@ -116,8 +116,8 @@ const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
   const isSelected = location.pathname === fullPath;
 
   const baseStyle = "flex items-center justify-around space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
-  const selectedStyle = "font-bold bg-accent text-accent-foreground";
-  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+  const selectedStyle = "font-bold bg-accent text-accent-foreground dark:bg-darkSurface";
+  const hoverStyle = "hover:bg-accent hover:text-accent-foreground hover:dark:bg-darkSurface";
 
   const barStyle = {
     content: "''",
@@ -190,7 +190,7 @@ const handleLogout = ({ icon: Icon, label, path }) => {
     <a
       href={path}
       onClick={handleClick}
-      className="flex items-center space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500"
+      className="flex items-center space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:dark:bg-darkSurface dark:text-gray-white hover:text-accent-foreground transition-colors duration-500"
     >
       <Icon className="h-5 w-5" />
       <span>{label}</span>
@@ -205,12 +205,12 @@ const Sidebar = ({ isChatOpen }) => (
     initial={{ width: isChatOpen ? '5rem' : '15rem' }}
     animate={{ width: isChatOpen ? '5rem' : '15rem' }}
     transition={{ duration: 0.6 }}
-    className="hidden md:flex pb-12 h-full flex-col dark:bg-black"
+    className="hidden md:flex pb-12 h-full flex-col dark:bg-darkBackground "
   >
 
     <div className="flex-grow space-y-4 py-4 ">
       <div className="py-2 h-full ">
-        <div className={`h-full${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
+        <div className={`h-full ${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
 
           <UserDropdown
             user={{
@@ -238,7 +238,7 @@ const Sidebar = ({ isChatOpen }) => (
         </div>
       </div>
     </div>
-    <div className="mt-auto border-t dark:border-gray-100">
+    <div className="mt-auto border-t dark:border-darkBorder">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
           !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
@@ -266,7 +266,7 @@ const MobileNav = ({ navItems }) => {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-60 p-0">
-        <div className="flex flex-col h-full py-4">
+        <div className="flex flex-col h-full py-4 dark:bg-darkBackground">
           <div className="flex-grow ">
 
             <UserDropdown
@@ -295,7 +295,7 @@ const MobileNav = ({ navItems }) => {
               </div>
             </div>
           </div>
-          <div className="mt-auto  border-t">
+          <div className="mt-auto  border-t dark:border-darkBorder">
             <div>
               {navItems.filter(item => item.position === "bottom").map((item, index) => (
                 <NavItem key={index} {...item} onClick={handleClose} />
@@ -356,13 +356,13 @@ export default function DashboardLayout() {
 
       {/* Main Content */}
       <div className="MAIN CONTENT flex flex-col flex-1 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-none dark:bg-gray-700 ">
+        <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-dark-gradient ">
           <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8  ">
 
             {/* Navbar */}
-            <header className={`NAVBAR fixed top-0 z-10 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]  ${isChatOpen && isMobile ? 'hidden' : ''}`}>
+            <header className={`NAVBAR fixed top-0 z-20 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]  ${isChatOpen && isMobile ? 'hidden' : ''}`}>
               <div className="mx-auto sm:px-6 md:px-8 ">
-                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem] dark:bg-black dark:bg-none">
+                <div className="flex items-center justify-between h-16 bg-gradient-to-t from-white/60 to-white/30 backdrop-blur-lg rounded-b-[1.5rem] px-[1rem] dark:bg-darkBackground dark:bg-none">
                   <div className="flex items-center">
                     {/* Mobile Navigation */}
                     <div className="md:hidden">
@@ -383,9 +383,9 @@ export default function DashboardLayout() {
                 // Render ChatWindowMobile on mobile view only
                 <ChatService onClose={toggleChat} mobile />
               ) : (
-                <div className="CHATWINDOW mt-24 max-h-screen items-start flex flex-row justify-between w-full dark:from-gray-700 dark:to-gray-900">
+                <div className="mt-24 max-h-screen items-start flex flex-row justify-between w-full dark:from-gray-700 dark:to-gray-900">
                   <motion.div
-                    className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8 dark:bg-black"
+                    className="chart-content-box rounded-[1.5rem] bg-white/60 bg-opacity-80 shadow-lg p-4 md:p-6 lg:p-8 mb-8 dark:bg-darkBackground"
                     animate={{
                       width: isChatOpen ? '67%' : '100%',
                     }}

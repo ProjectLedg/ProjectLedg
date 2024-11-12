@@ -256,7 +256,7 @@ export default function InvoicingPage() {
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Fakturering</h1>
-        <Button variant="outline" onClick={resetForm}>
+        <Button variant="outline" onClick={resetForm} className="dark:bg-darkSurface dark:border-darkBorder">
           <RefreshCw className="mr-2 h-4 w-4" />
           Återställ formulär
         </Button>
@@ -278,8 +278,8 @@ export default function InvoicingPage() {
 
 
 
-      <Tabs defaultValue="details" className="mb-6">
-        <TabsList>
+      <Tabs defaultValue="details" className="mb-6 ">
+        <TabsList className="dark:bg-darkBackground">
           <TabsTrigger value="details">Innehåll</TabsTrigger>
           <TabsTrigger value="customer">Kundinformation</TabsTrigger>
         </TabsList>
@@ -308,7 +308,7 @@ export default function InvoicingPage() {
 
       <div className="flex justify-around sm:justify-end">
         <Button
-          className="mr-2 w-48"
+          className="mr-2 w-48 dark:text-darkBackground"
           onClick={saveInvoice}
           disabled={saveStatus === "saving" || saveStatus === "saved"}
         >
@@ -331,7 +331,7 @@ export default function InvoicingPage() {
           variant="outline"
           onClick={generatePdfStatus === "ready" ? downloadPdf : generatePdf}
           disabled={!outgoingInvoiceId || generatePdfStatus === "generating"}
-          className="w-48"
+          className="w-48 dark:bg-darkSurface dark:border-darkBorder dark:text-darkSecondary"
         >
           {generatePdfStatus === "generating" && (
             <>
