@@ -14,9 +14,9 @@ const ProfitabilityCard = ({ runway }) => {
   }
 
   const getStatusColor = (percentage) => {
-    if (percentage >= 80) return "text-green-500";
+    if (percentage >= 80) return "text-green-500 dark:text-darkPositive";
     if (percentage >= 50) return "text-yellow-500";
-    return "text-red-500";
+    return "text-red-500 dark:text-dark-negative";
   };
 
   const statusColor = getStatusColor(runway.percentage);
