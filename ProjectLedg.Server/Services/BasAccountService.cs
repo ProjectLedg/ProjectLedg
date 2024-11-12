@@ -6,28 +6,21 @@ using Microsoft.EntityFrameworkCore;
 using ProjectLedg.Server.Data;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.BasAccount;
-using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Options;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
-using Sprache;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
+
 
 public class BasAccountService : IBasAccountService
 {
     private readonly string _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
     private readonly IBasAccountRepository _basAccountRepository;
     private readonly ICompanyService _companyService;
-    private readonly IIngoingInvoiceService _ingoingInvoiceService;
-    private readonly IBasAccountRepo _basAccountRepo;
+    private readonly IBasAccountRepository _basAccountRepo;
 
-    public BasAccountService(ICompanyService companyService, IIngoingInvoiceService ingoingInvoiceService, IBasAccountRepo basAccountRepo)
+    public BasAccountService(ICompanyService companyService, IBasAccountRepository basAccountRepo)
     {
         _companyService = companyService;
-        _ingoingInvoiceService = ingoingInvoiceService;
         _basAccountRepo = basAccountRepo;
     }
 
@@ -88,7 +81,7 @@ public class BasAccountService : IBasAccountService
                 BasAccount basAccount;
 
                 // Check if bas account exists (if null it doesn't exist)
-                var existingBasAccount = await _basAccountRepo.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
+                var existingBasAccount = await _basAccountRepository.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
 
                 // Create new if doesn't exist
                 if (existingBasAccount == null)

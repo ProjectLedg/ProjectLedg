@@ -224,7 +224,7 @@ namespace ProjectLedg.Server
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<ICompanyService, CompanyService>();
             //Finances
-            services.AddScoped<IFinanceRepo, FinanceRepo>();
+            services.AddScoped<IFinanceRepository, FinanceRepository>();
             services.AddScoped<IFinanceService, FinanceService>();
 
             //Customer
@@ -275,7 +275,7 @@ namespace ProjectLedg.Server
             //Notice
             services.AddScoped<INoticeRepository, NoticeRepository>();
             services.AddScoped<INoticeService, NoticeService>();
-            services.AddScoped<IBasAccountRepo, BasAccountRepo>();
+            services.AddScoped<IBasAccountRepository, BasAccountRepository>();
 
             //Functions:
             services.AddScoped<IBasAccountFunctions, BasAccountFunctions>();

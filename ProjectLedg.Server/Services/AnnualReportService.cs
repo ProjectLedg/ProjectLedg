@@ -7,8 +7,8 @@ namespace ProjectLedg.Server.Services
     public class AnnualReportService : IAnnualReportService
     {
         private readonly ICompanyRepository _companyRepository;
-        private readonly IFinanceRepo _financeRepository;
-        public AnnualReportService(ICompanyRepository companyRepository, IFinanceRepo financeRepository)
+        private readonly IFinanceRepository _financeRepository;
+        public AnnualReportService(ICompanyRepository companyRepository, IFinanceRepository financeRepository)
         {
             _companyRepository = companyRepository;
             _financeRepository = financeRepository;

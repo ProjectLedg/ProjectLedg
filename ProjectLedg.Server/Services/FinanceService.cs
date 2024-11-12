@@ -10,10 +10,10 @@ namespace ProjectLedg.Server.Services
 {
     public class FinanceService : IFinanceService
     {
-        private readonly IFinanceRepo _financeRepo;
+        private readonly IFinanceRepository _financeRepo;
         private readonly ILogger<FinanceService> _logger;
 
-        public FinanceService(IFinanceRepo financeRepo, ILogger<FinanceService> logger)
+        public FinanceService(IFinanceRepository financeRepo, ILogger<FinanceService> logger)
         {
             _financeRepo = financeRepo;
             _logger = logger;

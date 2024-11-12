@@ -3,7 +3,7 @@ using ProjectLedg.Server.Data.Models.DTOs.Finance;
 
 namespace ProjectLedg.Server.Repositories.IRepositories
 {
-    public interface IFinanceRepo
+    public interface IFinanceRepository
     {
         public Task<decimal> GetYearToDateProfitAsync(int companyId, int year);
 

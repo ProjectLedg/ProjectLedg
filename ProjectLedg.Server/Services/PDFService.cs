@@ -16,8 +16,8 @@ namespace ProjectLedg.Server.Services
         private readonly IOutgoingInvoiceRepository _invoiceRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly ICustomerRepository _customerRepository;
-        private readonly IFinanceRepo _financeRepository;
-        public PDFService(IConverter converter, IOutgoingInvoiceRepository invoiceRepository, ICompanyRepository companyRepository, ICustomerRepository customerRepository, IFinanceRepo financeRepository)
+        private readonly IFinanceRepository _financeRepository;
+        public PDFService(IConverter converter, IOutgoingInvoiceRepository invoiceRepository, ICompanyRepository companyRepository, ICustomerRepository customerRepository, IFinanceRepository financeRepository)
         {
             _converter = converter;
             _invoiceRepository = invoiceRepository;
