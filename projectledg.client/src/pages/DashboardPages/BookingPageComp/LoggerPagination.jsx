@@ -57,8 +57,8 @@ export default function LoggerPagination({ totalPages, totalInvoices, pagination
     }
 
     return (
-        <Pagination>
-            <PaginationContent>
+        <Pagination >
+            <PaginationContent >
                 {/* Previous button */}
                 <PaginationItem className="cursor-pointer"  disabled={pageNumber === 1}>
                     <PaginationPrevious onClick={handlePreviousPageClick} />

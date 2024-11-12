@@ -55,15 +55,15 @@ export function CustomerInfo({ invoice, handleInputChange }) {
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between items-center">
-        <CardTitle>Kund information</CardTitle>
-        <div className="w-48">
-          <Select onValueChange={handleCustomerSelect} disabled={loading}>
+        <CardTitle>Kundinformation</CardTitle>
+        <div className="w-48 ">
+          <Select onValueChange={handleCustomerSelect} disabled={loading} >
             <SelectTrigger>
               <SelectValue placeholder={loading ? "Laddar..." : "Välj kund"} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-darkBackground dark:border-darkBorder" >
               {customers.map((customer) => (
-                <SelectItem key={customer.id} value={customer.id.toString()}>
+                <SelectItem  key={customer.id} value={customer.id.toString()}>
                   {customer.name}
                 </SelectItem>
               ))}

@@ -127,13 +127,13 @@ export default function InvoiceLogger() {
   return (
     <Card className="w-full h-[40rem] flex flex-col shadow-lg">
       <Tabs defaultValue="ingoing" className="flex flex-col h-full overflow-hidden">
-       <CardHeader className="flex flex-row justify-between border-b">
+       <CardHeader className="flex flex-row justify-between border-b dark:border-darkBorder">
         <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
           <FileText className="mr-2 text-green-500" />
           Fakturor
         </CardTitle>
         
-        <TabsList className="w-auto rounded-md p-6">
+        <TabsList className="w-auto rounded-md p-6 dark:bg-darkBackground">
             <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing}>Ingående</TabsTrigger>
             <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing}>Utgående</TabsTrigger>
         </TabsList>
@@ -164,7 +164,7 @@ export default function InvoiceLogger() {
       </CardContent>
       </Tabs>
 
-      <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2">
+      <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2 dark:border-darkBorder">
         <LoggerPagination 
           totalPages={totalPages} 
           totalInvoices={totalInvoices}

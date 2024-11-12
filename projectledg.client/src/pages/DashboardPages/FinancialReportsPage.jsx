@@ -79,7 +79,7 @@ export default function FinancialReportsPage() {
     <div className="space-y-4 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 sm:mb-0">Finansiella Rapporter</h2>
-        <Button onClick={fetchData} variant="outline" size="sm" disabled={isLoading}>
+        <Button onClick={fetchData} variant="outline" size="sm" disabled={isLoading} className="dark:bg-darkSurface dark:border-darkBorder">
           <RefreshCcw className="mr-2 h-4 w-4" />
           Uppdatera data
         </Button>
@@ -90,11 +90,11 @@ export default function FinancialReportsPage() {
           Array(4).fill(0).map((_, index) => (
             <Card key={index}>
               <CardHeader className="pb-2">
-                <Skeleton className="h-4 w-[140px]" />
+                <Skeleton className="h-4 w-[140px] dark:bg-darkSecondary" />
               </CardHeader>
               <CardContent>
-                <Skeleton className="h-7 w-[100px] mb-1" />
-                <Skeleton className="h-4 w-[60px]" />
+                <Skeleton className="h-7 w-[100px] mb-1 dark:bg-darkSecondary" />
+                <Skeleton className="h-4 w-[60px] dark:bg-darkSecondary" />
               </CardContent>
             </Card>
           ))
@@ -115,14 +115,14 @@ export default function FinancialReportsPage() {
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
             <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0">Balansrapport</CardTitle>
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto">
-              <Download className="mr-2 h-4 w-4" />
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:dark:bg-darkBackground">
+              <Download className="mr-2 h-4 w-4 " />
               Ladda ner
             </Button>
           </CardHeader>
           <CardContent>
             {isLoading || !financialData ? (
-              <Skeleton className="h-[200px] sm:h-[300px] w-full" />
+              <Skeleton className="h-[200px] sm:h-[300px] w-full dark:bg-darkSecondary" />
             ) : (
               <ChartContainer 
                 config={{ 
@@ -148,14 +148,14 @@ export default function FinancialReportsPage() {
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
             <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0">Resultatrapport</CardTitle>
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto">
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:dark:bg-darkBackground">
               <Download className="mr-2 h-4 w-4" />
               Ladda ner
             </Button>
           </CardHeader>
           <CardContent>
             {isLoading || !financialData ? (
-              <Skeleton className="h-[200px] sm:h-[300px] w-full" />
+              <Skeleton className="h-[200px] sm:h-[300px] w-full dark:bg-darkSecondary" />
             ) : (
               <ChartContainer 
                 config={{ 
@@ -182,7 +182,7 @@ export default function FinancialReportsPage() {
       {error && (
         <div className="text-center text-red-500 mt-4">
           {error}
-          <Button onClick={fetchData} variant="outline" size="sm" className="ml-2">
+          <Button onClick={fetchData} variant="outline" size="sm" className="ml-2 dark:bg-darkSurface dark:border-darkBorder">
             <RefreshCcw className="mr-2 h-4 w-4" />
             Retry
           </Button>
