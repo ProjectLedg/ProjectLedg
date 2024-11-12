@@ -40,7 +40,7 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
     </CardHeader>
     <CardContent>
       <div className="text-lg sm:text-2xl font-bold ">{value}</div>
-      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${changeType === 'positive' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${changeType === 'positive' ? 'bg-green-100 text-green-800 dark:bg-darkPositive dark:text-white' : 'bg-red-100 text-red-800 dark:bg-darkNegative dark:text-white'
         }`}>
         {change}
       </div>
@@ -108,7 +108,7 @@ const DashboardHomePage = () => {
           companyId: parseInt(companyId),
           year: currentYear
         };
-        
+
         const axiosConfig = axios.create({
           baseURL: 'https://projectledg.azurewebsites.net/api/',
           headers: {
@@ -141,7 +141,7 @@ const DashboardHomePage = () => {
 
   const { revenue, profit, expenses, runway } = topGraphsData;
 
-  const isDarkMode = document.documentElement.classList.contains('dark'); 
+  const isDarkMode = document.documentElement.classList.contains('dark');
 
   const metricOptions = [
     { value: 'grossProfit', label: 'Total vinst' },
@@ -178,13 +178,14 @@ const DashboardHomePage = () => {
                   tickLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
                   axisLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
                   style={{
-                    fill: isDarkMode ? 'white' : 'grey', 
+                    fill: isDarkMode ? 'white' : 'grey',
                   }}
                 />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="amount" stroke="#10B34A" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="amount" stroke={isDarkMode ? '#00B8D9' : '#4CAF50'} strokeWidth={2} dot={false} />
               </LineChart>
+
             }
           />
 
@@ -208,14 +209,20 @@ const DashboardHomePage = () => {
                   tickLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
                   axisLine={{ stroke: isDarkMode ? 'white' : 'grey' }}
                   style={{
-                    fill: isDarkMode ? 'white' : 'grey', 
+                    fill: isDarkMode ? 'white' : 'grey',
                   }}
                 />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="amount">
                   {profit.profitHistory.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B34A" : "#EF4444"} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={isDarkMode
+                        ? (entry.amount >= 0 ? "#00B8D9" : "#FF6F00") // Dark mode colors
+                        : (entry.amount >= 0 ? "#4CAF50" : "#F44336") // Light mode colors
+                      }
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -248,10 +255,16 @@ const DashboardHomePage = () => {
                   }}
                 />
                 <YAxis hide />
-                <Tooltip content={<CustomTooltip />} x/>
+                <Tooltip content={<CustomTooltip />} x />
                 <Bar dataKey="amount">
-                  {expenses.expensesHistory.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? "#10B34A" : "#EF4444"} />
+                  {profit.profitHistory.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={isDarkMode
+                        ? (entry.amount >= 0 ? "#00B8D9" : "#FF6F00") // Dark mode colors
+                        : (entry.amount >= 0 ? "#4CAF50" : "#F44336") // Light mode colors
+                      }
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -268,7 +281,7 @@ const DashboardHomePage = () => {
           title=""
           metricsData={filterGraphsData}
           metricOptions={metricOptions}
-          
+
         />
         <MetricGraph
           metricFilter={bottomMetricFilter}
