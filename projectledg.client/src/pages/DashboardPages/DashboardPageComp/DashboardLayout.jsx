@@ -90,7 +90,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
       onClick={handleClick}
     >
       <Icon className="h-5 w-5 dark:text-gray-300" strokeWidth={isSelected ? 2 : 1} />
-      <span className="dark:text-gray-300">{label}</span>
+      <span className="dark:text-white">{label}</span>
       {isSelected && (
         <motion.span
           style={barStyle}
@@ -117,8 +117,8 @@ const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
   const isSelected = location.pathname === fullPath;
 
   const baseStyle = "flex items-center justify-around space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
-  const selectedStyle = "font-bold bg-accent text-accent-foreground";
-  const hoverStyle = "hover:bg-accent hover:text-accent-foreground";
+  const selectedStyle = "font-bold bg-accent text-accent-foreground dark:bg-darkSurface";
+  const hoverStyle = "hover:bg-accent hover:text-accent-foreground hover:dark:bg-darkSurface";
 
   const barStyle = {
     content: "''",
@@ -191,7 +191,7 @@ const handleLogout = ({ icon: Icon, label, path }) => {
     <a
       href={path}
       onClick={handleClick}
-      className="flex items-center space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-500"
+      className="flex items-center space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:dark:bg-darkSurface dark:text-gray-white hover:text-accent-foreground transition-colors duration-500"
     >
       <Icon className="h-5 w-5" />
       <span>{label}</span>
