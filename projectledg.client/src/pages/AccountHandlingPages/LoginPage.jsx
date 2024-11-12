@@ -24,7 +24,7 @@ export default function LoginPage() {
 
         try {
             //send login request
-            const response = await axios.post('https://localhost:7223/api/User/login', formData, {
+            const response = await axios.post('https://projectledg.azurewebsites.net/api/User/login', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -49,7 +49,7 @@ export default function LoginPage() {
     const handleGoogleSignIn = () => {
         try {
             //Redirect to backend endpoint for Google sign-in
-            window.location.href = "https://localhost:7223/login-google";
+            window.location.href = "https://projectledg.azurewebsites.net/api/login-google";
         }
         catch (error) {
             console.error("Error during sign-in redirect:", error);
@@ -64,7 +64,7 @@ export default function LoginPage() {
 
     const handleMicrosoftSignIn = () => {
         try {
-            window.location.href = "https://localhost:7223/login-microsoft"
+            window.location.href = "https://projectledg.azurewebsites.net/api/login-microsoft"
         }
         catch (error) {
             console.error("Error during sign-in redirect:", error);

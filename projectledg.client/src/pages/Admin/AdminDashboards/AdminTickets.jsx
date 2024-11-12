@@ -12,7 +12,7 @@ const UserTickets = () => {
         setMessage('');
 
         try {
-            const response = await axios.post('https://localhost:7223/api/SupportTickets', {
+            const response = await axios.post('https://projectledg.azurewebsites.net/api/SupportTickets', {
                 subject,
                 description,
                 priority
