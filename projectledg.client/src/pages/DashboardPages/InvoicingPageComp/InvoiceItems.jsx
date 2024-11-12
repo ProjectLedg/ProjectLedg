@@ -71,7 +71,7 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
                   <span className="text-lg">{(item.amount + item.taxAmount).toFixed(2)}kr</span>
                 </TableCell>
                 <TableCell className="pl-0">
-                  <Button variant="destructive" size="icon" onClick={() => removeItem(index)}>
+                  <Button className="" variant="destructive" size="icon" onClick={() => removeItem(index)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TableCell>
@@ -137,7 +137,7 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
 
       
 
-        <Button className="hidden lg:flex mt-4 bg-green-500 dark:text-white" onClick={addItem}>
+        <Button className="hidden hover:dark:bg-green-800 lg:flex mt-4 bg-green-500 dark:text-white" onClick={addItem}>
           <PlusCircle className="mr-2 h-4 w-4 dark:text-white" /> Lägg till artikel
         </Button>
       </CardContent>
