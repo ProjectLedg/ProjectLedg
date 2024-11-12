@@ -48,7 +48,7 @@ namespace ProjectLedg.Server
             var aesIV = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV"));
 
 
-            //Creating a Session for the temporary files to exist within.
+            //Creating a Session for the temporary files to exist within
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
