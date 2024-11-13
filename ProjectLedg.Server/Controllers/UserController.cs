@@ -106,7 +106,7 @@ namespace ProjectLedg.Server.Controllers
                 {
                     HttpOnly = false,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.Now.AddHours(1)
                 };
                 Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
