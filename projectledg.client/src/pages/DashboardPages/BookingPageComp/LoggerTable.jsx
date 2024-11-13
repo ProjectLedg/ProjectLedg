@@ -36,12 +36,14 @@ const [sortOrder, setSortOrder] = useState("asc") // Default sort order ascendin
 return (
     <Table>
         <TableHeader>
-            <TableRow className="bg-gray-100 dark:bg-black">
+            <TableRow className="bg-gray-100 dark:bg-black ">
                 <DropdownMenu className="flex flex-row justify-around">
-                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("id")}>Fakturanummer {sortBy === "id" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
-                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("date")}>Fakturadatum {sortBy === "date" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("invoiceNumber")}>Fakturanummer {sortBy === "invoiceNumber" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
+                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("vendorName")}>Kund {sortBy === "vendorName" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+
+                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("invoiceDate")}>Fakturadatum {sortBy === "invoiceDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
                     <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("dueDate")}>Förfallodatum {sortBy === "dueDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
-                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("amount")}>Belopp {sortBy === "amount" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
+                    <TableHead className="font-bold cursor-pointer" onClick={() => handleSort("invoiceTotal")}>Belopp {sortBy === "invoiceTotal" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" /> }</TableHead>
                 <DropdownMenuTrigger>
                     <TableHead 
                         className="font-bold flex justify-center items-center">
@@ -79,19 +81,22 @@ return (
                     className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => handleInvoiceClick(invoice)}
                 >
-                    <TableCell className="font-medium py-4 px-6">
-                        {invoice.id}
+                    <TableCell className="font-medium p-4">
+                        {invoice.invoiceNumber  }
                     </TableCell>
-                    <TableCell >
-                        {new Date(invoice.date).toLocaleDateString()}
+                    <TableCell className="font-medium p-4">
+                        {invoice.vendorName}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="p-4" >
+                        {new Date(invoice.invoiceDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="p-4">
                         {new Date(invoice.dueDate).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="font-medium">
-                        {invoice.amount}kr
+                    <TableCell className="font-medium p-4">
+                        {invoice.invoiceTotal}kr
                     </TableCell>
-                    <TableCell className="w-64">
+                    <TableCell className="p-4">
                         <div className="flex space-x-2">
                             <Badge className="w-[45%] max-h-5" variant={invoice.isPaid ? "success" : "destructive"}>
                                 {invoice.isPaid ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
