@@ -107,7 +107,22 @@ const SignUpPage = () => {
     <div className="flex flex-col lg:flex-row min-h-screen bg-slate-300">
       <div className="hidden flex-1 overflow-auto bg-gradient-to-b from-blue-700/40 to-gray-200 lg:flex lg:w-1/3 p-8 lg:p-12 flex-col justify-between">
         <div className='pt-40 pl-11'>
-          <div className="w-10 h-10 bg-gray-800 rounded-lg mb-8"></div>
+          <svg
+            width="40" height="40" viewBox="0 0 150 150" fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-10 h-10 mb-8"
+          >
+            <g id="Group 1">
+              {/* Outer Rounded Rectangle */}
+              <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
+
+              {/* Inner Squares with Separate Tailwind Colors */}
+              <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
+              <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+              <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
+              <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
+            </g>
+          </svg>
           <div className="mb-8">
             <h2 className="text-3xl font-bold mb-4">Plan inkluderar</h2>
             <ul className="space-y-2">

@@ -32,9 +32,26 @@ export default function Navbar() {
       <nav className="text-black flex items-center justify-between w-full">
         {/* Logo Section */}
         <div className="flex-shrink-0 w-1/4 flex justify-start">
-          <div className="w-8 h-8 bg-black rounded-full">
-            <Link to="/" className="w-full h-full block"></Link>
-          </div>
+
+          <Link to="/" className="block w-8 h-8">
+            <svg
+              width="100%" height="100%" viewBox="0 0 150 150" fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full h-full"
+            >
+              <g id="Group 1">
+                {/* Outer Rounded Rectangle */}
+                <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
+
+                {/* Inner Squares with Separate Tailwind Colors */}
+                <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
+                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+                <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
+                <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
+              </g>
+            </svg>
+          </Link>
+
         </div>
 
         {/* Navigation Items Section */}
