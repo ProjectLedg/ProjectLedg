@@ -17,12 +17,18 @@ const axiosConfigMultipart = axios.create({
 });
 
 // JWT Interceptor that adds JWT token to the auth bearer for the axios calls
-const attachJwtInterceptor = (instance) => {
+const attachJwtAndRoleInterceptor = (instance) => {
     instance.interceptors.request.use(
         (config) => {
-            const jwtToken = Cookie.get("JWTToken");
+            const jwtToken = Cookie.get("JWTTolkien");
+            console.log(jwtToken)
+            const userRole = Cookie.get("UserRole");
+
             if (jwtToken) {
                 config.headers.Authorization = `Bearer ${jwtToken}`;
+            }
+            if (userRole) {
+                config.headers.Role = userRole; // Add the user role to the headers
             }
             return config;
         },
@@ -33,7 +39,7 @@ const attachJwtInterceptor = (instance) => {
 };
 
 // Add the JWT to each axios call
-attachJwtInterceptor(axiosConfig)
-attachJwtInterceptor(axiosConfigMultipart)
+attachJwtAndRoleInterceptor(axiosConfig)
+attachJwtAndRoleInterceptor(axiosConfigMultipart)
 
 export { axiosConfig, axiosConfigMultipart};
