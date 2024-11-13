@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Mail, Lock, Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import LedgeIcon from "@/assets/LedgeIcon.svg"
+import Cookie from 'js-cookie';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -25,13 +26,16 @@ export default function LoginPage() {
 
         try {
             //send login request
-            const response = await axios.post('https://projectledg.azurewebsites.net/api/User/login', formData, {
+            const response = await axios.post('https://localhost:7223/api/User/login', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
                 withCredentials: true
             });
-
+            
+            Cookie.set("JWTTolkien",response.data.token)
+            
+            Cookie.set("UserRole",response.data.roles[0])
             if (response.data.message === 'Login successful') {
                 navigate('/company-select')
             }
