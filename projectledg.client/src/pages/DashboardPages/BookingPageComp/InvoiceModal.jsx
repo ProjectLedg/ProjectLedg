@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useReset } from "@/services/ResetProvider"
 import ReactMarkdown from "react-markdown"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -13,12 +14,13 @@ import ChatLoader from "@/ChatLoader"
 import SuccessAnimation from "./SuccessAnimation"
 
 export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsModalOpen, handleSaveChanges,
-    handleSubmit, handleIsPaidStatusChange, isBooked, resetInvoiceFields }) {
+    handleSubmit, handleIsPaidStatusChange, isBooked }) {
     // const [input, setInput] = useState('');
     // const [loading, setLoading] = useState(false);
     const [isOn, setIsOn] = useState(false)
     const [triggerSound, setTriggerSound] = useState(false)
     const scrollAreaRef = useRef(null)
+
 
     // const [messages, setMessages] = useState(() => {
     //     const savedMessages = localStorage.getItem('chatMessages');
@@ -116,6 +118,16 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
     //     setIsModalOpen(false)
     // }
     
+    const { reset } = useReset();
+
+    useEffect(() => {
+        if (reset) {
+            setIsOn(false)
+            setTriggerSound(false)
+        }
+
+    }, [reset]);
+
     const handleConfirmPress = () => {
         if(handleSaveChanges) {
             handleSaveChanges()
@@ -127,7 +139,7 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
         setIsOn(false)
         setTriggerSound(false)
 
-        resetInvoiceFields()
+        // resetInvoiceFields()
     }
 
 
@@ -297,7 +309,7 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
 
                 {/* Success animation for when invoice is booked  */}
                 <div className={`${!isBooked ? "hidden" : "block"} `}>
-                    <SuccessAnimation setIsModalOpen={setIsModalOpen} triggerSound={triggerSound} resetModalFields={resetModalFields}/>
+                    {isBooked && <SuccessAnimation key={triggerSound} setIsModalOpen={setIsModalOpen} triggerSound={triggerSound}/>}
                 </div>
             </DialogContent>
         </Dialog>
