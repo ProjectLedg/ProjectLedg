@@ -109,6 +109,12 @@ namespace ProjectLedg.Server.Services
             return await _invoiceRepository.GetIngoingInvoiceByIdAsync(invoiceId);
         }
 
+        public async Task<List<IngoingInvoice>> GetAllIngoingInvoicesForCompanyAsync(int companyId)
+        {
+            return await _invoiceRepository.GetAllIngoingInvoicesForCompanyAsync(companyId);
+        }
+
+
         public async Task<IEnumerable<IngoingInvoice>> GetAllIngoingInvoicesAsync()
         {
             return await _invoiceRepository.GetAllIngoingInvoicesAsync();
