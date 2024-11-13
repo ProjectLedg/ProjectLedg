@@ -10,112 +10,19 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
 import { FileText } from "lucide-react"
+import { useParams } from "react-router-dom"
 
 
-export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading }) {
+export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading, setResetUpFields }) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [isBasAccLoading, setIsBasAccLoading] = useState(false)
   const scrollAreaRef = useRef(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showPreviewAnimation, setShowPreviewAnimation] = useState(false);
   const [basAccounts, setBasAccounts] = useState([])
-
-  // Modal chat 
-  // const [input, setInput] = useState('');
-  // const [messages, setMessages] = useState(() => {
-  //   const savedMessages = localStorage.getItem('chatMessages');
-  //   return savedMessages ? JSON.parse(savedMessages) : [];
-  // });
-  // const [hasMessages, setHasMessages] = useState(messages.length > 0);
-  // const [loading, setLoading] = useState(false);
-
-
-  // useEffect(() => {
-  //   localStorage.setItem('chatMessages', JSON.stringify(messages));
-  // }, [messages]);
-
-
-  // // Send message to the AI
-  // const handleChatSubmit = async (e, inputText = input) => {
-  //   if (e) e.preventDefault();
-  //   if (inputText.trim()) {
-  //     const newMessage = { text: inputText, type: 'sent' };
-  //     setMessages((prevMessages) => [...prevMessages, newMessage]);
-  //     setHasMessages(true);
-  //     setInput('');
-
-  //     setLoading(true);
-
-  //     const response = await handleSend(inputText);
-
-  //     const responseMessage = { text: response, type: 'received', isTyping: true };
-  //     setMessages((prevMessages) => [...prevMessages, responseMessage]);
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleSend = async (input) => {
-  //   try {
-  //     const response = await sendMessage(input);
-  //     console.log('Response from server:', response);
-  //     return response || 'No response received';
-  //   } catch (error) {
-  //     console.error("Error while sending message:", error);
-  //     return 'Error occurred while sending message';
-  //   }
-  // };
-
-  // const sendMessage = async (input) => {
-  //   try {
-  //     const response = await axios.post(
-  //       'https://projectledg.azurewebsites.net/api/Assistant/chat',
-  //       JSON.stringify(input),
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       }
-  //     );
-  //     return response.data; // Return the response data
-  //   } catch (error) {
-  //     console.error("Failed to send message", error);
-  //     throw error; // Rethrow the error if you want to handle it further up
-  //   }
-  // }
-
-  // // Render messages sent between the AI and the user
-  // const renderedMessages = messages.map((message, index) => (
-  //   <div
-  //     key={index}
-  //     className={`mb-12 flex items-start ${message.type === 'sent' ? 'self-end' : 'self-start'}`}
-  //   >
-  //     {message.type === 'received' && (
-  //       <div className='p-2 mt-1 border-2 rounded-full '>
-  //         <Bot className="w-4 h-4 " />
-  //       </div>
-  //     )}
-  //     <div
-  //       className={`${message.type === 'sent'
-  //         ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-xl ml-auto max-w-64 text-white break-words whitespace-normal'
-  //         : 'prose bg-gray-100 p-2 rounded-3xl  max-w-[100%] text-black'
-  //         }`}
-  //     >
-  //       {message.type === 'sent' || !message.isTyping ? (
-  //         <ReactMarkdown>{message.text}</ReactMarkdown>
-  //       ) : (
-  //         <Typewriter text={message.text} delay={5} onComplete={() => {
-  //           setMessages((prevMessages) =>
-  //             prevMessages.map((msg, i) =>
-  //               i === index ? { ...msg, isTyping: false } : msg
-  //             )
-  //           );
-  //         }} />
-
-  //       )}
-  //     </div>
-  //   </div>
-  // ));
-
+  const [isPaidStatus, setIsPaidStatus] = useState(false)
+  const [isBooked, setIsBooked] = useState(false);
+  const { companyId } = useParams()
 
 
   // Sets state for showing preview fade in animation when upload invoice is loading
@@ -127,6 +34,11 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     }
   }, [isUploadLoading]);
 
+
+  useEffect(() => {
+    console.log("isModalOpen updated:", isModalOpen);
+  }, [isModalOpen]);
+
   // console.log("INVOICE PREVIEW: ", invoice)
 
   // Handles iterating through and updatign the invoice with edited input
@@ -137,7 +49,8 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     if (name.startsWith("item")) {
       // Extract the item index from dataset
       const index = dataset.index;
-      const propertyName = name.replace('item', '').charAt(0) + name.slice(5);
+      // const propertyName = name.replace('item', '').charAt(0) + name.slice(5);
+      const propertyName = name.replace('item', '');
 
       // Update the specific item in the items array
       setInvoice(prev => {
@@ -159,11 +72,17 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     }
   };
 
+  const handleIsPaidStatusChange = () => {
 
+    // Create new invoice with same data but override isPaid and nake it the opposite
+    setInvoice({...invoice, isPaid: !isPaidStatus})
 
+    // Set is paid status to the opposite of what it is (true/false)
+    setIsPaidStatus(!isPaidStatus)
+  }
 
-
-  function transformInvoiceData(invoiceData) {
+  // Convert ints to decimals and removes kr and SEK text
+  function convertInvoiceData(invoiceData) {
     return {
       AdditionalContext: invoiceData.AdditionalContext || null,
       InvoiceNumber: invoiceData.InvoiceId || null,
@@ -171,14 +90,51 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
       TotalTax: parseFloat(invoiceData.TotalTax.replace(',', '.')),
       Items: invoiceData.Items.map(item => ({
         Description: item.Description,
-        Quantity: parseFloat(item.Quantity),
-        UnitPrice: item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim(),
+        Quantity: parseInt(item.Quantity),
+        UnitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim()),
         Amount: parseFloat(item.Amount.replace(',', '.'))
       }))
     };
   }
 
+  // Transform invoice to match backend expectations
+  const transformInvoice = (invoice) => ({
+    invoiceNumber: invoice.InvoiceId,
+    invoiceDate: new Date(invoice.InvoiceDate).toISOString(), 
+    dueDate: new Date(invoice.DueDate).toISOString(),
+    invoiceTotal: parseFloat(invoice.InvoiceTotal.replace(",", ".")),
+    items: invoice.Items.map(item => ({
+      description: item.Description,
+      quantity: parseFloat(item.Quantity),
+      unitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim()),
+      amount: parseFloat(item.Amount.replace(",", "."))
+    })),
+    paymentDetails: typeof invoice.PaymentDetails === 'string' ? invoice.PaymentDetails : "",  // Force empty string if not a string
+    totalTax: parseFloat(invoice.TotalTax.replace(",", ".")),
+    isPaid: isPaidStatus,
+    isOutgoing: false, // Always false when creating invoices in this component
+    isBooked: false, // As invoice just is created it isn't booked yet
+    customerId: invoice.CustomerId,
+    customerName: invoice.CustomerName,
+    customerAddress: invoice.CustomerAddress,
+    customerAddressRecipient: invoice.CustomerAddressRecipient,
+    vendorName: invoice.VendorName,
+    vendorAddress: invoice.VendorAddress,
+    vendorAddressRecipient: invoice.VendorAddressRecipient,
+    vendorTaxId: invoice.VendorTaxId,
+    companyId: parseInt(companyId, 10)
+  });
 
+  // Transform basAccounts to match backend expectations
+  const transformBasAccounts = (basAccounts) => (
+    basAccounts.accounts.map(account => ({
+      basAccount: account.BasAccount.toString(), // To string as that is what backend expects
+      description: account.Description,
+      debit: parseFloat(account.Debit),
+      credit: parseFloat(account.Credit)
+    }))
+  );
+  
 
   const handleSubmitInvoiceMap = async (event) => {
     event.preventDefault()
@@ -187,17 +143,14 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     setIsPreviewLoading(true)
     setIsModalOpen(true);
 
-
-    const transformedInvoice = transformInvoiceData(invoice);
+    // Convert ints to decimals
+    const transformedInvoice = convertInvoiceData(invoice);
 
 
     try {
       // Open modal and turn on loading animation
       // setIsModalOpen(true);
       // setIsBasAccLoading(true);
-
-      console.log(invoice);
-
 
       // Wait for invoice mapping and get a list of bas accounts back
       const response = await axiosConfig.post("/Assistant/MapInvoiceDataToBasAccount", transformedInvoice);
@@ -222,22 +175,38 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     }
   }
 
-  const handleSaveChanges = async () => {
-    // Post and save changes to backend API 
+  const handleSaveChanges = async (event) => {   
+
+    // Create object to send to backend
+    const invBaAccDto = {
+      companyId: parseInt(companyId, 10),
+      invoice: transformInvoice(invoice),
+      accounts: transformBasAccounts(basAccounts)
+    };
 
     try {
-      // const response = await axiosConfig.post("/Assistant/CreateBasAccounts", invoice)
+      const response = await axiosConfig.post("/BasAccount/ProcessInvoiceWithBasAccounts", invBaAccDto)
 
-
-
-
+      // Set is booked to true to trigger success animation in modal popup
+      setIsBooked(true);
 
     } catch (error) {
       console.log("Something went wrong: ", error)
-    }
-
-    setIsModalOpen(false)
+    }  
   }
+
+  const resetInvoiceFields = () => {
+    setIsPreviewLoading(false)
+    setIsBasAccLoading(false)
+    setIsModalOpen(false)
+    setShowPreviewAnimation(false)
+    setBasAccounts([])
+    setIsPaidStatus(false)
+    setIsBooked(false)
+    
+    setResetUpFields(true)
+  }
+
 
   // Loading skeleton animation while wating for invoice to upload
   if (isUploadLoading) {
@@ -331,21 +300,21 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                       <CardContent>
                         <section className="grid grid-cols-1 gap-4 mt-6">
                           <article>
-                            <Label htmlFor="invoiceNumber">Fakturanummer</Label>
+                            <Label htmlFor="InvoiceId">Fakturanummer</Label>
                             <Input
-                              id="invoiceNumber"
-                              name="invoiceNumber"
+                              id="InvoiceId"
+                              name="InvoiceId"
                               value={invoice.InvoiceId ? invoice.InvoiceId : null}
                               placeholder={invoice.InvoiceId ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
                             />
                           </article>
                           <article>
-                            <Label htmlFor="invoiceTotal">Totalt belopp</Label>
+                            <Label htmlFor="InvoiceTotal">Totalt belopp</Label>
                             <div className="relative w-full">
                               <Input
-                                id="invoiceTotal"
-                                name="invoiceTotal"
+                                id="InvoiceTotal"
+                                name="InvoiceTotal"
                                 value={invoice.InvoiceTotal ? invoice.InvoiceTotal : null}
                                 placeholder={invoice.InvoiceTotal ? null : "Ej Läsbart"}
 
@@ -355,11 +324,11 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                             </div>
                           </article>
                           <article>
-                            <Label htmlFor="totalTax">Total moms</Label>
+                            <Label htmlFor="TotalTax">Total moms</Label>
                             <div className="relative w-full">
                               <Input
-                                id="totalTax"
-                                name="totalTax"
+                                id="TotalTax"
+                                name="TotalTax"
                                 value={invoice.TotalTax ? invoice.TotalTax : null}
                                 placeholder={invoice.TotalTax ? null : "Ej Läsbart"}
                                 onChange={handleInputChange}
@@ -368,10 +337,10 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                             </div>
                           </article>
                           <article>
-                            <Label htmlFor="invoiceDate">Fakturadatum</Label>
+                            <Label htmlFor="InvoiceDate">Fakturadatum</Label>
                             <Input
-                              id="invoiceDate"
-                              name="invoiceDate"
+                              id="InvoiceDate"
+                              name="InvoiceDate"
                               type="date"
                               value={invoice.InvoiceDate ? invoice.InvoiceDate : null}
                               placeholder={invoice.InvoiceDate ? null : "Ej Läsbart"}
@@ -379,10 +348,10 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                             />
                           </article>
                           <article>
-                            <Label htmlFor="dueDate">Förfallodatum</Label>
+                            <Label htmlFor="DueDate">Förfallodatum</Label>
                             <Input
-                              id="dueDate"
-                              name="dueDate"
+                              id="DueDate"
+                              name="DueDate"
                               type="date"
                               value={invoice.DueDate}
                               placeholder={invoice.DueDate ? null : "Ej Läsbart"}
@@ -390,10 +359,10 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                             />
                           </article>
                           <article>
-                            <Label htmlFor="paymentDetails">Bankgiro/PlusGiro</Label>
+                            <Label htmlFor="PaymentDetails">Bankgiro/PlusGiro</Label>
                             <Input
-                              id="paymentDetails"
-                              name="paymentDetails"
+                              id="PaymentDetails"
+                              name="PaymentDetails"
                               value={invoice.PaymentDetails ? invoice.PaymentDetails : null}
                               placeholder={invoice.PaymentDetails.Length == 0 ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
@@ -410,30 +379,30 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                       <CardContent>
                         <section className="space-y-4 mt-6">
                           <article>
-                            <Label htmlFor="customerName">Kundnamn</Label>
+                            <Label htmlFor="CustomerName">Kundnamn</Label>
                             <Input
-                              id="customerName"
-                              name="customerName"
+                              id="CustomerName"
+                              name="CustomerName"
                               value={invoice.CustomerName ? invoice.CustomerName : null}
                               placeholder={invoice.CustomerName ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
                             />
                           </article>
                           <article>
-                            <Label htmlFor="customerAddress">Kundadress</Label>
+                            <Label htmlFor="CustomerAddress">Kundadress</Label>
                             <Input
-                              id="customerAddress"
-                              name="customerAddress"
+                              id="CustomerAddress"
+                              name="CustomerAddress"
                               value={invoice.CustomerAddress ? invoice.CustomerAddress : null}
                               placeholder={invoice.CustomerAddress ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
                             />
                           </article>
                           <article>
-                            <Label htmlFor="customerAddressRecipient">Kundadressmottagare</Label>
+                            <Label htmlFor="CustomerAddressRecipient">Kundadressmottagare</Label>
                             <Input
-                              id="customerAddressRecipient"
-                              name="customerAddressRecipient"
+                              id="CustomerAddressRecipient"
+                              name="CustomerAddressRecipient"
                               value={invoice.CustomerAddressRecipient ? invoice.CustomerAddressRecipient : null}
                               placeholder={invoice.CustomerAddressRecipient ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
@@ -450,40 +419,41 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                       <CardContent>
                         <section className="space-y-4 mt-6">
                           <article>
-                            <Label htmlFor="vendorName">Leverantörsnamn</Label>
+                            <Label htmlFor="VendorName">Leverantörsnamn</Label>
                             <Input
-                              id="vendorName"
-                              name="vendorName"
+                              id="VendorName"
+                              name="VendorName"
                               value={invoice.VendorName ? invoice.VendorName : null}
                               placeholder={invoice.VendorName ? null : "Ej Läsbart"}
+                              
                               onChange={handleInputChange}
                             />
                           </article>
                           <article>
                             <Label htmlFor="vendorAddress">Leverantörsadress</Label>
                             <Input
-                              id="vendorAddress"
-                              name="vendorAddress"
+                              id="VendorAddress"
+                              name="VendorAddress"
                               value={invoice.VendorAddress ? invoice.VendorAddress : null}
                               placeholder={invoice.VendorAddress ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
                             />
                           </article>
                           <article>
-                            <Label htmlFor="vendorAddressRecipient">Leverantörsadressmottagare</Label>
+                            <Label htmlFor="VendorAddressRecipient">Leverantörsadressmottagare</Label>
                             <Input
-                              id="vendorAddressRecipient"
-                              name="vendorAddressRecipient"
+                              id="VendorAddressRecipient"
+                              name="VendorAddressRecipient"
                               value={invoice.VendorAddressRecipient ? invoice.VendorAddressRecipient : null}
                               placeholder={invoice.VendorAddressRecipient ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
                             />
                           </article>
                           <article>
-                            <Label htmlFor="vendorTaxId">Momsregistreringsnummer</Label>
+                            <Label htmlFor="VendorTaxId">Momsregistreringsnummer</Label>
                             <Input
-                              id="vendorTaxId"
-                              name="vendorTaxId"
+                              id="VendorTaxId"
+                              name="VendorTaxId"
                               value={invoice.VendorTaxId ? invoice.VendorTaxId : null}
                               placeholder={invoice.VendorTaxId ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
@@ -534,6 +504,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                                   name="itemTaxAmount"
                                   value={item.TaxAmount ? item.TaxAmount : null}
                                   placeholder={item.TaxAmount ? null : "Ej läsbart"}
+                                  data-index={i}
                                   onChange={handleInputChange}
                                 />
                                 <div className="absolute right-0 top-0 h-full flex items-center bg-slate-400 text-white rounded-r-md px-4 text-sm">kr</div>
@@ -547,6 +518,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                                   name="itemTaxPercentage"
                                   value={item.TaxPercentage ? item.TaxPercentage : null}
                                   placeholder={item.TaxPercentage ? null : "Ej läsbart"}
+                                  data-index={i}
                                   onChange={handleInputChange}
                                 />
                                 <div className="absolute right-0 top-0 h-full flex items-center bg-slate-400 text-white rounded-r-md px-4 text-sm">%</div>
@@ -561,7 +533,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                                     name="itemUnitPrice"
                                     value={item.UnitPrice ? item.UnitPrice : null}
                                     placeholder={item.UnitPrice ? null : "Ej läsbart"}
-
+                                    data-index={i}
                                     onChange={handleInputChange}
                                   />
                                   <div className="absolute right-0 top-0 h-full flex items-center bg-slate-400 text-white rounded-r-md px-4 text-sm">kr</div>
@@ -624,8 +596,12 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
         basAccounts={basAccounts}
         invoice={invoice}
         isModalOpen={isModalOpen}
+        isBooked={isBooked}
         setIsModalOpen={setIsModalOpen}
-        handleSaveChanges={handleSaveChanges} />
+        handleSaveChanges={handleSaveChanges} 
+        handleIsPaidStatusChange={handleIsPaidStatusChange}
+        resetInvoiceFields={resetInvoiceFields}
+        />
     </Card>
   )
 }
