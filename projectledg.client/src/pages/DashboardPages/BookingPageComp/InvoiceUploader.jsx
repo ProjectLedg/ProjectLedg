@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Upload, FileText } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUploadLoading, resetUpFields }) {
+export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [additionalInfo, setAdditionalInfo] = useState("")
@@ -114,14 +114,17 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
     }
   }
 
+  const { reset } = useReset();
+
+
   useEffect(() => {
-    if(resetUpFields) {
+    if (reset) {
       setSelectedFile(null)
       setPreviewUrl(null)
       setAdditionalInfo("")
       setInvoice(null)
     }
-  }, [resetUpFields]);
+  }, [reset]);
 
   return (
     <Card className="w-half h-[600px] flex flex-col shadow-lg">
