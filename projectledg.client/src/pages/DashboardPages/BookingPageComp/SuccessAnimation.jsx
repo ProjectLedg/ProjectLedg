@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button"
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { useReset } from "@/services/ResetProvider"
 
 const drawCircle = {
     hidden: { pathLength: 0, opacity: 0 },
@@ -34,16 +34,23 @@ const drawLine = {
 };
 
 
+export default function SuccessAnimation({ setIsModalOpen, triggerSound }) {
+    const [isAnimationVisible, setIsAnimationVisible] = useState(false)
 
+    const { triggerReset } = useReset();
 
-
-export default function SuccessAnimation({ setIsModalOpen, triggerSound, resetModalFields }) {
 
     useEffect(() => {
 
         if (triggerSound) {
-            const audio = new Audio(`/ledge-success-chime.mp3`)
-            audio.play();
+            // Trigger animation
+            setIsAnimationVisible(true);
+
+            const audioTimeout = setTimeout(() => {
+                const audio = new Audio(`/ledge-success-chime.mp3`);
+                audio.play();
+                console.log("Audio playing");
+            }, 1000); // Delay in milliseconds
         }
 
     }, [triggerSound])
@@ -51,7 +58,7 @@ export default function SuccessAnimation({ setIsModalOpen, triggerSound, resetMo
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        resetModalFields()
+        triggerReset(); // Change reset context to reset all fields without reloading the page
     };
 
     return (
@@ -62,7 +69,8 @@ export default function SuccessAnimation({ setIsModalOpen, triggerSound, resetMo
                 // height="50vh"
                 viewBox="0 0 600 600"
                 initial="hidden"
-                animate="visible"
+                animate={isAnimationVisible ? "visible" : "hidden"}
+                
             >
                 <motion.circle
                     cx="300"
@@ -115,7 +123,7 @@ export default function SuccessAnimation({ setIsModalOpen, triggerSound, resetMo
                 animate={{ opacity: 1 }}
                 transition={{ delay: 3, duration: 1 }}
             >
-                Faktura bokförd!
+                Verifikation bokförd!
             </motion.h1>
 
             <motion.div className="mt-14"
