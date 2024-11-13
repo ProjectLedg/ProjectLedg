@@ -125,11 +125,18 @@ const SignUpPage = () => {
       <div className="w-full lg:w-2/3 flex items-center justify-center p-4 lg:p-0 min-h-screen px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md rounded-[1.5rem] p-4 sm:p-8 lg:p-12 m-8">
           <CardHeader className="flex flex-col items-center space-y-4 pt-2 sm:pt-4">
-            <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="currentColor">
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
-              </svg>
-            </div>
+            <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+              <g id="Group 1">
+                {/* <!-- Outer Rounded Rectangle --> */}
+                <rect id="Rectangle 1" width="150" height="150" rx="40" className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center" />
+
+                {/* <!-- Inner Squares with Separate Tailwind Colors --> */}
+                <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
+                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+                <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
+                <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
+              </g>
+            </svg>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Skapa Konto</h1>
           </CardHeader>
           <div className="max-w-md mx-auto w-full">
@@ -272,7 +279,7 @@ const SignUpPage = () => {
             </form>
           </div>
           <CardFooter className="flex flex-col items-center space-y-2 pt-0 px-4 sm:px-6">
-            
+
             <p className="text-sm text-gray-500 pt-4 sm:mt-0">
               Har redan konto?{" "}
               <Link to="/login" className="text-blue-600 hover:underline">

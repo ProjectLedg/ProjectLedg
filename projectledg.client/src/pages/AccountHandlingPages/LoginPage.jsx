@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Mail, Lock, Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import LedgeIcon from "@/assets/LedgeIcon.svg"
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -77,11 +78,20 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-slate-300 backdrop-blur-md px-4 sm:px-6 lg:px-8">
             <Card className="w-full max-w-md bg-white shadow-lg rounded-[1.5rem]">
                 <CardHeader className="flex flex-col items-center space-y-4 pt-4 sm:pt-8">
-                    <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="currentColor">
-                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
-                        </svg>
-                    </div>
+
+                    <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                        <g id="Group 1">
+                            {/* <!-- Outer Rounded Rectangle --> */}
+                            <rect id="Rectangle 1" width="150" height="150" rx="40" className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center" />
+
+                            {/* <!-- Inner Squares with Separate Tailwind Colors --> */}
+                            <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
+                            <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+                            <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
+                            <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
+                        </g>
+                    </svg>
+
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Logga in</h1>
                     {/* <p className="text-sm text-gray-600">Logga in med Google</p> */}
                 </CardHeader>
