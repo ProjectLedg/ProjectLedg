@@ -58,6 +58,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'node-app'
+          app-name: 'ledg'
           slot-name: 'production' # Ensure this matches your Azure slot, or remove if using only the main slot
           package: ./node-app # Adjusted to match the downloaded artifact pathå
