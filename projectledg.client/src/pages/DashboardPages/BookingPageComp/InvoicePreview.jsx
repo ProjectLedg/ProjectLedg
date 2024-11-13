@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useReset } from "@/services/ResetProvider"
 import { motion } from "framer-motion"
 import { axiosConfig } from '/axiosconfig'
 import InvoiceModal from "./InvoiceModal"
@@ -13,7 +14,7 @@ import { FileText } from "lucide-react"
 import { useParams } from "react-router-dom"
 
 
-export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading, setResetUpFields }) {
+export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [isBasAccLoading, setIsBasAccLoading] = useState(false)
   const scrollAreaRef = useRef(null)
@@ -35,9 +36,21 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
   }, [isUploadLoading]);
 
 
+  const { reset } = useReset();
+
   useEffect(() => {
-    console.log("isModalOpen updated:", isModalOpen);
-  }, [isModalOpen]);
+    if (reset) {
+      setIsPreviewLoading(false)
+      setIsBasAccLoading(false)
+      setIsModalOpen(false)
+      setShowPreviewAnimation(false)
+      setBasAccounts([])
+      setIsPaidStatus(false)
+      setIsBooked(false)
+    }
+
+  }, [reset]);
+
 
   // console.log("INVOICE PREVIEW: ", invoice)
 
@@ -193,18 +206,6 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     } catch (error) {
       console.log("Something went wrong: ", error)
     }  
-  }
-
-  const resetInvoiceFields = () => {
-    setIsPreviewLoading(false)
-    setIsBasAccLoading(false)
-    setIsModalOpen(false)
-    setShowPreviewAnimation(false)
-    setBasAccounts([])
-    setIsPaidStatus(false)
-    setIsBooked(false)
-    
-    setResetUpFields(true)
   }
 
 
@@ -600,7 +601,6 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
         setIsModalOpen={setIsModalOpen}
         handleSaveChanges={handleSaveChanges} 
         handleIsPaidStatusChange={handleIsPaidStatusChange}
-        resetInvoiceFields={resetInvoiceFields}
         />
     </Card>
   )
