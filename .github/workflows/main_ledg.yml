@@ -62,4 +62,4 @@ jobs:
         with:
           app-name: 'ledg'
           slot-name: 'production' # Ensure this matches your Azure slot, or remove if using only the main slot
-          package: ./node-app # Artifact download path, now correctly referencing the artifact name
+          package: ./ProjectLedg.Client/dist # Artifact download path, now correctly referencing the artifact name
