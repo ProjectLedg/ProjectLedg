@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
+import { useReset } from "@/services/ResetProvider"
 import { axiosConfigMultipart } from '/axiosconfig'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -116,7 +117,6 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
 
   const { reset } = useReset();
 
-
   useEffect(() => {
     if (reset) {
       setSelectedFile(null)
@@ -125,6 +125,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
       setInvoice(null)
     }
   }, [reset]);
+
 
   return (
     <Card className="w-half h-[600px] flex flex-col shadow-lg">
