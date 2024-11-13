@@ -41,7 +41,7 @@ export default function CompanySelectPage() {
         setProgress(20);
         
         const response = await axiosConfig.get("Company/getUserCompanies");
-        console.log(response)
+        console.log(response.data)
         setProgress(60);
 
         await new Promise(resolve => setTimeout(resolve, 1000));
