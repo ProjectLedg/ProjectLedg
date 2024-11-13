@@ -26,7 +26,7 @@ export default function LoginPage() {
 
         try {
             //send login request
-            const response = await axios.post('https://localhost:7223/api/User/login', formData, {
+            const response = await axios.post('https://projectledg.azurewebsites.net/api/User/login', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

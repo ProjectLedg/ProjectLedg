@@ -6,6 +6,7 @@ import {axiosConfig} from '/axiosconfig'
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 
+
 export default function CompanySelectPage() {
   const companyIcons = [
     "src/assets/company-icons/balance.png",
