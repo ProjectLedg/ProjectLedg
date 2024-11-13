@@ -60,6 +60,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'ledg'
+          app-name: 'node-app'
           slot-name: 'production' # Ensure this matches your Azure slot, or remove if using only the main slot
           package: ./ProjectLedg.Client/dist # Artifact download path, now correctly referencing the artifact name
