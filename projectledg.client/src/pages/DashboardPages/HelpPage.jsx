@@ -132,11 +132,11 @@ const HelpPage = () => {
                 <Input id="name" value={formData.name} onChange={handleInputChange} placeholder="Ditt namn" className="text-sm sm:text-base" />
               </div>
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
+                <Label htmlFor="email" className="text-sm sm:text-base">Ämne</Label>
                 <Input id="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="Din email" className="text-sm sm:text-base" />
               </div>
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="message" className="text-sm sm:text-base">Meddelande</Label>
+                <Label htmlFor="message" className="text-sm sm:text-base">Beskrivning</Label>
                 <Textarea id="message" value={formData.message} onChange={handleInputChange} placeholder="Beskriv problemet eller feedbacken du har!" className="text-sm sm:text-base" />
               </div>
               <Button type="submit" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base">Skicka meddelande</Button>
