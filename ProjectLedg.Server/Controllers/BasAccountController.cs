@@ -29,10 +29,11 @@ namespace ProjectLedg.Server.Controllers
                 return BadRequest("Failed to create invoice");
 
             var basAccountResult = await _basAccountService.AddBasAccountsToCompanyAsync(invBaAccDto.Accounts, invoice, invBaAccDto.CompanyId);
-            if (basAccountResult == null)
-                return BadRequest("Failed to create BAS Account");
+            if (basAccountResult.Success == true)
+                return Ok("Invoice created and mapped to BAS Accounts");
 
-            return Ok("Invoice created and mapped to BAS Accounts");
+            return BadRequest($"Failed to create BAS Account: {basAccountResult.Message}");
+
         }
 
     }
