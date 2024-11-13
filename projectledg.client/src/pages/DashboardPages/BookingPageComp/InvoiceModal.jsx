@@ -157,7 +157,7 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
 
                     <div className="LoaderContainer flex flex-col items-center justify-center h-[65vh]">
 
-                        <Spinner size="xlarge" />
+                        <Spinner className="text-green-500" size="xlarge" />
                     </div>
                 </DialogContent>
             </Dialog>
@@ -173,8 +173,8 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
                     <DialogTitle className="text-2xl font-bold text-green-600 ">Verifikation</DialogTitle>
                 </DialogHeader>
 
-                <div className={`${isBooked ? " hidden" : "flex"} VerificationContainer flex flex-col justify-between h-[70vh] overflow-hidden `}>
-                    <div className="TopRow p-2 mb-4 h-full flex flex-col border-gray-100">
+                <div className={`${isBooked ? " hidden" : "flex"} VerificationContainer flex flex-col justify-between h-[80vh] overflow-hidden `}>
+                    <div className="TopRow p-2 h-full flex flex-col border-gray-100">
 
                         {/* Chat section */}
                         {/* <div className="ChatSection  bg-gray-500/15 border-1 border-gray-300 shadow-inner shadow-gray-500/60 rounded-md h-auto">
