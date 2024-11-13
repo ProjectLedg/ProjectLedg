@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { axiosConfigMultipart } from '/axiosconfig'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -65,6 +65,20 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
     }
   }
 
+  // Removes kr and SEK text
+  const convertInvoiceData = (invoiceData) => {
+    return {
+      ...invoiceData,
+        InvoiceTotal: invoiceData.InvoiceTotal.replace('kr', '').replace('SEK', '').trim(),
+        TotalTax: invoiceData.TotalTax.replace('kr', '').replace('SEK', '').trim(),
+      Items: invoiceData.Items.map(item => ({
+        ...item,    
+        Amount: item.Amount.replace('kr', '').replace('SEK', '').trim(),
+        UnitPrice: item.UnitPrice.replace('kr', '').replace('SEK', '').trim(),
+      }))
+    };
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsUploadLoading(true);
@@ -78,8 +92,13 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
       // Send formData to API endpoint
       const response = await axiosConfigMultipart.post("/IngoingInvoice/Analyze", formData);
 
+      const convertedInvoice = convertInvoiceData(response.data)
+
       // Update state with response data
-      setInvoice(response.data);
+      setInvoice(convertedInvoice);
+      console.log("conv inv: ", convertedInvoice)
+
+
       console.log("Request successful:", response);
       console.log("response data:", response.data);
     } catch (error) {
