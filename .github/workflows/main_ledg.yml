@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./ProjectLedg.Client/dist # Path to the build output
+          path: ProjectLedg.Client\publish # Path to the build output
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,4 +62,4 @@ jobs:
         with:
           app-name: 'node-app'
           slot-name: 'production' # Ensure this matches your Azure slot, or remove if using only the main slot
-          package: ./ProjectLedg.Client/dist # Artifact download path, now correctly referencing the artifact name
+          package: ProjectLedg.Client\publish # Artifact download path, now correctly referencing the artifact name
