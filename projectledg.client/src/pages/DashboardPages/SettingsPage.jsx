@@ -78,8 +78,8 @@ export default function SettingsPage() {
           {/* Appearance Settings Card */}
           <Card className="border-green-500 border-opacity-20">
             <CardHeader>
-              <CardTitle className="text-green-500">Appearance</CardTitle>
-              <CardDescription className="dark:text-darkSecondary">Customize the look and feel of your interface</CardDescription>
+              <CardTitle className="text-green-500">Utseende</CardTitle>
+              <CardDescription className="dark:text-darkSecondary">Anpassa utseendet och känslan för ditt gränssnitt</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
@@ -94,8 +94,8 @@ export default function SettingsPage() {
           {/* Billing Plan Card */}
           <Card className="border-green-500 border-opacity-20">
             <CardHeader>
-              <CardTitle className="text-green-500">Billing Plan</CardTitle>
-              <CardDescription className="dark:text-darkSecondary">Manage your subscription and billing preferences</CardDescription>
+              <CardTitle className="text-green-500">Betalnings plan</CardTitle>
+              <CardDescription className="dark:text-darkSecondary">Hantera dina prenumerationer och faktureringsinställningar</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={currentPlan} onValueChange={handlePlanChange}>
