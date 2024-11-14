@@ -16,12 +16,10 @@ namespace ProjectLedg.Server.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
-        private readonly INoticeService _noticeService;
 
         public AdminController(IAdminService adminService, INoticeService noticeService)
         {
             _adminService = adminService;
-            _noticeService = noticeService;
         }
 
         // Only managers can create admins
@@ -114,21 +112,6 @@ namespace ProjectLedg.Server.Controllers
             }
 
             return BadRequest(new { Message = result.ErrorMessage });
-        }
-
-        [HttpPost("send-notice")]
-        public async Task<IActionResult> SendNotice([FromBody] NoticeRequest request)
-        {
-            await _noticeService.SendNoticeToUserAsync(request.UserId, request.Title, request.Content);
-            return Ok(new { Message = "Notice sent successfully" });
-        }
-
-        // GET: api/user/notices/{userId}
-        [HttpGet("notices/{userId}")]
-        public async Task<IActionResult> GetUserNotices(string userId)
-        {
-            var notices = await _noticeService.GetUserNoticesAsync(userId);
-            return Ok(notices);
         }
     }
 }

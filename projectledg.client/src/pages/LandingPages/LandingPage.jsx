@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "./LandingPageComp/Navbar";
 import Content from "./LandingPageComp/Content";
 import CardShow from "./LandingPageComp/Problems";
 import FooterSection from "./LandingPageComp/FooterSection";
 import NewsletterSignup from "./LandingPageComp/NewsletterSignup";
 import CallToAction from "./LandingPageComp/CallToAction";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function LandingPage() {
-return (
+
+    const { theme, setTheme } = useTheme();
+
+    useEffect(() => {
+        setTheme(theme ==="light")
+    },[])
+    
+
+
+    return (
     <>
         
         <Navbar />

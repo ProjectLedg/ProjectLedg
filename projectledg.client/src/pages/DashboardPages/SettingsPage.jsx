@@ -52,14 +52,15 @@ export default function SettingsPage() {
           {/* Card for Change Password */}
           <Card className="border-green-500 border-opacity-20">
             <CardHeader>
-              <CardTitle className="text-green-500">Byt lösenord</CardTitle>
-              <CardDescription>Uppdatera ditt lösenord för att hålla ditt konto säkert</CardDescription>
+              <CardTitle className="text-green-500 dark:text-white">Byt lösenord</CardTitle>
+              <CardDescription className="dark:text-darkSecondary">Uppdatera ditt lösenord för att hålla ditt konto säkert</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordChange} className="space-y-4">
                 <div>
                   <Label htmlFor="current-password">Nuvarande lösenord</Label>
                   <Input className="max-w-sm" id="current-password" type="password" required />
+                  
                 </div>
                 <div>
                   <Label htmlFor="new-password">Nytt lösenord</Label>
@@ -77,14 +78,14 @@ export default function SettingsPage() {
           {/* Appearance Settings Card */}
           <Card className="border-green-500 border-opacity-20">
             <CardHeader>
-              <CardTitle className="text-green-500">Appearance</CardTitle>
-              <CardDescription>Customize the look and feel of your interface</CardDescription>
+              <CardTitle className="text-green-500">Utseende</CardTitle>
+              <CardDescription className="dark:text-darkSecondary">Anpassa utseendet och känslan för ditt gränssnitt</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <Label className="flex items-center cursor-pointer">
                   <ThemeToggle />
-                  <div className="ml-3 text-gray-700 font-medium">Dark Mode</div>
+                  <div className="ml-3 text-gray-700 dark:text-white font-medium">Dark Mode</div>
                 </Label>
               </div>
             </CardContent>
@@ -93,8 +94,8 @@ export default function SettingsPage() {
           {/* Billing Plan Card */}
           <Card className="border-green-500 border-opacity-20">
             <CardHeader>
-              <CardTitle className="text-green-500">Billing Plan</CardTitle>
-              <CardDescription>Manage your subscription and billing preferences</CardDescription>
+              <CardTitle className="text-green-500">Betalnings plan</CardTitle>
+              <CardDescription className="dark:text-darkSecondary">Hantera dina prenumerationer och faktureringsinställningar</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={currentPlan} onValueChange={handlePlanChange}>

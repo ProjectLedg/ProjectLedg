@@ -5,7 +5,7 @@ export function InvoiceSummary({ items, totalTax, invoiceTotal }) {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Faktura summering</CardTitle>
+        <CardTitle>Fakturasummering</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">

@@ -129,7 +129,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
 
   return (
     <Card className="w-half h-[600px] flex flex-col shadow-lg">
-      <CardHeader className="border-b">
+      <CardHeader className="border-b dark:border-darkBorder">
         <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Ladda upp faktura</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-y-auto p-0">
@@ -138,7 +138,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
             <div className="relative flex items-center justify-center w-full">
               <Label
                 htmlFor="dropzone-file"
-                className="flex flex-col text-center items-center justify-center w-full h-56 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700"
+                className="flex flex-col text-center items-center justify-center w-full h-56 border-2 border-dashed dark:border-darkSurface rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-darkBackground"
               >
                 {selectedFile && selectedFile.type.startsWith('image') && previewUrl && (
                   <img
@@ -147,12 +147,12 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
                     className="absolute inset-0 object-cover w-full h-full opacity-40 rounded-lg"
                   />
                 )}
-                <div className="flex flex-col items-center justify-center pt-5 pb-6 px-1 relative z-10">
-                  <Upload className={"w-8 h-8 mb-4 text-gray-500"} />
+                <div className="flex flex-col items-center justify-center pt-5 pb-6 px-1 relative z-10 ">
+                  <Upload className={"w-8 h-8 mb-4 text-gray-500 dark:text-darkSecondary"} />
                   <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold dark:text-white">Klicka för att ladda upp eller släpp filen här</span>
+                    <span className="font-semibold dark:text-darkSecondary">Klicka för att ladda upp eller släpp filen här</span>
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-white">SVG, PNG, JPG eller GIF (MAX. 800x400px)</p>
+                  <p className="text-xs text-gray-500 dark:text-darkSecondary">SVG, PNG, JPG eller GIF (MAX. 800x400px)</p>
                 </div>
                 <Input
                   id="dropzone-file"
@@ -177,7 +177,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
               </div>
             )}
             <div>
-              <Label htmlFor="additionalInfo" className="font-semibold">
+              <Label htmlFor="additionalInfo" className="font-semibold ">
                 Övrig information:
               </Label>
               <Textarea
@@ -185,13 +185,13 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
                 placeholder="Lägg till ytterligare information om fakturan här..."
                 value={additionalInfo}
                 onChange={(e) => setAdditionalInfo(e.target.value)}
-                className="mt-1"
+                className="mt-1 dark:border-darkBorder dark:bg-darkBackground dark:text-darkSecondary dark:placeholder-darkSecondary"
               />
             </div>
           </form>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="border-t p-4">
+      <CardFooter className="border-t dark:border-darkBorder p-4">
         <Button
           onClick={handleSubmit}
           disabled={!selectedFile || isUploadLoading}

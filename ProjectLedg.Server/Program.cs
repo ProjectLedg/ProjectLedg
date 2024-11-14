@@ -48,7 +48,7 @@ namespace ProjectLedg.Server
             var aesIV = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV"));
 
 
-            //Creating a Session for the temporary files to exist within.
+            //Creating a Session for the temporary files to exist within
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -81,8 +81,8 @@ namespace ProjectLedg.Server
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
-                options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
 
@@ -156,10 +156,11 @@ namespace ProjectLedg.Server
                 options.AddDefaultPolicy(builder =>
                 {
 
-                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294", "https://projectledg.azurewebsites.net")
+                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294", "https://projectledg.azurewebsites.net", "https://ledg.se", "https://ledg-gycnhmdqb8a0cub9.eastus-01.azurewebsites.net")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowCredentials()
+                        .WithExposedHeaders("Authorization", "Role");
                 });
             });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

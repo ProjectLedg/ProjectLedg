@@ -3,7 +3,7 @@ import Cookie from 'js-cookie';
 
 // Json config 
 const axiosConfig = axios.create({
-    baseURL: "https://localhost:7223/api",
+    baseURL: "https://projectledg.azurewebsites.net/api",
     headers: {
         "Content-Type": "application/json",
     },
@@ -12,17 +12,23 @@ const axiosConfig = axios.create({
 
 // Multipart config
 const axiosConfigMultipart = axios.create({
-    baseURL: "https://localhost:7223/api",
+    baseURL: "https://projectledg.azurewebsites.net/api",
     withCredentials: true,
 });
 
 // JWT Interceptor that adds JWT token to the auth bearer for the axios calls
-const attachJwtInterceptor = (instance) => {
+const attachJwtAndRoleInterceptor = (instance) => {
     instance.interceptors.request.use(
         (config) => {
-            const jwtToken = Cookie.get("JWTToken");
+            const jwtToken = Cookie.get("JWTTolkien");
+            console.log(jwtToken)
+            const userRole = Cookie.get("UserRole");
+
             if (jwtToken) {
                 config.headers.Authorization = `Bearer ${jwtToken}`;
+            }
+            if (userRole) {
+                config.headers.Role = userRole; // Add the user role to the headers
             }
             return config;
         },
@@ -33,7 +39,7 @@ const attachJwtInterceptor = (instance) => {
 };
 
 // Add the JWT to each axios call
-attachJwtInterceptor(axiosConfig)
-attachJwtInterceptor(axiosConfigMultipart)
+attachJwtAndRoleInterceptor(axiosConfig)
+attachJwtAndRoleInterceptor(axiosConfigMultipart)
 
 export { axiosConfig, axiosConfigMultipart};

@@ -9,10 +9,30 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useParams } from 'react-router-dom'
 
 const HelpPage = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
-  const [formStatus, setFormStatus] = useState(null)
+  const { companyId } = useParams();
+
+  // Mappning för kategorier till deras respektive index
+  const categoryMapping = {
+    Technical: 0,
+    Billing: 1,
+    AccountManagement: 2,
+    GeneralInquiry: 3,
+    ProductSupport: 4,
+    Feedback: 5,
+    NothingRelevant: 6,
+  };
+
+  const [formData, setFormData] = useState({
+    category: 'Technical', // default value
+    subject: '',
+    description: '',
+    companyId, // Assign directly from params
+    image: null,
+  });
+  const [formStatus, setFormStatus] = useState(null);
 
   const helpSections = [
     {
@@ -62,21 +82,65 @@ const HelpPage = () => {
     },
   ]
 
+
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
+    const { id, value } = e.target
+    setFormData(prev => ({ ...prev, [id]: value }))
+  }
+
+  const handleFileChange = (e) => {
+    setFormData(prev => ({ ...prev, image: e.target.files[0] }))
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+  
+    // Mappa kategorin från string till motsvarande nummer
+    const categoryMapping = {
+      Technical: 0,
+      Billing: 1,
+      AccountManagement: 2,
+      GeneralInquiry: 3,
+      ProductSupport: 4,
+      Feedback: 5,
+      NothingRelevant: 6,
+    };
+    
+    // Skapa JSON-payloaden
+    const payload = {
+      category: categoryMapping[formData.category],
+      subject: formData.subject,
+      description: formData.description,
+      companyId: parseInt(formData.companyId, 10),
+      image: formData.image ? await toBase64(formData.image) : null, // Konvertera bilden till base64 om den finns
+    };
+  
     try {
-      await axiosConfig.post('/Email/create-help-message', formData)
-      setFormStatus({ type: 'success', message: "Vi har tagit emot ditt meddelande och återkommer på mail så snart som möjligt" })
-      setFormData({ name: '', email: '', message: '' })
+      // Skicka JSON-payload
+      await axiosConfig.post('/SupportTickets', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      setFormStatus({ type: 'success', message: "Ditt supportärende har skickats!" });
+      // Återställ formuläret
+      setFormData({ category: 'Technical', subject: '', description: '', companyId, image: null });
+  
     } catch (error) {
-      console.log(error)
-      setFormStatus({ type: 'error', message: "Det uppstog ett problem..." })
+      console.error("Submission error:", error);
+      setFormStatus({ type: 'error', message: "Det uppstod ett problem med att skicka ärendet." });
     }
-  }
+  };
+  
+  // Helper för att konvertera bildfil till base64-sträng
+  const toBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+  
 
   const HelpSection = ({ title, content, faqs }) => (
     <div className="mt-4 space-y-4">
@@ -94,16 +158,16 @@ const HelpPage = () => {
   )
 
   return (
-    <div className="container ">
+    <div className="container">
       <Card className="w-full">
         <CardHeader className="space-y-1 sm:space-y-2">
           <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold">Hjälp</CardTitle>
-          <CardDescription className="text-sm sm:text-base">Välkommen till hjälp centralen, Här finns svar & frågor samt möjlighet att lämna in en förfrågning</CardDescription>
+          <CardDescription className="text-sm sm:text-base">Välkommen till hjälp centralen...</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={helpSections[0].id} className="w-full">
-            <ScrollArea className=" whitespace-nowrap rounded-md border">
-              <TabsList className="inline-flex justify-between w-full p-1 h-auto ">
+            <ScrollArea className="whitespace-nowrap rounded-md border">
+              <TabsList className="inline-flex justify-between w-full p-1 h-auto">
                 {helpSections.map((section) => (
                   <TabsTrigger key={section.id} value={section.id} className="text-xs min-w-36 sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5 dark:bg-gray-800">
                     {section.title}
@@ -117,7 +181,6 @@ const HelpPage = () => {
               </TabsContent>
             ))}
           </Tabs>
-          
           <section className="mt-6 sm:mt-8">
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4">Skapa ett Supportärende</h2>
             {formStatus && (
@@ -128,18 +191,28 @@ const HelpPage = () => {
             )}
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="name" className="text-sm sm:text-base">Kategori</Label>
-                <Input id="name" value={formData.name} onChange={handleInputChange} placeholder="Ditt namn" className="text-sm sm:text-base" />
+                <Label htmlFor="category" className="text-sm sm:text-base">Kategori</Label>
+                <select id="category" value={formData.category} onChange={handleInputChange} className="text-sm sm:text-base">
+                  {Object.keys(categoryMapping).map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
-                <Input id="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="Din email" className="text-sm sm:text-base" />
+                <Label htmlFor="subject" className="text-sm sm:text-base">Ärende</Label>
+                <Input id="subject" value={formData.subject} onChange={handleInputChange} placeholder="Ärendets titel" className="text-sm sm:text-base" />
               </div>
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="message" className="text-sm sm:text-base">Meddelande</Label>
-                <Textarea id="message" value={formData.message} onChange={handleInputChange} placeholder="Beskriv problemet eller feedbacken du har!" className="text-sm sm:text-base" />
+
+                <Label htmlFor="description" className="text-sm sm:text-base">Beskrivning</Label>
+                <Textarea id="description" value={formData.description} onChange={handleInputChange} placeholder="Beskriv problemet" className="text-sm sm:text-base" />
               </div>
-              <Button type="submit" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base">Skicka meddelande</Button>
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="image" className="text-sm sm:text-base">Bild (valfritt)</Label>
+                <Input id="image" type="file" onChange={handleFileChange} className="text-sm sm:text-base" />
+
+              </div>
+              <Button type="submit" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base">Skicka supportärende</Button>
             </form>
           </section>
         </CardContent>
