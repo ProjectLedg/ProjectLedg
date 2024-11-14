@@ -23,6 +23,11 @@ namespace ProjectLedg.Server.Services
             return await _invoiceRepository.GetOutgoingInvoiceByIdAsync(invoiceId);
         }
 
+        public async Task<List<OutgoingInvoice>> GetAllOutgoingInvoicesForCompanyAsync(int companyId)
+        {
+            return await _invoiceRepository.GetAllOutgoingInvoicesForCompanyAsync(companyId);
+        }
+
         public async Task<IEnumerable<OutgoingInvoice>> GetAllOutgoingInvoicesAsync()
         {
             return await _invoiceRepository.GetAllOutgoingInvoicesAsync();

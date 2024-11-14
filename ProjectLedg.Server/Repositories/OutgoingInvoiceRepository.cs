@@ -26,6 +26,10 @@ namespace ProjectLedg.Server.Repositories
             return invoice;
         }
 
+        public async Task<List<OutgoingInvoice>> GetAllOutgoingInvoicesForCompanyAsync(int companyId)
+        {
+            return await _context.OutgoingInvoices.Where(i => i.CompanyId == companyId).ToListAsync();
+        }
         public async Task<IEnumerable<OutgoingInvoice>> GetAllOutgoingInvoicesAsync()
         {
             return await _context.OutgoingInvoices.ToListAsync();

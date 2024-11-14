@@ -79,6 +79,17 @@ namespace ProjectLedg.Server.Controllers
             return Ok(invoice);
         }
 
+        [HttpGet("all/Company/{companyId}")]
+        public async Task<IActionResult> GetAllIngoingInvoicesForCompanyAsync(int companyId)
+        {
+            var invoices = await _invoiceService.GetAllIngoingInvoicesForCompanyAsync(companyId);
+            if (!invoices.Any())
+            {
+                return BadRequest("No invoices found");
+            }
+            return Ok(invoices);
+        }
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAllInvoices()
         {

@@ -295,7 +295,7 @@ using System.Globalization;
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                     .Select(g => new MonthlyTotalDTO
                     {
-                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")), // the months full name ex: January
 
                         // Filter the revenue credit posts and subtract the expenses debit posts
                         Amount =
@@ -351,7 +351,7 @@ using System.Globalization;
 
             var result = monthlyData.Select(data => new MonthlyTotalDTO
             {
-                MonthName = new DateTime(data.Year, data.Month, 1).ToString("MMMM"),
+                MonthName = new DateTime(data.Year, data.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")),
                 Amount = data.Revenue != 0 ? Math.Round(((data.Revenue - data.Expenses) / data.Revenue) * 100, 1) : 0
 
             }).ToList();
@@ -371,7 +371,7 @@ using System.Globalization;
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                     .Select(g => new MonthlyTotalDTO
                     {
-                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM"), // the months full name ex: January
+                        MonthName = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")), // the months full name ex: January
 
                         // Filter the revenue credit posts and subtract the expenses debit posts
                         Amount =
@@ -447,7 +447,7 @@ using System.Globalization;
 
             var result = monthlyData.Select(data => new MonthlyTotalDTO
             {
-                MonthName = new DateTime(data.Year, data.Month, 1).ToString("MMMM"), // the month's full name ex: January
+                MonthName = new DateTime(data.Year, data.Month, 1).ToString("MMMM", new CultureInfo("sv-SE")), // the month's full name ex: January
                 Amount = data.Revenue != 0 ? Math.Round(((data.Revenue - data.Expenses) / data.Revenue) * 100, 1) : 0
 
         }).ToList();

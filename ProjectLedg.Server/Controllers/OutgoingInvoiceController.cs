@@ -33,6 +33,17 @@ namespace ProjectLedg.Server.Controllers
             return Ok(invoices);
         }
 
+        [HttpGet("all/Company/{companyId}")]
+        public async Task<IActionResult> GetAllOutgoingInvoicesForCompanyAsync(int companyId)
+        {
+            var invoices = await _invoiceService.GetAllOutgoingInvoicesForCompanyAsync(companyId);
+            if (!invoices.Any())
+            {
+                return BadRequest("No invoices found");
+            }
+            return Ok(invoices);
+        }
+
         [HttpPost("create/{companyId}")]
         public async Task<IActionResult> CreateInvoice([FromBody] OutgoingInvoiceCreationDTO invoiceDto,[FromRoute]int companyId)
         {

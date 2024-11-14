@@ -14,14 +14,13 @@ using ProjectLedg.Server.Services.IServices;
 public class BasAccountService : IBasAccountService
 {
     private readonly string _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
-    private readonly IBasAccountRepository _basAccountRepository;
     private readonly ICompanyService _companyService;
     private readonly IBasAccountRepository _basAccountRepo;
 
     public BasAccountService(ICompanyService companyService, IBasAccountRepository basAccountRepo)
     {
         _companyService = companyService;
-        _basAccountRepo = basAccountRepo;
+        _basAccountRepo = basAccountRepo ?? throw new ArgumentNullException(nameof(basAccountRepo));
     }
 
 
@@ -57,7 +56,7 @@ public class BasAccountService : IBasAccountService
 
     public async Task<KeyValuePair<string, int>> GetMostPopularBasAccountAsync()
     {
-        return await _basAccountRepository.GetMostUsedBasAccountAsync();
+        return await _basAccountRepo.GetMostUsedBasAccountAsync();
     }
 
     public async Task<ResultObject> AddBasAccountsToCompanyAsync(List<BasAccountDTO> basAccountsDto, IngoingInvoice invoice, int companyId)
@@ -81,7 +80,7 @@ public class BasAccountService : IBasAccountService
                 BasAccount basAccount;
 
                 // Check if bas account exists (if null it doesn't exist)
-                var existingBasAccount = await _basAccountRepository.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
+                var existingBasAccount = await _basAccountRepo.GetBasAccountByAccountNumberAsync(accountDto.BasAccount, companyId);
 
                 // Create new if doesn't exist
                 if (existingBasAccount == null)
@@ -142,7 +141,7 @@ public class BasAccountService : IBasAccountService
         }
         catch (Exception ex)
         {
-            return new ResultObject { Message = "An error occurred while processing BAS Accounts", Success = false };
+            return new ResultObject { Message = $"An error occurred while processing BAS Accounts {ex}", Success = false };
 
         }
     }

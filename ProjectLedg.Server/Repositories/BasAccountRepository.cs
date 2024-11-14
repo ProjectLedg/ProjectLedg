@@ -11,7 +11,7 @@ namespace ProjectLedg.Server.Repositories
 
         public BasAccountRepository(ProjectLedgContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<KeyValuePair<string, int>> GetMostUsedBasAccountAsync()
@@ -38,9 +38,14 @@ namespace ProjectLedg.Server.Repositories
             }
             public async Task<BasAccount> GetBasAccountByAccountNumberAsync(string basAccountNumber, int companyId)
             {
+                if (string.IsNullOrEmpty(basAccountNumber))
+                {
+                    throw new ArgumentException("Bas account number cannot be null or empty.", nameof(basAccountNumber));
+                }
+
                 return await _context.BasAccounts
-                    .Where(ba => ba.CompanyId == companyId && ba.AccountNumber == basAccountNumber)
-                    .FirstOrDefaultAsync();
+                        .Where(ba => ba.CompanyId == companyId && ba.AccountNumber == basAccountNumber)
+                        .FirstOrDefaultAsync();
             }
             public async Task<List<BasAccount>> GetAllBasAccountsByCompanyIdAsync(int companyId)
             {
