@@ -203,12 +203,14 @@ const HelpPage = () => {
                 <Input id="subject" value={formData.subject} onChange={handleInputChange} placeholder="Ärendets titel" className="text-sm sm:text-base" />
               </div>
               <div className="space-y-1 sm:space-y-2">
+
                 <Label htmlFor="description" className="text-sm sm:text-base">Beskrivning</Label>
                 <Textarea id="description" value={formData.description} onChange={handleInputChange} placeholder="Beskriv problemet" className="text-sm sm:text-base" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label htmlFor="image" className="text-sm sm:text-base">Bild (valfritt)</Label>
                 <Input id="image" type="file" onChange={handleFileChange} className="text-sm sm:text-base" />
+
               </div>
               <Button type="submit" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base">Skicka supportärende</Button>
             </form>

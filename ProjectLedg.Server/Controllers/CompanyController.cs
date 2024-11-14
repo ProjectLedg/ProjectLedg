@@ -64,9 +64,5 @@ namespace ProjectLedg.Server.Controllers
 
             return Ok(companies);
         }
-
-       
-
-
     }
 }

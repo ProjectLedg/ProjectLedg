@@ -108,12 +108,12 @@ namespace ProjectLedg.Server.Controllers
                 var roles = result.Roles;
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false,
+                    HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.None,
                     Expires = DateTime.Now.AddHours(1)
                 };
-                Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
+                //Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
 
                 return Ok(new { Message = "Login successful", Token = result.Token, Roles = roles });
             }
@@ -121,7 +121,7 @@ namespace ProjectLedg.Server.Controllers
             {
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false,
+                    HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddHours(1)

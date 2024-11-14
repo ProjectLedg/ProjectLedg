@@ -6,6 +6,7 @@ import {axiosConfig} from '/axiosconfig'
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 
+
 export default function CompanySelectPage() {
   const companyIcons = [
     "src/assets/company-icons/balance.png",
@@ -41,7 +42,7 @@ export default function CompanySelectPage() {
         setProgress(20);
         
         const response = await axiosConfig.get("Company/getUserCompanies");
-        console.log(response)
+        console.log(response.data)
         setProgress(60);
 
         await new Promise(resolve => setTimeout(resolve, 1000));
