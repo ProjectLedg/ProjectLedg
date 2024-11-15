@@ -4,6 +4,7 @@ using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -122,6 +123,22 @@ namespace ProjectLedg.Server.Services
 
         public async Task<IngoingInvoice> CreateIngoingInvoiceAsync(InvoiceDTO invoiceDto)
         {
+
+            // Map all items from dto to object
+            List<InvoiceItems> invoiceItems = new List<InvoiceItems>();
+            foreach (var item in invoiceDto.Items)
+            {
+                var mappedItem = new InvoiceItems
+                {
+                    Amount = item.Amount,
+                    Description = item.Description,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice,
+                };
+
+                invoiceItems.Add(mappedItem);
+            }
+
             var invoice = new IngoingInvoice
             {
                 InvoiceNumber = invoiceDto.InvoiceNumber,
@@ -141,6 +158,7 @@ namespace ProjectLedg.Server.Services
                 VendorAddressRecipient = invoiceDto.VendorAddressRecipient,
                 VendorTaxId = invoiceDto.VendorTaxId,
                 CompanyId = invoiceDto.CompanyId,
+                Items = invoiceItems
             };
 
             return await _invoiceRepository.CreateIngoingInvoiceAsync(invoice);
