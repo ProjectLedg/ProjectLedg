@@ -229,6 +229,7 @@ const Sidebar = ({ isChatOpen }) => (
               console.log("Switched to:", company.name);
             }}
             isChatOpen={isChatOpen}
+            isNavOpen={true}
           />
 
           {navItems.filter(item => item.position === "top").map((item, index) => (
