@@ -59,7 +59,7 @@ const SkeletonLoader = () => {
 
 
   return (
-    <div className="space-y-4 p-4 sm:p-6">
+    <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Översikt</h2>
       </div>
@@ -171,7 +171,7 @@ const DashboardHomePage = () => {
   ];
 
   return (
-    <div className="space-y-4 p-4 sm:p-6">
+    <div className="space-y-4 p-4 ">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight ">Översikt</h2>
       </div>
