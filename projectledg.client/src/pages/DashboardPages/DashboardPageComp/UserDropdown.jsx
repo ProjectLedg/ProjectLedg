@@ -41,7 +41,7 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
     return (
         <div className={`flex items-center w-full max-w-sm px-2 pb-6 dark:bg-darkBackground bg-background border-b-2 dark:border-darkBorder ${isChatOpen ? 'justify-around' : 'justify-between'} h-16`}>
             <div className="flex items-center space-x-3 ">
-                <Avatar className={`p-[0.125rem]  border-2 border-green-500 rounded-full ${isChatOpen ? 'ml-3' : 'ml-[0.25rem] '}`}>
+                <Avatar className={`p-[0.125rem]  border-2 border-green-500 rounded-full ${isChatOpen ? 'ml-3 mb-7' : 'ml-[0.25rem] '}`}>
                     <AvatarImage src={user.avatarUrl} alt={user.name} />
                     <AvatarFallback className="bg-green-50 dark:bg-green-900 text-green-500 font-semibold">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -66,13 +66,10 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
                         >
                             <TooltipProvider>
                                 <TooltipShad>
-                                    <TooltipTrigger
-                                        // Add this condition to disable the tooltip
-                                        className={isNavOpen ? 'pointer-events-none' : ''}
-                                    >
+                                    <TooltipTrigger>
                                         <Button
                                             variant="outline"
-                                            className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative dark:bg-darkBackground hover:dark:bg-darkSurface"
+                                            className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative dark:bg-darkBackground hover:dark:bg-darkSurface cursor-pointer"
                                         >
                                             <ChevronsUpDown className="absolute inset-0 h-4 w-4 m-auto opacity-50" />
                                         </Button>
