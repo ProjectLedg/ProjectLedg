@@ -43,12 +43,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="space-y-4 p-4">
       <div className="flex-none bg-transparent">
-        <h1 className=" text-3xl font-bold text-black dark:text-white">Inställningar</h1>
+        <h1 className="text-3xl font-bold text-black dark:text-white">Inställningar</h1>
       </div>
       <ScrollArea className="flex-grow">
-        <div className="max-w mx-auto p-4 space-y-6">
+        <div className="max-w mx-auto space-y-6">
           {/* Card for Change Password */}
           <Card >
             <CardHeader>
