@@ -16,7 +16,7 @@ export default function ReportCheck() {
                     <TabsTrigger value="annualReports" className="font-semibold ">
                         Generera Årsredovisningar
                     </TabsTrigger>
-                    <TabsTrigger value="edit" className="text-muted-foreground">
+                    <TabsTrigger value="edit" className="text-muted-foreground font-semibold">
                         Föregående Årsredovisningar
                     </TabsTrigger>
                     
