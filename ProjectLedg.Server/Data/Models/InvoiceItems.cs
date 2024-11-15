@@ -1,4 +1,5 @@
 ﻿    using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ProjectLedg.Server.Data.Models
 {
@@ -12,7 +13,14 @@ namespace ProjectLedg.Server.Data.Models
         public decimal Amount { get; set; }
         public int? OutgoingInvoiceId { get; set; } // FK to the Invoice model
         public int? IngoingInvoiceId { get; set; } // FK to the Invoice model
+
+
+        // Ignore both nav props when serializing to avoid circular referencing error
+
+        [JsonIgnore]
         public virtual IngoingInvoice? IngoingInvoice { get; set; } // Nav property to Invoice
+
+        [JsonIgnore]
         public virtual OutgoingInvoice? OutgoingInvoice { get; set; } // Nav property to Invoice
     }
 }
