@@ -285,6 +285,7 @@ const MobileNav = ({ navItems }) => {
                 // Handle company change here
                 console.log("Switched to:", company.name);
               }}
+              isNavOpen={isOpen}
             />
 
             <div >
