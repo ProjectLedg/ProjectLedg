@@ -25,8 +25,6 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
         visible: { opacity: 1, y: 0 },
     };
 
-    console.log(isNavOpen)
-
     const buttonVariants = {
         hidden: {
             opacity: 0,
