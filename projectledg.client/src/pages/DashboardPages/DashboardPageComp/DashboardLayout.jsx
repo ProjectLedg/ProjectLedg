@@ -49,7 +49,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
 
   const isSelected = location.pathname === fullPath;
 
-  const baseStyle = "flex items-center space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
+  const baseStyle = "flex items-center space-x-2 px-3 py-4  transition-colors duration-500";
   const selectedStyle = "font-bold relative bg-accent dark:bg-darkSurface";
   const hoverStyle = "hover:bg-accent hover:dark:bg-darkSurface hover:text-accent-foreground";
 
@@ -210,7 +210,7 @@ const Sidebar = ({ isChatOpen }) => (
 
     <div className="flex-grow space-y-4 py-4 ">
       <div className="py-2 h-full ">
-        <div className={`h-full ${isChatOpen ? 'flex flex-col justify-around h-[30vh]' : ''}`}>
+        <div className={`h-full ${isChatOpen ? 'flex flex-col h-[30vh]' : ''}`}>
 
           <UserDropdown
             user={{
