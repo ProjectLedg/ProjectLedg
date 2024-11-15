@@ -39,7 +39,7 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
     };
 
     return (
-        <div className={`flex items-center w-full max-w-sm px-2 pb-6 dark:bg-darkBackground bg-background border-b-2 dark:border-darkBorder ${isChatOpen ? 'justify-around' : 'justify-between'} h-16`}>
+        <div className={`flex items-center w-full max-w-sm px-2  dark:bg-darkBackground bg-background border-b-2 dark:border-darkBorder ${isChatOpen ? 'justify-around ' : 'justify-between pb-6'} h-16`}>
             <div className="flex items-center space-x-3 ">
                 <Avatar className={`p-[0.125rem]  border-2 border-green-500 rounded-full ${isChatOpen ? 'ml-3 mb-7' : 'ml-[0.25rem] '}`}>
                     <AvatarImage src={user.avatarUrl} alt={user.name} />
