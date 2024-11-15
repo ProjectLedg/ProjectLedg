@@ -27,7 +27,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTicket([FromForm] SupportTicketCreationDTO ticketDto)
+        public async Task<IActionResult> CreateTicket([FromBody] SupportTicketCreationDTO ticketDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

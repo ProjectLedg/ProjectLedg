@@ -16,12 +16,12 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
         <Table className="hidden lg:table  border-separate border-spacing-2  ">
           <TableHeader>
             <TableRow className="block lg:table-row border-none">
-              <TableHead className="pl-0">Beskrivning</TableHead>
-              <TableHead className="pl-0">Kvantitet</TableHead>
-              <TableHead className="pl-0">Styckpris</TableHead>
-              <TableHead className="pl-0">Skattesats %</TableHead>
-              <TableHead className="pl-0">Total</TableHead>
-              <TableHead className="pl-0"></TableHead>
+              <TableHead className="pl-0 dark:text-darkSecondary">Beskrivning</TableHead>
+              <TableHead className="pl-0 dark:text-darkSecondary">Kvantitet</TableHead>
+              <TableHead className="pl-0 dark:text-darkSecondary">Styckpris</TableHead>
+              <TableHead className="pl-0 dark:text-darkSecondary">Skattesats %</TableHead>
+              <TableHead className="pl-0 dark:text-darkSecondary">Total</TableHead>
+              <TableHead className="pl-0 dark:text-darkSecondary"></TableHead>
             </TableRow>
           </TableHeader>
 
@@ -31,7 +31,7 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
                 key={index}
                 className="block lg:table-row"
               >
-                <TableCell className="pl-0">
+                <TableCell className="pl-0 ">
                   <span className="lg:hidden font-semibold text-sm">Beskrivning</span>
                   <Input
                     placeholder="Artikelbeskrivning"
@@ -71,7 +71,7 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
                   <span className="text-lg">{(item.amount + item.taxAmount).toFixed(2)}kr</span>
                 </TableCell>
                 <TableCell className="pl-0">
-                  <Button variant="destructive" size="icon" onClick={() => removeItem(index)}>
+                  <Button className="" variant="destructive" size="icon" onClick={() => removeItem(index)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TableCell>
@@ -83,7 +83,7 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
         {/* Mobile version as list */}
         <div className="flex flex-col lg:hidden">
           {items.map((item, index) => (
-            <div key={index} className="border-b border-gray-200 p-4">
+            <div key={index} className="border-b border-gray-200 dark:border-darkBorder p-4">
               <div className="flex flex-col mb-2">
                 <span className="font-normal">Beskrivning</span>
                 <Input
@@ -130,15 +130,15 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
             </div>
             
           ))}
-          <Button className="mt-4 self-center bg-green-500 w-[90%]" onClick={addItem}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Lägg till artikel
+          <Button className="mt-4 self-center bg-green-500 w-[90%] dark:text-white" onClick={addItem}>
+            <PlusCircle className="mr-2 h-4 w-4 dark:text-white" /> Lägg till artikel
           </Button>
         </div>
 
       
 
-        <Button className="hidden lg:flex mt-4 bg-green-500" onClick={addItem}>
-          <PlusCircle className="mr-2 h-4 w-4" /> Lägg till artikel
+        <Button className="hidden hover:dark:bg-green-800 lg:flex mt-4 bg-green-500 dark:text-white" onClick={addItem}>
+          <PlusCircle className="mr-2 h-4 w-4 dark:text-white" /> Lägg till artikel
         </Button>
       </CardContent>
     </Card>

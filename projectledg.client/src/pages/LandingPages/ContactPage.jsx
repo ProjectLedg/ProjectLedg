@@ -37,7 +37,7 @@ export default function ContactPage() {
     setSubmitStatus(null)
 
     try {
-      const response = await axios.post("https://localhost:7223/api/Email/SendEmail", formData)
+      const response = await axios.post("https://projectledg.azurewebsites.net/api/Email/SendEmail", formData)
       if (response.status === 200) {
         setSubmitStatus("success")
         setFormData({ name: "", email: "", message: "" })

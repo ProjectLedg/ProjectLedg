@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnnualReportPreview } from "./AnnualReportPreview";
 import React, { useState } from "react";
-import AnnualReportSign from "./AnnualReportSign";
+
 
 export default function ReportCheck() {
     
@@ -11,17 +11,15 @@ export default function ReportCheck() {
 
     return (
         <div className="w-full">
-            <Tabs defaultValue="annualReports" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="annualReports" className="font-semibold">
-                        Förhandsvisning
+            <Tabs defaultValue="annualReports" className="w-full ">
+                <TabsList className="flex w-min justify-start">
+                    <TabsTrigger value="annualReports" className="font-semibold ">
+                        Generera Årsredovisningar
                     </TabsTrigger>
                     <TabsTrigger value="edit" className="text-muted-foreground">
-                        Redigera
+                        Föregående Årsredovisningar
                     </TabsTrigger>
-                    <TabsTrigger value="previousYears" className="text-muted-foreground">
-                        Föregående år
-                    </TabsTrigger>
+                    
                 </TabsList>
 
                 <TabsContent value="annualReports" className="h-full w-full">
@@ -29,10 +27,7 @@ export default function ReportCheck() {
                     <Card>
                         <CardContent>{
                                     
-                            <AnnualReportPreview/>        
-                                    
-                                    
-                                    
+                            <AnnualReportPreview/>                                            
                                     
                         }</CardContent>
                     </Card>
@@ -47,11 +42,7 @@ export default function ReportCheck() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="previousYears">
-                    <Card>
-                        <CardContent>{/* Add previous years' content here */}</CardContent>
-                    </Card>
-                </TabsContent>
+                
             </Tabs>
         </div>
     );

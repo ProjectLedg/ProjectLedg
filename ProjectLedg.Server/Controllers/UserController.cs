@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Services.IServices;
 using ProjectLedg.Server.Model.DTOs.User;
+using ProjectLedg.Server.Options.Notice;
+using ProjectLedg.Server.Services;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -13,12 +15,14 @@ namespace ProjectLedg.Server.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly INoticeService _noticeService;
 
-        public UserController(IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserController(IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, INoticeService noticeService)
         {
             _userService = userService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _noticeService = noticeService;
         }
 
         // GET: api/User/all
@@ -104,12 +108,12 @@ namespace ProjectLedg.Server.Controllers
                 var roles = result.Roles;
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false,
+                    HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.Now.AddHours(1)
                 };
-                Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
+                //Response.Cookies.Append("JWTToken", result.Token, cookieOptions);
 
                 return Ok(new { Message = "Login successful", Token = result.Token, Roles = roles });
             }
@@ -117,7 +121,7 @@ namespace ProjectLedg.Server.Controllers
             {
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false,
+                    HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddHours(1)
@@ -159,6 +163,20 @@ namespace ProjectLedg.Server.Controllers
             }
 
             return BadRequest("Password change failed.");
+        }
+
+        [HttpPost("send-notice")]
+        public async Task<IActionResult> SendNotice([FromBody] NoticeRequest request)
+        {
+            await _noticeService.SendNoticeToUserAsync(request.UserId, request.Title, request.Content);
+            return Ok(new { Message = "Notice sent successfully" });
+        }
+
+        [HttpGet("notices/{userId}")]
+        public async Task<IActionResult> GetUserNotices(string userId)
+        {
+            var notices = await _noticeService.GetUserNoticesAsync(userId);
+            return Ok(notices);
         }
     }
 }

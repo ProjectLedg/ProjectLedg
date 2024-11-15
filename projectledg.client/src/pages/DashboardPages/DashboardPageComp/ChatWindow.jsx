@@ -77,8 +77,8 @@ export default function ChatWindow({ onClose, onSendMessage }) {
             )}
             <div
                 className={`${message.type === 'sent'
-                    ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
-                    : 'prose bg-gray-100 px-3 py-3 rounded-3xl  max-w-[100%] text-black'
+                    ? 'bg-green-500 dark:bg-gray-600 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
+                    : 'prose  px-3 py-3 rounded-3xl  max-w-[100%] text-black dark:text-white'
                     }`}
             >
                 {message.type === 'sent' || !message.isTyping ? (
@@ -98,14 +98,14 @@ export default function ChatWindow({ onClose, onSendMessage }) {
     ));
 
     return (
-        <div className="chatWindow flex flex-col  right-0 p-2 w-[30vw] h-[80vh] bg-white/60 bg-opacity-80 shadow-lg rounded-l-2xl max-w-[720px]">
-            <div className="bg-gray-100 rounded-xl overflow-hidden h-[100%]">
+        <div className="chatWindow flex flex-col  right-0 p-2 w-[30vw] h-[80vh] bg-white/60 dark:bg-darkBackground bg-opacity-80 shadow-lg rounded-l-2xl max-w-[720px]">
+            <div className="bg-gray-100 dark:bg-darkSurface rounded-xl overflow-hidden h-[100%]">
                 <div className="flex justify-between items-center p-4 shadow-sm">
-                    
+
                     <TooltipProvider>
                         <TooltipShad>
                             <TooltipTrigger>
-                                <button onClick={handleNewChat} className="text-gray-500  hover:text-gray-700">
+                                <button onClick={handleNewChat} className="text-gray-500 dark:text-white hover:text-gray-700 dark:hover:text-darkSecondary">
                                     <SquarePen size={25} />
                                 </button>
                             </TooltipTrigger>
@@ -113,32 +113,32 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                         </TooltipShad>
                     </TooltipProvider>
 
-                    <button onClick={onClose} className="text-gray-500 bg-gray-200 p-1 rounded-full hover:text-gray-700">
+                    <button onClick={onClose} className="text-gray-500 dark:text-white bg-gray-200 dark:bg-darkSurface p-1 rounded-full hover:text-gray-700 hover:dark:text-darkSecondary">
                         <X size={20} />
                     </button>
                 </div>
 
                 {!hasMessages ? (
-                    <div className="p-6 space-y-4 flex flex-col justify-around h-[80%]">
+                    <div className="p-6 space-y-4 flex flex-col justify-around h-[80%] dark:bg-darkSurface ">
                         <div className="space-y-2 flex flex-col items-center text-center">
-                            <h2 className="text-3xl font-normal text-gray-400">
+                            <h2 className="text-3xl font-normal text-gray-400 dark:text-white">
                                 Hej <span className="text-green-500">Placeholder</span>
                             </h2>
 
-                            <h3 className="text-xl font-semibold text-gray-800">Kan jag hjälpa dig med något?</h3>
-                            <p className="text-md text-gray-600">
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Kan jag hjälpa dig med något?</h3>
+                            <p className="text-md text-gray-600 dark:text-darkSecondary">
                                 Oavsett om det gäller att hålla koll på utgifter, skapa fakturor eller något annat inom bokföring, finns jag här för dig!
                             </p>
                         </div>
 
-                        <div className="space-y-2 flex flex-col justify-between h-[45%]">
+                        <div className="space-y-2 flex flex-col justify-between h-[45%] ">
                             {['Hur skapar jag en faktura?', 'Vilka utgifter är avdragsgilla?', 'Visa min senaste månatliga rapport'].map((topic, index) => (
                                 <button
                                     key={index}
                                     className="w-full text-left p-3 h-20 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center space-x-2"
                                     onClick={() => handleSuggestionClick(topic)}
                                 >
-                                    <div className="w-8 h-8 text-gray-100 bg-gray-800 rounded-xl flex items-center justify-center">
+                                    <div className="w-8 h-8 text-gray-100 bg-gray-800 dark:bg-darkSurface rounded-xl flex items-center justify-center">
                                         {index === 0 ? (
                                             <FilePlus className="w-4 h-4" />
                                         ) : index === 1 ? (
@@ -159,12 +159,12 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="absolute bottom-0 left-0 right-0 bg-transparent p-1">
+                <form onSubmit={handleSubmit} className="absolute bottom-0 left-0 right-0 bg-transparent p-4">
                     <div className="flex flex-row justify-between items-center space-x-2">
                         <div className="flex-grow p-2 h-auto bg-white rounded-3xl flex items-center">
                             <button
                                 type="button"
-                                className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-500 transition-colors duration-200"
+                                className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-500 dark:bg-darkSurface hover:dark:bg-darkSecondary transition-colors duration-200"
                             >
                                 <Paperclip size={20} />
                             </button>
