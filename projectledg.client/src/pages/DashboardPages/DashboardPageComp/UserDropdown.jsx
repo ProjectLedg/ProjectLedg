@@ -19,11 +19,13 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export default function UserDropdown({ user, companies, currentCompany, onCompanyChange, isChatOpen }) {
+export default function UserDropdown({ user, companies, currentCompany, onCompanyChange, isChatOpen, isNavOpen }) {
     const textVariants = {
         hidden: { opacity: 0, y: -10 },
         visible: { opacity: 1, y: 0 },
     };
+
+    console.log(isNavOpen)
 
     const buttonVariants = {
         hidden: {
@@ -55,7 +57,7 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
             </div>
             <DropdownMenu>
                 {/* Render DropdownMenuTrigger only if chat is not open */}
-                {!isChatOpen && (
+                {!isChatOpen && isNavOpen && (
                     <DropdownMenuTrigger asChild>
                         <motion.div
                             initial="hidden"
@@ -64,18 +66,31 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
                         >
                             <TooltipProvider>
                                 <TooltipShad>
-                                    <TooltipTrigger>
-                                        <Button variant="outline" className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative dark:bg-darkBackground hover:dark:bg-darkSurface">
+                                    <TooltipTrigger
+                                        // Add this condition to disable the tooltip
+                                        className={isNavOpen ? 'pointer-events-none' : ''}
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative dark:bg-darkBackground hover:dark:bg-darkSurface"
+                                        >
                                             <ChevronsUpDown className="absolute inset-0 h-4 w-4 m-auto opacity-50" />
                                         </Button>
                                     </TooltipTrigger>
-                                    <TooltipContent className="dark:bg-darkBackground dark:border-darkBorder">Växla mellan företag</TooltipContent>
+                                    <TooltipContent
+                                        // Hide tooltip content when nav is open
+                                        className={`${isNavOpen ? 'hidden' : ''} dark:bg-darkBackground dark:border-darkBorder`}
+                                    >
+                                        Växla mellan företag
+                                    </TooltipContent>
                                 </TooltipShad>
                             </TooltipProvider>
-
                         </motion.div>
                     </DropdownMenuTrigger>
                 )}
+
+
+
                 <DropdownMenuContent align="end" className="w-[15rem] dark:bg-darkSurface dark:border-darkBorder">
                     {companies.map((company) => (
                         <DropdownMenuItem
