@@ -80,7 +80,7 @@ const SkeletonLoader = () => {
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 ">
         {Array.from({ length: 2 }).map((_, index) => (
-          <Card key={index} className="h-[38vh] w-full">
+          <Card key={index} className="h-[37vh] w-full">
             <CardHeader className="pb-2">
               <Skeleton className="h-4 w-[140px] dark:bg-darkSecondary" />
             </CardHeader>
