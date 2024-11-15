@@ -34,6 +34,7 @@ const HelpPage = () => {
   });
   const [formStatus, setFormStatus] = useState(null);
 
+
   const helpSections = [
     {
       id: "Hem",
@@ -83,6 +84,8 @@ const HelpPage = () => {
   ]
 
 
+  const [activeTab, setActiveTab] = useState(helpSections[0].id);
+
   const handleInputChange = (e) => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
@@ -94,7 +97,7 @@ const HelpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Mappa kategorin från string till motsvarande nummer
     const categoryMapping = {
       Technical: 0,
@@ -105,7 +108,7 @@ const HelpPage = () => {
       Feedback: 5,
       NothingRelevant: 6,
     };
-    
+
     // Skapa JSON-payloaden
     const payload = {
       category: categoryMapping[formData.category],
@@ -114,7 +117,7 @@ const HelpPage = () => {
       companyId: parseInt(formData.companyId, 10),
       image: formData.image ? await toBase64(formData.image) : null, // Konvertera bilden till base64 om den finns
     };
-  
+
     try {
       // Skicka JSON-payload
       await axiosConfig.post('/SupportTickets', payload, {
@@ -122,17 +125,17 @@ const HelpPage = () => {
           'Content-Type': 'application/json',
         },
       });
-      
+
       setFormStatus({ type: 'success', message: "Ditt supportärende har skickats!" });
       // Återställ formuläret
       setFormData({ category: 'Technical', subject: '', description: '', companyId, image: null });
-  
+
     } catch (error) {
       console.error("Submission error:", error);
       setFormStatus({ type: 'error', message: "Det uppstod ett problem med att skicka ärendet." });
     }
   };
-  
+
   // Helper för att konvertera bildfil till base64-sträng
   const toBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -140,12 +143,14 @@ const HelpPage = () => {
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
-  
+
 
   const HelpSection = ({ title, content, faqs }) => (
     <div className="mt-4 space-y-4">
       <h2 className="text-xl sm:text-2xl font-semibold">{title}</h2>
-      <p className="text-sm sm:text-base">{content}</p>
+      <div className="h-8">
+        <p className="text-md">{content}</p>
+      </div>
       <Accordion type="single" collapsible className="w-full">
         {faqs.map((faq, index) => (
           <AccordionItem value={`item-${index}`} key={index}>
@@ -158,71 +163,135 @@ const HelpPage = () => {
   )
 
   return (
-    <div className="container">
-      <Card className="w-full">
-        <CardHeader className="space-y-1 sm:space-y-2">
-          <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold">Hjälp</CardTitle>
-          <CardDescription className="text-sm sm:text-base">Välkommen till hjälp centralen...</CardDescription>
-        </CardHeader>
+    <div className="space-b-4 p-4">
+
+
+      {/* Tabs outside the Card */}
+      <div className="w-full space-y-4 ">
+        <h1 className="text-3xl mb-8 font-bold">Hjälp</h1>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full ">
+          <ScrollArea className="whitespace-nowrap rounded-md ">
+            <TabsList className="inline-flex justify-between w-full p-1 h-auto dark:bg-darkBackground ">
+              {helpSections.map((section) => (
+                <TabsTrigger
+                  key={section.id}
+                  value={section.id}
+                  className="text-sm min-w-36 font-semibold dark:bg-darkBackground"
+                >
+                  {section.title}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </ScrollArea>
+        </Tabs>
+      </div>
+
+      {/* Card with TabsContent inside */}
+      <Card className="w-full mt-2">
         <CardContent>
-          <Tabs defaultValue={helpSections[0].id} className="w-full">
-            <ScrollArea className="whitespace-nowrap rounded-md border">
-              <TabsList className="inline-flex justify-between w-full p-1 h-auto">
-                {helpSections.map((section) => (
-                  <TabsTrigger key={section.id} value={section.id} className="text-xs min-w-36 sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5 dark:bg-gray-800">
-                    {section.title}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </ScrollArea>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             {helpSections.map((section) => (
               <TabsContent key={section.id} value={section.id}>
                 <HelpSection {...section} />
               </TabsContent>
             ))}
           </Tabs>
+
           <section className="mt-6 sm:mt-8">
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4">Skapa ett Supportärende</h2>
             {formStatus && (
-              <Alert className={`mb-4 ${formStatus.type === 'success' ? 'bg-green-100' : 'bg-red-100'}`}>
-                <AlertTitle className="text-sm sm:text-base">{formStatus.type === 'success' ? 'Skickat' : 'Fel'}</AlertTitle>
-                <AlertDescription className="text-xs sm:text-sm">{formStatus.message}</AlertDescription>
+              <Alert
+                className={`mb-4 ${formStatus.type === "success" ? "bg-green-100" : "bg-red-100"
+                  }`}
+              >
+                <AlertTitle className="text-sm sm:text-base">
+                  {formStatus.type === "success" ? "Skickat" : "Fel"}
+                </AlertTitle>
+                <AlertDescription className="text-xs sm:text-sm">
+                  {formStatus.message}
+                </AlertDescription>
               </Alert>
             )}
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="category" className="text-sm sm:text-base">Kategori</Label>
-                <select id="category" value={formData.category} onChange={handleInputChange} className="text-sm sm:text-base">
+                <Label htmlFor="category" className="text-sm sm:text-base mr-4">
+                  Kategori
+                </Label>
+                <select
+                  id="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="text-sm sm:text-base dark:bg-darkBackground"
+                >
                   {Object.keys(categoryMapping).map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="subject" className="text-sm sm:text-base">Ärende</Label>
-                <Input id="subject" value={formData.subject} onChange={handleInputChange} placeholder="Ärendets titel" className="text-sm sm:text-base" />
+                <Label htmlFor="subject" className="text-sm sm:text-base">
+                  Ärende
+                </Label>
+                <Input
+                  id="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  placeholder="Ärendets titel"
+                  className="text-sm sm:text-base"
+                />
               </div>
               <div className="space-y-1 sm:space-y-2">
-
-                <Label htmlFor="description" className="text-sm sm:text-base">Beskrivning</Label>
-                <Textarea id="description" value={formData.description} onChange={handleInputChange} placeholder="Beskriv problemet" className="text-sm sm:text-base" />
+                <Label htmlFor="description" className="text-sm sm:text-base">
+                  Beskrivning
+                </Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Beskriv problemet"
+                  className="text-sm sm:text-base placeholder:dark:text-darkSecondary"
+                />
               </div>
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="image" className="text-sm sm:text-base">Bild (valfritt)</Label>
-                <Input id="image" type="file" onChange={handleFileChange} className="text-sm sm:text-base" />
-
+                <Label htmlFor="image" className="text-sm sm:text-base">
+                  Bild (valfritt)
+                </Label>
+                <Input
+                  id="image"
+                  type="file"
+                  onChange={handleFileChange}
+                  className="text-sm sm:text-base"
+                />
               </div>
-              <Button type="submit" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base">Skicka supportärende</Button>
+              <Button
+                type="submit"
+                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base"
+              >
+                Skicka supportärende
+              </Button>
             </form>
           </section>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
-          <Button variant="link" className="w-full sm:w-auto text-sm sm:text-base">Användar guide</Button>
-          <Button variant="link" className="w-full sm:w-auto text-sm sm:text-base">Video genomgång</Button>
+          <Button
+            variant="link"
+            className="w-full sm:w-auto text-sm sm:text-base"
+          >
+            Användarguide
+          </Button>
+          <Button
+            variant="link"
+            className="w-full sm:w-auto text-sm sm:text-base"
+          >
+            Videogenomgång
+          </Button>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
+
 }
 
 export default HelpPage
