@@ -50,7 +50,7 @@ export default function SettingsPage() {
       <ScrollArea className="flex-grow">
         <div className="max-w mx-auto p-4 space-y-6">
           {/* Card for Change Password */}
-          <Card className="border-green-500 border-opacity-20">
+          <Card >
             <CardHeader>
               <CardTitle className="text-green-500 dark:text-white">Byt lösenord</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Uppdatera ditt lösenord för att hålla ditt konto säkert</CardDescription>
@@ -76,7 +76,7 @@ export default function SettingsPage() {
           </Card>
 
           {/* Appearance Settings Card */}
-          <Card className="border-green-500 border-opacity-20">
+          <Card >
             <CardHeader>
               <CardTitle className="text-green-500">Utseende</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Anpassa utseendet och känslan för ditt gränssnitt</CardDescription>
@@ -92,14 +92,14 @@ export default function SettingsPage() {
           </Card>
 
           {/* Billing Plan Card */}
-          <Card className="border-green-500 border-opacity-20">
+          <Card >
             <CardHeader>
               <CardTitle className="text-green-500">Betalnings plan</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Hantera dina prenumerationer och faktureringsinställningar</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={currentPlan} onValueChange={handlePlanChange}>
-                <SelectTrigger className="border-green-500 border-opacity-50">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a plan" />
                 </SelectTrigger>
                 <SelectContent>
