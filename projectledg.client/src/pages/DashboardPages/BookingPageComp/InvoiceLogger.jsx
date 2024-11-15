@@ -220,7 +220,7 @@ export default function InvoiceLogger() {
         </CardContent>
       </Tabs>
 
-      <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2 dark:border-darkBorder"">
+      <div className="flex justify-center gap-3 pt-2 mb-3 border-t-2 dark:border-darkBorder">
         <LoggerPagination
           totalPages={totalPages}
           totalInvoices={totalInvoices}
