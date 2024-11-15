@@ -12,7 +12,7 @@ export default function ReportCheck() {
     return (
         <div className="w-full">
             <Tabs defaultValue="annualReports" className="w-full ">
-                <TabsList className="flex w-min justify-start">
+                <TabsList className="flex w-min justify-start dark:bg-darkBackground">
                     <TabsTrigger value="annualReports" className="font-semibold ">
                         Generera Årsredovisningar
                     </TabsTrigger>
