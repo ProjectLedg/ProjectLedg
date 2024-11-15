@@ -25,9 +25,12 @@ export default function AdminLoginPage() {
     
             const { token, roles } = response.data;
     
-            if (token && roles && (roles.includes("Admin") || roles.includes("Manager"))) {
+            if (token && Array.isArray(roles) && roles.some(role => ["Admin", "Manager"].includes(role))) {
                 // Store the token in a secure cookie or localStorage
                 Cookies.set('JWTToken', token, { secure: true, sameSite: 'strict' });
+                roles.forEach((role, index) => {
+                    Cookies.set(`Role${index}`, role, { secure: true, sameSite: 'strict' });
+                });
     
                 // Set token as default Authorization header
                 axiosConfig.defaults.headers.common['Authorization'] = `Bearer ${token}`;
