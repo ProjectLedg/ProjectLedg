@@ -28,7 +28,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         px-4 py-2 font-medium text-sm rounded-full dark:bg-transparent dark:text-white
         ${isChatOpen
             ? 'bg-green-500 text-white border-green-500 dark:bg-green-500'
-            : 'bg-transparent text-gray-700 border-none hover:bg-green-50 dark:hover:bg-gray-600'}
+            : 'bg-transparent text-gray-700 border-none hover:bg-green-50 dark:hover:bg-darkSurface'}
         `}
       >
         <SquarePen className="h-5 w-5 mr-2 inline-block" />
@@ -41,7 +41,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
             variant="ghost"
             size="icon"
             className={`
-        relative transition-all duration-300 ease-in-out
+        relative transition-all duration-300 ease-in-out dark:hover:bg-darkSurface
         ${isNotificationsOpen ? 'bg-white' : 'bg-transparent'}
       `}
             onClick={() => setIsNotificationsOpen(true)}
