@@ -32,10 +32,9 @@ import {
 const navItems = [
 
   { icon: Home, label: "Hem", path: "", position: "top", tooltipText: "Hem" },
-  { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top", tooltipText: "Finansiell rapport" },
-  { icon: BookCheck, label: "Bokför", path: "/book", position: "top", tooltipText: "Bokför" },
-  { icon: BookDown, label: "Årsredovisning", path: "/financial-statement", position: "top", tooltipText: "Årsredovisning" },
-  { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top", tooltipText: "Fakturering" },
+  { icon: Activity, label: "Hantera Användare", path: "/user-management", position: "top", tooltipText: "Hantera Användare" },
+  { icon: BookCheck, label: "Två Faktor Autentisering", path: "/2fa", position: "top", tooltipText: "Två Faktor Autentisering" },
+  { icon: FileText, label: "Tickets", path: "/tickets", position: "top", tooltipText: "Tickets" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom", tooltipText: "Inställningar" },
   { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom", tooltipText: "Hjälp" },
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom", tooltipText: "Logga ut" },
@@ -44,9 +43,8 @@ const navItems = [
 
 
 const NavItem = ({ icon: Icon, label, path, onClick }) => {
-  const { companyId } = useParams();
   const location = useLocation();
-  const fullPath = `/dashboard/${companyId}${path}`;
+  const fullPath = `/admin/dashboard${path}`;
 
   const isSelected = location.pathname === fullPath;
 
@@ -110,9 +108,8 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
 
 
 const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
-  const { companyId } = useParams();
   const location = useLocation();
-  const fullPath = `/dashboard/${companyId}${path}`;
+  const fullPath = `/admin/dashboard${path}`;
 
   const isSelected = location.pathname === fullPath;
 
@@ -284,7 +281,7 @@ const MobileNav = ({ navItems }) => {
               currentCompany={{ id: "1", name: "Company A" }}
               onCompanyChange={(company) => {
                 // Handle company change here
-                console.log("Switched to:", company.name);
+                console.log("Switched to:", user.name);
               }}
             />
 
@@ -320,10 +317,10 @@ export default function AdminDashboardLayout() {
   const fetchCompanyData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosConfig.get(`/Company/${companyId}`);
+      const response = await axiosConfig.get(`/Statistics/users/total`);
       setCompanyData(response.data);
     } catch (error) {
-      console.error("Failed to fetch company data", error);
+      console.error("Failed to fetch the users", error);
     } finally {
       setIsLoading(false);
     }
