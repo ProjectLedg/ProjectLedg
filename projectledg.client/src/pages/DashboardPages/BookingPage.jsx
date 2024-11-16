@@ -14,11 +14,11 @@ export default function BookingPage() {
         <div className="container mx-auto   ">
         
             <div className="grid grid-cols-1 gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="md:col-span-1">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <div className="xl:col-span-1">
                         <InvoiceUploader setInvoice={setInvoice} isUploadLoading={isUploadLoading} setIsUploadLoading={setIsUploadLoading} />
                     </div>
-                    <div className="md:col-span-2">
+                    <div className="xl:col-span-2">
                         <InvoicePreview invoice={invoice} setInvoice={setInvoice} isUploadLoading={isUploadLoading} setIsUploadLoading={setIsUploadLoading}/>
                     </div>
                     
