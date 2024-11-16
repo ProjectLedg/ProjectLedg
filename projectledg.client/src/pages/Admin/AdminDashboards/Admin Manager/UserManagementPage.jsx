@@ -9,105 +9,133 @@ import { Table } from "@/components/ui/table";
 import axios from "axios";
 
 const UserManagementPage = () => {
-  const [activeEntity, setActiveEntity] = useState("Users"); // Tracks current entity
-  const [entitiesData, setEntitiesData] = useState({
-    Users: [],
-    IngoingInvoice: [],
-    OutgoingInvoice: [],
-    Company: [],
-  });
+  const [users, setUsers] = useState([]);
+  const [ingoingInvoices, setIngoingInvoices] = useState([]);
+  const [outgoingInvoices, setOutgoingInvoices] = useState([]);
+  const [admins, setAdmins] = useState([]);
+  const [isDetailedDialogOpen, setIsDetailedDialogOpen] = useState(false); // For detailed modal
+  const [detailedData, setDetailedData] = useState(null); // For detailed data
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // For edit modal
+  const [editData, setEditData] = useState(null); // Data being edited
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredResults, setFilteredResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [formValues, setFormValues] = useState({}); // Form values for Edit
 
-  const entityFields = {
-    Users: { email: "", firstName: "", lastName: "", role: "" },
-    IngoingInvoice: { invoiceNumber: "", invoiceDate: "", invoiceTotal: "" },
-    OutgoingInvoice: { invoiceNumber: "", invoiceDate: "", invoiceTotal: "" },
-    Company: { companyName: "", orgNumber: "", address: "", taxId: "" },
-  };
-
-  // Fetch data for the active entity
-  const fetchEntityData = async (entity) => {
+  const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      let response;
-      if (entity === "Users") {
-        response = await axios.get("/api/User/all");
-      } else if (entity === "IngoingInvoice") {
-        response = await axios.get("/api/IngoingInvoice/all");
-      } else if (entity === "OutgoingInvoice") {
-        response = await axios.get("/api/OutgoingInvoice/all");
-      } else if (entity === "Company") {
-        response = await axios.get("/api/Company/getUserCompanies");
-      }
-      console.log(response.data); // Debugging the response
-      setEntitiesData((prev) => ({ ...prev, [entity]: response.data || [] }));
+      const response = await axios.get("https://localhost:7223/api/User/all");
+      setUsers(response.data || []);
     } catch (error) {
-      console.error(`Failed to fetch ${entity}:`, error);
-      setError(`Failed to fetch ${entity}: ${error.message}`);
+      setError("Failed to fetch users: " + error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const fetchIngoingInvoices = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("https://localhost:7223/api/IngoingInvoice/all");
+      setIngoingInvoices(response.data || []);
+    } catch (error) {
+      setError("Failed to fetch ingoing invoices: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchOutgoingInvoices = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("https://localhost:7223/api/OutgoingInvoice/all");
+      setOutgoingInvoices(response.data || []);
+    } catch (error) {
+      setError("Failed to fetch outgoing invoices: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchAdmins = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("https://localhost:7223/api/Admin/getAllAdmins");
+      setAdmins(response.data || []);
+    } catch (error) {
+      setError("Failed to fetch admins: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchDetailedData = async (id, type) => {
+    try {
+      const response = await axios.get(`https://localhost:7223/api/${type}/${id}`);
+      setDetailedData(response.data);
+      setIsDetailedDialogOpen(true);
+    } catch (error) {
+      console.error("Failed to fetch detailed data:", error);
+    }
+  };
+
+  const handleEdit = (data, type) => {
+    setEditData({ ...data, type });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!editData) return;
+
+    try {
+      await axios.put(`https://localhost:7223/api/${editData.type}/${editData.id}`, editData);
+      setIsEditDialogOpen(false);
+      refreshData();
+    } catch (error) {
+      setError(`Failed to edit ${editData.type}: ${error.message}`);
+    }
+  };
+
+  const handleDelete = async (id, type) => {
+    try {
+      await axios.delete(`https://localhost:7223/api/${type}/${id}`);
+      refreshData();
+    } catch (error) {
+      setError(`Failed to delete ${type}: ${error.message}`);
+    }
+  };
+
+  const refreshData = () => {
+    fetchUsers();
+    fetchIngoingInvoices();
+    fetchOutgoingInvoices();
+    fetchAdmins();
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    const allData = [
+      ...users.map((item) => ({ ...item, type: "User" })),
+      ...ingoingInvoices.map((item) => ({ ...item, type: "IngoingInvoice" })),
+      ...outgoingInvoices.map((item) => ({ ...item, type: "OutgoingInvoice" })),
+      ...admins.map((item) => ({ ...item, type: "Admin" })),
+    ];
+
+    const results = allData.filter((item) =>
+      Object.values(item)
+        .filter((value) => typeof value === "string" || typeof value === "number")
+        .some((value) => value.toString().toLowerCase().includes(query))
+    );
+
+    setFilteredResults(results);
+  };
+
   useEffect(() => {
-    fetchEntityData(activeEntity);
-  }, [activeEntity]);
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle Update (PUT or PATCH)
-  const handleUpdate = async () => {
-    try {
-      if (!selectedItem) return;
-
-      if (activeEntity === "Users") {
-        await axios.put(`/api/User/edit`, { ...selectedItem, ...formValues });
-      } else if (activeEntity === "IngoingInvoice") {
-        await axios.put(`/api/IngoingInvoice/update/${selectedItem.id}`, { ...selectedItem, ...formValues });
-      } else if (activeEntity === "OutgoingInvoice") {
-        await axios.put(`/api/OutgoingInvoice/update/${selectedItem.id}`, { ...selectedItem, ...formValues });
-      } else if (activeEntity === "Company") {
-        await axios.patch(`/api/Company/${selectedItem.id}`, { ...selectedItem, ...formValues });
-      }
-      setIsDialogOpen(false);
-      fetchEntityData(activeEntity); // Refresh the data
-    } catch (error) {
-      setError(`Failed to update ${activeEntity}: ${error.message}`);
-    }
-  };
-
-  // Handle Delete
-  const handleDelete = async (id) => {
-    try {
-      if (activeEntity === "Users") {
-        await axios.delete(`/api/User/delete/${id}`);
-      } else if (activeEntity === "IngoingInvoice") {
-        await axios.delete(`/api/IngoingInvoice/delete/${id}`);
-      } else if (activeEntity === "OutgoingInvoice") {
-        await axios.delete(`/api/OutgoingInvoice/delete/${id}`);
-      } else if (activeEntity === "Company") {
-        await axios.delete(`/api/Company/${id}`);
-      }
-      fetchEntityData(activeEntity); // Refresh the data
-    } catch (error) {
-      setError(`Failed to delete ${activeEntity}: ${error.message}`);
-    }
-  };
-
-  // Open dialog for Edit
-  const openDialog = (item = null) => {
-    setSelectedItem(item);
-    setFormValues(item || entityFields[activeEntity]);
-    setIsDialogOpen(true);
-  };
+    refreshData();
+  }, []);
 
   if (isLoading) {
     return <div className="p-4">Loading...</div>;
@@ -119,94 +147,328 @@ const UserManagementPage = () => {
 
   return (
     <div className="w-full">
-      <Tabs defaultValue="Users" onValueChange={setActiveEntity} className="w-full">
+      <Tabs defaultValue="Users" className="w-full">
         <TabsList className="flex w-min justify-start">
-          <TabsTrigger value="Users" className="font-semibold">
-            Users
-          </TabsTrigger>
-          <TabsTrigger value="IngoingInvoice" className="font-semibold">
-            Ingående Fakturor
-          </TabsTrigger>
-          <TabsTrigger value="OutgoingInvoice" className="font-semibold">
-            Utgående Fakturor
-          </TabsTrigger>
-          <TabsTrigger value="Company" className="font-semibold">
-            Företag
-          </TabsTrigger>
+          <TabsTrigger value="Users">Kunder</TabsTrigger>
+          <TabsTrigger value="Ingoing">Ingående Fakturor</TabsTrigger>
+          <TabsTrigger value="Outgoing">Utgående Fakturor</TabsTrigger>
+          <TabsTrigger value="Admins">Administratörer</TabsTrigger>
+          <TabsTrigger value="Search">Sökning</TabsTrigger>
         </TabsList>
 
-        {/* Entity Tab Content */}
-        {Object.keys(entitiesData).map((entity) => (
-          <TabsContent key={entity} value={entity} className="h-full w-full">
-            <Card>
-              <CardHeader>
-                <CardTitle>{entity}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <thead>
-                    <tr>
-                      {Object.keys(entityFields[entity]).map((field) => (
-                        <th key={field}>{field}</th>
-                      ))}
-                      <th>Åtgärder</th>
+
+                {/* Users Tab */}
+                <TabsContent value="Users">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hantera Användare</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Kund-ID</th>
+                    <th>Förnamn</th>
+                    <th>Email</th>
+                    <th>Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id}>
+                      <td
+                        className="cursor-pointer text-blue-500"
+                        onClick={() => fetchDetailedData(user.id, "User")}
+                      >
+                        {user.id}
+                      </td>
+                      <td>{user.firstName}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        <Button size="sm" onClick={() => handleEdit(user, "User")}>
+                          Ändra
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(user.id, "User")}
+                          className="ml-2"
+                        >
+                          Ta bort
+                        </Button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {(Array.isArray(entitiesData[entity]) ? entitiesData[entity] : []).map((item) => (
-                      <tr key={item.id}>
-                        {Object.keys(entityFields[entity]).map((field) => (
-                          <td key={field}>{item[field]}</td>
-                        ))}
+                  ))}
+                </tbody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Ingoing Invoices Tab */}
+        <TabsContent value="Ingoing">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hantera Ingående Fakturor</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Faktura-ID</th>
+                    <th>Fakturanummer</th>
+                    <th>Kundnamn</th>
+                    <th>Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ingoingInvoices.map((invoice) => (
+                    <tr key={invoice.id}>
+                      <td
+                        className="cursor-pointer text-blue-500"
+                        onClick={() => fetchDetailedData(invoice.id, "IngoingInvoice")}
+                      >
+                        {invoice.id}
+                      </td>
+                      <td>{invoice.invoiceNumber}</td>
+                      <td>{invoice.customerName}</td>
+                      <td>
+                        <Button size="sm" onClick={() => handleEdit(invoice, "IngoingInvoice")}>
+                          Ändra
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(invoice.id, "IngoingInvoice")}
+                          className="ml-2"
+                        >
+                          Ta bort
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Outgoing Invoices Tab */}
+        <TabsContent value="Outgoing">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hantera Utgående Fakturor</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Faktura-ID</th>
+                    <th>Fakturanummer</th>
+                    <th>Kundnamn</th>
+                    <th>Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {outgoingInvoices.map((invoice) => (
+                    <tr key={invoice.id}>
+                      <td
+                        className="cursor-pointer text-blue-500"
+                        onClick={() => fetchDetailedData(invoice.id, "OutgoingInvoice")}
+                      >
+                        {invoice.id}
+                      </td>
+                      <td>{invoice.invoiceNumber}</td>
+                      <td>{invoice.customerName}</td>
+                      <td>
+                        <Button size="sm" onClick={() => handleEdit(invoice, "OutgoingInvoice")}>
+                          Ändra
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(invoice.id, "OutgoingInvoice")}
+                          className="ml-2"
+                        >
+                          Ta bort
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Admins Tab */}
+        <TabsContent value="Admins">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hantera Administratörer</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Admin-ID</th>
+                    <th>Förnamn</th>
+                    <th>Email</th>
+                    <th>Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {admins.map((admin) => (
+                    <tr key={admin.id}>
+                      <td
+                        className="cursor-pointer text-blue-500"
+                        onClick={() => fetchDetailedData(admin.id, "Admin")}
+                      >
+                        {admin.id}
+                      </td>
+                      <td>{admin.firstName}</td>
+                      <td>{admin.email}</td>
+                      <td>
+                        <Button size="sm" onClick={() => handleEdit(admin, "Admin")}>
+                          Ändra
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(admin.id, "Admin")}
+                          className="ml-2"
+                        >
+                          Ta bort
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Search Tab */}
+        <TabsContent value="Search">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sök genom all data</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <Input
+                  type="text"
+                  placeholder="Sök här..."
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  className="w-full"
+                />
+              </div>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Typ</th>
+                    <th>ID</th>
+                    <th>Namn</th>
+                    <th>Ytterligare Info</th>
+                    <th>Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredResults.length > 0 ? (
+                    filteredResults.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.type}</td>
+                        <td
+                          className="cursor-pointer text-blue-500"
+                          onClick={() => fetchDetailedData(item.id, item.type)}
+                        >
+                          {item.id}
+                        </td>
+                        <td>{item.firstName || item.customerName || "N/A"}</td>
+                        <td>{item.invoiceNumber || item.email || "Ingen ytterligare info"}</td>
                         <td>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openDialog(item)}
-                          >
-                            Redigera
+                          <Button size="sm" onClick={() => handleEdit(item, item.type)}>
+                            Ändra
                           </Button>
                           <Button
-                            variant="destructive"
                             size="sm"
-                            onClick={() => handleDelete(item.id)}
+                            variant="destructive"
+                            onClick={() => handleDelete(item.id, item.type)}
                             className="ml-2"
                           >
-                            Radera
+                            Ta bort
                           </Button>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5">Inga resultat hittades</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
+      {/* Dialog for Detailed View */}
+      <Dialog open={isDetailedDialogOpen} onOpenChange={setIsDetailedDialogOpen}>
+  <DialogContent className="sm:max-w-[600px]">
+    <DialogHeader>
+      <DialogTitle>Detaljerad Vy</DialogTitle>
+    </DialogHeader>
+    <div className="grid gap-4 py-4">
+      {detailedData ? (
+        <pre
+          className="bg-gray-100 p-4 rounded overflow-x-auto"
+          style={{
+            maxWidth: "100%",
+            wordWrap: "break-word",
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {JSON.stringify(detailedData, null, 2)}
+        </pre>
+      ) : (
+        <p>Laddar...</p>
+      )}
+    </div>
+    <Button onClick={() => setIsDetailedDialogOpen(false)} className="w-full">
+      Stäng
+    </Button>
+  </DialogContent>
+</Dialog>
+
       {/* Dialog for Edit */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Redigera {activeEntity}</DialogTitle>
+            <DialogTitle>Redigera Data</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {Object.keys(entityFields[activeEntity]).map((field) => (
-              <div key={field}>
-                <Label htmlFor={field}>{field}</Label>
-                <Input
-                  id={field}
-                  name={field}
-                  value={formValues[field] || ""}
-                  onChange={handleInputChange}
-                  placeholder={`Skriv ${field}`}
-                />
-              </div>
-            ))}
+          <div className="grid gap-4 py-4 grid-cols-2">
+            {editData &&
+              Object.keys(editData).map((key) =>
+                key !== "type" && (
+                  <div key={key} className="col-span-1">
+                    <Label htmlFor={key}>{key}</Label>
+                    <Input
+                      id={key}
+                      value={editData[key] || ""}
+                      onChange={(e) =>
+                        setEditData((prev) => ({ ...prev, [key]: e.target.value }))
+                      }
+                      placeholder={`Enter ${key}`}
+                    />
+                  </div>
+                )
+              )}
           </div>
-          <Button onClick={handleUpdate} className="w-full">
-            Spara
+          <Button onClick={handleEditSave} className="w-full">
+            Spara ändringar
           </Button>
         </DialogContent>
       </Dialog>
