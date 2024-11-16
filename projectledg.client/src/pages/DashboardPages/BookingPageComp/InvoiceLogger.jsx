@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from '@/components/ui/separator'
 import { axiosConfig } from '/axiosconfig'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +12,7 @@ import Switch from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Check, X, FileText, Car } from "lucide-react"
+import { Check, X, FileText, Car, Download } from "lucide-react"
 import invoiceLogger from './invoiceLogger.json'
 import invoiceLoggerOutgoing from './invoiceLoggerOutgoing.json'
 import LoggerTable from './LoggerTable'
@@ -23,9 +24,6 @@ export default function InvoiceLogger() {
   const [invoices, setInvoices] = useState([])
   const [ingoingInvoices, setIngoingInvoices] = useState([])
   const [outgoingInvoices, setOutgoingInvoices] = useState([])
-  const { companyId } = useParams()
-
-
   const [selectedInvoice, setSelectedInvoice] = useState(null)
   const [isIngoingSelected, setIsIngoingSelected] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,6 +31,7 @@ export default function InvoiceLogger() {
   const [statusIngoing, setStatusIngoing] = useState("loading")
   const [statusOutgoing, setStatusOutgoing] = useState("loading")
   const [error, setError] = useState(null)
+  const { companyId } = useParams()
 
   // Pagination
   const pagination = 20;
@@ -40,7 +39,7 @@ export default function InvoiceLogger() {
   const [endItem, setEndItem] = useState(pagination)
   const [pageNumber, setPageNumber] = useState(1)
 
-  const totalInvoices = invoices.length; // TODO: Change this to the api variable when endpoint is finished
+  const totalInvoices = invoices.length; 
   const totalPages = Math.ceil(invoices.length / pagination);
 
   // Button toggle
@@ -53,7 +52,7 @@ export default function InvoiceLogger() {
     async function getIngInvoices() {
       try {
         const ingoingInvoicesResponse = await axiosConfig.get(`/IngoingInvoice/all/Company/${companyId}`)
-        console.log("INGOING RESPONSE: ", ingoingInvoicesResponse.data)
+        // console.log("INGOING RESPONSE: ", ingoingInvoicesResponse.data)
 
         if (ingoingInvoicesResponse.status === 200) {
           setIngoingInvoices(ingoingInvoicesResponse.data)
@@ -64,7 +63,7 @@ export default function InvoiceLogger() {
         }
       }
       catch (error) {
-        console.log("Something went wrong retrieving invoices", error)
+        // console.log("Something went wrong retrieving invoices", error)
 
         if (error.response && error.response.status === 404) {
           setStatusIngoing("empty");
@@ -78,7 +77,7 @@ export default function InvoiceLogger() {
     async function getOutInvoices() {
       try {
         const outgoingInvoicesResponse = await axiosConfig.get(`/OutgoingInvoice/all/Company/${companyId}`)
-        console.log("OUTGOING RESPONSE: ", outgoingInvoicesResponse.data)
+        // console.log("OUTGOING RESPONSE: ", outgoingInvoicesResponse.data)
 
         if (outgoingInvoicesResponse.status === 200) {
           setOutgoingInvoices(outgoingInvoicesResponse.data)
@@ -86,7 +85,7 @@ export default function InvoiceLogger() {
         }
       }
       catch (error) {
-        console.log("Something went wrong retrieving invoices", error)
+        // console.log("Something went wrong retrieving invoices", error)
 
         if (error.response && error.response.status === 404) {
           setStatusOutgoing("empty");
@@ -100,9 +99,9 @@ export default function InvoiceLogger() {
     getIngInvoices();
     getOutInvoices();
 
-    console.log("Is ingoing selected: ", isIngoingSelected)
-    console.log("Status ingoings: ", statusIngoing)
-    console.log("Status outgoings: ", statusOutgoing)
+    // console.log("Is ingoing selected: ", isIngoingSelected)
+    // console.log("Status ingoings: ", statusIngoing)
+    // console.log("Status outgoings: ", statusOutgoing)
 
     setIsLoading(false);
 
@@ -160,6 +159,13 @@ export default function InvoiceLogger() {
     setIsModalOpen(false)
   }
 
+  const handleIsPaidStatusChange = (newIsPaid) => {
+    setSelectedInvoice((prev) => ({
+      ...prev,
+      isPaid: newIsPaid,
+    }));
+  };
+
   const renderIngoingInvoices = () => {
     if (statusIngoing === "empty") {
       return (
@@ -203,6 +209,17 @@ export default function InvoiceLogger() {
           </Button>
         </CardContent>
       )
+    }
+  }
+
+  const handleConfirmAndSave = () => {
+    try {
+      const response = axiosConfig.post(`/IngoingInvoice/update/${selectedInvoice.id}`, selectedInvoice);
+
+      console.log(response)
+
+    } catch(error) {
+
     }
   }
 
@@ -312,71 +329,79 @@ export default function InvoiceLogger() {
         />
       </div>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} className="focus:outline-none ">
-        <DialogContent className={` w-auto flex flex-col  min-w-[600px]  min-h-[80vh]`}>
-          <DialogHeader className={`${"isBooked" ? "hidden" : "block"}`} >
-            <DialogTitle className="text-2xl font-bold text-green-600 ">Verifikation</DialogTitle>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[30vw]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-green-600">Faktura verifikation</DialogTitle>
           </DialogHeader>
           {selectedInvoice && (
-            <div className={`VerificationContainer flex flex-col justify-between h-[80vh] overflow-hidden `}>
-              <div className="TopRow p-2 h-full flex flex-col border-gray-100">
-
-                {/* Invoice info section */}
-                <div className="FakturaInfo space-y-2 mb-3">
-                  <h3 className="font-semibold text-lg mb-4">{selectedInvoice.vendorAddressRecipient} </h3>
-                  <div className="Fakturanummer grid grid-cols-4 ">
-
-                    <div className="flex flex-col col-span-3 justify-between space-y-2">
-                      <p className="font-bold text-lg text-gray-600 mb-1">{selectedInvoice.vendorName}</p>
-                      <p className=" text-gray-600 ">Belopp</p>
-                      <p className="font-light text-gray-500">Var av moms</p>
-                      <p className=" text-gray-600">Fakturadatum</p>
-                      <p className=" text-gray-600">Förfallodatum</p>
-                    </div>
-                    <div className="flex flex-col items-end space-y-2">
-                      <p className="font-bold text-lg text-gray-600 mb-1">{selectedInvoice.invoiceNumber}</p>
-                      <p className="font-semibold text-green-600">{selectedInvoice.invoiceTotal}kr</p>
-                      <p className="font-light text-gray-500">{selectedInvoice.totalTax}kr</p>
-                      <p className="text-gray-600 ">{new Date(selectedInvoice.invoiceDate).toLocaleDateString()}</p>
-                      <p className="text-gray-600 ">{new Date(selectedInvoice.dueDate).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-
-                  {/* Is paid button */}
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="paid-status" className="font-normal text-base text-gray-600">Betald</Label>
-
-                    <Switch isOn={isOn} setIsOn={setIsOn}
-                      id="paid-status"
-                      checked={"invoice.isPaid"}
-                      onCheckedChange={"handleIsPaidStatusChange"} />
-                  </div>
+            <div className="mt-4 space-y-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">{selectedInvoice.invoiceNumber}</h2>
+                  <p className="text-sm text-gray-500">{selectedInvoice.vendorName}</p>
                 </div>
+                <Badge variant={selectedInvoice.isBooked ? "success" : "destructive"}>
+                  {selectedInvoice.isBooked ? <Check className="h-4 w-4 mr-1" /> : <X className="h-4 w-4 mr-1" />}
+                  {selectedInvoice.isBooked ? "Bokförd" : "Ej Bokförd"}
+                </Badge>
+              </div>
 
-                {/* Booking suggestion - bottom row */}
-                <div className="BottomRow flex flex-col border-t pt-3">
-                  <div className="p-0 h-full flex flex-col justify-between space-y-10 ">
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">TEMP TEST</h3>
-                      <ScrollArea className="max-h-[40vh] w-full overflow-y-auto  ">
-
-                      </ScrollArea>
-                    </div>
-
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Fakturadatum</p>
+                  <p className="text-sm text-gray-900">{new Date(selectedInvoice.invoiceDate).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Förfallodatum</p>
+                  <p className="text-sm text-gray-900">{new Date(selectedInvoice.dueDate).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Belopp</p>
+                  <p className="text-lg font-semibold text-green-600">{selectedInvoice.invoiceTotal} kr</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Varav moms</p>
+                  <p className="text-sm text-gray-900">{selectedInvoice.totalTax} kr</p>
                 </div>
               </div>
-              <DialogFooter className="w-full ">
-                <Button onClick={"handleConfirmPress"} className="w-full bg-green-500  hover:bg-green-600 text-white">
-                  Bekräfta och spara
+
+              {/* <Separator /> */}
+
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-gray-900">Betalstatus</span>
+                <Switch
+                  isOn={selectedInvoice?.isPaid}
+                  setIsOn={(value) => handleIsPaidStatusChange(value)}
+                />
+              </div>
+
+              {/* <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Faktura </h3>
+                <p className="text-sm text-gray-500 mb-1">{selectedInvoice.vendorAddressRecipient}</p> */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    const link = document.createElement("a");
+                    link.href = selectedInvoice.invoiceFilePath; // The URL of the file
+                    link.download = selectedInvoice.invoiceFilePath.split('/').pop(); // Optional: Extract the filename from the URL
+                    link.click();
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Ladda ner faktura
                 </Button>
-              </DialogFooter>
+              {/* </div> */}
             </div>
           )}
-          {/* Success animation for when invoice is booked  */}
-          {/* <div className={`${!isBooked ? "hidden" : "block"} `}>
-            {isBooked && <SuccessAnimation key={triggerSound} setIsModalOpen={setIsModalOpen} triggerSound={triggerSound} />}
-          </div> */}
+          <DialogFooter>
+            <Button onClick={handleConfirmAndSave} className="w-full bg-green-500 hover:bg-green-600 text-white">
+              Bekräfta och spara
+            </Button>
+          </DialogFooter>
+
         </DialogContent>
       </Dialog>
     </Card>
