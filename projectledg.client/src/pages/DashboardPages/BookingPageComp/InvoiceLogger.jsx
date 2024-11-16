@@ -218,8 +218,10 @@ export default function InvoiceLogger() {
 
       console.log(response)
 
-    } catch(error) {
+      setIsModalOpen(false)
 
+    } catch(error) {
+      console.log(error)
     }
   }
 
@@ -330,13 +332,13 @@ export default function InvoiceLogger() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[30vw]">
+        <DialogContent className="w-[85vw] rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-green-600">Faktura verifikation</DialogTitle>
           </DialogHeader>
           {selectedInvoice && (
             <div className="mt-4 space-y-6">
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start">x
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">{selectedInvoice.invoiceNumber}</h2>
                   <p className="text-sm text-gray-500">{selectedInvoice.vendorName}</p>
@@ -401,7 +403,6 @@ export default function InvoiceLogger() {
               Bekräfta och spara
             </Button>
           </DialogFooter>
-
         </DialogContent>
       </Dialog>
     </Card>
