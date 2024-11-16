@@ -263,7 +263,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
           <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
         </CardHeader>
         <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
-          <h3 className="text-xl text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
+          <h3 className="text-xl text-center text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
         </CardContent>
       </Card>
     )
