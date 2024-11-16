@@ -12,7 +12,7 @@ namespace ProjectLedg.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin, Manager")]
+    [Authorize(Roles = "Admin, Manager")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
