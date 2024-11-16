@@ -99,13 +99,13 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     return {
       AdditionalContext: invoiceData.AdditionalContext || null,
       InvoiceNumber: invoiceData.InvoiceId || null,
-      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal.replace(',', '.')),
-      TotalTax: parseFloat(invoiceData.TotalTax.replace(',', '.')),
+      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal),
+      TotalTax: parseFloat(invoiceData.TotalTax),
       Items: invoiceData.Items.map(item => ({
         Description: item.Description,
         Quantity: parseInt(item.Quantity),
-        UnitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim()),
-        Amount: parseFloat(item.Amount.replace(',', '.'))
+        UnitPrice: parseFloat(item.UnitPrice),
+        Amount: parseFloat(item.Amount)
       }))
     };
   }
@@ -115,15 +115,16 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     invoiceNumber: invoice.InvoiceId,
     invoiceDate: new Date(invoice.InvoiceDate).toISOString(), 
     dueDate: new Date(invoice.DueDate).toISOString(),
-    invoiceTotal: parseFloat(invoice.InvoiceTotal.replace(",", ".")),
+    invoiceTotal: parseFloat(invoice.InvoiceTotal),
     items: invoice.Items.map(item => ({
       description: item.Description,
       quantity: parseFloat(item.Quantity),
-      unitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim()),
-      amount: parseFloat(item.Amount.replace(",", "."))
+      unitPrice: parseFloat(item.UnitPrice),
+      amount: parseFloat(item.Amount)
     })),
+    invoiceFilePath: invoice.InvoiceFilePath,
     paymentDetails: typeof invoice.PaymentDetails === 'string' ? invoice.PaymentDetails : "",  // Force empty string if not a string
-    totalTax: parseFloat(invoice.TotalTax.replace(",", ".")),
+    totalTax: parseFloat(invoice.TotalTax),
     isPaid: isPaidStatus,
     isOutgoing: false, // Always false when creating invoices in this component
     isBooked: false, // As invoice just is created it isn't booked yet
@@ -198,7 +199,11 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     };
 
     try {
+      // console.log("invBaAccDto", invBaAccDto)
+      
+      
       const response = await axiosConfig.post("/BasAccount/ProcessInvoiceWithBasAccounts", invBaAccDto)
+      console.log(response.data)
 
       // Set is booked to true to trigger success animation in modal popup
       setIsBooked(true);
