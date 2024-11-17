@@ -167,6 +167,7 @@ namespace ProjectLedg.Server
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
+                // Define the API version and title
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectLedg API", Version = "v1" });
 
                 // Define Bearer Authentication scheme for Swagger
@@ -181,23 +182,27 @@ namespace ProjectLedg.Server
 
                 // Apply Bearer authentication globally in Swagger UI
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
                 {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                    }
-                });
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+
+                // Custom schema ID generation to resolve collisions
+                c.CustomSchemaIds(type => type.FullName); // Use fully qualified type names to avoid naming conflicts
             });
+
 
             //Service Registrations
 
