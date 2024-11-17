@@ -16,7 +16,7 @@ export default function AdminChatService({ onClose, mobile }) {
 - **Ticket**: Hämta ett slumpmässigt ärende att hantera.
 - **Respond [ticketId] [message]**: Skicka ett svar till en kund på ett specifikt ärende.
 - **Close [ticketId]**: Stäng ett specifikt ärende.
-- **Open Tickets**: Visa antal öppnade ärenden.
+- **OpenTickets**: Visa antal öppnade ärenden.
 - **!Ticket**: Visa antal ärenden sorterade efter prioritet.
                     `;
 
@@ -90,10 +90,10 @@ export default function AdminChatService({ onClose, mobile }) {
                     }
                 }
 
-                case 'open tickets': {
+                case 'opentickets': {
                     const response = await axios.get('https://localhost:7223/api/SupportTickets/statistics/open');
                     const count = response.data;
-                    return `Det finns ${count} öppna ärenden.`;
+                    return `Det finns **${count}** öppna ärenden.`;
                 }
 
                 case '!ticket': {
