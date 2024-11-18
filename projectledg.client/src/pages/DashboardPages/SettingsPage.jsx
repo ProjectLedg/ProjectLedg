@@ -70,7 +70,7 @@ export default function SettingsPage() {
                   <Label htmlFor="confirm-password">Bekräfta nytt lösenord</Label>
                   <Input className="max-w-sm" id="confirm-password" type="password" required />
                 </div>
-                <Button type="submit" className="bg-green-500 hover:bg-green-600">Change Password</Button>
+                <Button type="submit" className="bg-green-500 hover:bg-green-600 dark:text-white">Byt Lösenord</Button>
               </form>
             </CardContent>
           </Card>
@@ -78,7 +78,7 @@ export default function SettingsPage() {
           {/* Appearance Settings Card */}
           <Card >
             <CardHeader>
-              <CardTitle className="text-green-500">Utseende</CardTitle>
+              <CardTitle className="text-green-500 dark:text-white">Utseende</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Anpassa utseendet och känslan för ditt gränssnitt</CardDescription>
             </CardHeader>
             <CardContent>
@@ -94,13 +94,13 @@ export default function SettingsPage() {
           {/* Billing Plan Card */}
           <Card >
             <CardHeader>
-              <CardTitle className="text-green-500">Betalnings plan</CardTitle>
+              <CardTitle className="text-green-500 dark:text-white">Betalningsplan</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Hantera dina prenumerationer och faktureringsinställningar</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={currentPlan} onValueChange={handlePlanChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a plan" />
+                  <SelectValue placeholder="Välj ett paket" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">Free</SelectItem>
