@@ -8,6 +8,7 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<IEnumerable<SupportTicket>> GetAllTicketsAsync();
         Task<SupportTicket> GetTicketByIdAsync(int ticketId);
         Task UpdateTicketStatusAsync(int ticketId, string status);
+        Task<SupportTicket> UpdateTicketAsync(SupportTicket ticket);
 
         //statistical
         Task<int> CountTicketsByStatusAsync(string status);

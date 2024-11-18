@@ -34,7 +34,7 @@ namespace ProjectLedg.Server.Services
                 }
             }
 
-            // Now focusing on the 'Items' field (line items)
+            // Focusing on 'Items' field (line items)
             var items = new List<Dictionary<string, string>>();
 
             foreach (var document in result.Documents)
@@ -53,33 +53,25 @@ namespace ProjectLedg.Server.Services
 
                                 if (itemFields.TryGetValue("Content", out DocumentField? itemContentField))
                                 {
-                                    if (itemContentField.FieldType == DocumentFieldType.String)
-                                    {
-                                        lineItem["Content"] = itemContentField.Value.AsString();
-                                    }
+                                    lineItem["Content"] = itemContentField.Value.AsString();
                                 }
 
                                 if (itemFields.TryGetValue("Description", out DocumentField? itemDescriptionField))
                                 {
-                                    if (itemDescriptionField.FieldType == DocumentFieldType.String)
-                                    {
-                                        lineItem["Description"] = itemDescriptionField.Value.AsString();
-                                    }
+                                    lineItem["Description"] = itemDescriptionField.Value.AsString();
                                 }
 
                                 if (itemFields.TryGetValue("Quantity", out DocumentField? itemQuantityField))
                                 {
-                                    if (itemQuantityField.FieldType == DocumentFieldType.Double)
-                                    {
-                                        lineItem["Quantity"] = itemQuantityField.Value.AsDouble().ToString();
-                                    }
+                                    lineItem["Quantity"] = itemQuantityField.Value.AsDouble().ToString();
                                 }
 
                                 if (itemFields.TryGetValue("UnitPrice", out DocumentField? itemUnitPriceField))
                                 {
                                     if (itemUnitPriceField.FieldType == DocumentFieldType.Currency)
                                     {
-                                        lineItem["UnitPrice"] = $"{itemUnitPriceField.Value.AsCurrency().Symbol}{itemUnitPriceField.Value.AsCurrency().Amount}";
+                                        // Extract numeric part from currency
+                                        lineItem["UnitPrice"] = itemUnitPriceField.Value.AsCurrency().Amount.ToString();
                                     }
                                 }
 
@@ -87,7 +79,8 @@ namespace ProjectLedg.Server.Services
                                 {
                                     if (itemAmountField.FieldType == DocumentFieldType.Currency)
                                     {
-                                        lineItem["Amount"] = $"{itemAmountField.Value.AsCurrency().Symbol}{itemAmountField.Value.AsCurrency().Amount}";
+                                        // Extract numeric part from currency
+                                        lineItem["Amount"] = itemAmountField.Value.AsCurrency().Amount.ToString();
                                     }
                                 }
                             }
@@ -98,7 +91,7 @@ namespace ProjectLedg.Server.Services
                 }
             }
 
-            // Now focusing on the 'PaymentDetails' field
+            // Focusing on 'PaymentDetails' field
             var paymentDetails = new List<Dictionary<string, string>>();
 
             foreach (var document in result.Documents)
@@ -117,21 +110,14 @@ namespace ProjectLedg.Server.Services
 
                                 if (paymentFields.TryGetValue("IBAN", out DocumentField? paymentIBANField))
                                 {
-                                    if (paymentIBANField.FieldType == DocumentFieldType.String)
-                                    {
-                                        paymentDetail["IBAN"] = paymentIBANField.Value.AsString();
-                                    }
+                                    paymentDetail["IBAN"] = paymentIBANField.Value.AsString();
                                 }
 
                                 if (paymentFields.TryGetValue("SWIFT", out DocumentField? paymentSWIFTField))
                                 {
-                                    if (paymentSWIFTField.FieldType == DocumentFieldType.String)
-                                    {
-                                        paymentDetail["SWIFT"] = paymentSWIFTField.Value.AsString();
-                                    }
+                                    paymentDetail["SWIFT"] = paymentSWIFTField.Value.AsString();
                                 }
 
-                                // Add to payment details list
                                 paymentDetails.Add(paymentDetail);
                             }
                         }
@@ -139,11 +125,10 @@ namespace ProjectLedg.Server.Services
                 }
             }
 
-            // Add the extracted line items and payment details to the dictionary
+            // Add extracted data to the dictionary
             extractedData["Items"] = items;
             extractedData["PaymentDetails"] = paymentDetails;
 
-            // Return after processing the entire document
             return extractedData;
         }
     }

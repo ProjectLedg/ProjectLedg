@@ -43,14 +43,14 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="space-y-4 p-4">
       <div className="flex-none bg-transparent">
-        <h1 className=" text-3xl font-bold text-black dark:text-white">Inställningar</h1>
+        <h1 className="text-3xl font-bold text-black dark:text-white">Inställningar</h1>
       </div>
       <ScrollArea className="flex-grow">
-        <div className="max-w mx-auto p-4 space-y-6">
+        <div className="max-w mx-auto space-y-6">
           {/* Card for Change Password */}
-          <Card className="border-green-500 border-opacity-20">
+          <Card >
             <CardHeader>
               <CardTitle className="text-green-500 dark:text-white">Byt lösenord</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Uppdatera ditt lösenord för att hålla ditt konto säkert</CardDescription>
@@ -70,15 +70,15 @@ export default function SettingsPage() {
                   <Label htmlFor="confirm-password">Bekräfta nytt lösenord</Label>
                   <Input className="max-w-sm" id="confirm-password" type="password" required />
                 </div>
-                <Button type="submit" className="bg-green-500 hover:bg-green-600">Change Password</Button>
+                <Button type="submit" className="bg-green-500 hover:bg-green-600 dark:text-white">Byt Lösenord</Button>
               </form>
             </CardContent>
           </Card>
 
           {/* Appearance Settings Card */}
-          <Card className="border-green-500 border-opacity-20">
+          <Card >
             <CardHeader>
-              <CardTitle className="text-green-500">Utseende</CardTitle>
+              <CardTitle className="text-green-500 dark:text-white">Utseende</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Anpassa utseendet och känslan för ditt gränssnitt</CardDescription>
             </CardHeader>
             <CardContent>
@@ -92,15 +92,15 @@ export default function SettingsPage() {
           </Card>
 
           {/* Billing Plan Card */}
-          <Card className="border-green-500 border-opacity-20">
+          <Card >
             <CardHeader>
-              <CardTitle className="text-green-500">Betalnings plan</CardTitle>
+              <CardTitle className="text-green-500 dark:text-white">Betalningsplan</CardTitle>
               <CardDescription className="dark:text-darkSecondary">Hantera dina prenumerationer och faktureringsinställningar</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={currentPlan} onValueChange={handlePlanChange}>
-                <SelectTrigger className="border-green-500 border-opacity-50">
-                  <SelectValue placeholder="Select a plan" />
+                <SelectTrigger>
+                  <SelectValue placeholder="Välj ett paket" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">Free</SelectItem>

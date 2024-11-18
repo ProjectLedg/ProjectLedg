@@ -230,23 +230,23 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <Skeleton className="h-12 w-[100%] rounded-none" />
+            <Skeleton className="h-12 w-[100%] rounded-none dark:bg-darkSecondary" />
             <CardContent className="h-full overflow-hidden grid grid-cols-1 gap-4">
               <div className="space-y-2 mt-8">
-                <Skeleton className="h-4 w-[40%] mt-2" />
-                <Skeleton className="h-12 w-[85%] rounded-md" />
+                <Skeleton className="h-4 w-[40%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[85%] rounded-md dark:bg-darkSecondary" />
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-4 w-[25%] mt-2" />
-                <Skeleton className="h-12 w-[70%] rounded-md" />
+                <Skeleton className="h-4 w-[25%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[70%] rounded-md dark:bg-darkSecondary" />
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-4 w-[50%] mt-2" />
-                <Skeleton className="h-12 w-[80%] rounded-md" />
+                <Skeleton className="h-4 w-[50%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[80%] rounded-md dark:bg-darkSecondary" />
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-4 w-[30%] mt-2" />
-                <Skeleton className="h-12 w-[65%] rounded-md" />
+                <Skeleton className="h-4 w-[30%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[65%] rounded-md dark:bg-darkSecondary" />
               </div>
             </CardContent>
           </motion.div>

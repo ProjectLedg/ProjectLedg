@@ -159,5 +159,42 @@ namespace ProjectLedg.Server.Controllers
             var priorityCounts = await _supportTicketService.GetTicketsCountByPriorityAsync(status);
             return Ok(priorityCounts);
         }
+
+        [HttpGet("random")]
+        public async Task<IActionResult> GetRandomTicket()
+        {
+            var ticket = await _supportTicketService.GetPrioritizedRandomTicketAsync();
+            if (ticket == null)
+                return NotFound("No open tickets available.");
+            return Ok(ticket);
+        }
+
+        [HttpPost("{id}/respond")]
+        public async Task<IActionResult> RespondToTicket(int id, [FromBody] string message)
+        {
+            try
+            {
+                await _supportTicketService.RespondToTicketAsync(id, message);
+                return Ok("Response sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/close")]
+        public async Task<IActionResult> CloseTicket(int id)
+        {
+            try
+            {
+                await _supportTicketService.CloseTicketAsync(id);
+                return Ok("Ticket closed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

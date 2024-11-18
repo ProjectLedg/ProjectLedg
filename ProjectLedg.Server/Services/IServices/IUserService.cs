@@ -3,12 +3,13 @@ using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Options;
 using ProjectLedg.Server.Model.DTOs.User;
 using System.Security.Claims;
+using ProjectLedg.Server.Data.Models.DTOs.User;
 
 namespace ProjectLedg.Server.Services.IServices
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(string id);
         Task<AccountCreationResult> CreateUserAsync(CreateAccountRequestDTO request);
         Task<IdentityResult> UpdateUserAsync(User user);

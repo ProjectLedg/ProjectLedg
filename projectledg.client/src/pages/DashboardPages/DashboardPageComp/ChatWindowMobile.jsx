@@ -66,14 +66,14 @@ export default function ChatWindowMobile({ onClose, onSendMessage }) {
             className={`mb-12 flex items-start ${message.type === 'sent' ? 'self-end' : 'self-start'}`}
         >
             {message.type === 'received' && (
-                <div className='p-2 mt-1 border-2 rounded-full '>
+                <div className='p-2 mt-1 border-2  dark:border-darkBorder rounded-full '>
                     <Bot className="w-6 h-6 " />
                 </div>
             )}
             <div
                 className={`${message.type === 'sent'
-                    ? 'bg-green-500 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
-                    : 'prose bg-gray-100 px-3 py-3 rounded-3xl  max-w-[100%] text-black'
+                    ? 'bg-green-500 dark:bg-neutral-700  px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
+                    : 'prose bg-gray-100 px-3 py-3 rounded-3xl  max-w-[100%] text-black dark:text-white dark:bg-darkSurface'
                     }`}
             >
                 {message.type === 'sent' || !message.isTyping ? (
@@ -94,7 +94,7 @@ export default function ChatWindowMobile({ onClose, onSendMessage }) {
 
     return (
         <div className="chatWindow flex flex-col right-0 p-2 w-full h-[100vh] bg-white/60 dark:bg-darkBackground bg-opacity-80 shadow-lg rounded-2xl">
-            <div className="bg-gray-100 dark:bg-darkSurface rounded-xl overflow-hidden h-[90%] relative flex flex-col">
+            <div className="bg-gray-100 dark:bg-darkSurface rounded-xl overflow-hidden h-[100%] relative flex flex-col">
                 <div className="flex justify-between items-center p-4 shadow-sm">
                     <button onClick={handleNewChat} className="text-gray-500 hover:text-gray-700 dark:text-white ">
                         <SquarePen size={25} />

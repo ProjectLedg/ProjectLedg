@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/tooltip"
 
 const tooltipInfo = {
-  income: "Inkomst: <br /> Den totala summan pengar som tjänats in under en viss period.",
-  expenses: "Kostnader: <br /> Den totala summan pengar som spenderats under en viss period.",
-  revenue: "Omsättning: <br /> Den totala summan pengar som genererats från försäljning av varor eller tjänster under en viss period."
+  logins: "Antal Inloggningar: <br /> Det totala antalet unika inloggningar för Ledge; filtrerat på Dag/Vecka/År.",
+  sum: "Totala summan av bokförda fakturor: <br /> Den totala summan av alla fakturor.",
+  ingoing: "Ingående fakturor: <br /> Det totala antalet ingående fakturor som har bokförts.",
+  outgoing: "Omsättning: <br /> Den totala summan pengar som genererats från försäljning av varor eller tjänster under en viss period."
 }
 
 const MetricCard = ({ title, value, change, changeType, toolDescription, chart, icon: Icon }) => (
@@ -88,7 +89,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const AdminDashboardHomePage = () => {
-  const { companyId } = useParams();
+  const { userId } = useParams();
   const { isChatOpen } = useOutletContext();
 
   const [topGraphsData, setTopGraphsData] = useState(null);
@@ -103,35 +104,41 @@ const AdminDashboardHomePage = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const currentYear = 2023;        //new Date().getFullYear();
-        const payload = {
-          companyId: parseInt(companyId),
-          year: currentYear
-        };
-        
-
+        const currentYear = new Date().getFullYear();
+        const payload = { year: currentYear };
+  
         const [topGraphsResponse, filterGraphsResponse] = await Promise.all([
-          axiosConfig.post('/Finance/dashboardtopgraphs', payload),
-          axiosConfig.post('/Finance/dashboardbottomgraphs', payload)
+          axiosConfig.get('/Statistics/users/logins/today', { params: payload }),
+          axiosConfig.get('/Statistics/invoices/ingoing/today', { params: payload })
         ]);
-
+  
+        console.log("Top Graphs Data:", topGraphsResponse.data);
+        console.log("Filter Graphs Data:", filterGraphsResponse.data);
+  
         setTopGraphsData(topGraphsResponse.data);
         setFilterGraphsData(filterGraphsResponse.data);
       } catch (error) {
+        console.error("Error fetching data:", error);
         setError(error.message);
       } finally {
         setIsLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [companyId]);
+  }, [userId]);
+  
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <div>Error: {error}</div>;
-  if (!topGraphsData || !filterGraphsData) return null;
+  if (!topGraphsData || !filterGraphsData) return <div>No data available.</div>;
 
-  const { revenue, profit, expenses, runway } = topGraphsData;
+  const {
+    revenue = { totalRevenue: 0, changePercentage: 0, revenueHistory: [] },
+    profit = { totalProfit: 0, changePercentage: 0, profitHistory: [] },
+    expenses = { totalExpenses: 0, changePercentage: 0, expensesHistory: [] },
+    runway = null,
+  } = topGraphsData;
 
   const metricOptions = [
     { value: 'grossProfit', label: 'Total vinst' },
@@ -153,7 +160,7 @@ const AdminDashboardHomePage = () => {
             change={`${revenue.changePercentage}% MoM`}
             changeType={revenue.changePercentage >= 0 ? 'positive' : 'negative'}
             icon={Wallet}
-            toolDescription={tooltipInfo.revenue}
+            toolDescription={tooltipInfo.outgoing}
             chart={
               <LineChart data={revenue.revenueHistory}>
                 <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
@@ -169,7 +176,7 @@ const AdminDashboardHomePage = () => {
             change={`${profit.changePercentage}% MoM`}
             changeType={profit.changePercentage >= 0 ? 'positive' : 'negative'}
             icon={TrendingUp}
-            toolDescription={tooltipInfo.income}
+            toolDescription={tooltipInfo.sum}
             chart={
               <BarChart data={profit.profitHistory}>
                 <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />
@@ -192,7 +199,7 @@ const AdminDashboardHomePage = () => {
             change={`${expenses.changePercentage}% MoM`}
             changeType={expenses.changePercentage <= 0 ? 'positive' : 'negative'}
             icon={TrendingDown}
-            toolDescription={tooltipInfo.expenses}
+            toolDescription={tooltipInfo.ingoing}
             chart={
               <BarChart data={expenses.expensesHistory}>
                 <XAxis dataKey="monthName" tick={{ fontSize: 10 }} interval={'preserveStartEnd'} />

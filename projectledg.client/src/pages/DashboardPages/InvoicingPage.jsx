@@ -252,13 +252,13 @@ export default function InvoicingPage() {
   };
 
   return (
-    <div className="w-[92vw] sm:w-auto">
+    <div className="space-y-4 p-4">
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center ">
         <h1 className="text-3xl font-bold">Fakturering</h1>
         <Button variant="outline" onClick={resetForm} className="dark:bg-darkSurface dark:border-darkBorder">
           <RefreshCw className="mr-2 h-4 w-4" />
-          Återställ formulär
+          Återställ 
         </Button>
       </div>
 

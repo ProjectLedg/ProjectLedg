@@ -7,6 +7,8 @@ import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ProfitabilityCard from './DashboardPageComp/ProfitabilityCard'
 import MetricGraph from './DashboardPageComp/MetricGraph'
+import { Skeleton } from "@/components/ui/skeleton"
+
 import {
   TooltipShad,
   TooltipContent,
@@ -53,28 +55,46 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
   </Card>
 )
 
-const LoadingSpinner = () => {
-  const [progress, setProgress] = useState(0)
+const SkeletonLoader = () => {
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) => (prevProgress >= 100 ? 100 : prevProgress + 10))
-    }, 70)
-
-    return () => {
-      clearInterval(timer)
-    }
-  }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="w-64 space-y-4">
-        <Progress value={progress} className="w-full" />
-        <p className="text-center text-sm text-muted-foreground">Loading financial data...</p>
+    <div className="space-y-4 p-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Översikt</h2>
       </div>
+
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Card key={index} className="h-56 w-full">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-4 w-[140px] dark:bg-darkSecondary" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-7 w-[100px] mb-1 dark:bg-darkSecondary" />
+              <Skeleton className="h-4 w-[60px] dark:bg-darkSecondary" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 ">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <Card key={index} className="h-[37vh] w-full">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-4 w-[140px] dark:bg-darkSecondary" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-7 w-[100px] mb-1 dark:bg-darkSecondary" />
+              <Skeleton className="h-4 w-[60px] dark:bg-darkSecondary" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
     </div>
-  )
-}
+  );
+};
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -136,7 +156,7 @@ const DashboardHomePage = () => {
     fetchData();
   }, [companyId]);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return <SkeletonLoader />;
   if (error) return <div>Error: {error}</div>;
   if (!topGraphsData || !filterGraphsData) return null;
 
@@ -152,7 +172,7 @@ const DashboardHomePage = () => {
   ];
 
   return (
-    <div className="space-y-4 p-4 sm:p-6">
+    <div className="space-y-4 p-4 ">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight ">Översikt</h2>
       </div>

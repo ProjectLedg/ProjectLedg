@@ -11,6 +11,6 @@ export default function ThemeToggle() {
   };
 
   return (
-    <Switch isOn={theme === "dark"} setIsOn={handleToggle} />
+    <Switch isOn={theme === "dark"} setIsOn={handleToggle} offColor="bg-darkBackground" onColor="bg-white" knobColor="dark:bg-darkBackground bg-white"/>
   );
 }
