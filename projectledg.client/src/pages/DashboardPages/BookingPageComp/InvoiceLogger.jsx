@@ -170,7 +170,7 @@ export default function InvoiceLogger() {
     if (statusIngoing === "empty") {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
-          <p>Skapa en utgående faktura på faktureringssidan för att se den här!</p>
+          <p className="text-xl text-center text-gray-400 dark:text-darkSecondary">Skapa en utgående faktura på faktureringssidan för att se den här!</p>
         </CardContent>
       )
     }
@@ -193,7 +193,7 @@ export default function InvoiceLogger() {
     if (statusOutgoing === "empty") {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
-          <p>Skapa en utgående faktura på faktureringssidan för att se den här!</p>
+          <p className="text-xl text-center text-gray-400 dark:text-darkSecondary">Skapa en utgående faktura på faktureringssidan för att se den här!</p>
         </CardContent>
       )
     }
@@ -253,15 +253,15 @@ export default function InvoiceLogger() {
   }
 
   return (
-    <Card className="w-full h-[40rem] flex flex-col shadow-lg">
+    <Card className="w-full h-[90vh] md:h-[40rem]  flex flex-col shadow-lg">
       <Tabs defaultValue="ingoing" className="flex flex-col h-full overflow-hidden">
-        <CardHeader className="flex flex-row justify-between border-b dark:border-darkBorde">
+        <CardHeader className="flex flex-row justify-between border-b-2 dark:border-darkBorde">
           <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
             <FileText className="mr-2 text-green-500" />
             Fakturor
           </CardTitle>
 
-          <TabsList className="w-auto rounded-md p-6 dark:bg-darkBackground">
+          <TabsList className="flex flex-col md:flex-row px-2 py-10 w-auto rounded-md md:py-6 md:px-2 dark:bg-darkBackground">
             <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing}>Ingående</TabsTrigger>
             <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing}>Utgående</TabsTrigger>
           </TabsList>
@@ -272,8 +272,8 @@ export default function InvoiceLogger() {
 
         {/* Fallback CardContent for Ingoing */}
         {isIngoingSelected && !renderIngoingInvoices() && (
-          <CardContent className="flex-grow overflow-hidden p-0">
-            <ScrollArea className="h-full">
+          <CardContent className="flex-grow overflow-hidden p-0 ">
+            <ScrollArea className="h-full bg-gray-200 md:bg-white dark:bg-darkBackground">
               {isLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <p>Hämtar fakturor...</p>
@@ -296,8 +296,8 @@ export default function InvoiceLogger() {
 
         {/* Fallback CardContent for Outgoing */}
         {!isIngoingSelected && !renderOutgoingInvoices() && (
-          <CardContent className="flex-grow overflow-hidden p-0">
-            <ScrollArea className="h-full">
+          <CardContent className="flex-grow overflow-hidden p-0" >
+            <ScrollArea className="h-full bg-gray-200 md:bg-white dark:bg-darkBackground">
               {isLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <p>Hämtar fakturor...</p>
@@ -332,16 +332,16 @@ export default function InvoiceLogger() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="w-[85vw] rounded-lg">
+        <DialogContent className="w-[85vw] rounded-lg dark:bg-darkSurface">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-green-600">Faktura verifikation</DialogTitle>
           </DialogHeader>
           {selectedInvoice && (
             <div className="mt-4 space-y-6">
-              <div className="flex justify-between items-start">x
+              <div className="flex justify-between items-start">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">{selectedInvoice.invoiceNumber}</h2>
-                  <p className="text-sm text-gray-500">{selectedInvoice.vendorName}</p>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{selectedInvoice.invoiceNumber}</h2>
+                  <p className="text-sm text-gray-500 dark:text-darkSecondary">{selectedInvoice.vendorName}</p>
                 </div>
                 <Badge variant={selectedInvoice.isBooked ? "success" : "destructive"}>
                   {selectedInvoice.isBooked ? <Check className="h-4 w-4 mr-1" /> : <X className="h-4 w-4 mr-1" />}
@@ -351,27 +351,27 @@ export default function InvoiceLogger() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Fakturadatum</p>
-                  <p className="text-sm text-gray-900">{new Date(selectedInvoice.invoiceDate).toLocaleDateString()}</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Fakturadatum</p>
+                  <p className="text-sm text-gray-900 dark:text-darkSecondary">{new Date(selectedInvoice.invoiceDate).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Förfallodatum</p>
-                  <p className="text-sm text-gray-900">{new Date(selectedInvoice.dueDate).toLocaleDateString()}</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Förfallodatum</p>
+                  <p className="text-sm text-gray-900 dark:text-darkSecondary">{new Date(selectedInvoice.dueDate).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Belopp</p>
-                  <p className="text-lg font-semibold text-green-600">{selectedInvoice.invoiceTotal} kr</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Belopp</p>
+                  <p className="text-lg font-semibold text-green-600">{selectedInvoice.invoiceTotal}kr</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Varav moms</p>
-                  <p className="text-sm text-gray-900">{selectedInvoice.totalTax} kr</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Varav moms</p>
+                  <p className="text-sm text-gray-900 dark:text-darkSecondary">{selectedInvoice.totalTax} kr</p>
                 </div>
               </div>
 
               {/* <Separator /> */}
 
               <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-900">Betalstatus</span>
+                <span className="font-medium text-gray-900 dark:text-white">Betalstatus</span>
                 <Switch
                   isOn={selectedInvoice?.isPaid}
                   setIsOn={(value) => handleIsPaidStatusChange(value)}
@@ -384,7 +384,7 @@ export default function InvoiceLogger() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full"
+                className="w-full dark:text-white dark:bg-darkBackground dark:border-darkBorder"
                   onClick={() => {
                     const link = document.createElement("a");
                     link.href = selectedInvoice.invoiceFilePath; // The URL of the file
