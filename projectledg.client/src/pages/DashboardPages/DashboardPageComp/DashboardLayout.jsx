@@ -40,6 +40,42 @@ const navItems = [
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
 ];
 
+const fetchCompanyData = async () => {
+  
+  const [UserData, setUserData] = useState({
+    firstName: '', 
+    lastName: ''
+  
+  });
+  const [CompanyData, setCompanyData] = useState([
+    {
+      companyName: '',
+      companyId: ''
+    }
+  ]);
+  
+  
+  
+  try {
+    const userresponse = await axiosConfig.get('/User/1') 
+    const companyresponse = await axiosConfig.get('/Company/getUserCompanies') 
+    const fetchedComopanyresponse = companyresponse.data.map(comp => ({
+      companyName: comp.companyName,
+      companyId: comp.companyId,
+     
+    }))
+    setCompanyData(fetchedComopanyresponse)
+
+    const fetchedUserData = {
+      firstName: userResponse.data.firstName,
+      lastName: userResponse.data.lastName
+    };
+    setUserData(fetchedUserData);
+    
+  } catch (error) {
+    console.error('Kunde inte hämta notiser:', error)
+  } 
+}
 
 
 const NavItem = ({ icon: Icon, label, path, onClick }) => {
@@ -201,6 +237,13 @@ const handleLogout = ({ icon: Icon, label, path }) => {
 
 
 const Sidebar = ({ isChatOpen }) => (
+  
+  
+  
+  
+  
+  
+  
   <motion.div
     initial={{ width: isChatOpen ? '5rem' : '15rem' }}
     animate={{ width: isChatOpen ? '5rem' : '15rem' }}
