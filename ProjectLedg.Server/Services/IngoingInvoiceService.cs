@@ -143,6 +143,7 @@ namespace ProjectLedg.Server.Services
             {
                 InvoiceNumber = invoiceDto.InvoiceNumber,
                 InvoiceDate = invoiceDto.InvoiceDate,
+                InvoiceFilePath = invoiceDto.InvoiceFilePath,
                 DueDate = invoiceDto.DueDate,
                 InvoiceTotal = invoiceDto.InvoiceTotal,
                 PaymentDetails = invoiceDto.PaymentDetails,
