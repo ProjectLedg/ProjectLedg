@@ -18,7 +18,7 @@ export default function BookingPage() {
                     <div className="md:col-span-1">
                         <InvoiceUploader setInvoice={setInvoice} isUploadLoading={isUploadLoading} setIsUploadLoading={setIsUploadLoading} />
                     </div>
-                    <div className="md:col-span-2">
+                    <div className="xl:col-span-2">
                         <InvoicePreview invoice={invoice} setInvoice={setInvoice} isUploadLoading={isUploadLoading} setIsUploadLoading={setIsUploadLoading}/>
                     </div>
                     

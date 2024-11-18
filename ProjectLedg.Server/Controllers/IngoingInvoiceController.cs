@@ -82,12 +82,20 @@ namespace ProjectLedg.Server.Controllers
         [HttpGet("all/Company/{companyId}")]
         public async Task<IActionResult> GetAllIngoingInvoicesForCompanyAsync(int companyId)
         {
-            var invoices = await _invoiceService.GetAllIngoingInvoicesForCompanyAsync(companyId);
-            if (!invoices.Any())
+            try
             {
-                return BadRequest("No invoices found");
+                var invoices = await _invoiceService.GetAllIngoingInvoicesForCompanyAsync(companyId);
+                if (!invoices.Any())
+                {
+                    return NotFound("No ingoing invoices found");
+                }
+                return Ok(invoices);
             }
-            return Ok(invoices);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An unexpectd error occurred.", Details = ex.Message });
+            }
+            
         }
 
         [HttpGet("all")]
