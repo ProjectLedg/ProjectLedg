@@ -31,8 +31,12 @@ namespace ProjectLedg.Server.Repositories
 
         public async Task<SupportTicket> GetTicketByIdAsync(int ticketId)
         {
-            return await _context.SupportTickets.FindAsync(ticketId);
+            return await _context.SupportTickets
+                .Include(t => t.Company)
+                .Include(t => t.User) // Include the User entity
+                .FirstOrDefaultAsync(t => t.TicketId == ticketId);
         }
+
 
         public async Task UpdateTicketStatusAsync(int ticketId, string status)
         {
@@ -66,6 +70,13 @@ namespace ProjectLedg.Server.Repositories
                 .Where(t => t.Status == status)
                 .GroupBy(t => t.Priority)
                 .ToDictionaryAsync(g => g.Key, g => g.Count());
+        }
+
+        public async Task<SupportTicket> UpdateTicketAsync(SupportTicket ticket)
+        {
+            _context.SupportTickets.Update(ticket);
+            await _context.SaveChangesAsync();
+            return ticket;
         }
     }
 }

@@ -3,7 +3,7 @@ import Cookie from 'js-cookie';
 
 // Json config 
 const axiosConfig = axios.create({
-    baseURL: "https://projectledg.azurewebsites.net/api",
+    baseURL: "https://localhost:7223/api",
     headers: {
         "Content-Type": "application/json",
     },
@@ -12,7 +12,7 @@ const axiosConfig = axios.create({
 
 // Multipart config
 const axiosConfigMultipart = axios.create({
-    baseURL: "https://projectledg.azurewebsites.net/api",
+    baseURL: "https://localhost:7223/api",
     withCredentials: true,
 });
 

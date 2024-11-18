@@ -25,7 +25,8 @@ import AdminDashboardLayout from './pages/Admin/AdminDashboards/AdminDashboardLa
 import ProtectedRoute from './pages/Admin/ProtectedRouteComp/ProtectedRoute';
 import AdminTickets from './pages/Admin/AdminDashboards/AdminTickets'
 import AdminSettingsPage from './pages/Admin/AdminDashboards/AdminSettingsPage'
-import UserManagementPage from './pages/Admin/AdminDashboards/UserManagementPage'
+import UserManagementPage from './pages/Admin/AdminDashboards/Admin Manager/UserManagementPage'
+import TwoFactorAuth from './pages/Admin/AdminDashboards/TwoFactorAuth'
 import { ThemeProvider } from './components/ThemeProvider';
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
                         <Route path="settings" element={<AdminSettingsPage />} />
                         <Route path="tickets" element={<AdminTickets />} />
                         <Route path="user-management" element={<UserManagementPage />} />
+                        <Route path="2fa" element={<TwoFactorAuth />} />
                         </Route>
                 </Routes>
             </Router>

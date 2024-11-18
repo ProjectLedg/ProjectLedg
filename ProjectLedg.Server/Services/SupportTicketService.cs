@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectLedg.Options.Email.IEmail;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
@@ -10,10 +11,12 @@ namespace ProjectLedg.Server.Services
     public class SupportTicketService : ISupportTicketService
     {
         private readonly ISupportTicketRepository _supportTicketRepository;
+        private readonly IEmailSender _emailSender;
 
-        public SupportTicketService(ISupportTicketRepository supportTicketRepository)
+        public SupportTicketService(ISupportTicketRepository supportTicketRepository, IEmailSender emailSender)
         {
             _supportTicketRepository = supportTicketRepository;
+            _emailSender = emailSender;
         }
 
         public async Task<SupportTicket> CreateTicketAsync(SupportTicket ticket, int companyId)
@@ -84,6 +87,52 @@ namespace ProjectLedg.Server.Services
         public async Task<Dictionary<string, int>> GetTicketsCountByPriorityAsync(string status)
         {
             return await _supportTicketRepository.GetTicketsCountByPriorityAsync(status);
+        }
+
+        public async Task<SupportTicket> GetPrioritizedRandomTicketAsync()
+        {
+            var openTickets = (await _supportTicketRepository.GetAllTicketsAsync())
+                .Where(t => t.Status == "Open")
+                .OrderByDescending(t => t.Priority)
+                .ToList();
+
+            return openTickets.FirstOrDefault();
+        }
+
+        public async Task RespondToTicketAsync(int ticketId, string message)
+        {
+            var ticket = await _supportTicketRepository.GetTicketByIdAsync(ticketId);
+            if (ticket == null) throw new ArgumentException("Ticket not found.");
+
+            // Ensure the user exists and has an email address
+            if (ticket.User == null || string.IsNullOrEmpty(ticket.User.Email))
+                throw new Exception("Ticket does not have an associated user with a valid email address.");
+
+            // Compose the email
+            string subject = $"[{ticket.TicketId}] - {ticket.Subject}";
+            string htmlMessage = $"<p>Hej,</p><p>{message}</p><p>Vänliga hälsningar,</p><p>Teamet bakom Ledge</p>";
+
+            // Send the email
+            var emailResult = await _emailSender.SendEmailAsync(ticket.User.Email, subject, htmlMessage);
+            if (!emailResult.Success)
+            {
+                throw new Exception($"Failed to send email: {emailResult.ErrorMessage}");
+            }
+
+            // Update the ticket status
+            ticket.Status = "In Progress";
+            ticket.UpdatedAt = DateTime.UtcNow;
+            await _supportTicketRepository.UpdateTicketAsync(ticket);
+        }
+
+        public async Task CloseTicketAsync(int ticketId)
+        {
+            var ticket = await _supportTicketRepository.GetTicketByIdAsync(ticketId);
+            if (ticket == null) throw new ArgumentException("Ticket not found.");
+
+            ticket.Status = "Closed";
+            ticket.UpdatedAt = DateTime.UtcNow;
+            await _supportTicketRepository.UpdateTicketAsync(ticket);
         }
     }
 }

@@ -9,6 +9,7 @@ using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Options.Email.IEmail;
 using ProjectLedg.Server.Model.DTOs.User;
 using ProjectLedg.Server.Services;
+using ProjectLedg.Server.Data.Models.DTOs.User;
 
 namespace ProjectLedg.Server.Services
 {
@@ -17,33 +18,44 @@ namespace ProjectLedg.Server.Services
         private readonly IUserRepository _userRepository;
         private readonly AuthenticationService _authService;
         private readonly IEmailSender _emailSender;
+        private readonly UserManager<User> _userManager;
 
-        public UserService(IUserRepository userRepository, IEmailSender emailSender, AuthenticationService authService)
+        public UserService(IUserRepository userRepository, IEmailSender emailSender, AuthenticationService authService, UserManager<User> userManager)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
             _authService = authService;
+            _userManager = userManager;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
-            try
-            {
-                var listOfUsers = await _userRepository.GetAllUsersAsync();
+            var users = await _userRepository.GetAllUsersAsync();
 
-                return listOfUsers.Select(a => new User
-                {
-                    Id = a.Id,
-                    Email = a.Email,
-                    FirstName = a.FirstName,
-                    LastName = a.LastName,
-                }).ToList();
-            }
-            catch (Exception ex)
+            var userDTOs = new List<UserDTO>();
+            foreach (var user in users)
             {
-                throw new Exception($"{ex.Message}");
+                var roles = await _userManager.GetRolesAsync(user);
+                var filteredRoles = roles.Where(role => role == "User").ToList(); // Filter only "User" roles
+
+                userDTOs.Add(new UserDTO
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    EmailConfirmed = user.EmailConfirmed,
+                    LastLoginDate = user.LastLoginDate,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    TwoFactorEnabled = user.TwoFactorEnabled,
+                    Roles = filteredRoles // Include filtered roles
+                });
             }
+
+            return userDTOs;
         }
+
+
 
         public async Task<User> GetUserByIdAsync(string id)
         {
