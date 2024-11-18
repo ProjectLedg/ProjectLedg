@@ -221,10 +221,10 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
 
                                 <div className="flex flex-col col-span-3 justify-between space-y-2">
                                     <p className="font-bold text-lg text-gray-600 mb-1">{invoice.VendorAddressRecipient}</p>
-                                    <p className=" text-gray-600 ">Belopp</p>
-                                    <p className="font-light text-gray-500">Var av moms</p>
-                                    <p className=" text-gray-600">Fakturadatum</p>
-                                    <p className=" text-gray-600">Förfallodatum</p>
+                                    <p className="text-gray-600 ">Belopp</p>
+                                    <p className="text-gray-500 font-light">Var av moms</p>
+                                    <p className="text-gray-600">Fakturadatum</p>
+                                    <p className="text-gray-600">Förfallodatum</p>
                                 </div>
                                 <div className="flex flex-col items-end space-y-2">
                                     <p className="font-bold text-lg text-gray-600 mb-1">{invoice.InvoiceId}</p>
