@@ -155,31 +155,31 @@ export function AnnualReportPreview() {
         <div className="p-8 space-y-20">
          
          <div className='space-y-15'>
-         <Skeleton className="h-8 w-1/5 rounded-lg" /> {/* Titel */}
-         <Skeleton className="h-5 w-2/5 rounded-lg mt-5" /> {/* Underrubrik */}
+         <Skeleton className="h-8 w-1/5 rounded-lg dark:bg-darkSecondary" /> {/* Titel */}
+         <Skeleton className="h-5 w-2/5 rounded-lg mt-5 dark:bg-darkSecondary" /> {/* Underrubrik */}
          </div>
          
          <div className="space-x-4 flex flex-row">
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
         </div>
 
         <div className="space-x-4 flex flex-row">
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
         </div>
 
         <div className="space-x-4 flex flex-row">
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
         </div>
         <div className="space-x-4 flex flex-row">
-                <Skeleton className="h-8 w-1/2 rounded-lg" />
+                <Skeleton className="h-8 w-1/2 rounded-lg dark:bg-darkSecondary" />
                 
         </div>
 
         <div className="space-y-5 flex flex-row">
-                <Skeleton className="h-8 w-full rounded-lg" />
+                <Skeleton className="h-8 w-full rounded-lg dark:bg-darkSecondary" />
                 
         </div>
         
@@ -238,9 +238,9 @@ export function AnnualReportPreview() {
           <CardContent>
             <ScrollArea className="h-[600px] pr-4">
               <Tabs defaultValue="company" className="w-full">
-                <TabsList className="mb-4">
+                <TabsList className="mb-4 dark:bg-darkBackground">
                   <TabsTrigger value="company">Företag</TabsTrigger>
-                  <TabsTrigger value="resultDisposition">Resultat disposition</TabsTrigger>
+                  <TabsTrigger value="resultDisposition">Resultatdisposition</TabsTrigger>
                   <TabsTrigger value="financials">Balansrapport & Resultaträkning</TabsTrigger>
                   <TabsTrigger value="equityAndLiabilities">Eget kapital & Skulder</TabsTrigger>
                 </TabsList>

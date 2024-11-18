@@ -140,18 +140,18 @@ export default function InvoiceLogger() {
             Fakturor
           </CardTitle>
           <div className="flex gap-2">
-            <Skeleton className="h-12 w-56 rounded-md" />
+            <Skeleton className="h-12 w-56 rounded-md dark:bg-darkSecondary" />
           </div>
 
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 mt-8 ">
-          <Skeleton className="h-12 w-[90%] rounded-md" />
-          <Skeleton className="h-12 w-[70%] rounded-md" />
-          <Skeleton className="h-12 w-[88%] rounded-md" />
-          <Skeleton className="h-12 w-[66%] rounded-md" />
-          <Skeleton className="h-12 w-[75%] rounded-md" />
-          <Skeleton className="h-12 w-[82%] rounded-md" />
-          <Skeleton className="h-12 w-[68%] rounded-md" />
+          <Skeleton className="h-12 w-[90%] rounded-md dark:bg-darkSecondary" />
+          <Skeleton className="h-12 w-[70%] rounded-md dark:bg-darkSecondary" />
+          <Skeleton className="h-12 w-[88%] rounded-md dark:bg-darkSecondary" />
+          <Skeleton className="h-12 w-[66%] rounded-md dark:bg-darkSecondary" />
+          <Skeleton className="h-12 w-[75%] rounded-md dark:bg-darkSecondary" />
+          <Skeleton className="h-12 w-[82%] rounded-md dark:bg-darkSecondary" />
+          <Skeleton className="h-12 w-[68%] rounded-md dark:bg-darkSecondary" />
         </CardContent>
       </Card>
     )

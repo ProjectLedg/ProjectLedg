@@ -64,8 +64,8 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         relative overflow-hidden transition-all duration-300 ease-in-out
         px-4 py-2 font-medium text-sm rounded-full dark:bg-transparent dark:text-white
         ${isChatOpen
-            ? 'bg-green-500 text-white border-green-500 dark:bg-green-500'
-            : 'bg-transparent text-gray-700 border-none hover:bg-green-50 dark:hover:bg-gray-600'}
+            ? 'bg-green-500 text-white border-green-500 dark:bg-darkSurface dark:border-none'
+            : 'bg-transparent text-gray-700 border-none hover:bg-green-50 dark:hover:bg-darkSurface'}
         `}
       >
         <SquarePen className="h-5 w-5 mr-2 inline-block" />
@@ -78,37 +78,39 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
             variant="ghost"
             size="icon"
             className={`
-        relative transition-all duration-300 ease-in-out
-        ${isNotificationsOpen ? 'bg-white' : 'bg-transparent'}
+        relative transition-all duration-300 ease-in-out dark:hover:bg-darkSurface
+        ${isNotificationsOpen ? 'bg-white dark:bg-darkSurface' : 'bg-transparent'}
       `}
             onClick={() => setIsNotificationsOpen(true)}
           >
             <Bell className="h-5 w-5" />
             <span className="sr-only">Visa notiser</span>
             {newNotificationsCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[0.5rem] font-bold">
+              <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[0.5rem] font-bold ">
                 {newNotificationsCount}
               </span>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80" align="end" alignOffset={-40}>
-          <div className="grid gap-4">
+        <PopoverContent className="w-80 dark:bg-darkBackground dark:border-darkBorder" align="end" alignOffset={-40}>
+          <div className="grid gap-4 ">
             <h3 className="font-medium leading-none">Notiser</h3>
             <div className="grid gap-2">
+
               {loading ? (
                 <p>Laddar notiser...</p>
               ) : notifications.length === 0 ? (
                 <p>Inga nya notiser.</p>
               ) : (
                 notifications.map((notification) => (
-                  <div key={notification.id} className="flex items-start gap-4 p-2 hover:bg-gray-100">
+                  <div key={notification.id} className="flex items-start gap-4 p-2 hover:bg-gray-100 hover:dark:bg-darkSurface ">
                     <Bell className={`mt-1 h-5 w-5 ${notification.isNew ? 'text-blue-500' : 'text-gray-500'}`} />
                     <div className="grid gap-1">
                       <p className="text-m font-medium leading-none">{notification.message}</p>
                       <p className="text-sm text-gray-500 leading-none mt-1">{notification.contentmessage}</p>
                       <p className="text-sm text-gray-500">{notification.time}</p>
                     </div>
+
                   </div>
                 ))
               )}
