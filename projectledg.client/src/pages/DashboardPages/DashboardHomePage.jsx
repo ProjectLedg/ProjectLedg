@@ -109,18 +109,19 @@ const DashboardHomePage = () => {
           year: currentYear
         };
 
-        const axiosConfig = axios.create({
-          baseURL: 'https://projectledg.azurewebsites.net/api/',
-          headers: {
-            'Content-Type': 'application/json',
-            // Include additional headers if needed
-          },
-          withCredentials: false, // Ensure this is false unless you specifically need credentials
-        });
+        // Unecessary as this is why we use axios config //Adrian
+        // const axiosConfig = axios.create({
+        //   baseURL: 'https://localhost:7223/api',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     // Include additional headers if needed
+        //   },
+        //   withCredentials: false, // Ensure this is false unless you specifically need credentials
+        // });
 
         const [topGraphsResponse, filterGraphsResponse] = await Promise.all([
-          axiosConfig.post('Finance/dashboardtopgraphs', payload),
-          axiosConfig.post('Finance/dashboardbottomgraphs', payload)
+          axiosConfig.post('/Finance/dashboardtopgraphs', payload),
+          axiosConfig.post('/Finance/dashboardbottomgraphs', payload)
         ]);
 
         setTopGraphsData(topGraphsResponse.data);
