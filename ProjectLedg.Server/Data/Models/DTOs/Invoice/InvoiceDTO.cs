@@ -12,6 +12,7 @@
         public bool IsPaid { get; set; }
         public bool IsOutgoing { get; set; }
         public bool IsBooked { get; set; }
+        public string InvoiceFilePath { get; set; }
 
         //Customer Information
         public string CustomerId { get; set; }
