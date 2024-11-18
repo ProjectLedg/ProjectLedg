@@ -267,7 +267,7 @@ const HelpPage = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base"
+                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 dark:text-white text-sm sm:text-base"
               >
                 Skicka supportärende
               </Button>
