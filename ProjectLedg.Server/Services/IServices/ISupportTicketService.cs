@@ -10,6 +10,9 @@ namespace ProjectLedg.Server.Services.IServices
         Task<IEnumerable<SupportTicket>> GetAllTicketsAsync();
         Task<SupportTicket> GetTicketByIdAsync(int ticketId);
         Task UpdateTicketStatusAsync(int ticketId, string status);
+        Task<SupportTicket> GetPrioritizedRandomTicketAsync();
+        Task RespondToTicketAsync(int ticketId, string message);
+        Task CloseTicketAsync(int ticketId);
 
         //Statistics
         Task<int> GetOpenTicketsCountAsync();

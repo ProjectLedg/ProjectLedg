@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { axiosConfig } from '/axiosconfig'
 import { Button } from "@/components/ui/button"
 import { SquarePen, Bell } from "lucide-react"
 import {
@@ -7,15 +8,51 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-// Mock notifications data
-const notifications = [
-  { id: 1, message: "New message from John", time: "5 min ago", isNew: true },
-  { id: 2, message: "Your report is ready", time: "1 hour ago", isNew: true },
-  { id: 3, message: "Meeting scheduled for tomorrow", time: "3 hours ago", isNew: false },
-]
-
 export default function NavbarButtons({ isChatOpen, toggleChat }) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [notifications, setNotifications] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  // Hämta notiser från API vid komponentens mount
+ 
+    const fetchNotifications = async () => {
+      try {
+        const response = await axiosConfig.get('/User/notices/1') // Ändra URL till ditt API
+        const fetchedNotifications = response.data.map(notification => ({
+          id: notification.id,
+          message: notification.title,
+          contentmessage: notification.content,
+          time: new Date(notification.createdAt).toLocaleString('sv-SE', {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          
+          isNew: !notification.isRead,
+        }))
+        setNotifications(fetchedNotifications)
+      } catch (error) {
+        console.error('Kunde inte hämta notiser:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    useEffect(() => {
+      fetchNotifications() // Hämta direkt vid mount
+  
+      const interval = setInterval(() => {
+        fetchNotifications() // Hämta notiser var 1 minut
+      }, 60000) // 60000ms = 1 minut
+  
+      return () => clearInterval(interval) // Rensa intervallet när komponenten unmountas
+    }, [])
+
+
+    fetchNotifications()
+
+
   const newNotificationsCount = notifications.filter(n => n.isNew).length
 
   return (
@@ -59,20 +96,28 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
           <div className="grid gap-4 ">
             <h3 className="font-medium leading-none">Notiser</h3>
             <div className="grid gap-2">
-              {notifications.map((notification) => (
-                <div key={notification.id} className="flex items-start gap-4 p-2 hover:bg-gray-100 hover:dark:bg-darkSurface cursor-pointer">
-                  <Bell className={`mt-1 h-5 w-5 ${notification.isNew ? 'text-blue-500' : 'text-gray-500'}`} />
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">{notification.message}</p>
-                    <p className="text-sm text-gray-500">{notification.time}</p>
+
+              {loading ? (
+                <p>Laddar notiser...</p>
+              ) : notifications.length === 0 ? (
+                <p>Inga nya notiser.</p>
+              ) : (
+                notifications.map((notification) => (
+                  <div key={notification.id} className="flex items-start gap-4 p-2 hover:bg-gray-100 hover:dark:bg-darkSurface ">
+                    <Bell className={`mt-1 h-5 w-5 ${notification.isNew ? 'text-blue-500' : 'text-gray-500'}`} />
+                    <div className="grid gap-1">
+                      <p className="text-m font-medium leading-none">{notification.message}</p>
+                      <p className="text-sm text-gray-500 leading-none mt-1">{notification.contentmessage}</p>
+                      <p className="text-sm text-gray-500">{notification.time}</p>
+                    </div>
+
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </PopoverContent>
       </Popover>
-
     </div>
   )
 }

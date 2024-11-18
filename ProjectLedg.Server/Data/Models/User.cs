@@ -15,5 +15,6 @@ namespace ProjectLedg.Server.Data.Models
         public DateTime? LastLoginDate { get; set; }
 
         public virtual ICollection <Company>? Companies { get; set; }
+        public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
     }
 }

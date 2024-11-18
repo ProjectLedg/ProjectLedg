@@ -66,6 +66,10 @@ namespace ProjectLedg.Server.Data
                 .HasForeignKey(t => t.BasAccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<SupportTicket>()
+               .HasOne(t => t.User)
+               .WithMany(u => u.SupportTickets) // Adjust this depending on your User model
+               .HasForeignKey(t => t.UserId);
 
 
 

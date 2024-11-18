@@ -30,7 +30,7 @@ namespace ProjectLedg.Server.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
-            return Ok(users.Select(a => new { a.Id, a.Email }));
+            return Ok(users.Select(a => new { a.Id, a.Email, a.EmailConfirmed, a.LastLoginDate, a.FirstName, a.LastName, a.TwoFactorEnabled, a.Roles }));
         }
 
         // GET: api/User/{id}
