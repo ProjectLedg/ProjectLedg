@@ -163,7 +163,7 @@ namespace ProjectLedg.Server
                         .WithExposedHeaders("Authorization", "Role");
                 });
             });
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Learn more about configuring Swagger/OpenAPI At https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
