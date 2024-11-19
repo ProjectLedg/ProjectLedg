@@ -213,21 +213,7 @@ const Sidebar = ({ isChatOpen }) => (
         <div className={`h-full ${isChatOpen ? 'flex flex-col h-[30vh]' : ''}`}>
 
           <UserDropdown
-            user={{
-              name: "John Doe",
-              email: "john@example.com",
-              avatarUrl: "https://example.com/avatar.jpg"
-            }}
-            companies={[
-              { id: "1", name: "Company A" },
-              { id: "2", name: "Company B" },
-              { id: "3", name: "Company C" }
-            ]}
-            currentCompany={{ id: "1", name: "Company A" }}
-            onCompanyChange={(company) => {
-              // Handle company change here
-              console.log("Switched to:", company.name);
-            }}
+            
             isChatOpen={isChatOpen}
             isNavOpen={true}
           />
@@ -271,21 +257,7 @@ const MobileNav = ({ navItems }) => {
           <div className="flex-grow ">
 
             <UserDropdown
-              user={{
-                name: "John Doe",
-                email: "john@example.com",
-                avatarUrl: "https://example.com/avatar.jpg"
-              }}
-              companies={[
-                { id: "1", name: "Company A" },
-                { id: "2", name: "Company B" },
-                { id: "3", name: "Company C" }
-              ]}
-              currentCompany={{ id: "1", name: "Company A" }}
-              onCompanyChange={(company) => {
-                // Handle company change here
-                console.log("Switched to:", company.name);
-              }}
+              
               isNavOpen={isOpen}
             />
 
