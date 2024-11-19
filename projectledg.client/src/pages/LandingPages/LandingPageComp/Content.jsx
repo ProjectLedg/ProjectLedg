@@ -22,7 +22,7 @@ export default function Content() {
         <Button className="w-32" onClick={handleNavigate}>
           Läs mer
         </Button>
-        <button 
+        <button
           className="group relative inline-flex items-center justify-center overflow-hidden w-32 text-sm font-medium text-slate-800 transition-colors duration-700 ease-out hover:text-green-500 focus:outline-none focus:ring active:bg-green-800 active:text-white rounded-full"
           onClick={() => navigate("/signup")}
         >
@@ -36,7 +36,7 @@ export default function Content() {
       </div>
 
       <div className="my-24">
-        <img className="border-2 rounded-md drop-shadow-md" src="src\assets\dashboard placeholder.png" alt="Image of dashboard" />
+        <img className="border-2 rounded-md drop-shadow-md" src="src\assets\LoadingPageDashboardPlaceholder.jpg" alt="Image of dashboard" />
       </div>
     </div>
   );
