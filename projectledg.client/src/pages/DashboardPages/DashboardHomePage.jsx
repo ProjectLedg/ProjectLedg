@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
-import {axiosConfig} from '/axiosconfig';
+import { axiosConfig } from '/axiosconfig'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from '@/components/ui/progress'
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
