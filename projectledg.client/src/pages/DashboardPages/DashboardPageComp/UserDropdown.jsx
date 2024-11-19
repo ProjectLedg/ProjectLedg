@@ -38,8 +38,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
             const userDataresponse = await axiosConfig.get('/User/getUser')
             const companyDataresponse = await axiosConfig.get('/Company/getUserCompanies')
             // Log responses for debugging
-            console.log('User Data Response:', userDataresponse.data);
-            console.log('Company Data Response:', companyDataresponse.data);
+            
             
             
             const fetchedCompanyData = companyDataresponse.data.map(company => ({

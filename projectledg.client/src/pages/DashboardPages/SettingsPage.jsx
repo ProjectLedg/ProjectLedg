@@ -4,6 +4,7 @@ import ThemeToggle from "@/services/ThemeToggle"; // Importera ThemeToggle
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { axiosConfig } from '/axiosconfig'
 import {
   Select,
   SelectContent,
@@ -16,31 +17,39 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function SettingsPage() {
   const [currentPlan, setCurrentPlan] = useState("free");
+  const [formData, setFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [message, setMessage] = useState(null);
 
-  const handlePasswordChange = (e) => {
-    e.preventDefault();
-    console.log("Password change requested");
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({ ...prevState, [id]: value }));
   };
 
-  const handleEmailChange = (e) => {
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
-    console.log("Email change requested");
+    try {
+      const response = await axiosConfig.post("/User/ChangePassword", formData);
+      setMessage({ type: "success", text: "Password changed successfully!" });
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: error.response?.data?.message || "An error occurred. Please try again.",
+      });
+    }
   };
+
+ 
 
   const handlePlanChange = (plan) => {
     setCurrentPlan(plan);
     console.log("Plan changed to:", plan);
   };
 
-  const handleAddCompany = (e) => {
-    e.preventDefault();
-    console.log("New company addition requested");
-  };
-
-  const handleAddUser = (e) => {
-    e.preventDefault();
-    console.log("New user addition requested");
-  };
+  
 
   return (
     <div className="space-y-4 p-4">
@@ -50,36 +59,71 @@ export default function SettingsPage() {
       <ScrollArea className="flex-grow">
         <div className="max-w mx-auto space-y-6">
           {/* Card for Change Password */}
-          <Card >
+          <Card>
             <CardHeader>
               <CardTitle className="text-green-500 dark:text-white">Byt lösenord</CardTitle>
-              <CardDescription className="dark:text-darkSecondary">Uppdatera ditt lösenord för att hålla ditt konto säkert</CardDescription>
+              <CardDescription className="dark:text-darkSecondary">
+                Uppdatera ditt lösenord för att hålla ditt konto säkert
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordChange} className="space-y-4">
                 <div>
-                  <Label htmlFor="current-password">Nuvarande lösenord</Label>
-                  <Input className="max-w-sm" id="current-password" type="password" required />
-                  
+                  <Label htmlFor="currentPassword">Nuvarande lösenord</Label>
+                  <Input
+                    className="max-w-sm"
+                    id="currentPassword"
+                    type="text"
+                    value={formData.currentPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="new-password">Nytt lösenord</Label>
-                  <Input className="max-w-sm" id="new-password" type="password" required />
+                  <Label htmlFor="newPassword">Nytt lösenord</Label>
+                  <Input
+                    className="max-w-sm"
+                    id="newPassword"
+                    type="text"
+                    value={formData.newPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="confirm-password">Bekräfta nytt lösenord</Label>
-                  <Input className="max-w-sm" id="confirm-password" type="password" required />
+                  <Label htmlFor="confirmPassword">Bekräfta nytt lösenord</Label>
+                  <Input
+                    className="max-w-sm"
+                    id="confirmPassword"
+                    type="text"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
-                <Button type="submit" className="bg-green-500 hover:bg-green-600 dark:text-white">Byt Lösenord</Button>
+                <Button type="submit" className="bg-green-500 hover:bg-green-600 dark:text-white">
+                  Byt Lösenord
+                </Button>
               </form>
+              {message && (
+                <div
+                  className={`mt-4 text-sm ${
+                    message.type === "success" ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Appearance Settings Card */}
-          <Card >
+          <Card>
             <CardHeader>
               <CardTitle className="text-green-500 dark:text-white">Utseende</CardTitle>
-              <CardDescription className="dark:text-darkSecondary">Anpassa utseendet och känslan för ditt gränssnitt</CardDescription>
+              <CardDescription className="dark:text-darkSecondary">
+                Anpassa utseendet och känslan för ditt gränssnitt
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
@@ -92,10 +136,12 @@ export default function SettingsPage() {
           </Card>
 
           {/* Billing Plan Card */}
-          <Card >
+          <Card>
             <CardHeader>
               <CardTitle className="text-green-500 dark:text-white">Betalningsplan</CardTitle>
-              <CardDescription className="dark:text-darkSecondary">Hantera dina prenumerationer och faktureringsinställningar</CardDescription>
+              <CardDescription className="dark:text-darkSecondary">
+                Hantera dina prenumerationer och faktureringsinställningar
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={currentPlan} onValueChange={handlePlanChange}>
