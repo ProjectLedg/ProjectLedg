@@ -94,7 +94,46 @@ const Problems = () => {
 
 
   useEffect(() => {
+    const getRandomTextAndColor = () => ({
+      text: texts[Math.floor(Math.random() * texts.length)],
+      color: colors[Math.floor(Math.random() * colors.length)],
+    });
 
+    // Initialize all grid items with random text and color
+    setText1(getRandomTextAndColor().text);
+    setColor1(getRandomTextAndColor().color);
+    setText2(getRandomTextAndColor().text);
+    setColor2(getRandomTextAndColor().color);
+    setText3(getRandomTextAndColor().text);
+    setColor3(getRandomTextAndColor().color);
+    setText4(getRandomTextAndColor().text);
+    setColor4(getRandomTextAndColor().color);
+    setText5(getRandomTextAndColor().text);
+    setColor5(getRandomTextAndColor().color);
+    setText6(getRandomTextAndColor().text);
+    setColor6(getRandomTextAndColor().color);
+    setText7(getRandomTextAndColor().text);
+    setColor7(getRandomTextAndColor().color);
+    setText8(getRandomTextAndColor().text);
+    setColor8(getRandomTextAndColor().color);
+    setText9(getRandomTextAndColor().text);
+    setColor9(getRandomTextAndColor().color);
+    setText10(getRandomTextAndColor().text);
+    setColor10(getRandomTextAndColor().color);
+    setText11(getRandomTextAndColor().text);
+    setColor11(getRandomTextAndColor().color);
+    setText12(getRandomTextAndColor().text);
+    setColor12(getRandomTextAndColor().color);
+    setText13(getRandomTextAndColor().text);
+    setColor13(getRandomTextAndColor().color);
+    setText14(getRandomTextAndColor().text);
+    setColor14(getRandomTextAndColor().color);
+    setText15(getRandomTextAndColor().text);
+    setColor15(getRandomTextAndColor().color);
+    setText16(getRandomTextAndColor().text);
+    setColor16(getRandomTextAndColor().color);
+
+    // Set up intervals for updating grid items
     const updateTextAndColor = (setText, setColor) => {
       setText("");
       setColor("bg-transparent");
@@ -102,7 +141,6 @@ const Problems = () => {
       setTimeout(() => {
         setText(texts[Math.floor(Math.random() * texts.length)]);
         setColor(colors[Math.floor(Math.random() * colors.length)]);
-        
       }, 1000);
     };
 
@@ -111,7 +149,7 @@ const Problems = () => {
 
     const offsets = [
       410.2, 1204.1, 2413.5, 1802.9, 907.1, 1526.2, 2989.6, 1707.1,
-      601.4, 1402.3, 150.8, 1611.4, 2002.3, 1105.6, 2702.3, 802.23
+      601.4, 1402.3, 150.8, 1611.4, 2002.3, 1105.6, 2702.3, 802.23,
     ];
 
     intervals.push(setInterval(() => updateTextAndColor(setText1, setColor1), baseDuration + offsets[0]));
@@ -133,6 +171,7 @@ const Problems = () => {
 
     return () => intervals.forEach(clearInterval);
   }, []);
+
 
   return (
     <div className="relative w-full overflow-hidden bg-white">
