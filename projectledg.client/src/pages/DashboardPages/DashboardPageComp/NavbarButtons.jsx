@@ -17,7 +17,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
  
     const fetchNotifications = async () => {
       try {
-        const response = await axiosConfig.get('/User/notices/1') // Ändra URL till ditt API
+        const response = await axiosConfig.get('/User/notices') 
         const fetchedNotifications = response.data.map(notification => ({
           id: notification.id,
           message: notification.title,

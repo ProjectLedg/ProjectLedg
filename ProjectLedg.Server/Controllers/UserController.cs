@@ -5,6 +5,7 @@ using ProjectLedg.Server.Services.IServices;
 using ProjectLedg.Server.Model.DTOs.User;
 using ProjectLedg.Server.Options.Notice;
 using ProjectLedg.Server.Services;
+using System.Security.Claims;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -172,9 +173,21 @@ namespace ProjectLedg.Server.Controllers
             return Ok(new { Message = "Notice sent successfully" });
         }
 
-        [HttpGet("notices/{userId}")]
-        public async Task<IActionResult> GetUserNotices(string userId)
+        [HttpGet("notices")]
+        public async Task<IActionResult> GetUserNotices()
         {
+            ClaimsPrincipal claimsUser = User;
+            if (claimsUser == null)
+            {
+                return NotFound();
+            }
+            string userId = claimsUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(); // User ID not found in claims
+            }
+
             var notices = await _noticeService.GetUserNoticesAsync(userId);
             return Ok(notices);
         }
