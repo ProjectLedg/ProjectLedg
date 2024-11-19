@@ -21,7 +21,7 @@ const attachJwtAndRoleInterceptor = (instance) => {
     instance.interceptors.request.use(
         (config) => {
             const jwtToken = Cookie.get("JWTTolkien");
-            console.log(jwtToken)
+
             const userRole = Cookie.get("UserRole");
 
             if (jwtToken) {

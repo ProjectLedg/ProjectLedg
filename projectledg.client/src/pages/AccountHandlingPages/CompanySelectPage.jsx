@@ -2,9 +2,10 @@ import { useRef, useEffect, useState } from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard from './CompanySelectPageComponents/CompanyCard'
 import { useNavigate } from 'react-router-dom'
-import {axiosConfig} from '/axiosconfig'
+import { axiosConfig } from '/axiosconfig'
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+
 
 
 export default function CompanySelectPage() {
@@ -141,6 +142,7 @@ export default function CompanySelectPage() {
         setProgress(0);
         await new Promise(resolve => setTimeout(resolve, 500));
         setProgress(20);
+
         
         const response = await axiosConfig.get("/Company/getUserCompanies");
         // console.log(response.data)
@@ -153,9 +155,10 @@ export default function CompanySelectPage() {
         setCompanies(companiesData);
         // setCompanies(testCompanies) // TEST DEBUG
 
+        // If user has no companies route them to company create as they need to create one
         if (companiesData.length === 0) {
           navigate(`/company-create`)
-          // If user has exactly 1 company route them to the dashboard directly as there's no selections to choose anyway
+        // If user has exactly 1 company route them to the dashboard directly as there's no selections to choose anyway
         } else if (companiesData.length === 1) {
           navigate(`/dashboard/${companiesData[0].id}`)
         }
@@ -167,7 +170,7 @@ export default function CompanySelectPage() {
       } finally {
         setIsLoading(false);
       }
-    };  
+    };
     getUserCompanies();
 
     // if (container) {
@@ -203,18 +206,19 @@ export default function CompanySelectPage() {
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
     const walk = (x - startX) * 2;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk; 
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   }
 
   const handleCompanySelect = (company) => {
-    console.log(company)
-    navigate(`/dashboard/${company.companyId}`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    // console.log(company)
+    navigate(`/dashboard/${company.companyId}`)
   }
 
-  const handleCompanyAdd = () => {    
+  const handleCompanyAdd = () => {
     navigate('/company-create');
   }
 
+  // Display when loading
   if (isLoading) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm z-50">
@@ -223,8 +227,8 @@ export default function CompanySelectPage() {
       </div>
     )
   }
- 
-  return ( 
+
+  return (
     <section className="bg-gradient-to-bl from-blue-700/40 to-gray-200 min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-xl p-8 shadow-lg max-w-5xl w-full">
         <h1 className="text-3xl font-bold text-center mb-2 text-green-500">{infoText.sectionTitle}</h1>
@@ -282,6 +286,7 @@ export default function CompanySelectPage() {
               <span className="text-green-700 font-medium">Lägg till nytt företag</span>
             </button>
           </div>
+          {/* Fade in the left and right side */}
           {showLeftArrow && (
             <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
           )}

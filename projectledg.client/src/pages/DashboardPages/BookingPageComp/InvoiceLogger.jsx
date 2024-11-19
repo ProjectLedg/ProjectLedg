@@ -18,6 +18,7 @@ import invoiceLoggerOutgoing from './invoiceLoggerOutgoing.json'
 import LoggerTable from './LoggerTable'
 import LoggerPagination from "./LoggerPagination"
 import { RotateCcw } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 
 
 export default function InvoiceLogger() {
@@ -31,6 +32,7 @@ export default function InvoiceLogger() {
   const [statusIngoing, setStatusIngoing] = useState("loading")
   const [statusOutgoing, setStatusOutgoing] = useState("loading")
   const [error, setError] = useState(null)
+  const [isFetchLoading, setIsFetchLoading] = useState(false)
   const { companyId } = useParams()
 
   // Pagination
@@ -39,7 +41,7 @@ export default function InvoiceLogger() {
   const [endItem, setEndItem] = useState(pagination)
   const [pageNumber, setPageNumber] = useState(1)
 
-  const totalInvoices = invoices.length; 
+  const totalInvoices = invoices.length;
   const totalPages = Math.ceil(invoices.length / pagination);
 
   // Button toggle
@@ -48,53 +50,6 @@ export default function InvoiceLogger() {
 
   useEffect(() => {
     setIsLoading(true)
-
-    async function getIngInvoices() {
-      try {
-        const ingoingInvoicesResponse = await axiosConfig.get(`/IngoingInvoice/all/Company/${companyId}`)
-        // console.log("INGOING RESPONSE: ", ingoingInvoicesResponse.data)
-
-        if (ingoingInvoicesResponse.status === 200) {
-          setIngoingInvoices(ingoingInvoicesResponse.data)
-          setStatusIngoing("success");
-
-          // Set default invoices to be displayed to ingoing
-          setInvoices(ingoingInvoicesResponse.data)
-        }
-      }
-      catch (error) {
-        // console.log("Something went wrong retrieving invoices", error)
-
-        if (error.response && error.response.status === 404) {
-          setStatusIngoing("empty");
-        }
-        else {
-          setStatusIngoing("error");
-        }
-      }
-    }
-
-    async function getOutInvoices() {
-      try {
-        const outgoingInvoicesResponse = await axiosConfig.get(`/OutgoingInvoice/all/Company/${companyId}`)
-        // console.log("OUTGOING RESPONSE: ", outgoingInvoicesResponse.data)
-
-        if (outgoingInvoicesResponse.status === 200) {
-          setOutgoingInvoices(outgoingInvoicesResponse.data)
-          setStatusOutgoing("success");
-        }
-      }
-      catch (error) {
-        // console.log("Something went wrong retrieving invoices", error)
-
-        if (error.response && error.response.status === 404) {
-          setStatusOutgoing("empty");
-        }
-        else {
-          setStatusOutgoing("error");
-        }
-      }
-    }
 
     getIngInvoices();
     getOutInvoices();
@@ -108,6 +63,62 @@ export default function InvoiceLogger() {
     // setIngoingInvoices(invoiceLogger.mockTestData)
     // setOutgoingInvoices(invoiceLoggerOutgoing.mockTestData)
   }, [])
+
+
+  async function getIngInvoices() {
+    try {
+      setIsFetchLoading(true)
+
+      const ingoingInvoicesResponse = await axiosConfig.get(`/IngoingInvoice/all/Company/${companyId}`)
+      // console.log("INGOING RESPONSE: ", ingoingInvoicesResponse.data)
+
+      if (ingoingInvoicesResponse.status === 200) {
+        setIngoingInvoices(ingoingInvoicesResponse.data)
+        setStatusIngoing("success");
+
+        // Set default invoices to be displayed to ingoing
+        setInvoices(ingoingInvoicesResponse.data)
+      }
+    }
+    catch (error) {
+      // console.log("Something went wrong retrieving invoices", error)
+
+      if (error.response && error.response.status === 404) {
+        setStatusIngoing("empty");
+      }
+      else {
+        setStatusIngoing("error");
+      }
+    }
+
+    setIsFetchLoading(false)
+  }
+
+  async function getOutInvoices() {
+    try {
+      setIsFetchLoading(true)
+
+      const outgoingInvoicesResponse = await axiosConfig.get(`/OutgoingInvoice/all/Company/${companyId}`)
+      // console.log("OUTGOING RESPONSE: ", outgoingInvoicesResponse.data)
+
+      if (outgoingInvoicesResponse.status === 200) {
+        setOutgoingInvoices(outgoingInvoicesResponse.data)
+        setStatusOutgoing("success");
+      }
+    }
+    catch (error) {
+      // console.log("Something went wrong retrieving invoices", error)
+
+      if (error.response && error.response.status === 404) {
+        setStatusOutgoing("empty");
+      }
+      else {
+        setStatusOutgoing("error");
+      }
+    }
+
+    setIsFetchLoading(false)
+  }
 
 
   const handleSetInvoicesOutgoing = () => {
@@ -182,7 +193,7 @@ export default function InvoiceLogger() {
             className="bg-green-500 hover:bg-green-600 space-x-1"
             onClick={getIngInvoices} //Attempt to re-fetch ingoing invoices
           >
-            <RotateCcw size={16} /> <span>Ladda om</span>
+            {isFetchLoading ? <Spinner size={"xsmall"} className="text-white"  /> : <RotateCcw size={16} />} <span>{isFetchLoading ? "Laddar..." : "Ladda om"}</span>
           </Button>
         </CardContent>
       )
@@ -205,7 +216,7 @@ export default function InvoiceLogger() {
             className="bg-green-500 hover:bg-green-600 space-x-1"
             onClick={getOutInvoices} //Attempt to re-fetch ougoing invoices
           >
-            <RotateCcw size={16} /> <span>Ladda om</span>
+            {isFetchLoading ? <Spinner /> : <RotateCcw size={16} />} <span>Ladda om</span>
           </Button>
         </CardContent>
       )
@@ -216,11 +227,11 @@ export default function InvoiceLogger() {
     try {
       const response = axiosConfig.post(`/IngoingInvoice/update/${selectedInvoice.id}`, selectedInvoice);
 
-      console.log(response)
+      // console.log(response)
 
       setIsModalOpen(false)
 
-    } catch(error) {
+    } catch (error) {
       console.log(error)
     }
   }
@@ -381,20 +392,20 @@ export default function InvoiceLogger() {
               {/* <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="text-sm font-medium text-gray-900 mb-2">Faktura </h3>
                 <p className="text-sm text-gray-500 mb-1">{selectedInvoice.vendorAddressRecipient}</p> */}
-                <Button
-                  variant="outline"
-                  size="sm"
+              <Button
+                variant="outline"
+                size="sm"
                 className="w-full dark:text-white dark:bg-darkBackground dark:border-darkBorder"
-                  onClick={() => {
-                    const link = document.createElement("a");
-                    link.href = selectedInvoice.invoiceFilePath; // The URL of the file
-                    link.download = selectedInvoice.invoiceFilePath.split('/').pop(); // Optional: Extract the filename from the URL
-                    link.click();
-                  }}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Ladda ner faktura
-                </Button>
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.href = selectedInvoice.invoiceFilePath; // The URL of the file
+                  link.download = selectedInvoice.invoiceFilePath.split('/').pop(); // Optional: Extract the filename from the URL
+                  link.click();
+                }}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Ladda ner faktura
+              </Button>
               {/* </div> */}
             </div>
           )}

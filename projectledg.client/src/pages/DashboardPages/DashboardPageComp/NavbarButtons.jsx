@@ -17,7 +17,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
  
     const fetchNotifications = async () => {
       try {
-        const response = await axiosConfig.get('/User/notices/1') // Ändra URL till ditt API
+        const response = await axiosConfig.get('/User/notices') 
         const fetchedNotifications = response.data.map(notification => ({
           id: notification.id,
           message: notification.title,
@@ -33,24 +33,25 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         }))
         setNotifications(fetchedNotifications)
       } catch (error) {
-        console.error('Kunde inte hämta notiser:', error)
+        // console.error('Kunde inte hämta notiser:', error)
       } finally {
         setLoading(false)
       }
     }
 
     useEffect(() => {
-      fetchNotifications() // Hämta direkt vid mount
-  
+      fetchNotifications(); // Fetch notifications immediately on mount
+    
       const interval = setInterval(() => {
-        fetchNotifications() // Hämta notiser var 1 minut
-      }, 60000) // 60000ms = 1 minut
-  
-      return () => clearInterval(interval) // Rensa intervallet när komponenten unmountas
-    }, [])
+        fetchNotifications(); // Fetch notifications every minute
+      }, 60000); // 60000ms = 1 minute
+    
+      return () => clearInterval(interval); // Clear the interval when the component unmounts
+    }, []); // No dependencies, so it runs only once
+    
 
 
-    fetchNotifications()
+    
 
 
   const newNotificationsCount = notifications.filter(n => n.isNew).length

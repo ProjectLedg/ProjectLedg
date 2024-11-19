@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { axiosConfig } from '/axiosConfig';
+import { axiosConfig } from '/axiosconfig';
 
 const TwoFactorAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
