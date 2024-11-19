@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
-import axios from 'axios';
+import {axiosConfig} from '/axiosconfig';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from '@/components/ui/progress'
 import { HelpCircle, Wallet, TrendingDown, TrendingUp } from 'lucide-react'
@@ -157,7 +157,7 @@ const DashboardHomePage = () => {
   }, [companyId]);
 
   if (isLoading) return <SkeletonLoader />;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <SkeletonLoader />;
   if (!topGraphsData || !filterGraphsData) return null;
 
   const { revenue, profit, expenses, runway } = topGraphsData;
