@@ -237,7 +237,6 @@ const Sidebar = ({ isChatOpen }) => (
 
 
 const MobileNav = ({ navItems }) => {
-
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => {
     setIsOpen(false);
@@ -318,10 +317,10 @@ export default function DashboardLayout() {
     setIsChatOpen(!isChatOpen);
   };
 
-
-  if (isLoading) {
-    return <div>Loading...</div>; // Or a more sophisticated loading component
-  }
+  // Is this needed? All content has loaders and nav doesn't need to load. Keeping for now if needed later
+  // if (isLoading) {
+  //   return <div>Loading...</div>; // Or a more sophisticated loading component
+  // }
 
   return (
     <div className="flex h-screen overflow-hidden shadow-lg">

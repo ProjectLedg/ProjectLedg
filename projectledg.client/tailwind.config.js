@@ -8,6 +8,12 @@ export default {
 	],
 	theme: {
     	extend: {
+			transitionTimingFunction: {
+				'fade-delay': 'cubic-bezier(0.7, 0, 0.2, 1)', // Custom fade easing
+			},
+			transitionDuration:{
+				'3000': '3000ms'
+			},
     		borderRadius: {
     			lg: 'var(--radius)',
     			md: 'calc(var(--radius) - 2px)',

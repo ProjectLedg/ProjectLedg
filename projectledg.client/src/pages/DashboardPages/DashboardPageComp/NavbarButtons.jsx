@@ -33,7 +33,7 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
         }))
         setNotifications(fetchedNotifications)
       } catch (error) {
-        console.error('Kunde inte hämta notiser:', error)
+        // console.error('Kunde inte hämta notiser:', error)
       } finally {
         setLoading(false)
       }

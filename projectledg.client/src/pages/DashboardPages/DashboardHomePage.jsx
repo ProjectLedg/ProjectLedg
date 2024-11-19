@@ -157,7 +157,7 @@ const DashboardHomePage = () => {
   }, [companyId]);
 
   if (isLoading) return <SkeletonLoader />;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <SkeletonLoader />;
   if (!topGraphsData || !filterGraphsData) return null;
 
   const { revenue, profit, expenses, runway } = topGraphsData;

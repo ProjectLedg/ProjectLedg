@@ -29,10 +29,10 @@ export default function Navbar() {
       className={`w-full flex justify-between py-3 px-10 sticky top-0 bg-white bg-opacity-20 backdrop-blur-lg 
       ${shadow ? "shadow-md transition-shadow duration-300 ease-in-out" : "transition-shadow duration-300 ease-in-out"} z-50`}
     >
-      <nav className="text-black flex items-center justify-between w-full">
-        {/* Logo Section */}
-        <div className="flex-shrink-0 w-1/4 flex justify-start">
+      <nav className="text-black flex justify-between items-center w-full">
 
+        {/* Logo Section */}
+        <div className="flex flex-shrink-0 w-1/4">
           <Link to="/" className="block w-8 h-8">
             <svg
               width="100%" height="100%" viewBox="0 0 150 150" fill="none"
@@ -40,36 +40,34 @@ export default function Navbar() {
               className="w-full h-full"
             >
               <g id="Group 1">
-                {/* Outer Rounded Rectangle */}
+    
                 <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
 
-                {/* Inner Squares with Separate Tailwind Colors */}
+             
                 <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
-                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
                 <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
                 <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
               </g>
             </svg>
           </Link>
-
         </div>
 
         {/* Navigation Items Section */}
-        <div className=" md:block rounded-full px-2 py-1 flex-grow flex justify-center">
-          <div className="flex justify-around text-black">
-            <NavItem to="/why" className="mx-2">Varför Ledge?</NavItem>
-            <NavItem to="/features" className="mx-2">Tjänster</NavItem>
-            <NavItem to="/pricing" className="mx-2">Priser</NavItem>
-            <NavItem to="/contact" className="mx-2">Kontakt</NavItem>
+        <div className="px-2 py-2 hidden sm:block">
+          <div className=" text-black flex">
+            <NavItem to="/why" className="mx-4">Varför Ledge?</NavItem>
+            <NavItem to="/features" className="mx-4">Tjänster</NavItem>
+            <NavItem to="/pricing" className="mx-4">Priser</NavItem>
+            <NavItem to="/contact" className="mx-4">Kontakt</NavItem>
           </div>
         </div>
 
         {/* Button Section */}
         <div className="flex items-center space-x-4 w-1/4 justify-end">
-          <div className="hidden md:block">
+          <div className="hidden sm:block">
             <NavItem to="/login" className="text-gray-400">Logga in</NavItem>
           </div>
-
           <Button
             variant="solid"
             className="hidden md:inline-flex text-white text-lg font-normal bg-zinc-800 hover:text-black hover:bg-green-500 transition-all duration-300 ease-in-out"
@@ -89,6 +87,7 @@ export default function Navbar() {
             <span className="sr-only">Open menu</span>
           </Button>
         </div>
+        
       </nav>
 
       {/* Mobile Dropdown Menu */}

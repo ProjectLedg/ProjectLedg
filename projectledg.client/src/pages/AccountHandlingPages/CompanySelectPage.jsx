@@ -2,21 +2,68 @@ import { useRef, useEffect, useState } from 'react'
 import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import CompanyCard from './CompanySelectPageComponents/CompanyCard'
 import { useNavigate } from 'react-router-dom'
-import {axiosConfig} from '/axiosconfig'
+import { axiosConfig } from '/axiosconfig'
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 
 
+
 export default function CompanySelectPage() {
-  const companyIcons = [
-    "src/assets/company-icons/balance.png",
-    "src/assets/company-icons/bank.png",
-    "src/assets/company-icons/box.png",
-    "src/assets/company-icons/briefcase.png",
-    "src/assets/company-icons/calculator.png",
-    "src/assets/company-icons/city.png",
-    "src/assets/company-icons/company.png"
-  ]
+
+  // Test data
+  // const companyIcons = [
+  //   "src/assets/company-icons/balance.png",
+  //   "src/assets/company-icons/bank.png",
+  //   "src/assets/company-icons/box.png",
+  //   "src/assets/company-icons/briefcase.png",
+  //   "src/assets/company-icons/calculator.png",
+  //   "src/assets/company-icons/city.png",
+  //   "src/assets/company-icons/company.png"
+  // ]
+
+  // const testCompanies = [
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   },
+  //   {
+  //     "id": 1,
+  //     "companyName": "Test Company",
+  //     "orgNumber": "1234567890"
+  //   }
+
+  // ]
 
   const infoText = {
     sectionTitle: "Välj företag",
@@ -25,7 +72,7 @@ export default function CompanySelectPage() {
 
   const scrollContainerRef = useRef(null);
   const [companies, setCompanies] = useState([]);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showLeftArrow, setShowLeftArrow] = useState(true);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -40,9 +87,11 @@ export default function CompanySelectPage() {
         setProgress(0);
         await new Promise(resolve => setTimeout(resolve, 500));
         setProgress(20);
+
         
         const response = await axiosConfig.get("/Company/getUserCompanies");
         console.log(response.data)
+
         setProgress(60);
 
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -50,9 +99,12 @@ export default function CompanySelectPage() {
 
         const companiesData = response.data;
         setCompanies(companiesData);
+        // setCompanies(testCompanies) // TEST DEBUG
 
+        // If user has no companies route them to company create as they need to create one
         if (companiesData.length === 0) {
           navigate(`/company-create`)
+        // If user has exactly 1 company route them to the dashboard directly as there's no selections to choose anyway
         } else if (companiesData.length === 1) {
           navigate(`/dashboard/${companiesData[0].id}`)
         }
@@ -64,7 +116,7 @@ export default function CompanySelectPage() {
       } finally {
         setIsLoading(false);
       }
-    };  
+    };
     getUserCompanies();
 
     const container = scrollContainerRef.current;
@@ -104,18 +156,19 @@ export default function CompanySelectPage() {
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
     const walk = (x - startX) * 2;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk; 
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   }
 
   const handleCompanySelect = (company) => {
-    console.log(company)
-    navigate(`/dashboard/${company.companyId}`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    // console.log(company)
+    navigate(`/dashboard/${company.companyId}`)
   }
 
-  const handleCompanyAdd = () => {    
+  const handleCompanyAdd = () => {
     navigate('/company-create');
   }
 
+  // Display when loading
   if (isLoading) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm z-50">
@@ -124,8 +177,8 @@ export default function CompanySelectPage() {
       </div>
     )
   }
- 
-  return ( 
+
+  return (
     <section className="bg-gradient-to-bl from-blue-700/40 to-gray-200 min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-xl p-8 shadow-lg max-w-5xl w-full">
         <h1 className="text-3xl font-bold text-center mb-2 text-green-700">{infoText.sectionTitle}</h1>
@@ -136,7 +189,7 @@ export default function CompanySelectPage() {
           {showLeftArrow && (
             <Button
               onClick={() => scroll('left')}
-              className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10'
+              className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-white rounded-full p-2 shadow-md z-10'
               size="icon"
               variant="ghost"
             >
@@ -146,7 +199,7 @@ export default function CompanySelectPage() {
           {showRightArrow && (
             <Button
               onClick={() => scroll('right')}
-              className='absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10'
+              className='absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-white rounded-full p-2 shadow-md z-10'
               size="icon"
               variant="ghost"
             >
@@ -156,7 +209,7 @@ export default function CompanySelectPage() {
 
           <div
             ref={scrollContainerRef}
-            className='flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing' 
+            className='flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing'
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -174,7 +227,7 @@ export default function CompanySelectPage() {
                 companyId={company.id}
                 companyName={company.companyName}
                 orgNumber={company.orgNumber}
-                imageUrl={companyIcons[i % companyIcons.length]}
+                // imageUrl={companyIcons[i % companyIcons.length]}
                 handleCompanySelect={handleCompanySelect}
               />
             ))}
@@ -183,6 +236,7 @@ export default function CompanySelectPage() {
               <span className="text-green-700 font-medium">Lägg till nytt företag</span>
             </button>
           </div>
+          {/* Fade in the left and right side */}
           {showLeftArrow && (
             <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
           )}
