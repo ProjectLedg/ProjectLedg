@@ -142,9 +142,9 @@ const Problems = () => {
         </h2>
       </div>
 
-      <div className="flex flex-col relative w-screen max-h-screen items-center">
-        <div className="max-w-7xl py-12 flex flex-col justify-center w-screen items-center">
-          <div className="grid grid-cols-2 md:grid-cols-8 gap-4 w-[100vw] md:w-[110vw]">
+      <div className="flex flex-col relative w-screen max-h-screen items-center ">
+        <div className="max-w-7xl py-12 flex flex-col justify-center w-screen items-center ">
+          <div className="grid grid-cols-2 md:grid-cols-8 gap-4 w-[100vw] md:w-[110vw] p-4 sm:p-0">
             <div>
               <GridItem
                 color={color1}
@@ -173,84 +173,84 @@ const Problems = () => {
                 icon={textIconMap[text4]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color5}
                 text={text5}
                 icon={textIconMap[text5]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color6}
                 text={text6}
                 icon={textIconMap[text6]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color7}
                 text={text7}
                 icon={textIconMap[text7]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color8}
                 text={text8}
                 icon={textIconMap[text8]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color9}
                 text={text9}
                 icon={textIconMap[text9]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color10}
                 text={text10}
                 icon={textIconMap[text10]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color11}
                 text={text11}
                 icon={textIconMap[text11]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color12}
                 text={text12}
                 icon={textIconMap[text12]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color13}
                 text={text13}
                 icon={textIconMap[text13]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color14}
                 text={text14}
                 icon={textIconMap[text14]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color15}
                 text={text15}
                 icon={textIconMap[text15]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color16}
                 text={text16}
@@ -262,7 +262,7 @@ const Problems = () => {
       </div>
 
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none hidden sm:block"
         style={{
           background:
             "radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.8) 70%, rgb(255, 255, 255) 100%)",
