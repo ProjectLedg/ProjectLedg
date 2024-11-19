@@ -72,8 +72,8 @@ export default function CompanySelectPage() {
 
   const scrollContainerRef = useRef(null);
   const [companies, setCompanies] = useState([]);
-  const [showLeftArrow, setShowLeftArrow] = useState(true);
-  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [showLeftArrow, setShowLeftArrow] = useState();
+  const [showRightArrow, setShowRightArrow] = useState();
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -81,6 +81,61 @@ export default function CompanySelectPage() {
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
 
+  const containerClass = companies.length && !showRightArrow ? "justify-center" : "justify-start";
+
+  // Runs when companies has loaded in (as it needs that to calculate scroll width)
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+
+    const handleScroll = () => {
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(container.scrollLeft < container.scrollWidth - container.clientWidth);
+    };
+
+    const handleResize = () => {
+      if (container) {
+        setShowRightArrow(container.scrollWidth > container.clientWidth);
+        setShowLeftArrow(container.scrollLeft > 0);
+      }
+    };
+
+    if (container) {
+      handleResize(); // Run once on mount
+      container.addEventListener('scroll', handleScroll);
+      window.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('resize', handleResize);
+      }
+    };
+  }, [isLoading]);
+
+  // Runs once per render 
+  // Check if container is scrollable and center the items in the selector if not
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+
+    const checkScrollable = () => {
+      if (container) {
+        const isScroll = container.scrollWidth > container.clientWidth;
+        setShowRightArrow(isScroll);
+        setShowLeftArrow(false); // Default to false for left
+      }
+    };
+
+    checkScrollable();
+    window.addEventListener("resize", checkScrollable);
+
+    return () => {
+      window.removeEventListener("resize", checkScrollable);
+    };
+  }, []);
+
+
+  // Runs when navigate changes
   useEffect(() => {
     const getUserCompanies = async () => {
       try {
@@ -90,8 +145,7 @@ export default function CompanySelectPage() {
 
         
         const response = await axiosConfig.get("/Company/getUserCompanies");
-        console.log(response.data)
-
+        // console.log(response.data)
         setProgress(60);
 
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -119,26 +173,22 @@ export default function CompanySelectPage() {
     };
     getUserCompanies();
 
-    const container = scrollContainerRef.current;
-    if (container) {
-      if (container.scrollWidth - container.clientWidth === 0) {
-        setShowRightArrow(false)
-      }
+    // if (container) {
+    //   if (container.scrollWidth - container.clientWidth === 0) {
+    //     setShowRightArrow(false)
+    //   }
 
-      const handleScroll = () => {
-        setShowLeftArrow(container.scrollLeft > 0)
-        setShowRightArrow(container.scrollLeft < container.scrollWidth - container.clientWidth)
-      }
 
-      container.addEventListener('scroll', handleScroll);
-      return () => container.removeEventListener('scroll', handleScroll);
-    }
+
+    //   container.addEventListener('scroll', handleScroll);
+    //   return () => container.removeEventListener('scroll', handleScroll);
+    //}
   }, [navigate]);
 
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     const scrollAmount = direction === "left" ? -200 : 200;
-    container.scrollBy({ left: scrollAmount, behavior: 'smooth'});
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
 
   const handleMouseDown = (e) => {
@@ -181,7 +231,7 @@ export default function CompanySelectPage() {
   return (
     <section className="bg-gradient-to-bl from-blue-700/40 to-gray-200 min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-xl p-8 shadow-lg max-w-5xl w-full">
-        <h1 className="text-3xl font-bold text-center mb-2 text-green-700">{infoText.sectionTitle}</h1>
+        <h1 className="text-3xl font-bold text-center mb-2 text-green-500">{infoText.sectionTitle}</h1>
         <p className="text-gray-600 text-center mb-8">
           {infoText.sectionDescription}
         </p>
@@ -189,7 +239,7 @@ export default function CompanySelectPage() {
           {showLeftArrow && (
             <Button
               onClick={() => scroll('left')}
-              className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-white rounded-full p-2 shadow-md z-10'
+              className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-green-500 text-white hover:bg-green-400 hover:text-white rounded-full p-2 shadow-md z-20'
               size="icon"
               variant="ghost"
             >
@@ -199,7 +249,7 @@ export default function CompanySelectPage() {
           {showRightArrow && (
             <Button
               onClick={() => scroll('right')}
-              className='absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-white rounded-full p-2 shadow-md z-10'
+              className='absolute right-0 top-1/2 transform -translate-y-1/2 bg-green-500 text-white hover:bg-green-400 hover:text-white rounded-full p-2 shadow-md z-20'
               size="icon"
               variant="ghost"
             >
@@ -209,7 +259,7 @@ export default function CompanySelectPage() {
 
           <div
             ref={scrollContainerRef}
-            className='flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing'
+            className={`flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing  ${containerClass}`}
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -238,10 +288,10 @@ export default function CompanySelectPage() {
           </div>
           {/* Fade in the left and right side */}
           {showLeftArrow && (
-            <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+            <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
           )}
           {showRightArrow && (
-            <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+            <div className="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
           )}
         </div>
       </div>

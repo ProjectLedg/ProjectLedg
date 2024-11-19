@@ -16,7 +16,7 @@ export default function CompanyCard({ handleCompanySelect, companyId, companyNam
                 {/* <AvatarImage src={user.avatarUrl} alt={user.name} /> */}
                 <AvatarFallback className="bg-green-50 dark:bg-green-900 text-green-500 text-4xl font-medium">{companyName.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <h3 className="text-lg font-semibold text-center text-green-700 mb-1">{companyName}</h3>
+            <h3 className="text-lg font-semibold text-center text-green-600 mb-1">{companyName}</h3>
             <p className="text-sm text-center text-gray-500">{orgNumber}</p>
             <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-150"></div>
         </article>
