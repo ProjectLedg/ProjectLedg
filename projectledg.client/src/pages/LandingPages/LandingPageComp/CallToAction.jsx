@@ -12,7 +12,7 @@ export default function CallToAction() {
         <Card className="w-full max-w-4xl mx-auto shadow-lg">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center">
-              Enkel, snabb och användbar bokföring med Ledg
+              Enkel, snabb och användbar bokföring med Ledge
             </CardTitle>
             <CardDescription className="text-center text-lg mt-2">
               Precis som bokföring borde vara
