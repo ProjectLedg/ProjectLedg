@@ -32,10 +32,10 @@ export default function LoginPage() {
                 },
                 withCredentials: true
             });
-            
-            Cookie.set("JWTTolkien",response.data.token)
-            
-            Cookie.set("UserRole",response.data.roles[0])
+
+            Cookie.set("JWTTolkien", response.data.token)
+
+            Cookie.set("UserRole", response.data.roles[0])
             if (response.data.message === 'Login successful') {
                 navigate('/company-select')
             }
@@ -90,7 +90,7 @@ export default function LoginPage() {
 
                             {/* <!-- Inner Squares with Separate Tailwind Colors --> */}
                             <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
-                            <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+                            <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
                             <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
                             <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
                         </g>
