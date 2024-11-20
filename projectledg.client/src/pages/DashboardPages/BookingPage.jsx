@@ -14,7 +14,7 @@ export default function BookingPage() {
     return (
         <Tabs defaultValue="details" className="mb-6">
             <TabsList className="dark:bg-darkBackground">
-                <TabsTrigger value="details">Bokförning</TabsTrigger>
+                <TabsTrigger value="details">Bokföring</TabsTrigger>
                 <TabsTrigger value="customer">Verifikationer</TabsTrigger>
             </TabsList>
 
