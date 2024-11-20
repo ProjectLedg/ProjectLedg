@@ -33,116 +33,16 @@ const TransactionViewer = () => {
   const fetchTransactions = async () => {
     try {
       setIsLoading(true)
-      //const response = await axiosConfig.get(`/TransactionBooking/all/Company/${companyId}`)
-      //if (response.status === 200) {
-      //  setTransactions(response.data)
-     // }
-      // Mock response for testing
-      const mockResponse = [
-        {
-            transactionDate: "2024-11-20T12:00:00Z",
-            vendorOrCustomerName: "Vendor ABC",
-            invoiceNumber: "INV-001",
-            invoiceTotal: 1500.00,
-            basAccounts: [
-                {
-                    debit: 1500.00,
-                    credit: 0.00,
-                    description: "Purchase of goods",
-                    accountNumber: "12345"
-                },
-                {
-                    debit: 0.00,
-                    credit: 1500.00,
-                    description: "Outgoing payment",
-                    accountNumber: "54321"
-                },
-            ]
-        },
-        {
-          transactionDate: "2024-11-20T12:00:00Z",
-          vendorOrCustomerName: "Vendor ABC",
-          invoiceNumber: "INV-001",
-          invoiceTotal: 1500.00,
-          basAccounts: [
-              {
-                  debit: 1500.00,
-                  credit: 0.00,
-                  description: "Purchase of goods",
-                  accountNumber: "12345"
-              },
-              {
-                  debit: 0.00,
-                  credit: 1500.00,
-                  description: "Outgoing payment",
-                  accountNumber: "54321"
-              },
-          ]
-      },
-      {
-        transactionDate: "2024-11-20T12:00:00Z",
-        vendorOrCustomerName: "Vendor ABC",
-        invoiceNumber: "INV-001",
-        invoiceTotal: 1500.00,
-        basAccounts: [
-            {
-                debit: 1500.00,
-                credit: 0.00,
-                description: "Purchase of goods",
-                accountNumber: "12345"
-            },
-            {
-                debit: 0.00,
-                credit: 1500.00,
-                description: "Outgoing payment",
-                accountNumber: "54321"
-            },
-        ]
-    },
-        {
-            transactionDate: "2024-11-19T10:30:00Z",
-            vendorOrCustomerName: "Customer XYZ",
-            invoiceNumber: "INV-002",
-            invoiceTotal: 2000.00,
-            basAccounts: [
-                {
-                    debit: 0.00,
-                    credit: 2000.00,
-                    description: "Service provided",
-                    accountNumber: "67890"
-                },
-                {
-                    debit: 2000.00,
-                    credit: 0.00,
-                    description: "Incoming payment",
-                    accountNumber: "09876"
-                }
-            ]
-        },
-        {
-            transactionDate: "2024-11-18T08:15:00Z",
-            vendorOrCustomerName: "Vendor DEF",
-            invoiceNumber: "INV-003",
-            invoiceTotal: 3000.50,
-            basAccounts: [
-                {
-                    debit: 3000.50,
-                    credit: 0.00,
-                    description: "Office supplies purchase",
-                    accountNumber: "11223"
-                },
-                {
-                    debit: 0.00,
-                    credit: 3000.50,
-                    description: "Outgoing payment for supplies",
-                    accountNumber: "32111"
-                }
-            ]
-        }
-    ];
-    setTransactions(mockResponse)
+      const response = await axiosConfig.get(`/Transaction/GetTransactionsForBooking/companyId/${companyId}`)
+      console.log(response)
+
+
+      if (response.status === 200) {
+       setTransactions(response.data)
+     }
+
     } catch (error) {
-      setError("Failed to fetch transactions")
+      setError("Något gick fel")
       console.error("Error fetching transactions:", error)
     } finally {
       setIsLoading(false)
@@ -190,7 +90,7 @@ const TransactionViewer = () => {
             className="bg-green-500 hover:bg-green-600 ml-4"
             onClick={fetchTransactions}
           >
-            Retry
+            Ladda om
           </Button>
         </CardContent>
       </Card>
@@ -211,7 +111,7 @@ const TransactionViewer = () => {
           <Table className="hidden md:table">
             <TableHeader>
               <TableRow className="bg-gray-100 dark:bg-darkSurface">
-                <TableHead className="text-left">Dayum</TableHead>
+                <TableHead className="text-left">Datum</TableHead>
                 <TableHead className="text-left">Kund</TableHead>
                 <TableHead className="text-left">Fakturanummer</TableHead>
                 <TableHead className="text-left">Summa</TableHead>
@@ -270,7 +170,7 @@ const TransactionViewer = () => {
 
         </ScrollArea>
       </CardContent>
-      <div className="hidden md:block flex justify-center gap-3 pt-2 mb-3 border-t-2 dark:border-darkBorder">
+      <div className="hidden md:flex justify-center gap-3 pt-2 mb-3 border-t-2 dark:border-darkBorder">
       <LoggerPagination
         totalPages={totalPages}
         totalInvoices={totalTransactions}
