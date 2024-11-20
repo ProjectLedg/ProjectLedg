@@ -10,13 +10,14 @@ export default function FeaturePage() {
     return (
         <>
             <Navbar />
-            <div className="w-full flex flex-col justify-center 
-            bg-gradient-to-t from-blue-700/30">
+            <div className="w-full h-[2500px] sticky bottom-0  flex flex-col 
+            bg-gradient-to-t from-blue-700/30 mb-1">
                 <FeatureContentTitle />
+                
                 <FeatureContentImage />
-
-             <FeatureContentBody /> 
             </div>
+             <FeatureContentBody /> 
+     
            <Footer /> 
         </>
     )
