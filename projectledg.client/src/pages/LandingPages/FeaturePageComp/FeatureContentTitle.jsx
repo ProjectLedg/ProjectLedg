@@ -51,7 +51,7 @@ export default function FeatureContentTitle() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen space-y-[2vw]" style={{ height: '45vw' }}>
+        <div className="flex flex-col items-center mt-48 h-screen space-y-[2vw]" style={{ height: '45vw' }}>
             {/* Inject custom keyframes */}
             <style>{keyframes}</style>
 
@@ -75,7 +75,7 @@ export default function FeatureContentTitle() {
 
             {/* Element 2 */}
             <p
-                className=" opacity-0  text-center text-gray-600"
+                className=" opacity-0 text-center text-gray-600"
                 style={{
                     animation: "fade-in-down 2.5s ease-in-out 0.8s forwards",
                     fontSize: '2vw',
@@ -92,7 +92,7 @@ export default function FeatureContentTitle() {
             >
 
 
-                <div className="flex justify-center px-2 sm:px-4 lg:px-6">
+                <div className="flex justify-center mt-4 px-2 sm:px-4 lg:px-6">
 
                     <div className="w-full sm:w-auto">
                         <button
