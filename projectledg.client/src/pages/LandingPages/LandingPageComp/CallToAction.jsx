@@ -6,8 +6,9 @@ export default function CallToAction() {
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 ">
       <div className="container px-4 md:px-6 mx-auto flex flex-col items-center justify-center">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight first:mt-0 mb-16">
-          Vi gör det lättare
+        <h2 className="scroll-m-20  pb-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight first:mt-0 mb-16">
+          Vi gör det 
+          <span className="text-green-500"> lättare</span>
         </h2>
         <Card className="w-full max-w-4xl mx-auto shadow-lg">
           <CardHeader>

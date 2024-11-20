@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link, } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
 
 const FooterSection = ({ title, links }) => (
@@ -43,13 +44,32 @@ export default function Component() {
 
       
       <footer className="bg-white bg-opacity-20 backdrop-blur-lg w-full py-8 px-4 md:px-10 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl ">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Logo and description */}
-            <div className="col-span-1 md:col-span-1">
+            <div className="col-span-1">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-black rounded-full mr-2"></div>
-                <span className="text-xl font-bold text-black">Ledge</span>
+                <div className="flex flex-shrink-0 mr-2">
+                  <Link to="/" className="block w-8 h-8">
+                    <svg
+                      width="100%" height="100%" viewBox="0 0 150 150" fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-full h-full"
+                    >
+                      <g id="Group 1">
+
+                        <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
+
+
+                        <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
+                        <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
+                        <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
+                        <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
+                      </g>
+                    </svg>
+                  </Link>
+                </div>
+                <span className="text-xl font-semibold text-black">Ledge</span>
               </div>
               <p className="mt-2 text-sm text-black">
                 Ledge hjälper företag att växa och nå sin fulla potential.

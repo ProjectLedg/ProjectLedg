@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export default function FeatureContentTitle() {
     const navigate = useNavigate();
@@ -62,19 +63,19 @@ export default function FeatureContentTitle() {
                     fontSize: '3vw',
                 }}
             >
-                {splitText("Välkommen till ")}
-                <span className="text-green-500">{splitText("Ledge")}</span>{" "}
-                {splitText("vi gör bokföring")}{" "}
-                <span className="text-green-500">{splitText("ENKELT!")}</span>
+                {splitText("Det här är ")}
+                <span className="text-green-500">{splitText("Ledge")}</span>{". "}
+                {splitText("Vi gör bokföring")}{" "}
+                <span className="text-green-500">{splitText("snabbt")}</span>
                 <br />
-                <span className="text-green-500">{splitText("SNABBT!")}</span>{" "}
-                <span>{splitText("och")}</span> <span className="text-green-500">{splitText("EFFEKTIVT!")}</span>{" "}
+                <span className="text-green-500">{splitText("enkelt")}</span>{" "}
+                <span>{splitText("och")}</span> <span className="text-green-500">{splitText("effektivt")}</span>{" "}
                 {splitText("utan revisorer.")}
             </h1>
 
             {/* Element 2 */}
             <p
-                className="brödtext opacity-0  text-center text-gray-600"
+                className=" opacity-0  text-center text-gray-600"
                 style={{
                     animation: "fade-in-down 2.5s ease-in-out 0.8s forwards",
                     fontSize: '2vw',
@@ -83,25 +84,35 @@ export default function FeatureContentTitle() {
                 {splitText("Vi gör bokföring enklare för småföretag")}
 
             </p>
-            <div className="flex justify-center px-2 sm:px-4 lg:px-6">
-                <div className="w-full sm:w-auto">
-                    <button
-                        className="group relative bg-black inline-flex items-center justify-center 
+
+            <motion.div
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{delay:1.5, duration: 1}}
+            >
+
+
+                <div className="flex justify-center px-2 sm:px-4 lg:px-6">
+
+                    <div className="w-full sm:w-auto">
+                        <button
+                            className="group relative bg-black inline-flex items-center justify-center 
                         overflow-hidden w-full sm:w-40 md:w-48 lg:w-52 xl:w-60 text-xs sm:text-base md:text-lg 
-                        lg:text-xl font-medium text-slate-100 transition-colors duration-700 ease-out hover:text-green-500 
+                        lg:text-xl font-medium text-slate-100 transition-colors duration-700 ease-out hover:text-green-500 hover:bg-white
                         focus:outline-none focus:ring active:bg-green-800 active:text-white rounded-full py-1 px-2 sm:py-3 
                         sm:px-6"
-                        onClick={() => navigate("/signup")}
-                    >
-                        <span className="absolute inset-0 rounded-full border-2 border-transparent transition-all duration-700 ease-out group-hover:border-green-500"></span>
-                        <span className="absolute left-0 top-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
-                        <span className="absolute right-0 top-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
-                        <span className="absolute bottom-0 right-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
-                        <span className="absolute bottom-0 left-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
-                        <span className="relative z-10 whitespace-nowrap">Börja din resa här</span>
-                    </button>
+                            onClick={() => navigate("/signup")}
+                        >
+                            <span className="absolute inset-0 rounded-full border-2 border-transparent transition-all duration-700 ease-out group-hover:border-green-500"></span>
+                            <span className="absolute left-0 top-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
+                            <span className="absolute right-0 top-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
+                            <span className="absolute bottom-0 right-0 h-[2px] w-0 bg-green-500 transition-all duration-700 ease-out group-hover:w-full"></span>
+                            <span className="absolute bottom-0 left-0 h-0 w-[2px] bg-green-500 transition-all duration-700 ease-out group-hover:h-full"></span>
+                            <span className="relative z-10 whitespace-nowrap">Börja din resa här</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </motion.div>
 
 
         </div>

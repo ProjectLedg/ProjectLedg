@@ -62,7 +62,7 @@ const GridItem = ({ color, text, icon: IconComponent }) => {
               filter: 'blur(20px)',
               transition: { duration: 0.5 }
             }}
-            className="paragraf flex flex-col text-sm w-full align-center items-center text-center p-1"
+            className="paragraf flex flex-col text-sm md:text-base w-full align-center items-center text-center p-1"
           >
             {text}
           </motion.div>

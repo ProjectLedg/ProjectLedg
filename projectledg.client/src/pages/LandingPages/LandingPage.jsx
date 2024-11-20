@@ -12,34 +12,30 @@ export default function LandingPage() {
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
-        setTheme(theme ==="light")
-    },[])
-    
+        setTheme(theme === "light")
+    }, [])
+
 
 
     return (
-    <>
-        
-        <Navbar />
-        <div className="w-[100vw] flex flex-col items-center justify-center space-y-5">
-            <Content />
-        </div>
-        <div className="w-[100vw] overflow-auto">
-            
+        <div className="">
+            <Navbar />
+            <div className="w-[100vw] flex flex-col items-center justify-center">
+                <Content />
+            </div>
+            <div className="w-[100vw] overflow-auto">
                 <CardShow />
-              
+            </div>
+            <div className="flex flex-col items-center">
+                <section id="why" className="scroll-mt-32">
+                    <CallToAction />
+                </section>
+            </div>
+            <div className="flex flex-col items-center pb-14 sm:pb-36 ">
+                <NewsletterSignup />
+            </div>
+            <FooterSection />
         </div>
-        <div className="flex flex-col items-center pb-36">
-            
-            <section id="why" className="scroll-mt-32">
-            <CallToAction />
-            </section>
-        </div>
-        <div className="flex flex-col items-center pb-36">
-            <NewsletterSignup />
-        </div>   
-        <FooterSection />
-       
-    </>
-);
+
+    );
 }
