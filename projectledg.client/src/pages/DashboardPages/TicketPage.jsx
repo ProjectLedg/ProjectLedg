@@ -49,7 +49,7 @@ const TicketPage = () => {
         if (image) formData.append('image', image);
 
         try {
-            await axios.post('https://projectledg.azurewebsites.net/api/SupportTickets', formData, {
+            await axios.post('https://projectledgserver.azurewebsites.net/api/SupportTickets', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setMessage('Support ticket submitted successfully!');

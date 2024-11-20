@@ -16,7 +16,7 @@ export default function Component() {
 
     try {
       // Simulating API call Behöver bytas ut mot riktig endpoint och sätta loader enligt det, samt felhantering
-      const response = await axios.post('https://projectledg.azurewebsites.net/api/email/AddEmail', { email })
+      const response = await axios.post('https://projectledgserver.azurewebsites.net/api/email/AddEmail', { email })
 
       setStatus('success')
       setMessage('Tack för din prenumeration!')
