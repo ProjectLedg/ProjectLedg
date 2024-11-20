@@ -6,16 +6,18 @@ import FeatureContentImage from "./FeaturePageComp/FeatureContentImage";
 import Footer from "./LandingPageComp/FooterSection"
 
 export default function FeaturePage() {
+    
     return (
         <>
             <Navbar />
-            <div className="w-[100vw] flex flex-col justify-center px-8 md:px-12 lg:px-24
-            bg-gradient-to-b from-white to-gray-200">
+            <div className="w-full flex flex-col justify-center 
+            bg-gradient-to-t from-blue-700/30">
                 <FeatureContentTitle />
                 <FeatureContentImage />
-                <FeatureContentBody />
+
+             <FeatureContentBody /> 
             </div>
-            <Footer />
+           <Footer /> 
         </>
     )
 }
