@@ -54,14 +54,11 @@ export default function InvoiceLogger() {
     getIngInvoices();
     getOutInvoices();
 
-    // console.log("Is ingoing selected: ", isIngoingSelected)
-    // console.log("Status ingoings: ", statusIngoing)
-    // console.log("Status outgoings: ", statusOutgoing)
+
 
     setIsLoading(false);
 
-    // setIngoingInvoices(invoiceLogger.mockTestData)
-    // setOutgoingInvoices(invoiceLoggerOutgoing.mockTestData)
+    
   }, [])
 
 
