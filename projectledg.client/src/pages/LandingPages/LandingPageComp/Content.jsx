@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import DashboardImage from "@/assets/LoadingPageDashboardPlaceholder.jpg";
 
 export default function Content() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export default function Content() {
       </div>
 
       <div className="my-24">
-        <img className="border-2 rounded-md drop-shadow-md" src="src\assets\LoadingPageDashboardPlaceholder.jpg" alt="Image of dashboard" />
+        <img className="border-2 rounded-md drop-shadow-md" src={DashboardImage} />
       </div>
     </div>
   );
