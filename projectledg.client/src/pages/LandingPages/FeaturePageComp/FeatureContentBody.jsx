@@ -44,7 +44,7 @@ const steps = [
 
 export default function FeatureContentBody() {
   return (
-    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-green-100 dark:from-gray-900 dark:to-green-700 rounded-t-2xl">
+    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-green-100 dark:from-gray-900 dark:to-green-700 rounded-t-2xl ">
       <div className="max-w-7xl mx-auto ">
         <div className=''>
         <h1 className="text-2xl h-[8rem] sm:text-4xl lg:text-5xl font-extrabold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-teal-500 dark:from-green-400 dark:to-teal-300">
