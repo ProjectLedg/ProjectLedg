@@ -174,9 +174,9 @@ const Problems = () => {
 
 
   return (
-    <div className="relative w-full overflow-hidden bg-white">
+    <div className="relative w-full overflow-hidden">
       <div className="flex flex-col w-full justify-center items-center my-6">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight first:mt-0">
+        <h2 className="scroll-m-20  pb-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight first:mt-0">
           Bokföring är svårt
         </h2>
       </div>
