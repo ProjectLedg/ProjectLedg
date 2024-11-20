@@ -28,7 +28,7 @@ export default function Component() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md ">
       <div className="p-12 bg-white bg-opacity-20 backdrop-blur-lg rounded-xl shadow-lg border border-gray-200">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Prenumerera på vårt nyhetsbrev</h2>
         <p className="mb-6 text-center text-gray-600">Få de senaste nyheterna och uppdateringarna direkt i din inkorg.</p>
@@ -49,7 +49,7 @@ export default function Component() {
               className={`w-full sm:w-auto ${status === 'loading'
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-black hover:bg-gray-800'
-                } text-white transition-all duration-300 ease-in-out transform hover:scale-105`}
+                } text-white transition-all duration-300 ease-in-out transform hover:bg-green-500`}
             >
               {status === 'loading' ? (
                 <span className="flex items-center justify-center">
