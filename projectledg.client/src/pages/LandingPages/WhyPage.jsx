@@ -3,6 +3,7 @@ import Navbar from "./LandingPageComp/Navbar"
 import FooterSection from "./LandingPageComp/FooterSection"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle, ArrowRight } from "lucide-react"
+import LonsamhetImage from "@/assets/landingpage-icons/LonsamhetIcon.png";
 
 export default function VarforPage() {
   const reasons = [
@@ -69,7 +70,7 @@ export default function VarforPage() {
             </div>
             <div className="md:w-1/2 flex justify-center">
               <img
-                src="./src/assets/landingpage-icons/LonsamhetIcon.png"
+                src={LonsamhetImage}
                 alt="Illustration av Framgång"
                 className="rounded-lg shadow-md"
                 width={300}
