@@ -9,12 +9,12 @@ export default function Content() {
   };
 
   return (
-    <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24">
-      <h1 className="py-10 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+    <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24  ">
+      <h1 className="py-10 scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl text-center ">
         Data till insikter på <span className="text-green-500">minuter</span>
       </h1>
 
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+      <h3 className="scroll-m-20 text-2xl font-normal text-center tracking-tight">
         Få full kontroll över ditt företags ekonomi med Ledge
       </h3>
 
@@ -36,7 +36,7 @@ export default function Content() {
       </div>
 
       <div className="my-24">
-        <img className="border-2 rounded-md drop-shadow-md" src="src\assets\LoadingPageDashboardPlaceholder.jpg" alt="Image of dashboard" />
+        <img className="border-2 rounded-md shadow-even" src="src\assets\LoadingPageDashboardPlaceholder.jpg" alt="Image of dashboard" />
       </div>
     </div>
   );
