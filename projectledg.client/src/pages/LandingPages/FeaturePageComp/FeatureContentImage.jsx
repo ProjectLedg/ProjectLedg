@@ -7,49 +7,47 @@ export default function FeatureImage() {
     const { scrollYProgress } = useScroll();
     const [isLocked, setIsLocked] = useState(false);
 
+
     useEffect(() => {
         const unsubscribe = scrollYProgress.onChange((progress) => {
-            if (progress > 0.36 && !isLocked) {
+            if (progress > 0.275 && progress < 1) {
                 console.log("lock")
-                document.body.style.overflow = "hidden";
-
-            } else if (progress <= 0.36 && isLocked) {
+                setIsLocked(true);
+            } else {
                 console.log("unlock")
-                document.body.style.overflow = "auto";
-
+                setIsLocked(false);
             }
         });
 
-        return () => {
-            unsubscribe();
-            document.body.style.overflow = "auto";
-        };
-    }, [isLocked]);
+        // Cleanup subscription when the component unmounts
+        return () => unsubscribe();
+    }, [scrollYProgress]);
 
-    const translateX = useTransform(scrollYProgress, [0, 0.4], [600, -1], {
+    const translateX = useTransform(scrollYProgress, [0, 0.2], [600, -1], {
         type: "spring",
         stiffness: 100,
         damping: 2,
         mass: 1,
     });
 
-    const translateXLeft = useTransform(scrollYProgress, [0, 0.4], [-300, 0], {
+    const translateXLeft = useTransform(scrollYProgress, [0, 0.2], [-300, 0], {
         type: "spring",
         stiffness: 100,
         damping: 25,
         mass: 1,
     });
 
-    const li1Opacity = useTransform(scrollYProgress, [0.4, 0.5], [0, 1]);
-    const li2Opacity = useTransform(scrollYProgress, [0.5, 0.6], [0, 1]);
-    const li3Opacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1]);
+    const li1Opacity = useTransform(scrollYProgress, [0.3, 0.4], [0, 1]);
+    const li2Opacity = useTransform(scrollYProgress, [0.4, 0.5], [0, 1]);
+    const li3Opacity = useTransform(scrollYProgress, [0.5, 0.6], [0, 1]);
+
 
     return (
         <div
-            className={`w-[100vw] flex flex-row items-center overflow-hidden pb-8 ${isLocked ? "bg-red-5§" : "relative"}`}
+            className={`w-[100vw]  flex flex-row items-center overflow-hidden pb-8 `}
         >
             {/* Content container with text and image */}
-            <div className="relative w-full flex items-center justify-between overflow-hidden rounded-2xl">
+            <div className={` w-full flex items-center justify-between overflow-hidden rounded-2xl ${isLocked ? "fixed top-32" : "relative"}`}>
                 {/* Left section */}
                 <motion.div
                     className="relative h-full flex"
@@ -59,14 +57,14 @@ export default function FeatureImage() {
                 >
                     <div className="flex flex-col items-start justify-start h-[50vh] w-[60vw] ml-12">
                         <div className="flex flex-row mb-12">
-                            <h1 className="text-5xl font-medium mr-4">Digital </h1>
+                            <h1 className="text-5xl font-medium mr-4">Din digitala </h1>
                             <span className="text-5xl font-medium text-green-500">
                                 bokföringsassistent
                             </span>
                         </div>
                         <ul className="space-y-8 text-xl">
                             <motion.li
-                                className="text-gray-500 flex flex-row items-center"
+                                className="text-gray-600 flex flex-row items-center"
                                 style={{ opacity: li1Opacity }}
                             >
                                 <Gauge className="h-8 w-8 mr-2 text-red-500" />
@@ -77,7 +75,7 @@ export default function FeatureImage() {
                                 bokföring.
                             </motion.li>
                             <motion.li
-                                className="text-gray-500 flex flex-row items-center"
+                                className="text-gray-600 flex flex-row items-center"
                                 style={{ opacity: li2Opacity }}
                             >
                                 <ChartColumnIncreasing className="h-8 w-8 mr-2 text-cyan-500" />
@@ -88,7 +86,7 @@ export default function FeatureImage() {
                                 viktiga insikter.
                             </motion.li>
                             <motion.li
-                                className="text-gray-500 flex flex-row items-center"
+                                className="text-gray-600 flex flex-row items-center"
                                 style={{ opacity: li3Opacity }}
                             >
                                 <BotMessageSquare className="h-8 w-8 mr-2 text-green-500" />
@@ -104,12 +102,14 @@ export default function FeatureImage() {
 
                 {/* Right section */}
                 <motion.div
-                    className="relative h-full flex"
+                    className={`relative h-full flex `}
                     style={{
                         translateX,
                     }}
                 >
-                    <ChatWindowDemo />
+                    <div className="">
+                        <ChatWindowDemo />
+                    </div>
                 </motion.div>
             </div>
         </div>
