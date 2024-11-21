@@ -8,8 +8,11 @@ export default {
 	],
 	theme: {
     	extend: {
+			screens: {
+				'xl-monitor': '1600px', 
+			},
 			transitionTimingFunction: {
-				'fade-delay': 'cubic-bezier(0.7, 0, 0.2, 1)', // Custom fade easing
+				'fade-delay': 'cubic-bezier(0.7, 0, 0.2, 1)', 
 			},
 			transitionDuration:{
 				'3000': '3000ms'
