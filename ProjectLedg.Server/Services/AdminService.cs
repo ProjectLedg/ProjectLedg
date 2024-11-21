@@ -138,5 +138,39 @@ namespace ProjectLedg.Server.Services
                 ? new EmailResult { Success = false, ErrorMessage = "Failed to send emails to some users." }
                 : new EmailResult { Success = true };
         }
+
+        public async Task<EmailResult> SendEmailNotificationAsync(string subject, string content)
+        {
+            var allUsers = await _userRepository.GetAllUsersAsync();
+            var failedEmails = new List<string>();
+
+            foreach (var user in allUsers)
+            {
+                try
+                {
+                    var result = await _emailSender.SendEmailAsync(user.Email, subject, content);
+                    if (!result.Success)
+                    {
+                        failedEmails.Add(user.Email);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    failedEmails.Add($"{user.Email}: {ex.Message}");
+                }
+            }
+
+            if (failedEmails.Any())
+            {
+                // Log detailed errors or take further action if needed
+                return new EmailResult
+                {
+                    Success = false,
+                    ErrorMessage = $"Failed to send emails to: {string.Join(", ", failedEmails)}"
+                };
+            }
+
+            return new EmailResult { Success = true };
+        }
     }
 }

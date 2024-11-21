@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Model.DTOs.User;
+using ProjectLedg.Server.Options.Email.IEmail;
 using ProjectLedg.Server.Options.Newsletter;
 using ProjectLedg.Server.Options.Notice;
 using ProjectLedg.Server.Services;
@@ -109,6 +110,19 @@ namespace ProjectLedg.Server.Controllers
             if (result.Success)
             {
                 return Ok(new { Message = "Targeted email sent successfully" });
+            }
+
+            return BadRequest(new { Message = result.ErrorMessage });
+        }
+
+        [HttpPost("email-notification")]
+        public async Task<IActionResult> SendEmailNotification([FromBody] EmailNotificationRequest request)
+        {
+            var result = await _adminService.SendEmailNotificationAsync(request.Subject, request.Content);
+
+            if (result.Success)
+            {
+                return Ok(new { Message = "Email notification sent successfully" });
             }
 
             return BadRequest(new { Message = result.ErrorMessage });

@@ -27,23 +27,18 @@ namespace ProjectLedg.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTicket([FromBody] SupportTicketCreationDTO ticketDto)
+        public async Task<IActionResult> CreateTicket([FromForm] SupportTicketCreationDTO ticketDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Retrieve UserId from the authenticated user's claims
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized("User not authenticated");
 
-            // Check if CompanyId is provided
             if (!ticketDto.CompanyId.HasValue)
-            {
                 return BadRequest("CompanyId is required for creating a support ticket.");
-            }
 
-            // Verify that the user is associated with the selected CompanyId
             var userCompany = await _context.Companies
                 .Where(c => c.Id == ticketDto.CompanyId && c.Users.Any(u => u.Id == userId))
                 .FirstOrDefaultAsync();
@@ -51,7 +46,6 @@ namespace ProjectLedg.Server.Controllers
             if (userCompany == null)
                 return BadRequest("The selected company is not associated with the user");
 
-            // Map the DTO to the SupportTicket entity
             var ticket = new SupportTicket
             {
                 Category = (ProjectLedg.Server.Data.Models.Category)ticketDto.Category,
@@ -63,20 +57,33 @@ namespace ProjectLedg.Server.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
-            // Upload the image to Blob Storage if provided
             if (ticketDto.Image != null && ticketDto.Image.Length > 0)
             {
                 using (var stream = ticketDto.Image.OpenReadStream())
                 {
                     string fileName = $"{ticketDto.Subject}_{Path.GetRandomFileName()}";
                     string imageUrl = await _blobStorageService.UploadBlobAsync(stream, fileName);
-                    ticket.ImageUrl = imageUrl; // Save the URL in the ticket
+                    ticket.ImageUrl = imageUrl;
                 }
             }
 
-            // Call the service method with a non-nullable CompanyId
             var createdTicket = await _supportTicketService.CreateTicketAsync(ticket, ticketDto.CompanyId.Value);
-            return Ok(createdTicket);
+
+            // Map to response DTO
+            var responseDto = new Data.Models.DTOs.SupportTicket.SupportTicketResponseDTO
+            {
+                TicketId = createdTicket.TicketId,
+                Subject = createdTicket.Subject,
+                Description = createdTicket.Description,
+                Category = createdTicket.Category.ToString(),
+                Priority = createdTicket.Priority,
+                Status = createdTicket.Status,
+                ImageUrl = createdTicket.ImageUrl,
+                CreatedAt = createdTicket.CreatedAt,
+                CompanyId = createdTicket.Company.Id,
+            };
+
+            return Ok(responseDto);
         }
 
 

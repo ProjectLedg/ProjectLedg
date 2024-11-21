@@ -17,5 +17,6 @@ namespace ProjectLedg.Server.Services.IServices
         Task<LoginResult> AdminLoginAsync(string email, string password);
         Task<EmailResult> SendTargetedEmailAsync(List<string> userIds, string subject, string content);
         Task<EmailResult> SendNewsletterToAllUsersAsync(string subject, string content);
+        Task<EmailResult> SendEmailNotificationAsync(string subject, string content);
     }
 }
