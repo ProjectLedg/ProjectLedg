@@ -4,9 +4,7 @@ namespace ProjectLedg.Server.Model.DTOs.User
 {
     public class ChangePasswordDTO
     {
-        [Required]
-        public string Email { get; set; }
-
+        
         [Required]
         [DataType(DataType.Password)]
         public string CurrentPassword { get; set; }

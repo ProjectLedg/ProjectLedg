@@ -25,72 +25,77 @@ export default function Navbar() {
   }, []);
 
   return (
-    <div
-      className={`w-full flex justify-between py-3 px-10 sticky top-0 bg-white bg-opacity-20 backdrop-blur-lg 
-      ${shadow ? "shadow-md transition-shadow duration-300 ease-in-out" : "transition-shadow duration-300 ease-in-out"} z-50`}
-    >
-      <nav className="text-black flex items-center justify-between w-full">
-        {/* Logo Section */}
-        <div className="flex-shrink-0 w-1/4 flex justify-start">
 
-          <Link to="/" className="block w-8 h-8">
-            <svg
-              width="100%" height="100%" viewBox="0 0 150 150" fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full"
+    <div className=" w-full flex justify-center fixed z-50">
+
+      <div
+        className={`w-[95%] flex justify-between py-1  px-7 sm:px-10  mt-2 bg-white rounded-full 
+          ${shadow ? "shadow-md transition-all duration-700 ease-in-out bg-opacity-40 backdrop-blur-lg " : "transition-all duration-700 ease-in-out bg-opacity-80"} z-50`}
+      >
+        <nav className="text-black flex justify-between items-center w-full">
+
+          {/* Logo Section */}
+          <div className="flex flex-shrink-0 w-1/4 items-center justify-start">
+            <Link to="/" className="block w-8 h-8 mr-2 ">
+              <svg
+                width="100%" height="100%" viewBox="0 0 150 150" fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-full"
+              >
+                <g id="Group 1">
+
+                  <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
+
+
+                  <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
+                  <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
+                  <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
+                  <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
+                </g>
+              </svg>
+
+            </Link>
+            <p className={`text-xl font-semibold transition-opacity duration-500 ease-in-out hidden sm:block ${shadow ? "opacity-0" : "opacity-100"}`}>Ledge</p>
+          </div>
+
+          {/* Navigation Items Section */}
+          <div className="px-2 py-2 hidden sm:block">
+            <div className=" text-black flex">
+              <NavItem to="/why" className="mx-4">Varför Ledge?</NavItem>
+              <NavItem to="/features" className="mx-4">Tjänster</NavItem>
+              <NavItem to="/pricing" className="mx-4">Priser</NavItem>
+              <NavItem to="/contact" className="mx-4">Kontakt</NavItem>
+            </div>
+          </div>
+
+          {/* Button Section */}
+          <div className="flex items-center space-x-4 w-1/4 justify-end">
+            <div className="hidden sm:block">
+              <NavItem to="/login" className="text-gray-400">Logga in</NavItem>
+            </div>
+            <Button
+              variant="solid"
+              className="hidden md:inline-flex text-white text-lg font-normal bg-zinc-800 hover:text-black hover:bg-green-500 transition-all duration-300 ease-in-out"
+              onClick={() => navigate("/signup")}
             >
-              <g id="Group 1">
-                {/* Outer Rounded Rectangle */}
-                <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
+              Kom igång
+            </Button>
 
-                {/* Inner Squares with Separate Tailwind Colors */}
-                <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
-                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
-                <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
-                <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
-              </g>
-            </svg>
-          </Link>
-
-        </div>
-
-        {/* Navigation Items Section */}
-        <div className=" md:block rounded-full px-2 py-1 flex-grow flex justify-center">
-          <div className="flex justify-around text-black">
-            <NavItem to="/why" className="mx-2">Varför Ledge?</NavItem>
-            <NavItem to="/features" className="mx-2">Tjänster</NavItem>
-            <NavItem to="/pricing" className="mx-2">Priser</NavItem>
-            <NavItem to="/contact" className="mx-2">Kontakt</NavItem>
-          </div>
-        </div>
-
-        {/* Button Section */}
-        <div className="flex items-center space-x-4 w-1/4 justify-end">
-          <div className="hidden md:block">
-            <NavItem to="/login" className="text-gray-400">Logga in</NavItem>
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden text-black"
+              onClick={toggleMenu}
+            >
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Open menu</span>
+            </Button>
           </div>
 
-          <Button
-            variant="solid"
-            className="hidden md:inline-flex text-white text-lg font-normal bg-zinc-800 hover:text-black hover:bg-green-500 transition-all duration-300 ease-in-out"
-            onClick={() => navigate("/signup")}
-          >
-            Kom igång
-          </Button>
+        </nav>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden text-black"
-            onClick={toggleMenu}
-          >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </div>
-      </nav>
-
+      </div>
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md p-4">
@@ -111,6 +116,7 @@ export default function Navbar() {
         </div>
       )}
     </div>
+
   );
 }
 

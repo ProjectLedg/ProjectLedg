@@ -99,13 +99,13 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     return {
       AdditionalContext: invoiceData.AdditionalContext || null,
       InvoiceNumber: invoiceData.InvoiceId || null,
-      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal.replace(',', '.')),
-      TotalTax: parseFloat(invoiceData.TotalTax.replace(',', '.')),
+      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal),
+      TotalTax: parseFloat(invoiceData.TotalTax),
       Items: invoiceData.Items.map(item => ({
         Description: item.Description,
         Quantity: parseInt(item.Quantity),
-        UnitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim()),
-        Amount: parseFloat(item.Amount.replace(',', '.'))
+        UnitPrice: parseFloat(item.UnitPrice),
+        Amount: parseFloat(item.Amount)
       }))
     };
   }
@@ -115,15 +115,16 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     invoiceNumber: invoice.InvoiceId,
     invoiceDate: new Date(invoice.InvoiceDate).toISOString(), 
     dueDate: new Date(invoice.DueDate).toISOString(),
-    invoiceTotal: parseFloat(invoice.InvoiceTotal.replace(",", ".")),
+    invoiceTotal: parseFloat(invoice.InvoiceTotal),
     items: invoice.Items.map(item => ({
       description: item.Description,
       quantity: parseFloat(item.Quantity),
-      unitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').replace(',', '.').trim()),
-      amount: parseFloat(item.Amount.replace(",", "."))
+      unitPrice: parseFloat(item.UnitPrice),
+      amount: parseFloat(item.Amount)
     })),
+    invoiceFilePath: invoice.InvoiceFilePath,
     paymentDetails: typeof invoice.PaymentDetails === 'string' ? invoice.PaymentDetails : "",  // Force empty string if not a string
-    totalTax: parseFloat(invoice.TotalTax.replace(",", ".")),
+    totalTax: parseFloat(invoice.TotalTax),
     isPaid: isPaidStatus,
     isOutgoing: false, // Always false when creating invoices in this component
     isBooked: false, // As invoice just is created it isn't booked yet
@@ -198,7 +199,11 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
     };
 
     try {
+      // console.log("invBaAccDto", invBaAccDto)
+      
+      
       const response = await axiosConfig.post("/BasAccount/ProcessInvoiceWithBasAccounts", invBaAccDto)
+      console.log(response.data)
 
       // Set is booked to true to trigger success animation in modal popup
       setIsBooked(true);
@@ -225,23 +230,23 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <Skeleton className="h-12 w-[100%] rounded-none" />
+            <Skeleton className="h-12 w-[100%] rounded-none dark:bg-darkSecondary" />
             <CardContent className="h-full overflow-hidden grid grid-cols-1 gap-4">
               <div className="space-y-2 mt-8">
-                <Skeleton className="h-4 w-[40%] mt-2" />
-                <Skeleton className="h-12 w-[85%] rounded-md" />
+                <Skeleton className="h-4 w-[40%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[85%] rounded-md dark:bg-darkSecondary" />
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-4 w-[25%] mt-2" />
-                <Skeleton className="h-12 w-[70%] rounded-md" />
+                <Skeleton className="h-4 w-[25%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[70%] rounded-md dark:bg-darkSecondary" />
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-4 w-[50%] mt-2" />
-                <Skeleton className="h-12 w-[80%] rounded-md" />
+                <Skeleton className="h-4 w-[50%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[80%] rounded-md dark:bg-darkSecondary" />
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-4 w-[30%] mt-2" />
-                <Skeleton className="h-12 w-[65%] rounded-md" />
+                <Skeleton className="h-4 w-[30%] mt-2 dark:bg-darkSecondary" />
+                <Skeleton className="h-12 w-[65%] rounded-md dark:bg-darkSecondary" />
               </div>
             </CardContent>
           </motion.div>
@@ -258,7 +263,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
           <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
         </CardHeader>
         <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
-          <h3 className="text-xl text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
+          <h3 className="text-xl text-center text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
         </CardContent>
       </Card>
     )

@@ -81,8 +81,8 @@ namespace ProjectLedg.Server
 
             services.AddDbContext<ProjectLedgContext>(options =>
             {
-                options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-                //options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
+                //options.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("LEDGEDB_CONNECTION_STRING"));
             });
 
 
@@ -156,7 +156,7 @@ namespace ProjectLedg.Server
                 options.AddDefaultPolicy(builder =>
                 {
 
-                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294", "https://projectledg.azurewebsites.net", "https://ledg.se", "https://ledg-gycnhmdqb8a0cub9.eastus-01.azurewebsites.net")
+                    builder.WithOrigins("http://localhost:5173", "https://localhost:5173", "https://accounts.google.com", "https://localhost:7223", "https://localhost:7294", "https://projectledgserver.azurewebsites.net", "https://ledg.se", "https://ledg-gycnhmdqb8a0cub9.eastus-01.azurewebsites.net")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials()
@@ -236,6 +236,11 @@ namespace ProjectLedg.Server
             //Customer
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+
+            // Transaction
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<ITransactionService, TransactionService>();
+
             //Support Tickets
             services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<ISupportTicketService, SupportTicketService>();

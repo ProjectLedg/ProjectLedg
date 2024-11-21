@@ -76,9 +76,9 @@ export default function FinancialReportsPage() {
   }, [companyId])
 
   return (
-    <div className="space-y-4 p-4 sm:p-6">
+    <div className="space-y-4 p-4 ">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 sm:mb-0">Finansiella Rapporter</h2>
+        <h2 className="text-3xl font-bold tracking-tight mb-2 sm:mb-0">Finansiella Rapporter</h2>
         <Button onClick={fetchData} variant="outline" size="sm" disabled={isLoading} className="dark:bg-darkSurface dark:border-darkBorder">
           <RefreshCcw className="mr-2 h-4 w-4" />
           Uppdatera data

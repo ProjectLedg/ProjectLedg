@@ -1,9 +1,29 @@
 import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from "react";
 
 const GridItem = ({ color, text, icon: IconComponent }) => {
+  const [isFading, setIsFading] = useState(false);
+
+
+  useEffect(() => {
+    if (text) {
+      setIsFading(true); // Trigger fade effect when new content is set
+      const timeout = setTimeout(() => {
+        setIsFading(false); // Revert to gray after the animation
+      }, 2000); // 2 seconds delay
+
+      // Clean up the timeout on component unmount or when text changes
+      return () => clearTimeout(timeout);
+    }
+  }, [text]);
+
   return (
 
-    <div className="relative bg-gray-200 rounded-lg shadow-lg shadow-black/30 aspect-square">
+    <div
+      className={`relative rounded-lg shadow-md shadow-black/30 aspect-square 
+    transition-colors ease-fade-delay "
+    ${isFading ? "bg-white duration-1000" : "bg-gray-200 duration-3000 "}`}
+    >
       <div className="flex flex-col justify-around items-center pt-4 h-full">
         <AnimatePresence mode="wait">
           <motion.div
@@ -42,7 +62,7 @@ const GridItem = ({ color, text, icon: IconComponent }) => {
               filter: 'blur(20px)',
               transition: { duration: 0.5 }
             }}
-            className="paragraf flex flex-col text-xs w-full align-center items-center text-center p-1"
+            className="paragraf flex flex-col text-sm md:text-base w-full align-center items-center text-center p-1"
           >
             {text}
           </motion.div>

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useParams, useNavigate } from "react-router-dom";
+import { axiosConfig } from '/axiosconfig'
 
 import {
     DropdownMenu,
@@ -19,7 +21,57 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export default function UserDropdown({ user, companies, currentCompany, onCompanyChange, isChatOpen }) {
+export default function UserDropdown({isChatOpen, isNavOpen }) {
+    const { companyId } = useParams();
+    const navigate = useNavigate();
+    const [userData, setuserData] = useState(null);
+    const [companyData, setcompanyData] = useState([]);
+    const [currentCompany, setCurrentCompany] = useState(null);
+
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchData = async () => {
+          
+          try {
+            const userDataresponse = await axiosConfig.get('/User/getUser')
+            const companyDataresponse = await axiosConfig.get('/Company/getUserCompanies')
+            // Log responses for debugging
+            
+            
+            
+            const fetchedCompanyData = companyDataresponse.data.map(company => ({
+                id: company.id,
+                name: company.companyName
+              }));
+            
+            setuserData(userDataresponse.data.firstName)
+            setcompanyData(fetchedCompanyData)
+            
+            const activeCompany = fetchedCompanyData.find(company => company.id === companyId);
+            setCurrentCompany(activeCompany || fetchedCompanyData[0]);
+            
+            
+          } catch (error) {
+            console.log("Error message from userDropdown: ", error)
+          } 
+        };
+    
+        fetchData();
+        return () => {
+            isMounted = false;
+        };
+          
+    },[companyId]);   
+    
+    
+    const handleCompanyChange = (company) => {
+        setCurrentCompany(company); // Update current company
+        navigate(`/dashboard/${company.id}`); // Navigate to the new site
+    };
+    
+    
     const textVariants = {
         hidden: { opacity: 0, y: -10 },
         visible: { opacity: 1, y: 0 },
@@ -37,11 +89,11 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
     };
 
     return (
-        <div className={`flex items-center w-full max-w-sm px-2 pb-6 dark:bg-darkBackground bg-background border-b-2 dark:border-darkBorder ${isChatOpen ? 'justify-around' : 'justify-between'} h-16`}>
+        <div className={`flex items-center w-full max-w-sm px-2  dark:bg-darkBackground bg-background border-b-2 dark:border-darkBorder ${isChatOpen ? 'justify-around ' : 'justify-between pb-6'} h-16`}>
             <div className="flex items-center space-x-3 ">
-                <Avatar className={`p-[0.125rem]  border-2 border-green-500 rounded-full ${isChatOpen ? 'ml-3' : 'ml-[0.25rem] '}`}>
-                    <AvatarImage src={user.avatarUrl} alt={user.name} />
-                    <AvatarFallback className="bg-green-50 dark:bg-green-900 text-green-500 font-semibold">{user.name.charAt(0)}</AvatarFallback>
+                <Avatar className={`p-[0.125rem]  border-2 border-green-500 rounded-full ${isChatOpen ? 'ml-3 mb-7' : 'ml-[0.25rem] '}`}>
+                    <AvatarImage src={userData?.avatarUrl || ""} alt={userData?.firstName || ""} />
+                    <AvatarFallback className="bg-green-50 dark:bg-green-900 text-green-500 font-semibold"> {userData ? userData.charAt(0) : "?"}</AvatarFallback>
                 </Avatar>
                 <motion.div
                     initial="hidden"
@@ -49,13 +101,13 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
                     variants={textVariants}
                     transition={{ duration: 0.3 }}
                 >
-                    <h2 className="text-md font-semibold">{user.name}</h2>
-                    <p className="text-xs text-muted-foreground dark:text-darkSecondary">{currentCompany.name}</p>
+                    <h2 className="text-md font-semibold">{userData}</h2>
+                    <p className="text-xs text-muted-foreground dark:text-darkSecondary">{currentCompany?.name || "No Company"}</p>
                 </motion.div>
             </div>
             <DropdownMenu>
                 {/* Render DropdownMenuTrigger only if chat is not open */}
-                {!isChatOpen && (
+                {!isChatOpen && isNavOpen && (
                     <DropdownMenuTrigger asChild>
                         <motion.div
                             initial="hidden"
@@ -65,22 +117,32 @@ export default function UserDropdown({ user, companies, currentCompany, onCompan
                             <TooltipProvider>
                                 <TooltipShad>
                                     <TooltipTrigger>
-                                        <Button variant="outline" className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative dark:bg-darkBackground hover:dark:bg-darkSurface">
+                                        <Button
+                                            variant="outline"
+                                            className="ml-auto border-0 p-5 rounded-full flex items-center justify-center relative dark:bg-darkBackground hover:dark:bg-darkSurface cursor-pointer"
+                                        >
                                             <ChevronsUpDown className="absolute inset-0 h-4 w-4 m-auto opacity-50" />
                                         </Button>
                                     </TooltipTrigger>
-                                    <TooltipContent className="dark:bg-darkBackground dark:border-darkBorder">Växla mellan företag</TooltipContent>
+                                    <TooltipContent
+                                        // Hide tooltip content when nav is open
+                                        className={`${isNavOpen ? 'hidden' : ''} dark:bg-darkBackground dark:border-darkBorder`}
+                                    >
+                                        Växla mellan företag
+                                    </TooltipContent>
                                 </TooltipShad>
                             </TooltipProvider>
-
                         </motion.div>
                     </DropdownMenuTrigger>
                 )}
+
+
+
                 <DropdownMenuContent align="end" className="w-[15rem] dark:bg-darkSurface dark:border-darkBorder">
-                    {companies.map((company) => (
+                    {companyData.map((company) => (
                         <DropdownMenuItem
                             key={company.id}
-                            onClick={() => onCompanyChange(company)}
+                            onClick={() => handleCompanyChange(company)}
                             className="cursor-pointer"
                         >
                             <Check

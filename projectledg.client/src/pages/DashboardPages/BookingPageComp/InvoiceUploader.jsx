@@ -17,29 +17,29 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
   const scrollAreaRef = useRef(null)
 
   // TEMP TEST DATA - REMOVE WHEN API WORKS
-  const [invoiceTestData, setInvoiceTestData] = useState({
-    invoiceNumber: "12345678",
-    invoiceDate: "2024-01-01",
-    dueDate: "2024-01-31",
-    invoiceDescription: "Tjänster för konsultande",
-    invoiceTotal: 1337,
-    items: [
-      { description: "test1", amount: 10256, taxAmount: 500, taxPercentage: "25", unitPrice: "2000", quantity: "1" },
-      { description: "test2", amount: 137, taxAmount: 22, taxPercentage: "22", unitPrice: "100", quantity: "4" },
-      { description: "test3", amount: 2005, taxAmount: 18, taxPercentage: "18", unitPrice: "100", quantity: "10" }
-    ],
-    paymentDetails: "1234",
-    totalTax: 334.25,
-    customerName: "Yomama AB",
-    customerAddress: "Arenavägen 61",
-    customerAddressRecipient: "Kånkelberry",
-    vendorName: "Snus AB",
-    vendorAddress: "Ingenstans 33",
-    vendorAddressRecipient: "Snusmumriken",
-    vendorTaxId: "4567",
-    isPaid: false,
-    isBooked: false,
-  })
+  // const [invoiceTestData, setInvoiceTestData] = useState({
+  //   invoiceNumber: "12345678",
+  //   invoiceDate: "2024-01-01",
+  //   dueDate: "2024-01-31",
+  //   invoiceDescription: "Tjänster för konsultande",
+  //   invoiceTotal: 1337,
+  //   items: [
+  //     { description: "test1", amount: 10256, taxAmount: 500, taxPercentage: "25", unitPrice: "2000", quantity: "1" },
+  //     { description: "test2", amount: 137, taxAmount: 22, taxPercentage: "22", unitPrice: "100", quantity: "4" },
+  //     { description: "test3", amount: 2005, taxAmount: 18, taxPercentage: "18", unitPrice: "100", quantity: "10" }
+  //   ],
+  //   paymentDetails: "1234",
+  //   totalTax: 334.25,
+  //   customerName: "Yomama AB",
+  //   customerAddress: "Arenavägen 61",
+  //   customerAddressRecipient: "Kånkelberry",
+  //   vendorName: "Snus AB",
+  //   vendorAddress: "Ingenstans 33",
+  //   vendorAddressRecipient: "Snusmumriken",
+  //   vendorTaxId: "4567",
+  //   isPaid: false,
+  //   isBooked: false,
+  // })
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -66,16 +66,19 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
     }
   }
 
-  // Removes kr and SEK text
-  const convertInvoiceData = (invoiceData) => {
+  // Removes kr and SEK text and converts to decimal
+  const convertInvoiceData = (invoiceData, azureFileUrl) => {
     return {
       ...invoiceData,
-        InvoiceTotal: invoiceData.InvoiceTotal.replace('kr', '').replace('SEK', '').trim(),
-        TotalTax: invoiceData.TotalTax.replace('kr', '').replace('SEK', '').trim(),
+      InvoiceNumber: invoiceData.InvoiceId,
+      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal.replace(',', '.').replace('kr', '').replace('SEK', '').trim()),
+      TotalTax: parseFloat(invoiceData.TotalTax.replace('kr', '').replace('SEK', '').trim()),
+      PaymentDetails: invoiceData.PaymentDetails ? invoiceData.PaymentDetails : [],
+      InvoiceFilePath: azureFileUrl,
       Items: invoiceData.Items.map(item => ({
-        ...item,    
-        Amount: item.Amount.replace('kr', '').replace('SEK', '').trim(),
-        UnitPrice: item.UnitPrice.replace('kr', '').replace('SEK', '').trim(),
+        ...item,
+        Amount: parseFloat(item.Amount.replace('kr', '').replace('SEK', '').trim()),
+        UnitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').trim()),
       }))
     };
   }
@@ -91,17 +94,25 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
       // formData.append("additionalInfo", additionalInfo);
 
       // Send formData to API endpoint
-      const response = await axiosConfigMultipart.post("/IngoingInvoice/Analyze", formData);
+      const analyzeResponse = await axiosConfigMultipart.post("/IngoingInvoice/Analyze", formData);
 
-      const convertedInvoice = convertInvoiceData(response.data)
+      const fileUploadResponse = await axiosConfigMultipart.post("/Blob/UploadBlob", formData);
+      // setAzureFileUrl(fileUploadResponse.data.blobUrl)
+      // console.log("fileUploadResponse: ", fileUploadResponse)
+      // console.log("fileUploadResponse: ", fileUploadResponse.data.blobUrl)
+
+      const convertedInvoice = convertInvoiceData(analyzeResponse.data, fileUploadResponse.data.blobUrl)
+      // console.log("CONV INVOICE: ", convertedInvoice)
 
       // Update state with response data
-      setInvoice(convertedInvoice);
-      console.log("conv inv: ", convertedInvoice)
+      // console.log("conv inv: ", convertedInvoice)
 
 
-      console.log("Request successful:", response);
-      console.log("response data:", response.data);
+      // console.log("Request successful:", analyzeResponse);
+      // console.log("response data:", analyzeResponse.data);
+
+      setInvoice(convertedInvoice)
+
     } catch (error) {
       // Handle specific error cases
       if (error.response && error.response.status === 400) {

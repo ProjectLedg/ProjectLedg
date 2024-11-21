@@ -3,7 +3,7 @@ import Cookie from 'js-cookie';
 
 // Json config 
 const axiosConfig = axios.create({
-    baseURL: "https://localhost:7223/api",
+    baseURL: "https://projectledgserver.azurewebsites.net/api",
     headers: {
         "Content-Type": "application/json",
     },
@@ -12,7 +12,7 @@ const axiosConfig = axios.create({
 
 // Multipart config
 const axiosConfigMultipart = axios.create({
-    baseURL: "https://localhost:7223/api",
+    baseURL: "https://projectledgserver.azurewebsites.net/api",
     withCredentials: true,
 });
 
@@ -21,7 +21,7 @@ const attachJwtAndRoleInterceptor = (instance) => {
     instance.interceptors.request.use(
         (config) => {
             const jwtToken = Cookie.get("JWTTolkien");
-            console.log(jwtToken)
+
             const userRole = Cookie.get("UserRole");
 
             if (jwtToken) {

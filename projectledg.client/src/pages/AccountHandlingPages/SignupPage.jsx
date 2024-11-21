@@ -59,7 +59,7 @@ const SignUpPage = () => {
 
     try {
       console.log(userDetails);
-      const response = await axios.post('https://projectledg.azurewebsites.net/api/User/create', userDetails, {
+      const response = await axios.post('https://projectledgserver.azurewebsites.net/api/User/create', userDetails, {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -76,7 +76,7 @@ const SignUpPage = () => {
   const handleGoogleSignIn = () => {
     try {
       //Redirect to backend endpoint for Google sign-in
-      window.location.href = "https://projectledg.azurewebsites.net/api/login-google";
+      window.location.href = "https://projectledgserver.azurewebsites.net/api/login-google";
     }
     catch (error) {
       console.error("Error during sign-in redirect:", error);
@@ -87,7 +87,7 @@ const SignUpPage = () => {
 
   const handleMicrosoftSignIn = () => {
     try {
-      window.location.href = "https://projectledg.azurewebsites.net/api/login-microsoft"
+      window.location.href = "https://projectledgserver.azurewebsites.net/api/login-microsoft"
     }
     catch (error) {
       console.error("Error during sign-in redirect:", error);
@@ -118,7 +118,7 @@ const SignUpPage = () => {
 
               {/* Inner Squares with Separate Tailwind Colors */}
               <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
-              <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+              <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
               <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
               <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
             </g>
@@ -147,7 +147,7 @@ const SignUpPage = () => {
 
                 {/* <!-- Inner Squares with Separate Tailwind Colors --> */}
                 <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
-                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-blue-500" />
+                <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
                 <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
                 <rect id="BottomRight" x="79" y="70" width="34" height="42" className="fill-white" />
               </g>

@@ -3,6 +3,7 @@ import Navbar from "./LandingPageComp/Navbar"
 import FooterSection from "./LandingPageComp/FooterSection"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle, ArrowRight } from "lucide-react"
+import LonsamhetImage from "@/assets/landingpage-icons/LonsamhetIcon.png";
 
 export default function VarforPage() {
   const reasons = [
@@ -28,7 +29,7 @@ export default function VarforPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-16">
-        <section className="mb-20">
+        <section className="mb-20 mt-24">
           <h1 className="text-4xl font-bold text-center mb-4">Varför Välja Oss?</h1>
           <div className="w-24 h-1 bg-green-500 mx-auto mb-8"></div>
           <p className="text-xl text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
@@ -69,7 +70,7 @@ export default function VarforPage() {
             </div>
             <div className="md:w-1/2 flex justify-center">
               <img
-                src="./src/assets/landingpage-icons/LonsamhetIcon.png"
+                src={LonsamhetImage}
                 alt="Illustration av Framgång"
                 className="rounded-lg shadow-md"
                 width={300}

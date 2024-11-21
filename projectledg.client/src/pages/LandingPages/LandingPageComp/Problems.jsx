@@ -94,7 +94,46 @@ const Problems = () => {
 
 
   useEffect(() => {
+    const getRandomTextAndColor = () => ({
+      text: texts[Math.floor(Math.random() * texts.length)],
+      color: colors[Math.floor(Math.random() * colors.length)],
+    });
 
+    // Initialize all grid items with random text and color
+    setText1(getRandomTextAndColor().text);
+    setColor1(getRandomTextAndColor().color);
+    setText2(getRandomTextAndColor().text);
+    setColor2(getRandomTextAndColor().color);
+    setText3(getRandomTextAndColor().text);
+    setColor3(getRandomTextAndColor().color);
+    setText4(getRandomTextAndColor().text);
+    setColor4(getRandomTextAndColor().color);
+    setText5(getRandomTextAndColor().text);
+    setColor5(getRandomTextAndColor().color);
+    setText6(getRandomTextAndColor().text);
+    setColor6(getRandomTextAndColor().color);
+    setText7(getRandomTextAndColor().text);
+    setColor7(getRandomTextAndColor().color);
+    setText8(getRandomTextAndColor().text);
+    setColor8(getRandomTextAndColor().color);
+    setText9(getRandomTextAndColor().text);
+    setColor9(getRandomTextAndColor().color);
+    setText10(getRandomTextAndColor().text);
+    setColor10(getRandomTextAndColor().color);
+    setText11(getRandomTextAndColor().text);
+    setColor11(getRandomTextAndColor().color);
+    setText12(getRandomTextAndColor().text);
+    setColor12(getRandomTextAndColor().color);
+    setText13(getRandomTextAndColor().text);
+    setColor13(getRandomTextAndColor().color);
+    setText14(getRandomTextAndColor().text);
+    setColor14(getRandomTextAndColor().color);
+    setText15(getRandomTextAndColor().text);
+    setColor15(getRandomTextAndColor().color);
+    setText16(getRandomTextAndColor().text);
+    setColor16(getRandomTextAndColor().color);
+
+    // Set up intervals for updating grid items
     const updateTextAndColor = (setText, setColor) => {
       setText("");
       setColor("bg-transparent");
@@ -102,7 +141,6 @@ const Problems = () => {
       setTimeout(() => {
         setText(texts[Math.floor(Math.random() * texts.length)]);
         setColor(colors[Math.floor(Math.random() * colors.length)]);
-        
       }, 1000);
     };
 
@@ -111,7 +149,7 @@ const Problems = () => {
 
     const offsets = [
       410.2, 1204.1, 2413.5, 1802.9, 907.1, 1526.2, 2989.6, 1707.1,
-      601.4, 1402.3, 150.8, 1611.4, 2002.3, 1105.6, 2702.3, 802.23
+      601.4, 1402.3, 150.8, 1611.4, 2002.3, 1105.6, 2702.3, 802.23,
     ];
 
     intervals.push(setInterval(() => updateTextAndColor(setText1, setColor1), baseDuration + offsets[0]));
@@ -134,17 +172,18 @@ const Problems = () => {
     return () => intervals.forEach(clearInterval);
   }, []);
 
+
   return (
-    <div className="relative w-full overflow-hidden bg-white">
+    <div className="relative w-full overflow-hidden">
       <div className="flex flex-col w-full justify-center items-center my-6">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight first:mt-0">
+        <h2 className="scroll-m-20  pb-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight first:mt-0">
           Bokföring är svårt
         </h2>
       </div>
 
-      <div className="flex flex-col relative w-screen max-h-screen items-center">
-        <div className="max-w-7xl py-12 flex flex-col justify-center w-screen items-center">
-          <div className="grid grid-cols-2 md:grid-cols-8 gap-4 w-[100vw] md:w-[110vw]">
+      <div className="flex flex-col relative w-screen max-h-screen items-center ">
+        <div className="max-w-7xl py-12 flex flex-col justify-center w-screen items-center ">
+          <div className="grid grid-cols-2 md:grid-cols-8 gap-4 w-[100vw] md:w-[110vw] p-4 sm:p-0">
             <div>
               <GridItem
                 color={color1}
@@ -173,84 +212,84 @@ const Problems = () => {
                 icon={textIconMap[text4]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color5}
                 text={text5}
                 icon={textIconMap[text5]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color6}
                 text={text6}
                 icon={textIconMap[text6]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color7}
                 text={text7}
                 icon={textIconMap[text7]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color8}
                 text={text8}
                 icon={textIconMap[text8]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color9}
                 text={text9}
                 icon={textIconMap[text9]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color10}
                 text={text10}
                 icon={textIconMap[text10]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color11}
                 text={text11}
                 icon={textIconMap[text11]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color12}
                 text={text12}
                 icon={textIconMap[text12]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color13}
                 text={text13}
                 icon={textIconMap[text13]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color14}
                 text={text14}
                 icon={textIconMap[text14]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color15}
                 text={text15}
                 icon={textIconMap[text15]}
               />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <GridItem
                 color={color16}
                 text={text16}
@@ -262,7 +301,7 @@ const Problems = () => {
       </div>
 
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none hidden sm:block"
         style={{
           background:
             "radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.8) 70%, rgb(255, 255, 255) 100%)",

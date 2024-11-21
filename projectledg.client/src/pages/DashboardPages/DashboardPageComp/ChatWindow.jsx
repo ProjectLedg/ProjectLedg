@@ -71,13 +71,13 @@ export default function ChatWindow({ onClose, onSendMessage }) {
             className={`mb-12 flex items-start ${message.type === 'sent' ? 'self-end' : 'self-start'}`}
         >
             {message.type === 'received' && (
-                <div className='p-2 mt-1 border-2 rounded-full '>
+                <div className='p-2 mt-1 border-2 dark:border-darkBorder rounded-full '>
                     <Bot className="w-6 h-6 " />
                 </div>
             )}
             <div
                 className={`${message.type === 'sent'
-                    ? 'bg-green-500 dark:bg-gray-600 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
+                    ? 'bg-green-500 dark:bg-neutral-700 px-5 py-3 rounded-3xl shadow-lg ml-auto max-w-64 text-white break-words whitespace-normal'
                     : 'prose  px-3 py-3 rounded-3xl  max-w-[100%] text-black dark:text-white'
                     }`}
             >
@@ -182,7 +182,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                                     }
                                 }}
                                 placeholder="Fråga Ledge..."
-                                className="flex-grow p-2 bg-transparent rounded-none focus:outline-none resize-none overflow-hidden"
+                                className="flex-grow p-2 bg-transparent rounded-none focus:outline-none resize-none overflow-hidden dark:text-black"
                                 rows="1"
                             />
                             <button
