@@ -12,6 +12,7 @@ export default function LandingPage() {
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         setTheme(theme === "light")
     }, [])
 

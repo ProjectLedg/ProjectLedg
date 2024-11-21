@@ -1,4 +1,5 @@
 import React from "react"
+import { useEffect } from "react";
 import Navbar from "./LandingPageComp/Navbar"
 import FooterSection from "./LandingPageComp/FooterSection"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,6 +8,11 @@ import { Check, Lock, Sparkles } from "lucide-react"
 import { Link } from 'react-router-dom';
 
 const PricingPage = () => {
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+  
   const tiers = [
     {
       name: "Gratis",

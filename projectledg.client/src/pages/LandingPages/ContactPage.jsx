@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import axios from "axios"
 import Navbar from "./LandingPageComp/Navbar"
 import FooterSection from "./LandingPageComp/FooterSection"
@@ -9,6 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Mail, Phone, MapPin, Loader2, Sparkles } from "lucide-react"
 
 export default function ContactPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",

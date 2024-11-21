@@ -1,4 +1,5 @@
 import React from "react"
+import { useEffect } from "react";
 import Navbar from "./LandingPageComp/Navbar"
 import FooterSection from "./LandingPageComp/FooterSection"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,6 +7,11 @@ import { CheckCircle, ArrowRight } from "lucide-react"
 import LonsamhetImage from "@/assets/landingpage-icons/LonsamhetIcon.png";
 
 export default function VarforPage() {
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
   const reasons = [
     {
       title: "Innovativ Teknik",
