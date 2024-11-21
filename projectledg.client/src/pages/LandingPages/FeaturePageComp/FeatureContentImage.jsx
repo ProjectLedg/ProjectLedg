@@ -68,13 +68,13 @@ export default function FeatureImage() {
                             bokföringsassistent
                         </motion.span>
                     </div>
-                    <ul className="space-y-8 text-xl">
+                    <ul className="space-y-8 text-md xl-monitor:text-xl">
                         <motion.li
                             className="text-gray-600 flex flex-row items-center"
                             style={{ opacity: li1Opacity }}
                         >
                             <Gauge className="h-8 w-8 mr-2 text-red-500" />
-                            <span className="font-semibold text-black">
+                            <span className="font-semibold text-black ">
                                 Snabba svar på dina frågor:
                             </span>
                             &nbsp;Få klara och tydliga svar om företagets ekonomi och bokföring.
