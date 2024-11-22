@@ -15,6 +15,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\AssistantBasAccMapDirectives.txt" />
+    <None Remove="Assets\assistantDirectives.env" />
+    <None Remove="Assets\BASAccContext.txt" />
+    <None Remove="Assets\BasKontoPlan.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\AssistantBasAccMapDirectives.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\assistantDirectives.env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\BASAccContext.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\BasKontoPlan.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.AI.FormRecognizer" Version="4.1.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
@@ -52,14 +74,5 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
-
-	<ItemGroup>
-		<None Update="Assets\assistantDirectives.env">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\BasKontoPlan.csv">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 
 </Project>
