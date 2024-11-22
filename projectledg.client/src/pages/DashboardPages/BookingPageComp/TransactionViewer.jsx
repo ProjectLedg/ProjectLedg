@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
 import { FileText } from 'lucide-react'
 import { axiosConfig } from '/axiosconfig'
 import LoggerPagination from "./LoggerPagination"
@@ -17,7 +18,7 @@ const TransactionViewer = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const { companyId } = useParams()
- // Pagination
+  // Pagination
   const pagination = 20;
   const [startItem, setStartItem] = useState(0)
   const [endItem, setEndItem] = useState(pagination)
@@ -25,6 +26,9 @@ const TransactionViewer = () => {
 
   const totalTransactions = transactions.length;
   const totalPages = Math.ceil(transactions.length / pagination);
+
+  // Search filter for logger table
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     fetchTransactions()
@@ -38,8 +42,8 @@ const TransactionViewer = () => {
 
 
       if (response.status === 200) {
-       setTransactions(response.data)
-     }
+        setTransactions(response.data)
+      }
 
     } catch (error) {
       setError("Något gick fel")
@@ -54,6 +58,11 @@ const TransactionViewer = () => {
     setIsModalOpen(true)
   }
   const displayedTransactions = transactions.slice(startItem, endItem);
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+  };
 
   if (isLoading) {
     return (
@@ -99,11 +108,18 @@ const TransactionViewer = () => {
 
   return (
     <Card className="w-full h-[90vh] md:h-[40rem] flex flex-col shadow-lg">
-      <CardHeader className="flex flex-row justify-between border-b-2 dark:border-darkBorder">
-        <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
+      <CardHeader className="flex flex-col md:flex-row justify-between border-b-2 dark:border-darkBorder">
+        <CardTitle className="text-2xl font-bold mr-2 text-gray-800 flex items-center dark:text-white">
           <FileText className="mr-2 text-green-500" />
           Verifikationer
         </CardTitle>
+        <Input
+          type="text"
+          placeholder="Sök här..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="bg-gray-100 md:w-[25%] rounded-md "
+        />
       </CardHeader>
 
       <CardContent className="flex-grow overflow-hidden p-0">
@@ -118,7 +134,12 @@ const TransactionViewer = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {displayedTransactions.map((transaction, index) => (
+              {displayedTransactions.filter((item) =>
+                // Filter based on search query
+                Object.values(item)
+                  .filter((value) => typeof value === "string")
+                  .some((value) => value.toString().toLowerCase().includes(searchQuery))
+              ).map((transaction, index) => (
                 <TableRow
                   key={index}
                   className="border-b dark:border-darkBorder hover:bg-gray-50 dark:hover:bg-darkHover cursor-pointer"
@@ -133,7 +154,7 @@ const TransactionViewer = () => {
                   <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                     {transaction.invoiceNumber}
                   </TableCell>
-                  <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <TableCell className="px-4 py-4 text-sm font-medium text-green-500">
                     {transaction.invoiceTotal.toFixed(2)} kr
                   </TableCell>
                 </TableRow>
@@ -141,124 +162,131 @@ const TransactionViewer = () => {
             </TableBody>
           </Table>
           <div className="md:hidden space-y-4 bg-gray-200 dark:bg-darkBackground ">
-          <div className="flex flex-col">
-            {transactions.map((trans) => (
-              <Card key={trans.invoiceNumber} className="mt-2 w-full shadow-lg">
-                <CardContent 
-                  className="grid grid-cols-2 justify-between items-center gap-3 py-4 px-2 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-darkBackground dark:border-darkBorder transition-colors duration-200"
-                  onClick={() => handleTransactionClick(trans)} // Use trans, which contains the transaction data
-                >
-                  <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">Fakturanr: </p>
-                  <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">{trans.invoiceNumber}</p>
+            <div className="flex flex-col">
+              {transactions
+                .filter((item) =>
+                  // Filter based on search query
+                  Object.values(item)
+                    .filter((value) => typeof value === "string")
+                    .some((value) => value.toString().toLowerCase().includes(searchQuery))
+                )
+                .map((trans) => (
+                  <Card key={trans.invoiceNumber} className="mt-2 w-full shadow-lg">
+                    <CardContent
+                      className="grid grid-cols-2 justify-between items-center gap-3 py-4 px-2 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-darkBackground dark:border-darkBorder transition-colors duration-200"
+                      onClick={() => handleTransactionClick(trans)} // Use trans, which contains the transaction data
+                    >
+                      <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">Fakturanr: </p>
+                      <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">{trans.invoiceNumber}</p>
 
-                  <p className="font-semibold text-gray-600 dark:text-white px-2">Kund: </p>
-                  <p className="font-semibold text-gray-600 dark:text-white px-2">{trans.vendorOrCustomerName}</p>
+                      <p className="font-semibold text-gray-600 dark:text-white px-2">Kund: </p>
+                      <p className="font-semibold text-gray-600 dark:text-white px-2">{trans.vendorOrCustomerName}</p>
 
-                  <p className="text-gray-600 dark:text-white px-2">Fakturadatum: </p>
-                  <p className="text-gray-600 dark:text-white px-2">{new Date(trans.transactionDate).toLocaleDateString()}</p>
+                      <p className="text-gray-600 dark:text-white px-2">Fakturadatum: </p>
+                      <p className="text-gray-600 dark:text-white px-2">{new Date(trans.transactionDate).toLocaleDateString()}</p>
 
-                  <p className="font-medium text-gray-600 dark:text-white px-2">Belopp: </p>
-                  <p className="font-semibold text-green-500 px-2">{trans.invoiceTotal}kr</p>
+                      <p className="font-medium text-gray-600 dark:text-white px-2">Belopp: </p>
+                      <p className="font-semibold text-green-500 px-2">{trans.invoiceTotal}kr</p>
 
-                  {/* We don't have 'isPaid' or 'isBooked' in the data, so we'll remove those badges */}
-                  {/* If you want to display those fields later, you can add them back when available */}
-                </CardContent>
-              </Card>
-            ))}
+                      {/* We don't have 'isPaid' or 'isBooked' in the data, so we'll remove those badges */}
+                      {/* If you want to display those fields later, you can add them back when available */}
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
           </div>
-        </div>
 
         </ScrollArea>
       </CardContent>
       <div className="hidden md:flex justify-center gap-3 pt-2 mb-3 border-t-2 dark:border-darkBorder">
-      <LoggerPagination
-        totalPages={totalPages}
-        totalInvoices={totalTransactions}
-        pagination={pagination}
-        setStartItem={setStartItem}
-        setEndItem={setEndItem}
-        pageNumber={pageNumber}
-        setPageNumber={setPageNumber}
-      />
-    </div>
+        <LoggerPagination
+          totalPages={totalPages}
+          totalInvoices={totalTransactions}
+          pagination={pagination}
+          setStartItem={setStartItem}
+          setEndItem={setEndItem}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+        />
+      </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent className="w-full md:w-[85vw] max-w-3xl rounded-lg dark:bg-darkSurface">
-  <DialogHeader>
-    <DialogTitle className="text-2xl font-bold text-green-600">Verifikation</DialogTitle>
-  </DialogHeader>
-  {selectedTransaction && (
-    <div className="mt-4 space-y-6">
-      {/* Grid for details */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-white">Datum</p>
-          <p className="text-sm text-gray-900 dark:text-darkSecondary">
-            {new Date(selectedTransaction.transactionDate).toLocaleDateString()}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-white">Kund</p>
-          <p className="text-sm text-gray-900 dark:text-darkSecondary">
-            {selectedTransaction.vendorOrCustomerName}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-white">Fakturanummer</p>
-          <p className="text-sm text-gray-900 dark:text-darkSecondary">
-            {selectedTransaction.invoiceNumber}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-white">Summa</p>
-          <p className="text-lg font-semibold text-green-600">
-            {selectedTransaction.invoiceTotal.toFixed(2)} kr
-          </p>
-        </div>
-      </div>
+        <DialogContent className="w-full md:w-[85vw] max-w-3xl rounded-lg dark:bg-darkSurface">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-green-600">Verifikation</DialogTitle>
+          </DialogHeader>
+          {selectedTransaction && (
+            <div className="mt-4 space-y-6">
+              {/* Grid for details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Datum</p>
+                  <p className="text-sm text-gray-900 dark:text-darkSecondary">
+                    {new Date(selectedTransaction.transactionDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Kund</p>
+                  <p className="text-sm text-gray-900 dark:text-darkSecondary">
+                    {selectedTransaction.vendorOrCustomerName}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Fakturanummer</p>
+                  <p className="text-sm text-gray-900 dark:text-darkSecondary">
+                    {selectedTransaction.invoiceNumber}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white">Summa</p>
+                  <p className="text-lg font-semibold text-green-600">
+                    {selectedTransaction.invoiceTotal.toFixed(2)} kr
+                  </p>
+                </div>
+              </div>
 
-      {/* Table for bas accounts */}
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-100 dark:bg-darkSurface">
-              <TableHead className="text-left">Bas Konto</TableHead>
-              <TableHead className="text-left">Beskrivning</TableHead>
-              <TableHead className="text-left">Debit</TableHead>
-              <TableHead className="text-left">Kredit</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {selectedTransaction.basAccounts.map((account, index) => (
-              <TableRow key={index} className="border-b dark:border-darkBorder">
-                <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {account.accountNumber}
-                </TableCell>
-                <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {account.description}
-                </TableCell>
-                <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {account.debit.toFixed(2)}
-                </TableCell>
-                <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {account.credit.toFixed(2)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  )}
-  <DialogFooter>
-    <Button
-      onClick={() => setIsModalOpen(false)}
-      className="w-full bg-green-500 hover:bg-green-600 text-white"
-    >
-      Stäng
-    </Button>
-  </DialogFooter>
-</DialogContent>
+              {/* Table for bas accounts */}
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-100 dark:bg-darkSurface">
+                      <TableHead className="text-left">Bas Konto</TableHead>
+                      <TableHead className="text-left">Beskrivning</TableHead>
+                      <TableHead className="text-left">Debit</TableHead>
+                      <TableHead className="text-left">Kredit</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedTransaction.basAccounts.map((account, index) => (
+                      <TableRow key={index} className="border-b dark:border-darkBorder">
+                        <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {account.accountNumber}
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {account.description}
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {account.debit.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {account.credit.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              className="w-full bg-green-500 hover:bg-green-600 text-white"
+            >
+              Stäng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
 
       </Dialog>
     </Card>
