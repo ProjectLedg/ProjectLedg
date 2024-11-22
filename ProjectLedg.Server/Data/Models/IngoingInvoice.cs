@@ -18,10 +18,10 @@ namespace ProjectLedg.Server.Data.Models
         public bool IsBooked { get; set; } // If invoice is "bokförd" 
 
         //Customer Related queries  
-        public string CustomerId { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerAddress { get; set; }
-        public string CustomerAddressRecipient { get; set; }
+        public string? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerAddress { get; set; }
+        public string? CustomerAddressRecipient { get; set; }
 
         //Vendor Related queries
         public string VendorName { get; set; }
