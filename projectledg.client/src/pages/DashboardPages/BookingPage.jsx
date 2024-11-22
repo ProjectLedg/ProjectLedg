@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { ResetProvider } from "@/services/ResetProvider"
 import InvoiceUploader from "./BookingPageComp/InvoiceUploader"
 import InvoicePreview from "./BookingPageComp/InvoicePreview"
@@ -8,34 +8,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function BookingPage() {
     // State to hold invoice data for child components
-    const [invoice, setInvoice] = useState(null); 
+    const [invoice, setInvoice] = useState(null);
     const [isUploadLoading, setIsUploadLoading] = useState(false)
 
     return (
-        <Tabs defaultValue="details" className="mb-6">
-            <TabsList className="dark:bg-darkBackground">
-                <TabsTrigger value="details">Bokföring</TabsTrigger>
-                <TabsTrigger value="customer">Verifikationer</TabsTrigger>
-            </TabsList>
+        <ResetProvider>
+            <div className="space-y-4 p-4">
+                <Tabs defaultValue="details">
+                    <div className="grid grid-cols-1 ">
+                        <h2 className="text-3xl font-bold mb-2">Bokför</h2>
 
-            <TabsContent value="details">
-                <ResetProvider>
-                    <div className="space-y-4 p-4">     
-                        <div className="grid grid-cols-1 gap-4">
-                            
+                        <TabsList className="max-w-[250px] h-11 mb-1 dark:bg-darkBackground">
+                            <TabsTrigger value="details">Bokföring</TabsTrigger>
+                            <TabsTrigger value="customer">Verifikationer</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="details">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="md:col-span-1">
-                                    <InvoiceUploader 
-                                        setInvoice={setInvoice} 
-                                        isUploadLoading={isUploadLoading} 
-                                        setIsUploadLoading={setIsUploadLoading} 
+                                    <InvoiceUploader
+                                        setInvoice={setInvoice}
+                                        isUploadLoading={isUploadLoading}
+                                        setIsUploadLoading={setIsUploadLoading}
                                     />
                                 </div>
                                 <div className="xl:col-span-2">
-                                    <InvoicePreview 
-                                        invoice={invoice} 
-                                        setInvoice={setInvoice} 
-                                        isUploadLoading={isUploadLoading} 
+                                    <InvoicePreview
+                                        invoice={invoice}
+                                        setInvoice={setInvoice}
+                                        isUploadLoading={isUploadLoading}
                                         setIsUploadLoading={setIsUploadLoading}
                                     />
                                 </div>
@@ -43,19 +44,13 @@ export default function BookingPage() {
                             <div className="w-full">
                                 <InvoiceLogger />
                             </div>
-                        </div>
+                        </TabsContent>
+                        <TabsContent value="customer">
+                            <TransactionViewer />
+                        </TabsContent>
                     </div>
-                </ResetProvider>
-            </TabsContent>
-
-            <TabsContent value="customer">
-                <ResetProvider>
-                    <div className="space-y-4 p-4">
-                        
-                        <TransactionViewer />
-                    </div>
-                </ResetProvider>
-            </TabsContent>
-        </Tabs>
+                </Tabs>
+            </div>
+        </ResetProvider >
     );
 }
