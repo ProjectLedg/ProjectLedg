@@ -14,19 +14,19 @@ export default function VarforPage() {
 
   const reasons = [
     {
-      title: "Innovativ Teknik",
+      title: "Innovativ teknik",
       description: "Vår banbrytande lösning utnyttjar de senaste framstegen inom området."
     },
     {
-      title: "Användarvänligt Gränssnitt",
+      title: "Användarvänligt gränssnitt",
       description: "Intuitiv design som gör komplexa uppgifter enkla och effektiva."
     },
     {
-      title: "Skalbar Lösning",
+      title: "Skalbar lösning",
       description: "Växer med ditt företag, från startups till verksamheter på företagsnivå."
     },
     {
-      title: "Support Dygnet Runt",
+      title: "Support dygnet runt",
       description: "Stöd dygnet runt för att säkerställa din framgång och tillfredsställelse."
     }
   ]
@@ -36,7 +36,7 @@ export default function VarforPage() {
       <Navbar />
       <main className="container mx-auto px-4 py-16">
         <section className="mb-20 mt-24">
-          <h1 className="text-4xl font-bold text-center mb-4">Varför Välja Oss?</h1>
+          <h1 className="text-4xl font-bold text-center mb-4">Varför välja oss?</h1>
           <div className="w-24 h-1 bg-green-500 mx-auto mb-8"></div>
           <p className="text-xl text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
             Vår lösning sticker ut från konkurrensen och erbjuder enastående värde och innovation för att möta dina behov.
@@ -59,7 +59,7 @@ export default function VarforPage() {
         </section>
 
         <section className="bg-gray-50 rounded-lg p-8 shadow-lg max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6 text-center">Stärka Din Framgång</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center">Maximera din potential</h2>
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-6 md:mb-0 md:pr-8">
               <p className="text-lg mb-4">
