@@ -219,7 +219,7 @@ public class AssistantService : IAssistantService
         catch (Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return "erro";
+            return $"{ex.ToString()}";
         }
     }
 
