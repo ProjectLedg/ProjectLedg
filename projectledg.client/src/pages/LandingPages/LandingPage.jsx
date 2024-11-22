@@ -28,7 +28,7 @@ export default function LandingPage() {
                 <CardShow />
             </div>
             <div className="flex flex-col items-center">
-                <section id="why" className="scroll-mt-32">
+                <section id="why" className="scroll-mt-2">
                     <CallToAction />
                 </section>
             </div>

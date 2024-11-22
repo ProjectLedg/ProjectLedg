@@ -6,8 +6,12 @@ export default function Content() {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    window.location.hash = "#why";
+    const target = document.querySelector("#why");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
   };
+  
 
   return (
     <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24  ">
