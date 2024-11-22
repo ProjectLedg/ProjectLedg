@@ -104,8 +104,8 @@ const SignUpPage = () => {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-300">
-      <div className="hidden flex-1 overflow-auto bg-gradient-to-b from-blue-700/40 to-gray-200 lg:flex lg:w-1/3 p-8 lg:p-12 flex-col justify-between">
+    <div className="flex justify-center lg:flex-row min-h-screen max-h-fit bg-slate-300">
+      {/* <div className="hidden flex-1 overflow-auto bg-gradient-to-b from-blue-700/40 to-gray-200 lg:flex lg:w-1/3 p-8 lg:p-12 flex-col justify-between">
         <div className='pt-40 pl-11'>
           <svg
             width="40" height="40" viewBox="0 0 150 150" fill="none"
@@ -113,10 +113,10 @@ const SignUpPage = () => {
             className="w-10 h-10 mb-8"
           >
             <g id="Group 1">
-              {/* Outer Rounded Rectangle */}
+              
               <rect id="Rectangle 1" width="150" height="150" rx="40" className="fill-green-500" />
 
-              {/* Inner Squares with Separate Tailwind Colors */}
+              
               <rect id="TopLeft" x="37" y="36" width="34" height="42" className="fill-white" />
               <rect id="TopRight" x="79" y="36" width="34" height="26" className="fill-white" />
               <rect id="BottomLeft" x="37" y="86" width="34" height="26" className="fill-white" />
@@ -135,11 +135,11 @@ const SignUpPage = () => {
             </ul>
           </div>
         </div>
-      </div>
-
+      </div> 
+ */}
       <div className="w-full lg:w-2/3 flex items-center justify-center p-4 lg:p-0 min-h-screen px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md rounded-[1.5rem] p-4 sm:p-8 lg:p-12 m-8">
-          <CardHeader className="flex flex-col items-center space-y-4 pt-2 sm:pt-4">
+          <CardHeader className="flex flex-col items-center space-y-4 sm:pt-4">
             <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
               <g id="Group 1">
                 {/* <!-- Outer Rounded Rectangle --> */}
