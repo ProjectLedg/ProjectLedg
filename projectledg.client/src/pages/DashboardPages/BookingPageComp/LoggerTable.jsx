@@ -164,7 +164,7 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                             </button>
 
                             {/* Filtering Options */}
-                            <div className="">
+                            <div>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <button className="flex items-center px-4 py-2 text-sm font-medium bg-white text-gray-700 rounded-md border dark:border-none dark:text-white dark:bg-darkSurface shadow-sm">
