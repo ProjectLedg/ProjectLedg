@@ -35,7 +35,9 @@ export default function LandingPage() {
             <div className="flex flex-col items-center pb-14 sm:pb-36 ">
                 <NewsletterSignup />
             </div>
-            <FooterSection />
+            <div className="mt-24">
+      <FooterSection />
+      </div>
         </div>
 
     );

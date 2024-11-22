@@ -86,7 +86,9 @@ export default function VarforPage() {
           </div>
         </section>
       </main>
+      <div className="mt-24">
       <FooterSection />
+      </div>
     </div>
   )
 }
