@@ -42,17 +42,17 @@ const SignUpPage = () => {
     setIsLoading(true);
 
     if (userDetails.email !== userDetails.emailConfirmed) {
-      setError("Emails do not match.");
+      setError("Epost matchar inte");
       setIsLoading(false);
       return;
     }
     if (userDetails.password !== userDetails.passwordConfirmed) {
-      setError("Passwords do not match.");
+      setError("Lösenorden matchar inte.");
       setIsLoading(false);
       return;
     }
     if (userDetails.password.length < 8 || userDetails.password.length > 20) {
-      setError("Password must be at least 6 characters long.");
+      setError("Lösenordet måste innehåll 8 tecken.");
       setIsLoading(false);
       return;
     }
@@ -307,9 +307,9 @@ const SignUpPage = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Email Verification Sent</DialogTitle>
+            <DialogTitle>Epost verifikation skickad</DialogTitle>
             <DialogDescription>
-              A email verification has been sent to your email. Please check your inbox and follow the instructions to complete your registration.
+            En e-postverifiering har skickats till din e-post. Kontrollera din inkorg och följ instruktionerna för att slutföra din registrering.  
             </DialogDescription>
           </DialogHeader>
           <Link to="/login" className="inline-block">
