@@ -6,7 +6,7 @@ export default function ChatService({ onClose, mobile }) {
     async function sendMessage(input) {
         try {
             const response = await axios.post(
-                'https://projectledg.azurewebsites.net/api/Assistant/chat',
+                'https://projectledgserver.azurewebsites.net/api/Assistant/chat',
                 JSON.stringify(input),
                 {
                     headers: {

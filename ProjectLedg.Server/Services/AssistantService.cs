@@ -51,7 +51,7 @@ public class AssistantService : IAssistantService
         _mapDirectivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantBasAccMapDirectives.txt");
         _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccContext.txt");
         _encryptionHelper = encryptionHelper;
-    
+
 
 
         //Functions
@@ -77,90 +77,90 @@ public class AssistantService : IAssistantService
         _logger = logger;
     }
 
-        public async Task<string> SendMessageToAssistantAsync(string message)
+    public async Task<string> SendMessageToAssistantAsync(string message)
+    {
+        try
         {
-            try
+            var session = _httpContextAccessor.HttpContext.Session;
+
+            // Retrieve existing chat history from session, if any
+            var chatHistoryEncrypted = session.GetString("ChatHistory");
+            _logger.LogInformation("Retrieved chat history from session.");
+
+            var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
+                ? new List<Message>()
+                : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
+
+            // Clear chat history if it exceeds the maximum allowed size
+            const int MaxMessages = 20;
+            if (messages.Count > MaxMessages)
             {
-                var session = _httpContextAccessor.HttpContext.Session;
+                _logger.LogWarning("Chat history exceeded max size; truncating messages.");
+                messages = messages.TakeLast(MaxMessages).ToList();
+            }
 
-                // Retrieve existing chat history from session, if any
-                var chatHistoryEncrypted = session.GetString("ChatHistory");
-                _logger.LogInformation("Retrieved chat history from session.");
+            // Check if the message is a command
+            var commandResult = await ProcessCommandAsync(message);
+            if (commandResult != null)
+            {
+                _logger.LogInformation("Command processed successfully with result: {CommandResult}", commandResult);
 
-                var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
-                    ? new List<Message>()
-                    : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
-
-                // Clear chat history if it exceeds the maximum allowed size
-                const int MaxMessages = 20;
-                if (messages.Count > MaxMessages)
-                {
-                    _logger.LogWarning("Chat history exceeded max size; truncating messages.");
-                    messages = messages.TakeLast(MaxMessages).ToList();
-                }
-
-                // Check if the message is a command
-                var commandResult = await ProcessCommandAsync(message);
-                if (commandResult != null)
-                {
-                    _logger.LogInformation("Command processed successfully with result: {CommandResult}", commandResult);
-
-                    messages.Add(new Message(Role.Assistant, commandResult));
-
-                    // Encrypt and store updated chat history in session
-                    chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-                    session.SetString("ChatHistory", chatHistoryEncrypted);
-
-                    return commandResult;
-                }
-
-                // Ensure system message is added only once per session
-                if (!messages.Any(m => m.Role == Role.System))
-                {
-                    _logger.LogInformation("Adding system message with BAS Chart and assistant directives.");
-                    var basAccounts = LoadBasAccounts();
-                    var basContext = string.Join("\n", basAccounts.Select(a =>
-                        $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
-                    var assistantDirectives = LoadAssistantDirectives();
-
-                    var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
-                    messages.Insert(0, systemMessage);
-                }
-
-                // Add user's message
-                _logger.LogInformation("Adding user's message: {UserMessage}", message);
-                var userMessage = new Message(Role.User, message);
-                messages.Add(userMessage);
-
-                // Limit to recent messages again before sending
-                var recentMessages = messages.TakeLast(10).ToList();
-                var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
-
-                // Process with OpenAI
-                _logger.LogInformation("Sending message to OpenAI.");
-                var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
-
-                // Convert the response content to a string
-                var assistantResponse = response.FirstChoice?.Message?.Content ?? "No valid response from assistant.";
-                string assistantResponseString = assistantResponse.ToString();
-
-                // Log the response as a string
-                _logger.LogInformation("Received response from OpenAI: {AssistantResponse}", assistantResponseString);
-
-                messages.Add(new Message(Role.Assistant, assistantResponseString));
+                messages.Add(new Message(Role.Assistant, commandResult));
 
                 // Encrypt and store updated chat history in session
-                var encryptedChatHistoryFinal = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-                session.SetString("ChatHistory", encryptedChatHistoryFinal);
+                chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+                session.SetString("ChatHistory", chatHistoryEncrypted);
 
-                return assistantResponseString;
+                return commandResult;
             }
-            catch (Exception ex)
+
+            // Ensure system message is added only once per session
+            if (!messages.Any(m => m.Role == Role.System))
             {
-                _logger.LogError(ex, "An error occurred in SendMessageToAssistantAsync.");
-                return "An internal error occurred while processing your message.";
+                _logger.LogInformation("Adding system message with BAS Chart and assistant directives.");
+                var basAccounts = LoadBasAccounts();
+                var basContext = string.Join("\n", basAccounts.Select(a =>
+                    $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
+                var assistantDirectives = LoadAssistantDirectives();
+
+                var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
+                messages.Insert(0, systemMessage);
             }
+
+            // Add user's message
+            _logger.LogInformation("Adding user's message: {UserMessage}", message);
+            var userMessage = new Message(Role.User, message);
+            messages.Add(userMessage);
+
+            // Limit to recent messages again before sending
+            var recentMessages = messages.TakeLast(10).ToList();
+            var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
+
+            // Process with OpenAI
+            _logger.LogInformation("Sending message to OpenAI.");
+            var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+            // Convert the response content to a string
+            var assistantResponse = response.FirstChoice?.Message?.Content ?? "No valid response from assistant.";
+            string assistantResponseString = assistantResponse.ToString();
+
+            // Log the response as a string
+            _logger.LogInformation("Received response from OpenAI: {AssistantResponse}", assistantResponseString);
+
+            messages.Add(new Message(Role.Assistant, assistantResponseString));
+
+            // Encrypt and store updated chat history in session
+            var encryptedChatHistoryFinal = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
+            session.SetString("ChatHistory", encryptedChatHistoryFinal);
+
+            return assistantResponseString;
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in SendMessageToAssistantAsync.");
+            return "An internal error occurred while processing your message.";
+        }
+    }
 
 
         public async Task<string> MapInvoiceToBasAccountsAsync(InvoiceMapDTO invoice)
@@ -174,44 +174,44 @@ public class AssistantService : IAssistantService
             var basAccContext = LoadAssistantBasAccountContext();
             var basAccDict = ParseBasAccountContext(basAccContext);
 
-            // Extract invoice item descriptions
-            var itemDescriptions = invoice.Items.Select(i => i.Description).ToList();
 
-            // Determine relevant BasAccounts by connecting keywords with descriptions
-            var relevantBasAccs = FilterRelevantBasAccounts(basAccDict, itemDescriptions);
+        // Extract invoice item descriptions
+        var itemDescriptions = invoice.Items.Select(i => i.Description).ToList();
 
-            // Create message list
-            var messages = new List<Message>();
+        // Determine relevant BasAccounts by connecting keywords with descriptions
+        var relevantBasAccs = FilterRelevantBasAccounts(basAccDict, itemDescriptions);
 
-            // Load context and necessary info for the AI and give insructions
-            var assistantDirectives = LoadAssistantMapDirectives();
-            var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\n Here is a reference BAS Account chart for categorization:\n{basAccContext}");
-            messages.Add(systemMessage);
+        // Create message list
+        var messages = new List<Message>();
 
-
-            // Extract invoice item descriptions and amounts in a readable format
-            var invoiceDetails = $"{{ \"invoiceNumber\": \"{invoice.InvoiceNumber}\", \"invoiceTotal\": {invoice.InvoiceTotal}, \"totalTax\": {invoice.TotalTax}, \"Items\": [\n";
-
-            foreach (var item in invoice.Items)
-            {
-                invoiceDetails += $"  {{ \"Description\": \"{item.Description}\", \"Quantity\": {item.Quantity}, \"UnitPrice\": {item.UnitPrice}, \"Amount\": {item.Amount} }},\n";
-            }
-            invoiceDetails += "] }";
+        // Load context and necessary info for the AI and give insructions
+        var assistantDirectives = LoadAssistantMapDirectives();
+        var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\n Here is a reference BAS Account chart for categorization:\n{basAccContext}");
+        messages.Add(systemMessage);
 
 
-            var mappingPromt = new Message(
-                Role.User,
-                $"Using the BAS Account chart with descriptions and keywords, categorize each invoice item to the most relevant BAS account. The invoice details are:\n\n{invoiceDetails}.\n\n"
-            );
+        // Extract invoice item descriptions and amounts in a readable format
+        var invoiceDetails = $"{{ \"invoiceNumber\": \"{invoice.InvoiceNumber}\", \"invoiceTotal\": {invoice.InvoiceTotal}, \"totalTax\": {invoice.TotalTax}, \"Items\": [\n";
 
-            messages.Add(mappingPromt);
+        foreach (var item in invoice.Items)
+        {
+            invoiceDetails += $"  {{ \"Description\": \"{item.Description}\", \"Quantity\": {item.Quantity}, \"UnitPrice\": {item.UnitPrice}, \"Amount\": {item.Amount} }},\n";
+        }
+        invoiceDetails += "] }";
 
-            // Proccess request
-            var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini", temperature: 0.2, responseFormat: ChatResponseFormat.Json);
-            var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
 
-            var assistantResponse = response.Choices[0].Message.Content.GetString() ?? "No valid response from the assistant.";
+        var mappingPromt = new Message(
+            Role.User,
+            $"Using the BAS Account chart with descriptions and keywords, categorize each invoice item to the most relevant BAS account. The invoice details are:\n\n{invoiceDetails}.\n\n"
+        );
 
+        messages.Add(mappingPromt);
+
+        // Proccess request
+        var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini", temperature: 0.2, responseFormat: ChatResponseFormat.Json);
+        var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+        var assistantResponse = response.Choices[0].Message.Content.GetString() ?? "No valid response from the assistant.";
 
             return assistantResponse;
 
@@ -224,73 +224,73 @@ public class AssistantService : IAssistantService
     }
 
 
-        // Helper methods
+    // Helper methods
 
-        // Parse BAS account context from UTF-8 string into a dictionary
-        private Dictionary<string, (string description, List<string> keywords)> ParseBasAccountContext(string basAccContext)
+    // Parse BAS account context from UTF-8 string into a dictionary
+    private Dictionary<string, (string description, List<string> keywords)> ParseBasAccountContext(string basAccContext)
+    {
+        var basAccDict = new Dictionary<string, (string description, List<string> keywords)>();
+
+        // Split lines and handle UTF-8 specifically in parsing
+        var lines = basAccContext.Split('\n');
+        foreach (var line in lines)
         {
-            var basAccDict = new Dictionary<string, (string description, List<string> keywords)>();
+            // Ensure line is processed as UTF-8
+            var utf8Line = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(line));
 
-            // Split lines and handle UTF-8 specifically in parsing
-            var lines = basAccContext.Split('\n');
-            foreach (var line in lines)
+            var parts = utf8Line.Split(" - keywords: ");
+            if (parts.Length == 2)
             {
-                // Ensure line is processed as UTF-8
-                var utf8Line = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(line));
+                var accountParts = parts[0].Split(": ");
+                var accountNumber = accountParts[0].Trim();
+                var description = accountParts[1].Trim();
+                var keywords = parts[1].Split(", ").Select(k => k.Trim()).ToList();
 
-                var parts = utf8Line.Split(" - keywords: ");
-                if (parts.Length == 2)
+                basAccDict[accountNumber] = (description, keywords);
+            }
+        }
+        return basAccDict;
+    }
+
+    private List<string> FilterRelevantBasAccounts(Dictionary<string, (string description, List<string> keywords)> basAccountDict, List<string> itemDescriptions)
+    {
+        var relevantAccs = new HashSet<string>();
+
+        foreach (var description in itemDescriptions)
+        {
+            // Ensure UTF-8 processing in descriptions
+            var utf8Description = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(description));
+
+            foreach (var account in basAccountDict)
+            {
+                if (account.Value.keywords.Any(keyword => utf8Description.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
                 {
-                    var accountParts = parts[0].Split(": ");
-                    var accountNumber = accountParts[0].Trim();
-                    var description = accountParts[1].Trim();
-                    var keywords = parts[1].Split(", ").Select(k => k.Trim()).ToList();
-
-                    basAccDict[accountNumber] = (description, keywords);
+                    relevantAccs.Add(account.Key);
                 }
             }
-            return basAccDict;
         }
 
-        private List<string> FilterRelevantBasAccounts(Dictionary<string, (string description, List<string> keywords)> basAccountDict, List<string> itemDescriptions)
+        return relevantAccs.ToList();
+    }
+
+
+    // Not used atm, uneccessary?
+    // Creates a filtered BAS account context based on the relevant accounts for this invoice.
+    private string CreateFilteredBasAccountContext(List<string> relevantBasAccs, Dictionary<string, (string description, List<string> keywords)> basAccDict)
+    {
+        var filteredContext = new StringBuilder();
+
+        foreach (var accountNumber in relevantBasAccs)
         {
-            var relevantAccs = new HashSet<string>();
+            (string description, List<string> keywords) = basAccDict[accountNumber];
 
-            foreach (var description in itemDescriptions)
-            {
-                // Ensure UTF-8 processing in descriptions
-                var utf8Description = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(description));
-
-                foreach (var account in basAccountDict)
-                {
-                    if (account.Value.keywords.Any(keyword => utf8Description.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        relevantAccs.Add(account.Key);
-                    }
-                }
-            }
-
-            return relevantAccs.ToList();
+            // Build UTF-8 encoded string and append it
+            var contextLine = $"{accountNumber}: {description} - keywords: {string.Join(", ", keywords)}\n";
+            filteredContext.Append(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(contextLine)));
         }
 
-
-        // Not used atm, uneccessary?
-        // Creates a filtered BAS account context based on the relevant accounts for this invoice.
-        private string CreateFilteredBasAccountContext(List<string> relevantBasAccs, Dictionary<string, (string description, List<string> keywords)> basAccDict)
-        {
-            var filteredContext = new StringBuilder();
-
-            foreach (var accountNumber in relevantBasAccs)
-            {
-                (string description, List<string> keywords) = basAccDict[accountNumber];
-
-                // Build UTF-8 encoded string and append it
-                var contextLine = $"{accountNumber}: {description} - keywords: {string.Join(", ", keywords)}\n";
-                filteredContext.Append(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(contextLine)));
-            }
-
-            return filteredContext.ToString();
-        }
+        return filteredContext.ToString();
+    }
 
 
     public void ClearChatHistory()
@@ -399,39 +399,39 @@ public class AssistantService : IAssistantService
         return basAccounts;
     }
 
-        private string LoadAssistantDirectives()
+    private string LoadAssistantDirectives()
+    {
+        if (!File.Exists(_directivesFilePath))
         {
-            if (!File.Exists(_directivesFilePath))
-            {
-                _logger.LogError("Assistant directives file not found at path: {FilePath}", _directivesFilePath);
-                throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
-            }
-            _logger.LogInformation("Loading assistant directives from {FilePath}", _directivesFilePath);
-            return File.ReadAllText(_directivesFilePath, Encoding.UTF8);
+            _logger.LogError("Assistant directives file not found at path: {FilePath}", _directivesFilePath);
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
         }
+        _logger.LogInformation("Loading assistant directives from {FilePath}", _directivesFilePath);
+        return File.ReadAllText(_directivesFilePath, Encoding.UTF8);
+    }
 
-        private string LoadAssistantMapDirectives()
+    private string LoadAssistantMapDirectives()
+    {
+        if (!File.Exists(_mapDirectivesFilePath))
         {
-            if (!File.Exists(_mapDirectivesFilePath))
-            {
-                _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
-                throw new FileNotFoundException("Assistant directives file not found at path: " + _mapDirectivesFilePath);
-            }
-
             _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
-            return File.ReadAllText(_mapDirectivesFilePath, Encoding.UTF8);
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _mapDirectivesFilePath);
         }
 
-        private string LoadAssistantBasAccountContext()
+        _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
+        return File.ReadAllText(_mapDirectivesFilePath, Encoding.UTF8);
+    }
+
+    private string LoadAssistantBasAccountContext()
+    {
+        if (!File.Exists(_basAccContextFilePath))
         {
-            if (!File.Exists(_basAccContextFilePath))
-            {
-                _logger.LogInformation("Loading assistant directives from {FilePath}", _basAccContextFilePath);
-                throw new FileNotFoundException("Assistant directives file not found at path: " + _basAccContextFilePath);
-            }
-
             _logger.LogInformation("Loading assistant directives from {FilePath}", _basAccContextFilePath);
-            return File.ReadAllText(_basAccContextFilePath, Encoding.UTF8);
+            throw new FileNotFoundException("Assistant directives file not found at path: " + _basAccContextFilePath);
         }
+
+        _logger.LogInformation("Loading assistant directives from {FilePath}", _basAccContextFilePath);
+        return File.ReadAllText(_basAccContextFilePath, Encoding.UTF8);
+    }
 
 }
