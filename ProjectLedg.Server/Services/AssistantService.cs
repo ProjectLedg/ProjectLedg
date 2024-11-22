@@ -12,6 +12,7 @@ using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
 using ProjectLedg.Server.Functions.AssistantFunctions;
 using ProjectLedg.Server.Data.Models.DTOs;
 using ProjectLedg.Server.Helpers.Commands;
+using OpenAI.Assistants;
 
 public class AssistantService : IAssistantService
 {
@@ -162,11 +163,17 @@ public class AssistantService : IAssistantService
     }
 
 
-    public async Task<string> MapInvoiceToBasAccountsAsync(InvoiceMapDTO invoice)
-    {
-        // Load context and necessary info for the AI
-        var basAccContext = LoadAssistantBasAccountContext();
-        var basAccDict = ParseBasAccountContext(basAccContext);
+        public async Task<string> MapInvoiceToBasAccountsAsync(InvoiceMapDTO invoice)
+        {
+            try
+        {
+
+        
+
+            // Load context and necessary info for the AI
+            var basAccContext = LoadAssistantBasAccountContext();
+            var basAccDict = ParseBasAccountContext(basAccContext);
+
 
         // Extract invoice item descriptions
         var itemDescriptions = invoice.Items.Select(i => i.Description).ToList();
@@ -206,7 +213,14 @@ public class AssistantService : IAssistantService
 
         var assistantResponse = response.Choices[0].Message.Content.GetString() ?? "No valid response from the assistant.";
 
-        return assistantResponse;
+            return assistantResponse;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return "erro";
+        }
     }
 
 

@@ -19,6 +19,7 @@ import LoggerTable from './LoggerTable'
 import LoggerPagination from "./LoggerPagination"
 import { RotateCcw } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
+import { Input } from "@/components/ui/input"
 
 
 export default function InvoiceLogger() {
@@ -44,6 +45,9 @@ export default function InvoiceLogger() {
   const totalInvoices = invoices.length;
   const totalPages = Math.ceil(invoices.length / pagination);
 
+  // Search filter for logger table
+  const [searchQuery, setSearchQuery] = useState("")
+
   // Button toggle
   const [isOn, setIsOn] = useState(false)
 
@@ -58,7 +62,7 @@ export default function InvoiceLogger() {
 
     setIsLoading(false);
 
-    
+
   }, [])
 
 
@@ -190,7 +194,7 @@ export default function InvoiceLogger() {
             className="bg-green-500 hover:bg-green-600 space-x-1"
             onClick={getIngInvoices} //Attempt to re-fetch ingoing invoices
           >
-            {isFetchLoading ? <Spinner size={"xsmall"} className="text-white"  /> : <RotateCcw size={16} />} <span>{isFetchLoading ? "Laddar..." : "Ladda om"}</span>
+            {isFetchLoading ? <Spinner size={"xsmall"} className="text-white" /> : <RotateCcw size={16} />} <span>{isFetchLoading ? "Laddar..." : "Ladda om"}</span>
           </Button>
         </CardContent>
       )
@@ -233,6 +237,12 @@ export default function InvoiceLogger() {
     }
   }
 
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+  };
+
+
   // Loading skeleton animation
   if (isLoading) {
     return (
@@ -263,16 +273,25 @@ export default function InvoiceLogger() {
   return (
     <Card className="w-full h-[90vh] md:h-[40rem]  flex flex-col shadow-lg">
       <Tabs defaultValue="ingoing" className="flex flex-col h-full overflow-hidden">
-        <CardHeader className="flex flex-row justify-between border-b-2 dark:border-darkBorde">
+        <CardHeader className="flex flex-row justify-between  dark:border-darkBorder ">
           <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
             <FileText className="mr-2 text-green-500" />
             Fakturor
           </CardTitle>
 
-          <TabsList className="flex flex-col md:flex-row px-2 py-10 w-auto rounded-md md:py-6 md:px-2 dark:bg-darkBackground">
-            <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing}>Ingående</TabsTrigger>
-            <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing}>Utgående</TabsTrigger>
-          </TabsList>
+          <div className="flex gap-x-4 items-center ">
+            <Input
+              type="text"
+              placeholder="Sök här..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="bg-gray-100 hidden md:block h-[90%] rounded-md "
+            />
+            <TabsList className="flex flex-col md:flex-row px-2 py-10 w-auto rounded-md md:py-6 md:px-2 dark:bg-darkBackground">
+              <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing}>Ingående</TabsTrigger>
+              <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing}>Utgående</TabsTrigger>
+            </TabsList>
+          </div>
         </CardHeader>
 
         {/* Render errors if any depending on if ingoing or outgoing is selected */}
@@ -283,11 +302,11 @@ export default function InvoiceLogger() {
           <CardContent className="flex-grow overflow-hidden p-0 ">
             <ScrollArea className="h-full bg-gray-200 md:bg-white dark:bg-darkBackground">
               {isLoading ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full ">
                   <p>Hämtar fakturor...</p>
                 </div>
               ) : error ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full ">
                   <p className="text-red-500">{error}</p>
                 </div>
               ) : (
@@ -296,6 +315,8 @@ export default function InvoiceLogger() {
                   handleInvoiceClick={handleInvoiceClick}
                   startItem={startItem}
                   endItem={endItem}
+                  searchQuery={searchQuery}
+                  handleSearch={handleSearch}
                 />
               )}
             </ScrollArea>

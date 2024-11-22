@@ -165,6 +165,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
       // Open modal and turn on loading animation
       // setIsModalOpen(true);
       // setIsBasAccLoading(true);
+      // console.log("Transformed inv: ", transformedInvoice)
 
       // Wait for invoice mapping and get a list of bas accounts back
       const response = await axiosConfig.post("/Assistant/MapInvoiceDataToBasAccount", transformedInvoice);
