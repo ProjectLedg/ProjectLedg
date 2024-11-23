@@ -5,35 +5,43 @@ import React, { useState } from "react";
 
 
 export default function ReportCheck() {
-    
 
-    
+
+
 
     return (
         <div className="w-full">
-            <Tabs defaultValue="annualReports" className="w-full ">
-                <TabsList className="flex w-min justify-start dark:bg-darkBackground">
-                    <TabsTrigger value="annualReports" className="font-semibold ">
-                        Generera Årsredovisningar
+            <Tabs defaultValue="annualReports">
+                <TabsList className="flex  justify-start w-full  dark:bg-darkBackground">
+                    <TabsTrigger
+                        value="annualReports"
+                        className="font-semibold text-xs sm:text-sm truncate"
+                        title="Generera Årsredovisning"
+                    >
+                        Ny årsredovisning
                     </TabsTrigger>
-                    <TabsTrigger value="edit" className="text-muted-foreground font-semibold">
-                        Föregående Årsredovisningar
+                    <TabsTrigger
+                        value="edit"
+                        className="text-muted-foreground font-semibold text-xs sm:text-sm truncate"
+                        title="Föregående Årsredovisningar"
+                    >
+                        Föregående årsredovisningar
                     </TabsTrigger>
-                    
+
                 </TabsList>
 
                 <TabsContent value="annualReports" className="h-full w-full">
                     {/* Dots for step indicators */}
                     <Card>
                         <CardContent>{
-                                    
-                            <AnnualReportPreview/>                                            
-                                    
+
+                            <AnnualReportPreview />
+
                         }</CardContent>
                     </Card>
-                    
 
-                    
+
+
                 </TabsContent>
 
                 <TabsContent value="edit">
@@ -42,7 +50,7 @@ export default function ReportCheck() {
                     </Card>
                 </TabsContent>
 
-                
+
             </Tabs>
         </div>
     );
