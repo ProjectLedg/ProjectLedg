@@ -54,8 +54,8 @@ export function CustomerInfo({ invoice, handleInputChange }) {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between items-center">
-        <CardTitle>Kundinformation</CardTitle>
+      <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+        <CardTitle className="mb-2 sm:mb-0">Kundinformation</CardTitle>
         <div className="w-48 ">
           <Select onValueChange={handleCustomerSelect} disabled={loading} >
             <SelectTrigger>
@@ -89,7 +89,7 @@ export function CustomerInfo({ invoice, handleInputChange }) {
 
         
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div>
             <Label htmlFor="customerName">Kundnamn</Label>
             <Input 
