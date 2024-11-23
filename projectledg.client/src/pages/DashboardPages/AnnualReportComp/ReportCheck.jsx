@@ -10,9 +10,9 @@ export default function ReportCheck() {
 
 
     return (
-        <div className="w-full">
+        <div className="w-full ">
             <Tabs defaultValue="annualReports">
-                <TabsList className="flex  justify-start w-full  dark:bg-darkBackground">
+                <TabsList className="flex  justify-start w-full sm:w-min  dark:bg-darkBackground">
                     <TabsTrigger
                         value="annualReports"
                         className="font-semibold text-xs sm:text-sm truncate"
@@ -30,10 +30,10 @@ export default function ReportCheck() {
 
                 </TabsList>
 
-                <TabsContent value="annualReports" className="h-full w-full">
+                <TabsContent value="annualReports" className="h-full w-full ">
                     {/* Dots for step indicators */}
-                    <Card>
-                        <CardContent>{
+                    <Card >
+                        <CardContent className="p-0">{
 
                             <AnnualReportPreview />
 
