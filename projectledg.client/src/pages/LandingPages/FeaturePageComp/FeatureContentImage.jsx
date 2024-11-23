@@ -9,7 +9,7 @@ export default function FeatureImage() {
 
     useEffect(() => {
         const unsubscribe = scrollYProgress.onChange((progress) => {
-            if (progress > 0.275 && progress < 1) {
+            if (progress > 0.2 && progress < 1) {
                 console.log("lock")
                 setIsLocked(true);
             } else {
