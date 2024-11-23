@@ -4,8 +4,16 @@ import FeatureContentTitle from "./FeaturePageComp/FeatureContentTitle";
 import FeatureContentBody from "./FeaturePageComp/FeatureContentBody";
 import FeatureContentImage from "./FeaturePageComp/FeatureContentImage";
 import Footer from "./LandingPageComp/FooterSection"
+import { Navigate } from "react-router-dom";
 
 export default function FeaturePage() {
+
+    const isMobile = window.innerWidth <= 768;
+
+    if(isMobile){
+        return <Navigate to="/"/>;
+    }
+    
     return (
         <>
             <Navbar />
