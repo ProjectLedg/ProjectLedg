@@ -11,8 +11,8 @@ export default function AnnualReportPage() {
                 <h2 className="text-3xl font-bold">Årsredovisningar</h2>
                 <div className="md:col-span-1 flex flex-col">
                 
-                    <div className="flex flex-col pt-7 ">
-                        <ReportCheck className="w-full" />
+                    <div className="flex flex-col pt-7  ">
+                        <ReportCheck className="w-full " />
                     </div>
 
                 </div>
