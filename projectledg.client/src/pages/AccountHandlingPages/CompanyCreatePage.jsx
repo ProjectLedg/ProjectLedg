@@ -131,7 +131,7 @@ export default function CompanyCreatePage() {
           <CardFooter>
             <Button 
               type="submit" 
-              className="w-full transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              className="w-full transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-green-600 focus:outline-none bg-green-500"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -140,7 +140,7 @@ export default function CompanyCreatePage() {
                   Skapar Företag...
                 </>
               ) : (
-                'Submit'
+                'Bekräfta'
               )}
             </Button>
           </CardFooter>
