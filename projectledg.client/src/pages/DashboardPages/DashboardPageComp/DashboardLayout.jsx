@@ -28,7 +28,16 @@ import {
 } from "@/components/ui/tooltip"
 
 
+const handleLogout = (path) => (e) => {
+  e.preventDefault();
+  Cookies.remove('JWTToken');
+  window.location.href = path;
 
+  if (typeof window !== "undefined") {
+    localStorage.setItem("vite-ui-theme", "light"); 
+    document.documentElement.classList.remove("dark");
+  }
+};
 const navItems = [
   { icon: Home, label: "Hem", path: "", position: "top" },
   { icon: Activity, label: "Finasiell rapport", path: "/financial-reports", position: "top" },
@@ -37,7 +46,7 @@ const navItems = [
   { icon: FileText, label: "Fakturering", path: "/invoicing", position: "top" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom" },
   { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom" },
-  { icon: LogOut, label: "Logga ut", path: "/", position: "bottom" },
+  { icon: LogOut, label: "Logga ut", path: "/", position: "bottom", onClick: handleLogout("/") },
 ];
 
 
@@ -53,11 +62,9 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
   const selectedStyle = "font-bold relative bg-accent dark:bg-darkSurface";
   const hoverStyle = "hover:bg-accent hover:dark:bg-darkSurface hover:text-accent-foreground";
 
-  const handleClick = () => {
-    // Delay closing the mobile nav by 200 milliseconds
-    setTimeout(() => {
-      if (onClick) onClick();
-    }, 300);
+  const handleClick = (e) => {
+    if (onClick) onClick(e);
+    else setTimeout(() => {}, 300); // Delay for other nav actions
   };
 
   const barStyle = {
@@ -77,9 +84,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
     exit: { opacity: 0, height: 0 },
   };
 
-  if (label === "Logga ut") {
-    return handleLogout({ icon: Icon, label, path });
-  }
+  
 
   return (
     <Link
@@ -108,12 +113,16 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
 
 
 
-const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
+const NavItemSmall = ({ icon: Icon, path, tooltipText, onClick}) => {
   const { companyId } = useParams();
   const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
 
   const isSelected = location.pathname === fullPath;
+
+  const handleClick = (e) => {
+    if (onClick) onClick(e);
+  };
 
   const baseStyle = "flex items-center justify-around space-x-2 px-3 py-4 rounded-lg transition-colors duration-500";
   const selectedStyle = "font-bold bg-accent text-accent-foreground dark:bg-darkSurface";
@@ -139,6 +148,7 @@ const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
   return (
     <Link
       to={fullPath}
+      onClick={handleClick}
       className={`mb-4 ${baseStyle} ${isSelected ? selectedStyle : hoverStyle}`}
       style={{ marginTop: 0, ...(isSelected ? { position: "relative" } : {}) }}
     >
@@ -167,36 +177,8 @@ const NavItemSmall = ({ icon: Icon, path, tooltipText }) => {
 };
 
 
-const handleLogout = ({ icon: Icon, label, path }) => {
-  const handleClick = (e) => {
-    e.preventDefault();
-
-    // Ta bort JWT-token från cookies
-    Cookies.remove('JWTToken');
 
 
-
-    // Lägg till eventuella andra utloggningslogik här
-
-    // Omdirigera till den angivna vägen efter utloggning
-    window.location.href = path;
-    if (typeof window !== "undefined") {
-      localStorage.setItem("vite-ui-theme", "light"); // Återställ till "light" tema i localStorage
-      document.documentElement.classList.remove("dark"); // Ta bort dark class från <html> elementet
-    }
-  };
-
-  return (
-    <a
-      href={path}
-      onClick={handleClick}
-      className="flex items-center space-x-2 px-3 py-4 rounded-lg hover:bg-accent hover:dark:bg-darkSurface dark:text-gray-white hover:text-accent-foreground transition-colors duration-500"
-    >
-      <Icon className="h-5 w-5" />
-      <span>{label}</span>
-    </a>
-  );
-};
 
 
 
@@ -228,7 +210,7 @@ const Sidebar = ({ isChatOpen }) => (
     <div className="mt-auto border-t dark:border-darkBorder">
       <div className={` ${isChatOpen ? 'flex flex-col justify-around h-[20vh]' : ''}`}>
         {navItems.filter(item => item.position === "bottom").map((item, index) => (
-          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} />
+          !isChatOpen ? <NavItem key={index} {...item} /> : <NavItemSmall key={index} {...item} tooltipText={item.tooltipText} onClick={item.onClick} />
         ))}
       </div>
     </div>
