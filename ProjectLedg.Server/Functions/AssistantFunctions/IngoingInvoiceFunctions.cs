@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectLedg.Server.Data;
+using ProjectLedg.Server.Data.Models.DTOs.Functions.IngoingInvoice;
+using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
 using ProjectLedg.Server.Services.IServices;
 
@@ -9,47 +12,60 @@ namespace ProjectLedg.Server.Services.AssistantFunctions
     {
         private readonly ProjectLedgContext _context;
         private readonly IIngoingInvoiceService _invoiceService;
+        private readonly ILogger<IngoingInvoiceFunctions> _logger;
 
-        public IngoingInvoiceFunctions(ProjectLedgContext context, IIngoingInvoiceService invoiceService)
+        public IngoingInvoiceFunctions(ProjectLedgContext context, IIngoingInvoiceService invoiceService, ILogger<IngoingInvoiceFunctions> logger)
         {
             _context = context;
             _invoiceService = invoiceService;
+            _logger = logger;
         }
 
-        public async Task<string> GetUnpaidIngoingInvoicesForCompany(int companyId)
+        public async Task<List<IngoingInvoiceFunctionDTO>> GetUnpaidInvoicesForCompanyAsync(int companyId)
         {
+            _logger.LogInformation("Fetching unpaid incoming invoices for company ID: {CompanyId}", companyId);
+
             var invoices = await _context.IngoingInvoices
                 .Where(i => i.CompanyId == companyId && !i.IsPaid)
                 .Include(i => i.Company)
+                .Select(i => new IngoingInvoiceFunctionDTO
+                {
+                    InvoiceNumber = i.InvoiceNumber,
+                    InvoiceDate = i.InvoiceDate,
+                    DueDate = i.DueDate,
+                    InvoiceTotal = i.InvoiceTotal
+                })
                 .ToListAsync();
 
             if (!invoices.Any())
             {
-                return $"Jag hittade inga obetalda fakturor för företaget med företags Id: {companyId}.";
+                _logger.LogWarning("No unpaid incoming invoices found for company ID: {CompanyId}", companyId);
+                return null; // Caller can handle empty case
             }
 
-            var invoicesInfo = invoices.Select(i =>
-                $"Fakturanummer: {i.InvoiceNumber}, Betala senast: {i.DueDate.ToShortDateString()}, Total: {i.InvoiceTotal}");
-
-            return $"Obetalda fakturor för företaget '{invoices.First().Company.CompanyName}' med ID: {companyId}:\n" +
-                   string.Join("\n", invoicesInfo);
+            _logger.LogInformation("Found {InvoiceCount} unpaid invoices for company ID: {CompanyId}", invoices.Count, companyId);
+            return invoices;
         }
+
 
         public async Task<string> GetInvoices(string companyName, int? year = null, int? month = null)
         {
+            _logger.LogInformation("Fetching invoices for company: {CompanyName}, Year: {Year}, Month: {Month}",
+                companyName, year, month);
+
             var invoicesQuery = _context.IngoingInvoices
                 .Include(i => i.Company)
                 .Where(i => i.Company.CompanyName.ToLower() == companyName.ToLower());
 
-            // Apply year filter if specified
             if (year.HasValue)
             {
+                _logger.LogInformation("Applying year filter: {Year}", year);
                 invoicesQuery = invoicesQuery.Where(i => i.InvoiceDate.Year == year.Value);
             }
 
-            // Apply month filter if specified
             if (month.HasValue)
             {
+                _logger.LogInformation("Applying month filter: {Month}", month);
                 invoicesQuery = invoicesQuery.Where(i => i.InvoiceDate.Month == month.Value);
             }
 
@@ -61,6 +77,7 @@ namespace ProjectLedg.Server.Services.AssistantFunctions
                 if (year.HasValue) filterDescription += $" under året: {year}";
                 if (month.HasValue) filterDescription += $" och månaden: {month}";
 
+                _logger.LogWarning("No invoices found {FilterDescription}", filterDescription);
                 return $"Dessvärre hittades inga fakturor {filterDescription}.";
             }
 
