@@ -29,6 +29,7 @@ using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
 using ProjectLedg.Server.Functions.AssistantFunctions;
 using ProjectLedg.Server.Services.AssistantFunctions;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
+using ProjectLedg.Server.Helpers.Commands;
 
 namespace ProjectLedg.Server
 {
@@ -53,7 +54,7 @@ namespace ProjectLedg.Server
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(3);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
@@ -279,6 +280,8 @@ namespace ProjectLedg.Server
             //AssistantService
             services.AddSingleton(openAiClient);
             services.AddScoped<IAssistantService, AssistantService>();
+            builder.Services.AddSingleton<CommandHelper>();
+            services.AddSingleton<IntentHelper>();
 
             //BasAccount
             services.AddScoped<IBasAccountService, BasAccountService>();
@@ -309,41 +312,42 @@ namespace ProjectLedg.Server
 
             var app = builder.Build();
 
+
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var roles = new[] { "Manager", "Admin", "User" };
+                var roles = new[] { "Manager", "Admin", "User", "Assistant" };
 
                 foreach (var role in roles)
                 {
                     if (!await roleManager.RoleExistsAsync(role))
-                    
+                    {
                         await roleManager.CreateAsync(new IdentityRole(role));
-                    
+                    }
                 }
+
+                app.UseStaticFiles();
+                app.UseSession();
+
+                // Configure the HTTP request pipeline.
+
+                app.UseSwagger();
+                app.UseSwaggerUI();
+                app.UseRouting();
+
+                app.UseHttpsRedirection();
+
+                app.UseAuthentication();
+                app.UseAuthorization();
+
+                app.UseCors();
+
+                app.MapControllers();
+
+                //app.MapFallbackToFile("/index.html");
+
+                app.Run();
             }
-
-            app.UseStaticFiles();
-            app.UseSession();
-
-            // Configure the HTTP request pipeline.
-
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            app.UseRouting();
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseCors();
-
-            app.MapControllers();
-
-            //app.MapFallbackToFile("/index.html");
-
-            app.Run();
         }
     }
 }
