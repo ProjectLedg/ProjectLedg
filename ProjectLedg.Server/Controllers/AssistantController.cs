@@ -24,15 +24,35 @@ namespace ProjectLedg.Server.Controllers
         [HttpPost("chat")]
         public async Task<IActionResult> Chat([FromBody] string message)
         {
-            _logger.LogInformation($"Received message: {message}");
+            _logger.LogInformation("Received message: {Message}", message);
+
             if (string.IsNullOrWhiteSpace(message))
             {
+                _logger.LogWarning("Empty message received in Chat endpoint.");
                 return BadRequest("Message cannot be empty.");
             }
 
-            var response = await _assistantService.SendMessageToAssistantAsync(message);
-            return Ok(response);
+            try
+            {
+                // Call the AssistantService to process the message
+                var response = await _assistantService.SendMessageToAssistantAsync(message);
+
+                if (string.IsNullOrEmpty(response))
+                {
+                    _logger.LogWarning("Received empty response from AssistantService.");
+                    return Ok(new { response = "No response from the assistant. Please try again." });
+                }
+
+                _logger.LogInformation("Assistant response: {Response}", response);
+                return Ok(new { response });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in the Chat endpoint while processing the message.");
+                return StatusCode(500, new { error = "An internal error occurred while processing your request." });
+            }
         }
+
 
         [HttpPost("MapInvoiceDataToBasAccount")]
         public async Task<IActionResult> MapInvoiceDataToBasAccount([FromBody] InvoiceMapDTO invoiceMapData)
