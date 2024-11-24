@@ -1,423 +1,339 @@
 using OpenAI.Chat;
 using OpenAI;
-using ProjectLedg.Server.Services.IServices;
-using ProjectLedg.Server.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
-using ProjectLedg.Server.Data.Models;
-using System.Security.Cryptography;
-using System.Text;
-using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
-using ProjectLedg.Server.Functions.AssistantFunctions;
 using ProjectLedg.Server.Data.Models.DTOs;
+using ProjectLedg.Server.Data;
 using ProjectLedg.Server.Helpers.Commands;
+using ProjectLedg.Server.Services.IServices;
+using System.IO;
+using System.Text.Json;
+using ProjectLedg.Server.Functions.AssistantFunctions.IAssistantFunctions;
+using ProjectLedg.Server.Services.AssistantFunctions;
+using ProjectLedg.Server.Functions.AssistantFunctions;
+using ProjectLedg.Server.Data.Models.DTOs.Functions.IngoingInvoice;
+using Microsoft.EntityFrameworkCore;
+using ProjectLedg.Server.Data.Models;
 
 public class AssistantService : IAssistantService
 {
     private readonly OpenAIClient _openAiClient;
     private readonly ProjectLedgContext _dbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IIngoingInvoiceService _ingoingInvoiceService;
-    private readonly IBasAccountService _basAccountService;
-    private readonly EncryptionHelper _encryptionHelper;
-    private readonly string _csvFilePath;
-    private readonly string _directivesFilePath;
-    private readonly string _mapDirectivesFilePath;
-    private readonly string _basAccContextFilePath;
-    private readonly CommandHelper _commandHelper;
-
     private readonly ILogger<AssistantService> _logger;
-
+    private readonly EncryptionHelper _encryptionHelper;
+    private readonly IntentHelper _intentHelper;
     //Functions
-    private readonly IBasAccountFunctions _basAccountFunctions;
     private readonly IIngoingInvoiceFunctions _ingoingInvoiceFunctions;
-    private readonly ITransactionFunctions _transactionFunctions;
     private readonly IOutgoingInvoiceFunctions _outgoingInvoiceFunctions;
+    private readonly ITransactionFunctions _transactionFunctions;
+    private readonly IBasAccountFunctions _basAccountFunctions;
 
+    private const string AssistantDirectivesPath = "Assets/assistantDirectives.env";
+    private const string BasAccountContextPath = "Assets/BASAccContext.txt";
+    private const string AssistantMapDirectivesPath = "Assets/AssistantBasAccMapDirectives.txt";
 
-    private readonly Dictionary<string, Func<string[], Task<string>>> _commandHandlers;
-
-    public AssistantService(OpenAIClient openAiClient, ProjectLedgContext dbContext, IHttpContextAccessor httpContextAccessor, IIngoingInvoiceService invoiceService, IBasAccountService basAccountService, EncryptionHelper encryptionHelper, IBasAccountFunctions basAccountFunctions, IIngoingInvoiceFunctions ingoingInvoiceFunctions, ITransactionFunctions transactionFunctions, IOutgoingInvoiceFunctions outgoingInvoiceFunctions, ILogger<AssistantService> logger)
+    public AssistantService(
+     OpenAIClient openAiClient,
+     ProjectLedgContext dbContext,
+     IHttpContextAccessor httpContextAccessor,
+     ILogger<AssistantService> logger,
+     EncryptionHelper encryptionHelper,
+     IntentHelper intentHelper,
+     IBasAccountFunctions basAccountFunctions,
+     IIngoingInvoiceFunctions ingoingInvoiceFunctions,
+     IOutgoingInvoiceFunctions outgoingInvoiceFunctions,
+     ITransactionFunctions transactionFunctions)
     {
         _openAiClient = openAiClient;
         _dbContext = dbContext;
         _httpContextAccessor = httpContextAccessor;
-        _ingoingInvoiceService = invoiceService;
-        _basAccountService = basAccountService;
-        _csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BasKontoPlan.csv");
-        _directivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "assistantDirectives.env");
-        _mapDirectivesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AssistantBasAccMapDirectives.txt");
-        _basAccContextFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "BASAccContext.txt");
-        _encryptionHelper = encryptionHelper;
-
-
-
-        //Functions
-        _ingoingInvoiceFunctions = ingoingInvoiceFunctions;
-        _transactionFunctions = transactionFunctions;
-        _basAccountFunctions = basAccountFunctions;
-        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
-
-        _commandHelper = new CommandHelper();
-
-        _commandHandlers = new Dictionary<string, Func<string[], Task<string>>>
-            {
-                { "visa alla bas konton", async args => await _basAccountFunctions.GetCompanyBasAccounts(int.Parse(args[0])) },
-                { "visa mest populära bas konton", async args => await _basAccountFunctions.GetPopularBasAccountsForCompany(int.Parse(args[0])) },
-                { "visa senaste transaktionerna", async args => await _transactionFunctions.GetLatestTransactionsForCompany(int.Parse(args[0])) },
-                { "visa högprofilerade transaktioner", async args => await _transactionFunctions.GetHighProfileTransactionsForCompany(int.Parse(args[0]), decimal.Parse(args[1])) },
-                { "visa obetalda inkommande fakturor", async args => await _ingoingInvoiceFunctions.GetUnpaidIngoingInvoicesForCompany(int.Parse(args[0])) },
-                { "visa obetalda utgående fakturor", async args => await _outgoingInvoiceFunctions.GetUnpaidOutgoingInvoicesForCompany(int.Parse(args[0])) },
-                { "hämta fakturor", async args => await _ingoingInvoiceFunctions.GetInvoices(args[0], int.Parse(args[1])) }
-            };
-
-        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
         _logger = logger;
+        _encryptionHelper = encryptionHelper;
+        _intentHelper = intentHelper;
+
+        _basAccountFunctions = basAccountFunctions;
+        _transactionFunctions = transactionFunctions;
+        _ingoingInvoiceFunctions = ingoingInvoiceFunctions;
+        _outgoingInvoiceFunctions = outgoingInvoiceFunctions;
     }
 
     public async Task<string> SendMessageToAssistantAsync(string message)
     {
         try
         {
+            // Step 1: Process intent using IntentHelper
+            var result = await _intentHelper.ProcessIntentAsync(message);
+            if (!string.IsNullOrEmpty(result))
+            {
+                _logger.LogInformation("Processed intent successfully: {Result}", result);
+                return result;
+            }
+
+            // Step 2: If no intent matched, fall back to OpenAI chat
             var session = _httpContextAccessor.HttpContext.Session;
 
-            // Retrieve existing chat history from session, if any
-            var chatHistoryEncrypted = session.GetString("ChatHistory");
-            _logger.LogInformation("Retrieved chat history from session.");
+            // Retrieve chat history from session
+            var chatHistory = GetChatHistory();
 
-            var messages = string.IsNullOrEmpty(chatHistoryEncrypted)
-                ? new List<Message>()
-                : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(chatHistoryEncrypted));
+            // Add user's message to chat history
+            chatHistory.Add(new Message(Role.User, message));
 
-            // Clear chat history if it exceeds the maximum allowed size
-            const int MaxMessages = 20;
-            if (messages.Count > MaxMessages)
+            // Ensure system context is included
+            if (!chatHistory.Any(m => m.Role == Role.System))
             {
-                _logger.LogWarning("Chat history exceeded max size; truncating messages.");
-                messages = messages.TakeLast(MaxMessages).ToList();
+                var systemMessage = CreateSystemMessage();
+                chatHistory.Insert(0, systemMessage);
             }
 
-            // Check if the message is a command
-            var commandResult = await ProcessCommandAsync(message);
-            if (commandResult != null)
-            {
-                _logger.LogInformation("Command processed successfully with result: {CommandResult}", commandResult);
+            // Send chat request and get the assistant's response
+            var assistantResponse = await SendChatRequestAsync(chatHistory);
 
-                messages.Add(new Message(Role.Assistant, commandResult));
+            // Add assistant's response to chat history
+            chatHistory.Add(new Message(Role.Assistant, assistantResponse));
 
-                // Encrypt and store updated chat history in session
-                chatHistoryEncrypted = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-                session.SetString("ChatHistory", chatHistoryEncrypted);
+            // Save updated chat history
+            SaveChatHistory(chatHistory);
 
-                return commandResult;
-            }
-
-            // Ensure system message is added only once per session
-            if (!messages.Any(m => m.Role == Role.System))
-            {
-                _logger.LogInformation("Adding system message with BAS Chart and assistant directives.");
-                var basAccounts = LoadBasAccounts();
-                var basContext = string.Join("\n", basAccounts.Select(a =>
-                    $"Account {a.AccountNumber} ({a.Description}): Debit = {a.Debit}, Credit = {a.Credit}, Year = {a.Year}"));
-                var assistantDirectives = LoadAssistantDirectives();
-
-                var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\nBAS Chart:\n{basContext}");
-                messages.Insert(0, systemMessage);
-            }
-
-            // Add user's message
-            _logger.LogInformation("Adding user's message: {UserMessage}", message);
-            var userMessage = new Message(Role.User, message);
-            messages.Add(userMessage);
-
-            // Limit to recent messages again before sending
-            var recentMessages = messages.TakeLast(10).ToList();
-            var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
-
-            // Process with OpenAI
-            _logger.LogInformation("Sending message to OpenAI.");
-            var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
-
-            // Convert the response content to a string
-            var assistantResponse = response.FirstChoice?.Message?.Content ?? "No valid response from assistant.";
-            string assistantResponseString = assistantResponse.ToString();
-
-            // Log the response as a string
-            _logger.LogInformation("Received response from OpenAI: {AssistantResponse}", assistantResponseString);
-
-            messages.Add(new Message(Role.Assistant, assistantResponseString));
-
-            // Encrypt and store updated chat history in session
-            var encryptedChatHistoryFinal = _encryptionHelper.EncryptData(JsonSerializer.Serialize(messages));
-            session.SetString("ChatHistory", encryptedChatHistoryFinal);
-
-            return assistantResponseString;
+            return assistantResponse;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred in SendMessageToAssistantAsync.");
-            return "An internal error occurred while processing your message.";
+            _logger.LogError(ex, "An unexpected error occurred in SendMessageToAssistantAsync.");
+            return "Ett internt fel uppstod vid bearbetning av din förfrågan.";
         }
     }
+
 
 
     public async Task<string> MapInvoiceToBasAccountsAsync(InvoiceMapDTO invoice)
     {
-        // Load context and necessary info for the AI
-        var basAccContext = LoadAssistantBasAccountContext();
-        var basAccDict = ParseBasAccountContext(basAccContext);
-
-        // Extract invoice item descriptions
-        var itemDescriptions = invoice.Items.Select(i => i.Description).ToList();
-
-        // Determine relevant BasAccounts by connecting keywords with descriptions
-        var relevantBasAccs = FilterRelevantBasAccounts(basAccDict, itemDescriptions);
-
-        // Create message list
-        var messages = new List<Message>();
-
-        // Load context and necessary info for the AI and give insructions
-        var assistantDirectives = LoadAssistantMapDirectives();
-        var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\n Here is a reference BAS Account chart for categorization:\n{basAccContext}");
-        messages.Add(systemMessage);
-
-
-        // Extract invoice item descriptions and amounts in a readable format
-        var invoiceDetails = $"{{ \"invoiceNumber\": \"{invoice.InvoiceNumber}\", \"invoiceTotal\": {invoice.InvoiceTotal}, \"totalTax\": {invoice.TotalTax}, \"Items\": [\n";
-
-        foreach (var item in invoice.Items)
-        {
-            invoiceDetails += $"  {{ \"Description\": \"{item.Description}\", \"Quantity\": {item.Quantity}, \"UnitPrice\": {item.UnitPrice}, \"Amount\": {item.Amount} }},\n";
-        }
-        invoiceDetails += "] }";
-
-
-        var mappingPromt = new Message(
-            Role.User,
-            $"Using the BAS Account chart with descriptions and keywords, categorize each invoice item to the most relevant BAS account. The invoice details are:\n\n{invoiceDetails}.\n\n"
-        );
-
-        messages.Add(mappingPromt);
-
-        // Proccess request
-        var chatRequest = new ChatRequest(messages, model: "gpt-4o-mini", temperature: 0.2, responseFormat: ChatResponseFormat.Json);
-        var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
-
-        var assistantResponse = response.Choices[0].Message.Content.GetString() ?? "No valid response from the assistant.";
-
-        return assistantResponse;
-    }
-
-
-    // Helper methods
-
-    // Parse BAS account context from UTF-8 string into a dictionary
-    private Dictionary<string, (string description, List<string> keywords)> ParseBasAccountContext(string basAccContext)
-    {
-        var basAccDict = new Dictionary<string, (string description, List<string> keywords)>();
-
-        // Split lines and handle UTF-8 specifically in parsing
-        var lines = basAccContext.Split('\n');
-        foreach (var line in lines)
-        {
-            // Ensure line is processed as UTF-8
-            var utf8Line = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(line));
-
-            var parts = utf8Line.Split(" - keywords: ");
-            if (parts.Length == 2)
-            {
-                var accountParts = parts[0].Split(": ");
-                var accountNumber = accountParts[0].Trim();
-                var description = accountParts[1].Trim();
-                var keywords = parts[1].Split(", ").Select(k => k.Trim()).ToList();
-
-                basAccDict[accountNumber] = (description, keywords);
-            }
-        }
-        return basAccDict;
-    }
-
-    private List<string> FilterRelevantBasAccounts(Dictionary<string, (string description, List<string> keywords)> basAccountDict, List<string> itemDescriptions)
-    {
-        var relevantAccs = new HashSet<string>();
-
-        foreach (var description in itemDescriptions)
-        {
-            // Ensure UTF-8 processing in descriptions
-            var utf8Description = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(description));
-
-            foreach (var account in basAccountDict)
-            {
-                if (account.Value.keywords.Any(keyword => utf8Description.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
-                {
-                    relevantAccs.Add(account.Key);
-                }
-            }
-        }
-
-        return relevantAccs.ToList();
-    }
-
-
-    // Not used atm, uneccessary?
-    // Creates a filtered BAS account context based on the relevant accounts for this invoice.
-    private string CreateFilteredBasAccountContext(List<string> relevantBasAccs, Dictionary<string, (string description, List<string> keywords)> basAccDict)
-    {
-        var filteredContext = new StringBuilder();
-
-        foreach (var accountNumber in relevantBasAccs)
-        {
-            (string description, List<string> keywords) = basAccDict[accountNumber];
-
-            // Build UTF-8 encoded string and append it
-            var contextLine = $"{accountNumber}: {description} - keywords: {string.Join(", ", keywords)}\n";
-            filteredContext.Append(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(contextLine)));
-        }
-
-        return filteredContext.ToString();
-    }
-
-
-    public void ClearChatHistory()
-    {
-        var session = _httpContextAccessor.HttpContext.Session;
-        session.Remove("ChatHistory");
-    }
-
-
-
-    private async Task<string> ProcessCommandAsync(string message)
-    {
-        foreach (var command in _commandHandlers)
-        {
-            if (message.Contains(command.Key, StringComparison.OrdinalIgnoreCase))
-            {
-                // Extract arguments using the updated method
-                var args = ExtractArguments(message, command.Key);
-
-                // Handle company name or ID dynamically
-                if (int.TryParse(args[0], out int companyId))
-                {
-                    // Company ID is provided, call the command directly
-                    return await command.Value(new[] { companyId.ToString() });
-                }
-                else
-                {
-                    // Company name is provided; lookup the company by name with case-insensitivity
-                    var companyName = args[0].ToLower();
-                    var company = await _dbContext.Companies
-                        .FirstOrDefaultAsync(c => c.CompanyName.ToLower() == companyName);
-
-                    if (company == null)
-                    {
-                        var allCompanies = await _dbContext.Companies
-                            .Select(c => c.CompanyName)
-                            .ToListAsync();
-
-                        return $"Företaget med namnet '{args[0]}' hittades inte. Tillgängliga företag är: {string.Join(", ", allCompanies)}.";
-                    }
-
-                    return await command.Value(new[] { company.Id.ToString() });
-                }
-            }
-        }
-        return null; // Return null if no command matches
-    }
-
-
-    private string[] ExtractArguments(string message, string commandKeyword)
-    {
-        // Find the position of the command keyword in the message
-        int keywordPosition = message.IndexOf(commandKeyword, StringComparison.OrdinalIgnoreCase);
-        if (keywordPosition == -1)
-        {
-            return Array.Empty<string>();
-        }
-
-        // Extract everything after the command keyword
-        string arguments = message.Substring(keywordPosition + commandKeyword.Length).Trim();
-
-        // Remove the "för" keyword and any extra spaces that may follow it
-        if (arguments.StartsWith("för ", StringComparison.OrdinalIgnoreCase))
-        {
-            arguments = arguments.Substring(4).Trim();
-        }
-
-        // Return the cleaned-up argument as a single-element array
-        return new[] { arguments };
-    }
-
-    private List<BasAccount> LoadBasAccounts()
-    {
-        var basAccounts = new List<BasAccount>();
-
         try
         {
-            if (!File.Exists(_csvFilePath))
-            {
-                Console.WriteLine($"BAS chart CSV file not found at path: {_csvFilePath}");
-                return basAccounts;
-            }
+            var basAccContext = LoadAssistantBasAccountContext();
+            var assistantDirectives = LoadAssistantMapDirectives();
 
-            var lines = File.ReadAllLines(_csvFilePath);
-            foreach (var line in lines.Skip(1))
-            {
-                var fields = line.Split(',');
-                if (fields.Length >= 4)
-                {
-                    basAccounts.Add(new BasAccount
-                    {
-                        AccountNumber = fields[0].Trim(),
-                        Description = fields[1].Trim(),
-                        Debit = decimal.TryParse(fields[2], out var debit) ? debit : 0,
-                        Credit = decimal.TryParse(fields[3], out var credit) ? credit : 0,
-                        Year = int.TryParse(fields[4], out var year) ? year : 0
-                    });
-                }
-            }
+            var systemMessage = new Message(Role.System, $"{assistantDirectives}\n\n{basAccContext}");
+            var userMessage = new Message(Role.User, $"Analysera följande faktura: {JsonSerializer.Serialize(invoice)}");
+
+            var chatRequest = new ChatRequest(new[] { systemMessage, userMessage }, model: "gpt-4o-mini");
+            var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+            return response.FirstChoice?.Message?.Content ?? "Ingen giltigt svar från assistenten.";
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading BAS accounts: {ex.Message}");
+            _logger.LogError(ex, "An error occurred in MapInvoiceToBasAccountsAsync.");
+            return "Ett internt fel uppstod vid kartläggning av BAS-konton.";
+        }
+    }
+
+    // Helper Methods
+
+    private List<Message> GetChatHistory()
+    {
+        var session = _httpContextAccessor.HttpContext.Session;
+        var encryptedHistory = session.GetString("ChatHistory");
+        return string.IsNullOrEmpty(encryptedHistory)
+            ? new List<Message>()
+            : JsonSerializer.Deserialize<List<Message>>(_encryptionHelper.DecryptData(encryptedHistory));
+    }
+
+    private async Task<string> SendChatRequestAsync(List<Message> chatHistory)
+    {
+        var recentMessages = chatHistory.TakeLast(10).ToList();
+        var chatRequest = new ChatRequest(recentMessages, model: "gpt-4o-mini");
+
+        try
+        {
+            var response = await _openAiClient.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+            if (response?.Choices == null || !response.Choices.Any())
+            {
+                _logger.LogWarning("Assistant response is null or empty.");
+                return "The assistant did not provide a valid response.";
+            }
+
+            // Safely extract the response content
+            var assistantChoice = response.Choices.First();
+            var rawContent = assistantChoice.Message?.Content;
+
+            // Ensure content is properly converted to a string
+            if (rawContent.ValueKind == System.Text.Json.JsonValueKind.String)
+            {
+                return rawContent.GetString();
+            }
+
+            _logger.LogWarning("Assistant response content is not a string.");
+            return "The assistant did not provide a valid response.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in SendChatRequestAsync.");
+            return "An internal error occurred while processing your request.";
+        }
+    }
+    private void SaveChatHistory(List<Message> chatHistory)
+    {
+        var session = _httpContextAccessor.HttpContext.Session;
+
+        // Serialize and encrypt the chat history
+        var encryptedHistory = _encryptionHelper.EncryptData(JsonSerializer.Serialize(chatHistory));
+
+        // Save the encrypted chat history in the session
+        session.SetString("ChatHistory", encryptedHistory);
+    }
+
+
+    private Message CreateSystemMessage()
+    {
+        var assistantDirectives = LoadAssistantDirectives();
+        var basAccountContext = LoadAssistantBasAccountContext();
+
+        if (string.IsNullOrWhiteSpace(assistantDirectives) || string.IsNullOrWhiteSpace(basAccountContext))
+        {
+            _logger.LogWarning("Assistant context files are missing or empty.");
+            return new Message(Role.System, "Standardriktlinjer för assistent.");
         }
 
-        return basAccounts;
+        return new Message(Role.System, $"{assistantDirectives}\n\nBAS-kontoplan:\n{basAccountContext}");
     }
 
     private string LoadAssistantDirectives()
     {
-        if (!File.Exists(_directivesFilePath))
+        if (!File.Exists(AssistantDirectivesPath))
         {
-            _logger.LogError("Assistant directives file not found at path: {FilePath}", _directivesFilePath);
-            throw new FileNotFoundException("Assistant directives file not found at path: " + _directivesFilePath);
-        }
-        _logger.LogInformation("Loading assistant directives from {FilePath}", _directivesFilePath);
-        return File.ReadAllText(_directivesFilePath, Encoding.UTF8);
-    }
-
-    private string LoadAssistantMapDirectives()
-    {
-        if (!File.Exists(_mapDirectivesFilePath))
-        {
-            _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
-            throw new FileNotFoundException("Assistant directives file not found at path: " + _mapDirectivesFilePath);
+            _logger.LogWarning("Assistant directives file not found at path: {Path}", AssistantDirectivesPath);
+            return string.Empty;
         }
 
-        _logger.LogInformation("Loading assistant directives from {FilePath}", _mapDirectivesFilePath);
-        return File.ReadAllText(_mapDirectivesFilePath, Encoding.UTF8);
+        return File.ReadAllText(AssistantDirectivesPath);
     }
 
     private string LoadAssistantBasAccountContext()
     {
-        if (!File.Exists(_basAccContextFilePath))
+        if (!File.Exists(BasAccountContextPath))
         {
-            _logger.LogInformation("Loading assistant directives from {FilePath}", _basAccContextFilePath);
-            throw new FileNotFoundException("Assistant directives file not found at path: " + _basAccContextFilePath);
+            _logger.LogWarning("BAS account context file not found at path: {Path}", BasAccountContextPath);
+            return string.Empty;
         }
 
-        _logger.LogInformation("Loading assistant directives from {FilePath}", _basAccContextFilePath);
-        return File.ReadAllText(_basAccContextFilePath, Encoding.UTF8);
+        return File.ReadAllText(BasAccountContextPath);
     }
 
+    private string LoadAssistantMapDirectives()
+    {
+        if (!File.Exists(AssistantMapDirectivesPath))
+        {
+            _logger.LogWarning("Assistant map directives file not found at path: {Path}", AssistantMapDirectivesPath);
+            return string.Empty;
+        }
+
+        return File.ReadAllText(AssistantMapDirectivesPath);
+    }
+
+
+    private void RegisterIntents()
+    {
+        // Ingoing Invoices
+        _intentHelper.RegisterCommand("obetalda fakturor", async args =>
+        {
+            if (args.Length == 0)
+            {
+                return "Vänligen ange ett företagsnamn eller ID för att visa obetalda fakturor.";
+            }
+
+            // If input is an integer, assume it's a company ID
+            if (int.TryParse(args[0], out var companyId))
+            {
+                var invoices = await _ingoingInvoiceFunctions.GetUnpaidInvoicesForCompanyAsync(companyId);
+                return FormatInvoices("Obetalda inkommande fakturor", invoices);
+            }
+
+            // Otherwise, assume it's a company name
+            var companyName = string.Join(" ", args);
+            var company = await _dbContext.Companies
+                .FirstOrDefaultAsync(c => c.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
+
+            if (company == null)
+            {
+                return $"Företaget '{companyName}' kunde inte hittas.";
+            }
+
+            var invoicesByName = await _ingoingInvoiceFunctions.GetUnpaidInvoicesForCompanyAsync(company.Id);
+            return FormatInvoices($"Obetalda inkommande fakturor för {companyName}", invoicesByName);
+        });
+
+
+        // Outgoing Invoices
+        _intentHelper.RegisterCommand("obetald utgående faktura", args =>
+            _outgoingInvoiceFunctions.GetUnpaidOutgoingInvoicesForCompany(int.Parse(args[0])));
+
+        // BAS Accounts
+        _intentHelper.RegisterCommand("visa bas konton", async args =>
+        {
+            if (args.Length == 0)
+            {
+                return "Ange ett företags-ID för att visa BAS konton.";
+            }
+
+            if (int.TryParse(args[0], out var companyId))
+            {
+                return await _basAccountFunctions.HandleGetCompanyBasAccounts(new[] { companyId.ToString() });
+            }
+
+            return "Företags-ID är ogiltigt.";
+        });
+
+        // Latest Transactions WORKS
+        _intentHelper.RegisterCommand("senaste transaktioner", args =>
+            _transactionFunctions.GetLatestTransactionsForCompany(int.Parse(args[0])));
+
+        // High Profile Transactions
+        _intentHelper.RegisterCommand("högprofilerade transaktioner", async args =>
+        {
+            if (args.Length == 0)
+            {
+                return "Vänligen ange ett företags-ID för att visa högprofilerade transaktioner.";
+            }
+
+            if (int.TryParse(args[0], out var companyId))
+            {
+                return await _transactionFunctions.GetHighProfileTransactionsForCompany(companyId);
+            }
+
+            return "Ogiltigt företags-ID. Vänligen ange ett numeriskt ID.";
+        });
+    }
+
+    private string FormatInvoices(string title, List<IngoingInvoiceFunctionDTO> invoices)
+    {
+        if (invoices == null || !invoices.Any())
+        {
+            return $"{title}: Inga fakturor hittades.";
+        }
+
+        var formattedInvoices = invoices
+            .Select((invoice, index) =>
+                $"{index + 1}. Fakturanummer: {invoice.InvoiceNumber}\n" +
+                $"   Förfallodatum: {invoice.DueDate:yyyy-MM-dd}\n" +
+                $"   Total: {invoice.InvoiceTotal:C}")
+            .ToList();
+
+        return $"{title}:\n\n" + string.Join("\n\n", formattedInvoices);
+    }
+    private string FormatTransactions(string title, List<Transaction> transactions)
+    {
+        if (transactions == null || !transactions.Any())
+        {
+            return $"{title}: Inga transaktioner hittades.";
+        }
+
+        var formattedTransactions = transactions.Select((t, index) =>
+            $"{index + 1}. **Datum:** {t.TransactionDate:yyyy-MM-dd}\n" +
+            $"   - **Beskrivning:** {t.BasAccount?.Description ?? "Ingen beskrivning"}\n" +
+            $"   - **BAS konto:** {t.BasAccount?.AccountNumber ?? "Okänt konto"}\n" +
+            $"   - **Belopp:** {t.Amount:C}"
+        ).ToList();
+
+        return $"{title}:\n\n" + string.Join("\n\n", formattedTransactions);
+    }
 }
