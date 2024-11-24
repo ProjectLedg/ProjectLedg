@@ -17,7 +17,7 @@ namespace ProjectLedg.Server.Functions.AssistantFunctions
         {
             if (args.Length < 1 || !int.TryParse(args[0], out int companyId))
             {
-                return "Vänligen ange ett giltigt företags-ID. Användning: GetCompanyBasAccounts [companyId]";
+                return "Vänligen ange ett giltigt företags-ID. Användning: GetCompanyBasAccounts [companyId].";
             }
 
             return await FetchCompanyBasAccountsAsync(companyId);
@@ -36,14 +36,18 @@ namespace ProjectLedg.Server.Functions.AssistantFunctions
 
             if (company.BasAccounts == null || !company.BasAccounts.Any())
             {
-                return $"Jag hittade inga BAS konton för följande företaget: '{company.CompanyName}'.";
+                return $"Inga BAS konton hittades för företaget '{company.CompanyName}'.";
             }
 
-            var basAccountsInfo = company.BasAccounts.Select(b =>
-                $"Konto: {b.AccountNumber} ({b.Description}): Debet: {b.Debit}, Kredit: {b.Credit}, År: {b.Year}"
-            );
+            var formattedBasAccounts = company.BasAccounts
+                .Select((account, index) =>
+                    $"{index + 1}. **Konto:** {account.AccountNumber}\n" +
+                    $"   **Beskrivning:** {account.Description}\n" +
+                    $"   **Debet:** {account.Debit:C}, **Kredit:** {account.Credit:C}\n" +
+                    $"   **År:** {account.Year}");
 
-            return $"BAS Konton för företag: '{company.CompanyName}':\n" + string.Join("\n", basAccountsInfo);
+            return $"BAS Konton för företaget '{company.CompanyName}':\n\n" +
+                   string.Join("\n\n", formattedBasAccounts);
         }
 
         public async Task<string> GetCompanyBasAccounts(int companyId)
@@ -59,13 +63,18 @@ namespace ProjectLedg.Server.Functions.AssistantFunctions
 
             if (company.BasAccounts == null || !company.BasAccounts.Any())
             {
-                return $"Jag hittade inga BAS konton för följande företaget: '{company.CompanyName}'.";
+                return $"Inga BAS konton hittades för företaget '{company.CompanyName}'.";
             }
 
-            var basAccountsInfo = company.BasAccounts.Select(b =>
-                $"Konto {b.AccountNumber} ({b.Description}): Debet = {b.Debit}, Kredit = {b.Credit}, År = {b.Year}");
+            var formattedBasAccounts = company.BasAccounts
+                .Select((account, index) =>
+                    $"{index + 1}. **Konto:** {account.AccountNumber}\n" +
+                    $"   **Beskrivning:** {account.Description}\n" +
+                    $"   **Debet:** {account.Debit:C}, **Kredit:** {account.Credit:C}\n" +
+                    $"   **År:** {account.Year}");
 
-            return $"BAS Konton för företag: '{company.CompanyName}':\n" + string.Join("\n", basAccountsInfo);
+            return $"BAS Konton för företaget '{company.CompanyName}':\n\n" +
+                   string.Join("\n\n", formattedBasAccounts);
         }
 
         public async Task<string> GetPopularBasAccountsForCompany(int companyId)
@@ -78,12 +87,18 @@ namespace ProjectLedg.Server.Functions.AssistantFunctions
             {
                 return $"Företaget med ID {companyId} hittades inte.";
             }
+
             var popularAccounts = company.BasAccounts
                 .OrderByDescending(b => Math.Max(b.Debit, b.Credit))
-                .Take(5)  //
-                .Select(b => $"Konto: {b.AccountNumber} ({b.Description}): Debet: {b.Debit}, Kredit: {b.Credit}, År: {b.Year}");
+                .Take(5)
+                .Select((account, index) =>
+                    $"{index + 1}. **Konto:** {account.AccountNumber}\n" +
+                    $"   **Beskrivning:** {account.Description}\n" +
+                    $"   **Debet:** {account.Debit:C}, **Kredit:** {account.Credit:C}\n" +
+                    $"   **År:** {account.Year}");
 
-            return $"Mest populära BAS konton för företaget: '{company.CompanyName}':\n" + string.Join("\n", popularAccounts);
+            return $"Mest populära BAS konton för företaget '{company.CompanyName}':\n\n" +
+                   string.Join("\n\n", popularAccounts);
         }
     }
 }
