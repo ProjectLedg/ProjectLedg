@@ -24,13 +24,13 @@ export default function FeatureContentBody() {
   const li2Opacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1]);
   const li3Opacity = useTransform(scrollYProgress, [0.51, 0.61], [0, 1]);
 
+const imgOpacity = useTransform(scrollYProgress, [0, 0.6], [0,1]);
 
-
-  const h1Opacity = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
+  const h1Opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
   return (
     <div className="w-full py-8 px-4 rounded-t-2xl flex flex-row justify-evenly">
-      <motion.div ref={ref} className="relative h-full flex" style={{ x: translateXLeft }}>
+      <motion.div ref={ref} className="relative h-full flex" style={{ x: translateXLeft, opacity: imgOpacity }}>
         <div>
           <img src={BookingExample} alt="Image of booking example window" className="ml-4 w-h-[600px] h-[600px] shadow-md rounded-lg" />
           
@@ -41,6 +41,7 @@ export default function FeatureContentBody() {
         className="relative h-full flex"
         style={{
           translateX: translateX,
+
         }}
       >
         <div className="flex flex-col items-start justify-center h-[50vh] w-[50vw] ">
