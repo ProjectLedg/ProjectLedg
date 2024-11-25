@@ -27,7 +27,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
     const [userData, setuserData] = useState(null);
     const [companyData, setcompanyData] = useState([]);
     const [currentCompany, setCurrentCompany] = useState(null);
-
+    const [currentCompanyId , setCurrentCompanyId] = useState(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -39,7 +39,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
             const companyDataresponse = await axiosConfig.get('/Company/getUserCompanies')
                         
             const fetchedCompanyData = companyDataresponse.data.map(company => ({
-                id: company.id,
+                id: String(company.id),
                 name: company.companyName
               }));
             
@@ -47,6 +47,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
             setcompanyData(fetchedCompanyData)
             
             const activeCompany = fetchedCompanyData.find(company => company.id === companyId);
+            
             setCurrentCompany(activeCompany);
             
             
