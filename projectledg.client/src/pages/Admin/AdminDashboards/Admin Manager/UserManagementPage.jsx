@@ -147,8 +147,10 @@ const UserManagementPage = () => {
 
   return (
     <div className="w-full">
-      <Tabs defaultValue="Users" className="w-full">
-        <TabsList className="flex w-min justify-start">
+   
+
+      <Tabs defaultValue="Users" className="w-full ">
+        <TabsList className="flex flex-wrap w-min justify-start mb-4">
           <TabsTrigger value="Users">Kunder</TabsTrigger>
           <TabsTrigger value="Ingoing">Ingående Fakturor</TabsTrigger>
           <TabsTrigger value="Outgoing">Utgående Fakturor</TabsTrigger>
@@ -159,18 +161,18 @@ const UserManagementPage = () => {
 
                 {/* Users Tab */}
                 <TabsContent value="Users">
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Hantera Användare</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <thead>
-                  <tr>
-                    <th>Kund-ID</th>
-                    <th>Förnamn</th>
-                    <th>Email</th>
-                    <th>Åtgärder</th>
+                  <tr >
+                    <th className="text-left">Kund-ID</th>
+                    <th className="text-left">Förnamn</th>
+                    <th className="text-left">Email</th>
+                    <th className="text-left">Åtgärder</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -215,10 +217,10 @@ const UserManagementPage = () => {
               <Table>
                 <thead>
                   <tr>
-                    <th>Faktura-ID</th>
-                    <th>Fakturanummer</th>
-                    <th>Kundnamn</th>
-                    <th>Åtgärder</th>
+                    <th className="text-left">Faktura-ID</th>
+                    <th className="text-left">Fakturanummer</th>
+                    <th className="text-left">Kundnamn</th>
+                    <th className="text-left">Åtgärder</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -263,10 +265,10 @@ const UserManagementPage = () => {
               <Table>
                 <thead>
                   <tr>
-                    <th>Faktura-ID</th>
-                    <th>Fakturanummer</th>
-                    <th>Kundnamn</th>
-                    <th>Åtgärder</th>
+                    <th className="text-left">Faktura-ID</th>
+                    <th className="text-left">Fakturanummer</th>
+                    <th className="text-left">Kundnamn</th>
+                    <th className="text-left">Åtgärder</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -311,10 +313,10 @@ const UserManagementPage = () => {
               <Table>
                 <thead>
                   <tr>
-                    <th>Admin-ID</th>
-                    <th>Förnamn</th>
-                    <th>Email</th>
-                    <th>Åtgärder</th>
+                    <th className="text-left">Admin-ID</th>
+                    <th className="text-left">Förnamn</th>
+                    <th className="text-left">Email</th>
+                    <th className="text-left">Åtgärder</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -368,11 +370,11 @@ const UserManagementPage = () => {
               <Table>
                 <thead>
                   <tr>
-                    <th>Typ</th>
-                    <th>ID</th>
-                    <th>Namn</th>
-                    <th>Ytterligare Info</th>
-                    <th>Åtgärder</th>
+                    <th className="text-left">Typ</th>
+                    <th className="text-left">ID</th>
+                    <th className="text-left">Namn</th>
+                    <th className="text-left">Ytterligare Info</th>
+                    <th className="text-left">Åtgärder</th>
                   </tr>
                 </thead>
                 <tbody>
