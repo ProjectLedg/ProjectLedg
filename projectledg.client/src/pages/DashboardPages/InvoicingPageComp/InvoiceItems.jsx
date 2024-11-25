@@ -83,8 +83,8 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
         {/* Mobile version as list */}
         <div className="flex flex-col lg:hidden">
           {items.map((item, index) => (
-            <div key={index} className="border-b border-gray-200 dark:border-darkBorder p-4">
-              <div className="flex flex-col mb-2">
+            <div key={index} className="border-b border-gray-200 dark:border-darkBorder  ">
+              <div className="flex flex-col mb-2 ">
                 <span className="font-normal">Beskrivning</span>
                 <Input
                   placeholder="Artikelbeskrivning"
@@ -124,13 +124,13 @@ export function InvoiceItems({ items, handleItemChange, addItem, removeItem }) {
                 <span className="text-xl">{(item.amount + item.taxAmount).toFixed(2)}kr</span>
               </div>
               <Button variant="destructive"  className="w-full bg-red-500" size="icon" onClick={() => removeItem(index)}>
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4 mr-2" /> Ta bort artikel
               </Button>
               
             </div>
             
           ))}
-          <Button className="mt-4 self-center bg-green-500 w-[90%] dark:text-white" onClick={addItem}>
+          <Button className="mt-4 self-center  bg-green-500 w-full dark:text-white" onClick={addItem}>
             <PlusCircle className="mr-2 h-4 w-4 dark:text-white" /> Lägg till artikel
           </Button>
         </div>

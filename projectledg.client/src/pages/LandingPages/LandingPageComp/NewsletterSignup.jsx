@@ -33,7 +33,7 @@ export default function Component() {
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Prenumerera på vårt nyhetsbrev</h2>
         <p className="mb-6 text-center text-gray-600">Få de senaste nyheterna och uppdateringarna direkt i din inkorg.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+          <div className="flex flex-col sm:flex-row space-y-6 sm:space-y-0 sm:space-x-2">
             <Input
               type="email"
               placeholder="Din e-postadress"
@@ -46,7 +46,7 @@ export default function Component() {
             <Button
               type="submit"
               disabled={status === 'loading'}
-              className={`w-full sm:w-auto ${status === 'loading'
+              className={`w-full sm:w-auto    ${status === 'loading'
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-black hover:bg-gray-800'
                 } text-white transition-all duration-300 ease-in-out transform hover:bg-green-500`}
@@ -57,7 +57,7 @@ export default function Component() {
                   Skickar...
                 </span>
               ) : (
-                <span className="flex items-center justify-center">
+                <span className="flex items-center justify-center ">
                   Prenumerera <Send className="ml-2 h-4 w-4" />
                 </span>
               )}
