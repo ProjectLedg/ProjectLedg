@@ -37,10 +37,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
           try {
             const userDataresponse = await axiosConfig.get('/User/getUser')
             const companyDataresponse = await axiosConfig.get('/Company/getUserCompanies')
-            // Log responses for debugging
-            
-            
-            
+                        
             const fetchedCompanyData = companyDataresponse.data.map(company => ({
                 id: company.id,
                 name: company.companyName
@@ -50,7 +47,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
             setcompanyData(fetchedCompanyData)
             
             const activeCompany = fetchedCompanyData.find(company => company.id === companyId);
-            
+            setCurrentCompany(activeCompany);
             
             
           } catch (error) {
@@ -63,7 +60,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
             isMounted = false;
         };
           
-    },[companyId]);   
+    },[]);   
     
     
     const handleCompanyChange = (company) => {
@@ -150,12 +147,11 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
                             onClick={() => handleCompanyChange(company)}
                             className="cursor-pointer"
                         >
-                            <Check
-                                className={cn(
-                                    "mr-2 h-4 w-4 text-green-500",
-                                    currentCompany.id === company.id ? "opacity-100" : "opacity-0"
-                                )}
-                            />
+                      <Check
+                    className={cn(
+                        "mr-2 h-4 w-4 text-green-500",
+                        currentCompany?.id === company.id ? "opacity-100" : "opacity-0"
+                    )}/>
                             {company.name}
                         </DropdownMenuItem>
                     ))}
