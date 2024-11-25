@@ -284,7 +284,7 @@ export function AnnualReportPreview() {
             </ScrollArea>
           </CardContent>
           <CardFooter>
-            <Button onClick={handleConfirmAndContinue} className="bg-green-500 ml-auto">Bekräfta och fortsätt</Button>
+            <Button onClick={handleConfirmAndContinue} className="bg-green-500 ml-auto dark:bg-white">Bekräfta och fortsätt</Button>
           </CardFooter>
         </Card>
       </TabsContent>
