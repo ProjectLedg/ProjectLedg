@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import BookingExample from '/Users/hjalmarstranninge/VSCodeProjects/ProjectLedg/projectledg.client/src/assets/BookingExample.png';
+import BookingExample from '@/assets/BookingExample.png';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { TimerReset, ShieldOff, Focus } from 'lucide-react'
 import InvoiceCard from './InvoiceCard';
