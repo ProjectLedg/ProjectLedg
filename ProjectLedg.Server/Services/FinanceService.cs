@@ -253,7 +253,7 @@ namespace ProjectLedg.Server.Services
                     {
                         Title = title,
                         Amount = amount,
-                        Change = $"Inte tillämpligt",
+                        Change = $"Föregående årsdata ej tillgänglig",
                         ChangeType = "Ingen"
                     };
             }

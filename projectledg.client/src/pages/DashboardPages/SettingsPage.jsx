@@ -61,6 +61,7 @@ export default function SettingsPage() {
           {/* Card for Change Password */}
           <Card>
             <CardHeader>
+
               <CardTitle className=" dark:text-white">Byt lösenord</CardTitle>
               <CardDescription className="dark:text-darkSecondary">
                 Uppdatera ditt lösenord för att hålla ditt konto säkert
@@ -138,7 +139,9 @@ export default function SettingsPage() {
           {/* Billing Plan Card */}
           <Card>
             <CardHeader>
+
               <CardTitle className=" dark:text-white">Betalningsplan</CardTitle>
+
               <CardDescription className="dark:text-darkSecondary">
                 Hantera dina prenumerationer och faktureringsinställningar
               </CardDescription>

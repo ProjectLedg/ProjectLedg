@@ -80,6 +80,9 @@
     <None Update="GhostScript\Dink2PDF\32bit\libwkhtmltox.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="GhostScript\Dink2PDF\64bit\libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="GhostScript\gsdll64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { axiosConfig } from '/axiosconfig'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent} from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,6 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useParams } from 'react-router-dom'
+import {
+  Home,
+  Activity,
+  BookCheck,
+  BookDown,
+  FileText,
+} from "lucide-react";
+
 
 const HelpPage = () => {
   const { companyId } = useParams();
@@ -39,6 +47,7 @@ const HelpPage = () => {
     {
       id: "Hem",
       title: "Hem",
+      icon: <Home />,
       content: "Hem sidan är din startsida där du kan se en översikt av dina senaste aktiviteter i bolaget. Du kan också anpassa din Dashboard för att visa de mättal och information som är viktigast för dig.",
       faqs: [
         { question: "Vad är lönsamhets poäng?", answer: "Din lönsamhets poäng är baserad på din beräknade vinstmarginal på ett normaliserat värde på 0-100. Där 50% vinst marginal motsvarar ett högt lönsamhets poäng och 0% vinstmarginal motsvarar ett lågt lönsamhets poäng." },
@@ -46,8 +55,9 @@ const HelpPage = () => {
       ]
     },
     {
-      id: "Finasiell rapport",
-      title: "Finasiell rapport",
+      id: "Finansiell rapport",
+      title: "Finansiell rapport",
+      icon: <Activity />,
       content: "Detta sidan är där du kan få rapporter för att analysera din bolags ekonomi utifrån balansräkningen och resultaträkningen.",
       faqs: [
         { question: "Hur generar jag resultaträkning & balansräkning?", answer: "Balansräkningen och resultat räkning uppdateras dynamikt, Vilket betyder att när du gör ändringar i din bokförning såsom att ta emot en ny faktura så uppdateras RR & BR automatiskt." },
@@ -57,6 +67,7 @@ const HelpPage = () => {
     {
       id: "Bokför",
       title: "Bokför",
+      icon: <BookCheck />,
       content: "Bokföringssidan är där du kan skanna in dina kvitton och ingående fakturor. Utifrån dinna fakturor och kvitton skapas verifikationer som sedan används för att generar din balansräkning och resultaträkning.",
       faqs: [
         { question: "Hur bokför jag en faktura?", answer: "För att bokföra en faktura, börjar man med att ladda upp fakturan, Sedan så läses den av och man kan bekräfta att allting kommit med på fakturan. Utifrån denna information skapas ett verifikations förslag som kan användas för att bokföra fakturan eller kvittot." },
@@ -66,6 +77,7 @@ const HelpPage = () => {
     {
       id: "Fakturering",
       title: "Fakturering",
+      icon: <FileText />,
       content: "Faktueringssidan är där du kan skapa, skicka och hantera fakturor för dina kunder.",
       faqs: [
         { question: "Kan jag spara en kund?", answer: "För tillfället fungerar det så att tidigare kunder som man har fakturerat sparas i hos ditt företag och det går att välja utifrån dem" },
@@ -75,6 +87,7 @@ const HelpPage = () => {
     {
       id: "Årsredovisning",
       title: "Årsredovisning",
+      icon: <BookDown />,
       content: "Årsredovisningssidan är där du kan generar din årsredovisning och ladda ner den i pdf format.",
       faqs: [
         { question: "Kan jag ladda ner Årsredovisningen i SIE-format?", answer: "Nej, För tillfället är det ej möjligt att ladda ner sin årsredovisning i SIE-format, Det är något som kommer komma framöver." },
@@ -146,12 +159,14 @@ const HelpPage = () => {
 
 
   const HelpSection = ({ title, content, faqs }) => (
-    <div className="mt-4 space-y-4">
-      <h2 className="text-xl sm:text-2xl font-semibold">{title}</h2>
-      <div className="h-8">
-        <p className="text-md">{content}</p>
+    <div className="mt-4 space-y-2">
+      <div className="mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-8">{title}</h2>
+        <div className="h-auto ">
+          <p className="text-md">{content}</p>
+        </div>
       </div>
-      <Accordion type="single" collapsible className="w-full">
+      <Accordion type="single" collapsible className="w-full ">
         {faqs.map((faq, index) => (
           <AccordionItem value={`item-${index}`} key={index}>
             <AccordionTrigger className="text-sm sm:text-base">{faq.question}</AccordionTrigger>
@@ -176,9 +191,9 @@ const HelpPage = () => {
                 <TabsTrigger
                   key={section.id}
                   value={section.id}
-                  className="text-sm min-w-36 font-semibold dark:bg-darkBackground"
+                  className="text-sm lg:min-w-36 font-semibold dark:bg-darkBackground"
                 >
-                  {section.title}
+                  {section.icon}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -187,7 +202,7 @@ const HelpPage = () => {
       </div>
 
       {/* Card with TabsContent inside */}
-      <Card className="w-full mt-2">
+      <Card className="w-full mt-2 mb-6">
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             {helpSections.map((section) => (
@@ -196,9 +211,12 @@ const HelpPage = () => {
               </TabsContent>
             ))}
           </Tabs>
-
-          <section className="mt-6 sm:mt-8">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4">Skapa ett Supportärende</h2>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent>
+          <section className="mt-6 ">
+            <h2 className="text-xl  md:text-2xl font-semibold mb-8">Skapa ett Supportärende</h2>
             {formStatus && (
               <Alert
                 className={`mb-4 ${formStatus.type === "success" ? "bg-green-100" : "bg-red-100"
@@ -212,6 +230,7 @@ const HelpPage = () => {
                 </AlertDescription>
               </Alert>
             )}
+
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="space-y-1 sm:space-y-2">
     <Label htmlFor="category" className="text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300">
@@ -233,6 +252,7 @@ const HelpPage = () => {
       
     </div>
   </div>
+
               <div className="space-y-1 sm:space-y-2">
                 <Label htmlFor="subject" className="text-sm sm:text-base">
                   Ärende
@@ -270,14 +290,14 @@ const HelpPage = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 dark:text-white text-sm sm:text-base"
+                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 dark:text-white text-sm sm:text-base "
               >
                 Skicka supportärende
               </Button>
             </form>
           </section>
         </CardContent>
-        <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
+      {/*   <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
           <Button
             variant="link"
             className="w-full sm:w-auto text-sm sm:text-base"
@@ -290,7 +310,7 @@ const HelpPage = () => {
           >
             Videogenomgång
           </Button>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </div>
   );

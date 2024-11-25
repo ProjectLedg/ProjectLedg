@@ -14,6 +14,7 @@ import { FileText } from "lucide-react"
 import { useParams } from "react-router-dom"
 
 
+
 export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [isBasAccLoading, setIsBasAccLoading] = useState(false)
@@ -264,7 +265,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
           <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
         </CardHeader>
         <CardContent className=" h-[75%] flex justify-center items-center p-0 ">
-          <h3 className="text-xl text-center text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
+          <h3 className="text-xl text-center w-[90%] text-gray-400 dark:text-darkSecondary">Ladda upp en faktura för att förhandsgranska</h3>
         </CardContent>
       </Card>
     )
@@ -274,7 +275,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
   // Display invoice preview
   return (
     <Card className="w-full h-[600px] flex flex-col justify-between shadow-lg">
-      <CardHeader className="border-b">
+      <CardHeader className="border-b dark:border-darkBorder">
         <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">Förhandsgranska faktura</CardTitle>
       </CardHeader>
 
@@ -282,14 +283,14 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
         {/* Animation fade-in for when analyzing invoice */}
         {showPreviewAnimation && (
           <motion.div
-            className="overflow-hidden bottom-10"
+            className="overflow-hidden bottom-10 "
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             {/* Buttons to select different parts of the invoice */}
             <Tabs defaultValue="details" className="flex flex-col h-full">
-              <TabsList className="w-full border-b rounded-none p-6 overflow-hidden">
+              <TabsList className="w-full border-b rounded-none p-6 overflow-hidden dark:bg-darkBorder dark:border-darkBorder">
                 <TabsTrigger value="details" className="w-full p-3">Faktura</TabsTrigger>
                 <TabsTrigger value="customer" className="w-full p-3">Kund</TabsTrigger>
                 <TabsTrigger value="vendor" className="w-full p-3">Leverantör</TabsTrigger>
@@ -303,7 +304,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
 
                   {/* General invoice info */}
                   <TabsContent value="details">
-                    <Card className="border-0 shadow-none">
+                    <Card className="border-0 shadow-none dark:border-darkBorder">
                       <CardContent>
                         <section className="grid grid-cols-1 gap-4 mt-6">
                           <article>
@@ -365,7 +366,8 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                               onChange={handleInputChange}
                             />
                           </article>
-                          <article>
+                          {/* TODO: Add later when fixed in backend */}
+                          {/* <article>
                             <Label htmlFor="PaymentDetails">Bankgiro/PlusGiro</Label>
                             <Input
                               id="PaymentDetails"
@@ -374,7 +376,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                               placeholder={invoice.PaymentDetails.Length == 0 ? null : "Ej Läsbart"}
                               onChange={handleInputChange}
                             />
-                          </article>
+                          </article> */}
                         </section>
                       </CardContent>
                     </Card>
@@ -382,7 +384,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
 
                   {/* Customer info */}
                   <TabsContent value="customer">
-                    <Card className="border-0 shadow-none">
+                    <Card className="border-0 shadow-none dark:border-darkBorder">
                       <CardContent>
                         <section className="space-y-4 mt-6">
                           <article>
@@ -474,7 +476,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
                   {/* Invoice specification (each item on the invoice) */}
                   <TabsContent value="items">
                     {invoice.Items.map((item, i) => (
-                      <Card key={i} className="mb-4 border-0 border-b-2 rounded-none shadow-none space-y-4 mt-6">
+                      <Card key={i} className="mb-4 border-0 border-b-2 dark:border-darkBorder rounded-none shadow-none space-y-4 mt-6">
                         <CardContent className="shadow-none">
                           {/* <h2 className="mb-2 font-medium">Artikel: {i + 1}</h2> */}
                           <section className="grid grid-flow-row grid-cols-12 grid-rows-3 gap-4 mb-2 ">
@@ -580,7 +582,7 @@ export default function InvoicePreview({ invoice, setInvoice, isUploadLoading, s
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <CardFooter className="border-t p-4 flex justify-center">
+          <CardFooter className="border-t p-4 flex justify-center dark:border-darkBorder">
             <Button
               onClick={handleSubmitInvoiceMap}
               disabled={!invoice || isPreviewLoading}

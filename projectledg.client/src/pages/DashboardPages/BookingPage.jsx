@@ -18,13 +18,13 @@ export default function BookingPage() {
                     <div className="grid grid-cols-1 ">
                         <h2 className="text-3xl font-bold mb-2">Bokför</h2>
 
-                        <TabsList className="max-w-[250px] h-11 mb-1 dark:bg-darkBackground">
-                            <TabsTrigger value="details">Bokföring</TabsTrigger>
-                            <TabsTrigger value="customer">Verifikationer</TabsTrigger>
+                        <TabsList className="max-w-[250px] h-11 mb-1 dark:bg-darkSurface">
+                            <TabsTrigger value="details" className="dark:data-[state=active]:bg-green-500 dark:data-[state=active]:text-white">Bokföring</TabsTrigger>
+                            <TabsTrigger value="customer" className="dark:data-[state=active]:bg-green-500 dark:data-[state=active]:text-white" >Verifikationer</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="details">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                                 <div className="md:col-span-1">
                                     <InvoiceUploader
                                         setInvoice={setInvoice}
@@ -32,7 +32,7 @@ export default function BookingPage() {
                                         setIsUploadLoading={setIsUploadLoading}
                                     />
                                 </div>
-                                <div className="xl:col-span-2">
+                                <div className="lg:col-span-2">
                                     <InvoicePreview
                                         invoice={invoice}
                                         setInvoice={setInvoice}
