@@ -20,9 +20,9 @@ export default function FeatureContentBody() {
 
   const translateXLeft = useTransform(scrollYProgress, [0, 0.4], [-900, 0]);
 
-  const li1Opacity = useTransform(scrollYProgress, [0.49, 0.59], [0, 1]);
-  const li2Opacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1]);
-  const li3Opacity = useTransform(scrollYProgress, [0.51, 0.61], [0, 1]);
+  const li1Opacity = useTransform(scrollYProgress, [0.48, 0.58], [0, 1]);
+  const li2Opacity = useTransform(scrollYProgress, [0.49, 0.59], [0, 1]);
+  const li3Opacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1]);
 
 const imgOpacity = useTransform(scrollYProgress, [0, 0.6], [0,1]);
 
