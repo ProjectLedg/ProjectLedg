@@ -30,9 +30,6 @@ export default function FeaturePage() {
     }, [lastScrollY]);
 
 
-
-export default function FeaturePage() {
-
     const isMobile = window.innerWidth <= 768;
 
     if(isMobile){
@@ -54,7 +51,7 @@ export default function FeaturePage() {
             <div className="bg-gradient-to-b from-blue-700/30 mb-1 transition-colors duration-1000 ease-in-out">
                 <FeatureContentBody />
             </div>
-            <div className="mt-24">
+            <div>
       <FooterSection />
       </div>
         </>
