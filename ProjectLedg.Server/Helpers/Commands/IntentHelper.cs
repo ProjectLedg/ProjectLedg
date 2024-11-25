@@ -43,12 +43,13 @@
         var normalizedIntent = intent.Trim().ToLowerInvariant();
         var normalizedInput = userInput.Trim().ToLowerInvariant();
 
-        if (normalizedInput.StartsWith(normalizedIntent, StringComparison.OrdinalIgnoreCase))
+        // Check if userInput contains the intent string
+        if (normalizedInput.Contains(normalizedIntent))
         {
             _logger.LogInformation("Intent '{Intent}' matched the input.", intent);
 
-            // Extract parameters
-            var remainingInput = normalizedInput.Substring(normalizedIntent.Length).Trim();
+            // Extract remaining input after the intent phrase
+            var remainingInput = normalizedInput.Replace(normalizedIntent, "").Trim();
 
             if (remainingInput.StartsWith("för", StringComparison.OrdinalIgnoreCase))
             {

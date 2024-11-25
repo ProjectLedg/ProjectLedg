@@ -40,11 +40,11 @@ namespace ProjectLedg.Server.Controllers
                 if (string.IsNullOrEmpty(response))
                 {
                     _logger.LogWarning("Received empty response from AssistantService.");
-                    return Ok(new { response = "No response from the assistant. Please try again." });
+                    return Ok(new { response = "No response from the assistant. Please try again.", intentMatched = false });
                 }
 
                 _logger.LogInformation("Assistant response: {Response}", response);
-                return Ok(new { response });
+                return Ok(new { response, intentMatched = true }); // Assume intent matches if response is non-empty
             }
             catch (Exception ex)
             {

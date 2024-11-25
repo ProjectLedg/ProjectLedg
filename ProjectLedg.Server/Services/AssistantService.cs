@@ -241,14 +241,16 @@ public class AssistantService : IAssistantService
                 return "Vänligen ange ett företagsnamn eller ID för att visa obetalda fakturor.";
             }
 
-            // If input is an integer, assume it's a company ID
+            // Check if the first argument is a numeric Company ID
             if (int.TryParse(args[0], out var companyId))
             {
                 var invoices = await _ingoingInvoiceFunctions.GetUnpaidInvoicesForCompanyAsync(companyId);
-                return FormatInvoices("Obetalda inkommande fakturor", invoices);
+                return invoices == null
+                    ? "Inga obetalda fakturor hittades för det angivna företaget."
+                    : FormatInvoices("Obetalda inkommande fakturor", invoices);
             }
 
-            // Otherwise, assume it's a company name
+            // Otherwise, assume it is a company name
             var companyName = string.Join(" ", args);
             var company = await _dbContext.Companies
                 .FirstOrDefaultAsync(c => c.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
@@ -259,8 +261,11 @@ public class AssistantService : IAssistantService
             }
 
             var invoicesByName = await _ingoingInvoiceFunctions.GetUnpaidInvoicesForCompanyAsync(company.Id);
-            return FormatInvoices($"Obetalda inkommande fakturor för {companyName}", invoicesByName);
+            return invoicesByName == null
+                ? $"Inga obetalda fakturor hittades för företaget '{companyName}'."
+                : FormatInvoices($"Obetalda inkommande fakturor för {companyName}", invoicesByName);
         });
+
 
 
         // Outgoing Invoices

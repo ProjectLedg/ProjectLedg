@@ -131,7 +131,7 @@ const DashboardHomePage = () => {
 
         // Unecessary as this is why we use axios config //Adrian
         // const axiosConfig = axios.create({
-        //   baseURL: 'https://projectledgserver.azurewebsites.net/api',
+        //   baseURL: 'https://localhost:7223/api',
         //   headers: {
         //     'Content-Type': 'application/json',
         //     // Include additional headers if needed

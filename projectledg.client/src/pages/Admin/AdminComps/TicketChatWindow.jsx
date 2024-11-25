@@ -61,7 +61,7 @@ export default function TicketChatWindow({ onClose }) {
     const fetchTickets = async () => {
         try {
             console.log('Fetching tickets...');
-            const response = await fetch('https://projectledgserver.azurewebsites.net/api/SupportTickets');
+            const response = await fetch('https://localhost:7223/api/SupportTickets');
             if (!response.ok) throw new Error('Failed to fetch tickets');
             const tickets = await response.json();
             return tickets.length
@@ -76,7 +76,7 @@ export default function TicketChatWindow({ onClose }) {
     const fetchOpenTicketsCount = async () => {
         try {
             console.log('Fetching open tickets count...');
-            const response = await fetch('https://projectledgserver.azurewebsites.net/api/SupportTickets/statistics/open');
+            const response = await fetch('https://localhost:7223/api/SupportTickets/statistics/open');
             if (!response.ok) throw new Error('Failed to fetch open tickets count');
             const count = await response.json();
             return `There are ${count} open tickets.`;
@@ -89,7 +89,7 @@ export default function TicketChatWindow({ onClose }) {
     const fetchTicketsByPriority = async (status) => {
         try {
             console.log('Fetching tickets by priority...');
-            const response = await fetch(`https://projectledgserver.azurewebsites.net/api/SupportTickets/statistics/priority?status=${status}`);
+            const response = await fetch(`https://localhost:7223/api/SupportTickets/statistics/priority?status=${status}`);
             if (!response.ok) throw new Error('Failed to fetch tickets by priority');
             const priorities = await response.json();
             return Object.entries(priorities)

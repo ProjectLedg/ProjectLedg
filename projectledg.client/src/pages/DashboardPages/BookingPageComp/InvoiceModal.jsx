@@ -66,7 +66,7 @@ export default function InvoiceModal({ basAccounts, invoice, isModalOpen, setIsM
     // const sendMessage = async (input) => {
     //     try {
     //         const response = await axios.post(
-    //             'https://projectledgserver.azurewebsites.net/api/Assistant/chat',
+    //             'https://localhost:7223/api/Assistant/chat',
     //             JSON.stringify(input),
     //             {
     //                 headers: {

@@ -25,7 +25,7 @@ const UserManagementPage = () => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://projectledgserver.azurewebsites.net/api/User/all");
+      const response = await axios.get("https://localhost:7223/api/User/all");
       setUsers(response.data || []);
     } catch (error) {
       setError("Failed to fetch users: " + error.message);
@@ -37,7 +37,7 @@ const UserManagementPage = () => {
   const fetchIngoingInvoices = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://projectledgserver.azurewebsites.net/api/IngoingInvoice/all");
+      const response = await axios.get("https://localhost:7223/api/IngoingInvoice/all");
       setIngoingInvoices(response.data || []);
     } catch (error) {
       setError("Failed to fetch ingoing invoices: " + error.message);
@@ -49,7 +49,7 @@ const UserManagementPage = () => {
   const fetchOutgoingInvoices = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://projectledgserver.azurewebsites.net/api/OutgoingInvoice/all");
+      const response = await axios.get("https://localhost:7223/api/OutgoingInvoice/all");
       setOutgoingInvoices(response.data || []);
     } catch (error) {
       setError("Failed to fetch outgoing invoices: " + error.message);
@@ -61,7 +61,7 @@ const UserManagementPage = () => {
   const fetchAdmins = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://projectledgserver.azurewebsites.net/api/Admin/getAllAdmins");
+      const response = await axios.get("https://localhost:7223/api/Admin/getAllAdmins");
       setAdmins(response.data || []);
     } catch (error) {
       setError("Failed to fetch admins: " + error.message);
@@ -72,7 +72,7 @@ const UserManagementPage = () => {
 
   const fetchDetailedData = async (id, type) => {
     try {
-      const response = await axios.get(`https://projectledgserver.azurewebsites.net/api/${type}/${id}`);
+      const response = await axios.get(`https://localhost:7223/api/${type}/${id}`);
       setDetailedData(response.data);
       setIsDetailedDialogOpen(true);
     } catch (error) {
@@ -89,7 +89,7 @@ const UserManagementPage = () => {
     if (!editData) return;
 
     try {
-      await axios.put(`https://projectledgserver.azurewebsites.net/api/${editData.type}/${editData.id}`, editData);
+      await axios.put(`https://localhost:7223/api/${editData.type}/${editData.id}`, editData);
       setIsEditDialogOpen(false);
       refreshData();
     } catch (error) {
@@ -99,7 +99,7 @@ const UserManagementPage = () => {
 
   const handleDelete = async (id, type) => {
     try {
-      await axios.delete(`https://projectledgserver.azurewebsites.net/api/${type}/${id}`);
+      await axios.delete(`https://localhost:7223/api/${type}/${id}`);
       refreshData();
     } catch (error) {
       setError(`Failed to delete ${type}: ${error.message}`);

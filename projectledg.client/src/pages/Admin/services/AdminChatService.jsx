@@ -21,7 +21,7 @@ export default function AdminChatService({ onClose, mobile }) {
                     `;
 
                     case 'ticket': {
-                        const response = await axios.get('https://projectledgserver.azurewebsites.net/api/SupportTickets/random');
+                        const response = await axios.get('https://localhost:7223/api/SupportTickets/random');
                         if (!response.data) return 'Inga ärenden tillgängliga.';
                         const { ticketId, subject, description, imageUrl } = response.data;
                     
@@ -41,7 +41,7 @@ export default function AdminChatService({ onClose, mobile }) {
                     
                         try {
                             const response = await axios.post(
-                                `https://projectledgserver.azurewebsites.net/api/SupportTickets/${ticketId}/respond`,
+                                `https://localhost:7223/api/SupportTickets/${ticketId}/respond`,
                                 message, // Send the message directly as the body
                                 {
                                     headers: {
@@ -81,7 +81,7 @@ export default function AdminChatService({ onClose, mobile }) {
                     }
                     const ticketId = commandParts[1];
                     const response = await axios.post(
-                        `https://projectledgserver.azurewebsites.net/api/SupportTickets/${ticketId}/close`
+                        `https://localhost:7223/api/SupportTickets/${ticketId}/close`
                     );
                     if (response.status === 200) {
                         return `Ärende med Ticket ID: ${ticketId} har stängts.`;
@@ -91,13 +91,13 @@ export default function AdminChatService({ onClose, mobile }) {
                 }
 
                 case 'opentickets': {
-                    const response = await axios.get('https://projectledgserver.azurewebsites.net/api/SupportTickets/statistics/open');
+                    const response = await axios.get('https://localhost:7223/api/SupportTickets/statistics/open');
                     const count = response.data;
                     return `Det finns **${count}** öppna ärenden.`;
                 }
 
                 case '!ticket': {
-                    const response = await axios.get('https://projectledgserver.azurewebsites.net/api/SupportTickets/statistics/priority?status=Open');
+                    const response = await axios.get('https://localhost:7223/api/SupportTickets/statistics/priority?status=Open');
                     const priorities = response.data;
                     return Object.entries(priorities)
                         .map(([priority, count]) => `**${priority}**: ${count}`)

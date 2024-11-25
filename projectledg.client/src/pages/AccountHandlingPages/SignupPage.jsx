@@ -59,7 +59,7 @@ const SignUpPage = () => {
 
     try {
       console.log(userDetails);
-      const response = await axios.post('https://projectledgserver.azurewebsites.net/api/User/create', userDetails, {
+      const response = await axios.post('https://localhost:7223/api/User/create', userDetails, {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -76,7 +76,7 @@ const SignUpPage = () => {
   const handleGoogleSignIn = () => {
     try {
       //Redirect to backend endpoint for Google sign-in
-      window.location.href = "https://projectledgserver.azurewebsites.net/api/login-google";
+      window.location.href = "https://localhost:7223/api/login-google";
     }
     catch (error) {
       console.error("Error during sign-in redirect:", error);
@@ -87,7 +87,7 @@ const SignUpPage = () => {
 
   const handleMicrosoftSignIn = () => {
     try {
-      window.location.href = "https://projectledgserver.azurewebsites.net/api/login-microsoft"
+      window.location.href = "https://localhost:7223/api/login-microsoft"
     }
     catch (error) {
       console.error("Error during sign-in redirect:", error);
