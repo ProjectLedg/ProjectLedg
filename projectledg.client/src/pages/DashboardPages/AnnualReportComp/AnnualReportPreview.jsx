@@ -289,6 +289,7 @@ export function AnnualReportPreview() {
                         </div>
                       </div>
                     </div>
+
                   </TabsContent>
 
                   <TabsContent value="equityAndLiabilities">
@@ -318,6 +319,7 @@ export function AnnualReportPreview() {
             </CardFooter>
           </Card>
         </TabsContent>
+
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">

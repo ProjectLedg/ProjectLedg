@@ -14,6 +14,16 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
   const [loading, setLoading] = useState(true)
 
   // Hämta notiser från API vid komponentens mount
+  const handleNotificationClick = (id) => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((notification) =>
+        notification.id === id
+          ? { ...notification, isNew: false } // Update `isNew` to false
+          : notification
+      )
+    );
+  };
+  
  
     const fetchNotifications = async () => {
       try {
@@ -93,31 +103,44 @@ export default function NavbarButtons({ isChatOpen, toggleChat }) {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 dark:bg-darkBackground dark:border-darkBorder" align="end" alignOffset={-40}>
-          <div className="grid gap-4 ">
-            <h3 className="font-medium leading-none">Notiser</h3>
-            <div className="grid gap-2">
+        <PopoverContent
+          className="w-80 dark:bg-darkBackground dark:border-darkBorder"
+          align="end"
+          alignOffset={-40}
+        >
+      <div className="grid gap-4">
+        <h3 className="font-medium leading-none">Notiser</h3>
+        <div className="grid gap-2">
+          {loading ? (
+            <p>Laddar notiser...</p>
+          ) : notifications.length === 0 ? (
+            <p>Inga nya notiser.</p>
+          ) : (
+            notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className="flex items-start gap-4 p-2 hover:bg-gray-100 hover:dark:bg-darkSurface"
+                onClick={() => handleNotificationClick(notification.id)}
+              >
+                <Bell
+                  className={`mt-1 h-5 w-5 ${
+                    notification.isNew ? 'text-blue-500' : 'text-gray-500'
+                  }`}
+                />
+                <div className="grid gap-1">
+                  <p className="text-m font-medium leading-none">{notification.message}</p>
+                  <p className="text-sm text-gray-500 leading-none mt-1">
+                    {notification.contentmessage}
+                  </p>
+                  <p className="text-sm text-gray-500">{notification.time}</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+</PopoverContent>
 
-              {loading ? (
-                <p>Laddar notiser...</p>
-              ) : notifications.length === 0 ? (
-                <p>Inga nya notiser.</p>
-              ) : (
-                notifications.map((notification) => (
-                  <div key={notification.id} className="flex items-start gap-4 p-2 hover:bg-gray-100 hover:dark:bg-darkSurface ">
-                    <Bell className={`mt-1 h-5 w-5 ${notification.isNew ? 'text-blue-500' : 'text-gray-500'}`} />
-                    <div className="grid gap-1">
-                      <p className="text-m font-medium leading-none">{notification.message}</p>
-                      <p className="text-sm text-gray-500 leading-none mt-1">{notification.contentmessage}</p>
-                      <p className="text-sm text-gray-500">{notification.time}</p>
-                    </div>
-
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </PopoverContent>
       </Popover>
     </div>
   )

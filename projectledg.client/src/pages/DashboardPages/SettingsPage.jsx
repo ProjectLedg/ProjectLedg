@@ -33,11 +33,11 @@ export default function SettingsPage() {
     e.preventDefault();
     try {
       const response = await axiosConfig.post("/User/ChangePassword", formData);
-      setMessage({ type: "success", text: "Password changed successfully!" });
+      setMessage({ type: "Klart", text: "Lösenord är nu bytt!" });
     } catch (error) {
       setMessage({
         type: "error",
-        text: error.response?.data?.message || "An error occurred. Please try again.",
+        text: error.response?.data?.message || "Ett fel uppstog...",
       });
     }
   };
@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
   const handlePlanChange = (plan) => {
     setCurrentPlan(plan);
-    console.log("Plan changed to:", plan);
+    
   };
 
   
@@ -61,7 +61,8 @@ export default function SettingsPage() {
           {/* Card for Change Password */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-green-500 dark:text-white mb-2">Byt lösenord</CardTitle>
+
+              <CardTitle className=" dark:text-white">Byt lösenord</CardTitle>
               <CardDescription className="dark:text-darkSecondary">
                 Uppdatera ditt lösenord för att hålla ditt konto säkert
               </CardDescription>
@@ -108,7 +109,7 @@ export default function SettingsPage() {
               {message && (
                 <div
                   className={`mt-4 text-sm ${
-                    message.type === "success" ? "text-green-500" : "text-red-500"
+                    message.type === "Klart" ? "text-green-500" : "text-red-500"
                   }`}
                 >
                   {message.text}
@@ -120,7 +121,7 @@ export default function SettingsPage() {
           {/* Appearance Settings Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-green-500 dark:text-white mb-2">Utseende</CardTitle>
+              <CardTitle className=" dark:text-white">Utseende</CardTitle>
               <CardDescription className="dark:text-darkSecondary">
                 Anpassa utseendet och känslan för ditt gränssnitt
               </CardDescription>
@@ -138,7 +139,9 @@ export default function SettingsPage() {
           {/* Billing Plan Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-green-500 dark:text-white mb-2">Betalningsplan</CardTitle>
+
+              <CardTitle className=" dark:text-white">Betalningsplan</CardTitle>
+
               <CardDescription className="dark:text-darkSecondary">
                 Hantera dina prenumerationer och faktureringsinställningar
               </CardDescription>

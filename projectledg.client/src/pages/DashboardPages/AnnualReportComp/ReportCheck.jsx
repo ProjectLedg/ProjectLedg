@@ -1,7 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnnualReportPreview } from "./AnnualReportPreview";
-import React, { useState } from "react";
+import React from "react";
+import AnnualReportFeature from "./AnnualReportFeature";
 
 
 export default function ReportCheck() {
@@ -46,7 +47,9 @@ export default function ReportCheck() {
 
                 <TabsContent value="edit">
                     <Card>
-                        <CardContent>{/* Add Kund content here */}</CardContent>
+                        <CardContent>
+                                <AnnualReportFeature/>
+                        </CardContent>
                     </Card>
                 </TabsContent>
 
