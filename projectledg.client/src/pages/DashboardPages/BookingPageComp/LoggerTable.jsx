@@ -39,18 +39,18 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
     return (
         <div>
             {/* Desktop view */}
-            <Table className="hidden md:table">
+            <Table className="hidden lg:table">
                 <TableHeader>
-                    <TableRow className="bg-gray-100 dark:bg-darkBackground dark:border-darkBorder ">
+                    <TableRow className="bg-gray-100 dark:bg-darkBorder dark:border-darkBorder">
                         <DropdownMenu className="flex flex-row justify-around">
-                            <TableHead className="font-bold cursor-pointer dark:bg-darkBackground dark:text-darkSecondary" onClick={() => handleSort("invoiceNumber")}>Fakturanummer {sortBy === "invoiceNumber" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
-                            <TableHead className="font-bold cursor-pointer dark:bg-darkBackground dark:text-darkSecondary" onClick={() => handleSort("vendorName")}>Kund {sortBy === "vendorName" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
-                            <TableHead className="font-bold cursor-pointer dark:bg-darkBackground dark:text-darkSecondary" onClick={() => handleSort("invoiceDate")}>Fakturadatum {sortBy === "invoiceDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
-                            <TableHead className="font-bold cursor-pointer dark:bg-darkBackground dark:text-darkSecondary" onClick={() => handleSort("dueDate")}>Förfallodatum {sortBy === "dueDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
-                            <TableHead className="font-bold cursor-pointer dark:bg-darkBackground dark:text-darkSecondary" onClick={() => handleSort("invoiceTotal")}>Belopp {sortBy === "invoiceTotal" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+                            <TableHead className="font-bold cursor-pointer dark:text-white/90" onClick={() => handleSort("invoiceNumber")}>Fakturanummer {sortBy === "invoiceNumber" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+                            <TableHead className="font-bold cursor-pointer dark:text-white/90" onClick={() => handleSort("vendorName")}>Kund {sortBy === "vendorName" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+                            <TableHead className="font-bold cursor-pointer dark:text-white/90" onClick={() => handleSort("invoiceDate")}>Fakturadatum {sortBy === "invoiceDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+                            <TableHead className="font-bold cursor-pointer dark:text-white/90" onClick={() => handleSort("dueDate")}>Förfallodatum {sortBy === "dueDate" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
+                            <TableHead className="font-bold cursor-pointer dark:text-white/90" onClick={() => handleSort("invoiceTotal")}>Belopp {sortBy === "invoiceTotal" ? (sortOrder === "asc" ? <ArrowUpNarrowWide className="ml-1 w-4 h-4 inline" /> : <ArrowDownWideNarrow className="ml-1 w-4 h-4 inline" />) : <ListFilter className="ml-1 w-4 h-4 inline" />}</TableHead>
                             <DropdownMenuTrigger>
                                 <TableHead
-                                    className="font-bold flex justify-center items-center dark:text-darkSecondary ">
+                                    className="font-bold flex justify-center items-center dark:text-white/90 ">
                                     Status
                                     <Filter className="ml-2 w-4 h-4 inline" />
                                 </TableHead>
@@ -88,7 +88,7 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                         .map((invoice) => (
                             <TableRow
                                 key={invoice.id}
-                                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-darkBackground dark:border-darkBorder transition-colors duration-200"
+                                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-darkSurface dark:border-darkBorder transition-colors duration-200"
                                 onClick={() => handleInvoiceClick(invoice)}
                             >
                                 <TableCell className="font-medium p-4">
@@ -107,14 +107,14 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                                     {invoice.invoiceTotal}kr
                                 </TableCell>
                                 <TableCell className="p-4">
-                                    <div className="flex space-x-2">
-                                        <Badge className="w-[45%] max-h-5 dark:text-white" variant={invoice.isPaid ? "success" : "destructive"}>
+                                    <div className="flex md:flex-col space-x-2 md:space-x-0 md:space-y-2">
+                                        <Badge className="w-[45%] md:w-[90%] max-h-5 dark:text-white" variant={invoice.isPaid ? "success" : "destructive"}>
                                             {invoice.isPaid ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                                             <span className="ml-1 dark:text-white">{invoice.isPaid ? "Betald" : "Ej betald"}</span>
                                         </Badge>
-                                        <Badge className="w-[45%] max-h-5 dark:text-white " variant={invoice.isBooked ? "success" : "destructive"}>
+                                        <Badge className="w-[45%] md:w-[90%] max-h-5   dark:text-white " variant={invoice.isBooked ? "success" : "destructive"}>
                                             {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                                            <span className="ml-1 dark:text-white">{invoice.isBooked ? "Bokförd" : "Ej Bokförd"}</span>
+                                            <span className="ml-1 dark:text-white">{invoice.isBooked ? "Bokförd" : "Bokförd"}</span>
                                         </Badge>
                                     </div>
                                 </TableCell>
@@ -124,14 +124,14 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
             </Table>
 
             {/* Mobile view switch to card based layout instead of the table */}
-            <div className="md:hidden bg-gray-200 dark:bg-darkBackground ">
-                <div className="bg-white rounded-b-md">
+            <div className="lg:hidden bg-gray-200 dark:bg-darkBackground ">
+                <div className="bg-white dark:bg-darkBackground rounded-b-md">
                     <Input
                         type="text"
                         placeholder="Sök här..."
                         value={searchQuery}
                         onChange={handleSearch}
-                        className="bg-gray-100 w-[95%] mx-auto border-none"
+                        className="bg-gray-100 dark:bg-gray-300 dark:text-gray-500 dark:placeholder:text-gray-400 dark:mt-2 w-[95%] mx-auto border-none"
                     />
                     <div className=" flex  items-center gap-x-1 px-2 py-3 bg-white rounded-b-md dark:bg-darkBackground">
                         {/* Sorting Options */}
