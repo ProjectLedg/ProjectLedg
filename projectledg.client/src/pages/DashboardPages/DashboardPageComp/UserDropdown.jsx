@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, CirclePlus } from "lucide-react";
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -50,7 +50,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
             setcompanyData(fetchedCompanyData)
             
             const activeCompany = fetchedCompanyData.find(company => company.id === companyId);
-            setCurrentCompany(activeCompany || fetchedCompanyData[0]);
+            
             
             
           } catch (error) {
@@ -67,8 +67,13 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
     
     
     const handleCompanyChange = (company) => {
+        console.log(company)
         setCurrentCompany(company); // Update current company
         navigate(`/dashboard/${company.id}`); // Navigate to the new site
+    };
+
+    const handleRouteCompanyCreate = ()=> {
+        navigate("/company-create");
     };
     
     
@@ -147,13 +152,24 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
                         >
                             <Check
                                 className={cn(
-                                    "mr-2 h-4 w-4",
+                                    "mr-2 h-4 w-4 text-green-500",
                                     currentCompany.id === company.id ? "opacity-100" : "opacity-0"
                                 )}
                             />
                             {company.name}
                         </DropdownMenuItem>
                     ))}
+                    <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={handleRouteCompanyCreate}
+                    >
+                        <CirclePlus
+                        className="mr-2 h-4 w-4"
+                        />
+                        <p>Lägg till företag</p>
+
+                    
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
