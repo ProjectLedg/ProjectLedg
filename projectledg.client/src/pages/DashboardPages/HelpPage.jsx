@@ -16,13 +16,13 @@ const HelpPage = () => {
 
   // Mappning för kategorier till deras respektive index
   const categoryMapping = {
-    Technical: 0,
-    Billing: 1,
-    AccountManagement: 2,
-    GeneralInquiry: 3,
-    ProductSupport: 4,
+    Tekniskt: 0,
+    Betalninf: 1,
+    Konto: 2,
+    Generellt: 3,
+    Produktärende: 4,
     Feedback: 5,
-    NothingRelevant: 6,
+    Annat: 6,
   };
 
   const [formData, setFormData] = useState({
@@ -213,23 +213,26 @@ const HelpPage = () => {
               </Alert>
             )}
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-              <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="category" className="text-sm sm:text-base mr-4">
-                  Kategori
-                </Label>
-                <select
-                  id="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="text-sm sm:text-base dark:bg-darkBackground"
-                >
-                  {Object.keys(categoryMapping).map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="space-y-1 sm:space-y-2">
+    <Label htmlFor="category" className="text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300">
+      Kategori
+    </Label>
+    <div className="relative">
+      <select
+        id="category"
+        value={formData.category}
+        onChange={handleInputChange}
+        className="block w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-darkBackground text-gray-700 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500 hover:cursor-pointer"
+      >
+        {Object.keys(categoryMapping).map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
+      </select>
+      
+    </div>
+  </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label htmlFor="subject" className="text-sm sm:text-base">
                   Ärende
