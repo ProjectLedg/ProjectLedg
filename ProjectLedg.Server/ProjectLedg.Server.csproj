@@ -77,9 +77,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="GhostScript\Dink2PDF\libwkhtmltox.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="GhostScript\gsdll64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
