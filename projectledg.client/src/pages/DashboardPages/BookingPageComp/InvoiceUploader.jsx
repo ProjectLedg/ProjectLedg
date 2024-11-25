@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useReset } from "@/services/ResetProvider"
 import { axiosConfigMultipart } from '/axiosconfig'
 import { Button } from "@/components/ui/button"
@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Upload, FileText } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Spinner } from "@/components/ui/spinner"
+
 
 export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUploadLoading }) {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -209,7 +211,7 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
           className="w-full bg-green-500 hover:bg-green-600 text-white"
         >
           {isUploadLoading ? (
-            <span className="animate-spin mr-2">⏳</span>
+            <Spinner size={"xsmall"} className="text-white mr-1" ></Spinner>
           ) : (
             <FileText className="w-4 h-4 mr-2" />
           )}
