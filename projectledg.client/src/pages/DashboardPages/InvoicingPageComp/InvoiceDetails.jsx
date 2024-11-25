@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import DatePicker from "@/components/ui/datepicker"
 
 export function InvoiceDetails({ invoice, handleInputChange }) {
   return (
@@ -22,7 +23,7 @@ export function InvoiceDetails({ invoice, handleInputChange }) {
           </div>
           <div>
             <Label htmlFor="invoiceDate">Faktureringsdatum</Label>
-            <Input 
+            <DatePicker 
               id="invoiceDate" 
               name="invoiceDate"
               type="date" 
@@ -32,10 +33,9 @@ export function InvoiceDetails({ invoice, handleInputChange }) {
           </div>
           <div>
             <Label htmlFor="dueDate">Förfallodatum</Label>
-            <Input 
+            <DatePicker 
               id="dueDate" 
-              name="dueDate"
-              type="date" 
+              name="dueDate" 
               value={invoice.dueDate}
               onChange={handleInputChange}
             />

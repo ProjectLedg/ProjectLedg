@@ -75,7 +75,7 @@ export default function Navbar() {
             </div>
             <Button
               variant="solid"
-              className="hidden md:inline-flex text-white text-lg font-normal bg-zinc-800 hover:text-black hover:bg-green-500 transition-all duration-300 ease-in-out"
+              className="hidden md:inline-flex text-white text-lg font-normal bg-zinc-800  hover:bg-green-500 transition-all duration-300 ease-in-out"
               onClick={() => navigate("/signup")}
             >
               Kom igång
