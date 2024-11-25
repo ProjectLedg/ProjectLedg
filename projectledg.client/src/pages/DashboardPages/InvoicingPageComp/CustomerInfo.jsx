@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useParams } from "react-router-dom";
 
+
 export function CustomerInfo({ invoice, handleInputChange }) {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,12 +73,7 @@ export function CustomerInfo({ invoice, handleInputChange }) {
         </div>
       </CardHeader>
       <CardContent>
-        {loading && (
-          <div className="flex items-center justify-center p-4">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <span className="ml-2">Laddar kunder...</span>
-          </div>
-        )}
+        
 
         {error && (
           <Alert variant="destructive" className="mb-6">
@@ -92,7 +88,7 @@ export function CustomerInfo({ invoice, handleInputChange }) {
         <div className="space-y-4">
           <div>
             <Label htmlFor="customerName">Kundnamn</Label>
-            <Input 
+            <Input
               id="customerName" 
               name="customerName"
               value={invoice.customerName}
