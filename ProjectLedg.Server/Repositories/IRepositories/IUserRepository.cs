@@ -19,7 +19,10 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<IdentityResult> AddUserToRoleAsync(User user, string role);
         Task<List<User>> GetUsersByIdsAsync(List<string> userIds); //Fetches multiple users not just one
         Task<int> CountUsersAsync();
-
         Task<int> CountLoginsSinceAsync(DateTime startDate);
+        Task<User> GetUserAndCompaniesAsync(string userId);
+        Task<User> GetUserAndInvoicesAsync(string userId);
+
+
     }
 }
