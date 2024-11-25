@@ -1,12 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { ChevronDown } from 'lucide-react'
 
 export default function FeatureContentTitle() {
     const navigate = useNavigate();
+    const [arrowOpacity, setArrowOpacity] = useState(1);
+
+    // Track scroll position and update arrow opacity
     useEffect(() => {
-        // Optional: Trigger any side effects when the component loads
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const maxScroll = 200; // Adjust to determine how quickly it fades
+            const newOpacity = Math.max(1 - scrollY / maxScroll, 0);
+            setArrowOpacity(newOpacity);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, []);
 
     // Custom keyframes for the fade-down and fade-left animations
@@ -50,8 +64,9 @@ export default function FeatureContentTitle() {
         ));
     };
 
+    
     return (
-        <div className="flex flex-col items-center justify-center h-screen space-y-[2vw]" style={{ height: '45vw' }}>
+        <div className="flex flex-col items-center mt-48 h-screen space-y-[2vw]" style={{ height: '45vw' }}>
             {/* Inject custom keyframes */}
             <style>{keyframes}</style>
 
@@ -75,7 +90,7 @@ export default function FeatureContentTitle() {
 
             {/* Element 2 */}
             <p
-                className=" opacity-0  text-center text-gray-600"
+                className=" opacity-0 text-center text-gray-600"
                 style={{
                     animation: "fade-in-down 2.5s ease-in-out 0.8s forwards",
                     fontSize: '2vw',
@@ -92,7 +107,7 @@ export default function FeatureContentTitle() {
             >
 
 
-                <div className="flex justify-center px-2 sm:px-4 lg:px-6">
+                <div className="flex justify-center mt-4 px-2 sm:px-4 lg:px-6">
 
                     <div className="w-full sm:w-auto">
                         <button
@@ -114,6 +129,15 @@ export default function FeatureContentTitle() {
                 </div>
             </motion.div>
 
+            <motion.div
+                className="absolute bottom-10"
+                style={{
+                    opacity: arrowOpacity,
+                    animation: "bounce 2s infinite",
+                }}
+            >
+                <ChevronDown size={36} color="gray" />
+            </motion.div>
 
         </div>
     );

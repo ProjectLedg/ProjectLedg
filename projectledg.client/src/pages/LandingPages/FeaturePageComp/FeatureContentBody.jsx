@@ -1,62 +1,99 @@
-import React from 'react'
-import { Card, CardContent } from "@/components/ui/card"
-import { motion } from "framer-motion"
-
-const FeatureCard = ({ number, title, description }) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    transition={{ type: "spring", stiffness: 300 }}
-  >
-    <Card className="h-full bg-gradient-to-br from-green-50 to-teal-100 dark:from-green-900 dark:to-teal-800 border-none shadow-lg">
-      <CardContent className="p-6">
-        <span className="inline-block px-3 py-1 mb-4 text-sm font-semibold text-green-700 dark:text-green-300 bg-green-200 dark:bg-gree -800 rounded-full">
-          {number}
-        </span>
-        <h2 className="text-2xl font-bold mb-3 text-green-800 dark:text-green-100">{title}</h2>
-        <p className="text-green-700 dark:text-green-200">{description}</p>
-      </CardContent>
-    </Card>
-  </motion.div>
-)
-
-const steps = [
-  {
-    number: "01",
-    title: "Automatiserad Bokföring med AI",
-    description: "Automatisk bokföring av transaktioner så att du kan se hur ditt bolag går i realtid."
-  },
-  {
-    number: "02",
-    title: "Ekonomisk Översikt och Statistik",
-    description: "Få en tydlig bild av ditt företags ekonomiska utveckling. Följ resultat och analyser för att fatta bättre beslut och hålla din verksamhet på rätt spår."
-  },
-  {
-    number: "03",
-    title: "Generera Årsredovisning",
-    description: "Skapa din årsredovisning på några sekunder med vår automatiserade funktion. All data samlas och struktureras enligt aktuella standarder."
-  },
-  {
-    number: "04",
-    title: "Balans- och Resultaträkning",
-    description: "Få fullständig kontroll över ditt företags finansiella status. Våra balanserade rapporter hjälper dig att analysera tillgångar, skulder och vinster."
-  }
-]
+import React, { useRef } from 'react';
+import BookingExample from '/Users/hjalmarstranninge/VSCodeProjects/ProjectLedg/projectledg.client/src/assets/BookingExample.png';
+import { motion, useScroll, useTransform } from "framer-motion";
+import { TimerReset, ShieldOff, Focus } from 'lucide-react'
+import InvoiceCard from './InvoiceCard';
 
 export default function FeatureContentBody() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"], // Adjusts when the animation starts and ends
+  });
+
+  const translateX = useTransform(scrollYProgress, [0, 0.5], [900, -1], {
+    type: "spring",
+    stiffness: 1,
+    damping: 2,
+    mass: 1,
+  });
+
+  const translateXLeft = useTransform(scrollYProgress, [0, 0.4], [-900, 0]);
+
+  const li1Opacity = useTransform(scrollYProgress, [0.48, 0.58], [0, 1]);
+  const li2Opacity = useTransform(scrollYProgress, [0.49, 0.59], [0, 1]);
+  const li3Opacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1]);
+
+const imgOpacity = useTransform(scrollYProgress, [0, 0.6], [0,1]);
+
+  const h1Opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+
   return (
-    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-green-100 dark:from-gray-900 dark:to-green-700 rounded-t-2xl">
-      <div className="max-w-7xl mx-auto ">
-        <div className=''>
-        <h1 className="text-2xl h-[8rem] sm:text-4xl lg:text-5xl font-extrabold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-teal-500 dark:from-green-400 dark:to-teal-300">
-          Smidiga Tjänster för Din Ekonomiska Framgång
-        </h1>
+    <div className="w-full py-8 px-4 rounded-t-2xl flex flex-row justify-evenly">
+      <motion.div ref={ref} className="relative h-full flex" style={{ x: translateXLeft, opacity: imgOpacity }}>
+        <div>
+          <img src={BookingExample} alt="Image of booking example window" className="ml-4 w-h-[600px] h-[600px] shadow-md rounded-lg" />
+          
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {steps.map((step, index) => (
-            <FeatureCard key={index} {...step} />
-          ))}
+      </motion.div>
+
+      <motion.div
+        className="relative h-full flex"
+        style={{
+          translateX: translateX,
+
+        }}
+      >
+        <div className="flex flex-col items-start justify-center h-[50vh] w-[50vw] ">
+          <div className="flex flex-row mb-12 w-[60vw] ">
+            {/* Apply opacity transform to h1 element */}
+            <motion.h1
+              className="text-4xl font-medium mr-2"
+              style={{ opacity: h1Opacity }}
+            >
+              Smartare bokföring. 
+            </motion.h1>
+            <motion.span
+              className="text-4xl font-medium text-green-500 "
+              style={{ opacity: h1Opacity }}
+            >
+              Snabbare resultat
+            </motion.span>
+          </div>
+          <ul className="space-y-8 text-md xl-monitor:text-xl">
+            <motion.li
+              className="text-gray-600 flex flex-row items-center"
+              style={{ opacity: li1Opacity }}
+            >
+              <TimerReset className="h-8 w-8 mr-2 text-green-500" /> 
+              <span className="font-semibold text-black ">
+                Spara tid:
+              </span>
+              &nbsp;Ladda upp dina fakturor, låt Ledge sköta resten.
+            </motion.li>
+            <motion.li
+              className="text-gray-600 flex flex-row items-center"
+              style={{ opacity: li2Opacity }}
+            >
+               <ShieldOff className="h-8 w-8 mr-2 text-red-500" />
+              <span className="font-semibold text-black">
+                Minimera fel:
+              </span>
+              &nbsp;Noggranna bokföringsförslag som följer regelverket.
+            </motion.li>
+            <motion.li
+              className="text-gray-600 flex flex-row items-center"
+              style={{ opacity: li3Opacity }}
+            >
+              <Focus className="h-8 w-8 mr-2 text-cyan-500" /> 
+              <span className="font-semibold text-black">
+                Fokus på det viktiga:
+              </span>
+              &nbsp;Mindre administration, mer tid för din verksamhet.
+            </motion.li>
+          </ul>
         </div>
-      </div>
+      </motion.div>
     </div>
-  )
+  );
 }
