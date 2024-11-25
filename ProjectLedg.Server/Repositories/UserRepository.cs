@@ -214,5 +214,18 @@ namespace ProjectLedg.Server.Repositories
                 .Where(user => userIds.Contains(user.Id))
                 .ToListAsync();
         }
+
+        public async Task<User> GetUserAndCompaniesAsync(string userId)
+        {
+            return await _context.Users.Include(u => u.Companies).SingleOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task<User> GetUserAndInvoicesAsync(string userId)
+        {
+            return await _context.Users
+                .Include(u => u.Companies)
+                .ThenInclude(c => c.IngoingInvoices)
+                .SingleOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }
