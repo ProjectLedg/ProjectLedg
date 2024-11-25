@@ -21,10 +21,14 @@ const toolDescription = [
   "Totala utgifter för verksamheten, såsom löner, hyra och materialkostnader."
 ];
 
+
+
 const MetricCard = ({ title, value, change, changeType, toolDescription }) => (
   <Card>
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-xs sm:text-sm font-medium">{title}</CardTitle>
+      <CardTitle className="text-xs sm:text-sm font-medium dark:text-darkSecondary">
+        {title}
+      </CardTitle>
       <TooltipProvider>
         <TooltipShad>
           <TooltipTrigger>
@@ -102,7 +106,7 @@ export default function FinancialReportsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight mb-2 sm:mb-0">Finansiella Rapporter</h2>
         <Button onClick={fetchData} variant="outline" size="sm" disabled={isLoading} className="dark:bg-darkSurface dark:border-darkBorder">
-          <RefreshCcw className="mr-2 h-4 w-4" />
+          <RefreshCcw className="mr-2 h-4 w-4 dark:text-darkSecondary" />
           Uppdatera data
         </Button>
       </div>
@@ -138,7 +142,7 @@ export default function FinancialReportsPage() {
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-            <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0">Balansrapport</CardTitle>
+            <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0 dark:text-darkSecondary">Balansrapport</CardTitle>
             {/* <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:dark:bg-darkBackground">
               <Download className="mr-2 h-4 w-4 " />
               Ladda ner
@@ -171,7 +175,7 @@ export default function FinancialReportsPage() {
 
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-            <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0">Resultatrapport</CardTitle>
+            <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-0 dark:text-darkSecondary">Resultatrapport</CardTitle>
             {/* <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:dark:bg-darkBackground">
               <Download className="mr-2 h-4 w-4" />
               Ladda ner
