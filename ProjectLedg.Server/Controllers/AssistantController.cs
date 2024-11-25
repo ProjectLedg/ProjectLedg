@@ -21,6 +21,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         //Endpoint to send a message to the assistant and receive a response
+        [Authorize]
         [HttpPost("chat")]
         public async Task<IActionResult> Chat([FromBody] string message)
         {
@@ -34,6 +35,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpPost("MapInvoiceDataToBasAccount")]
         public async Task<IActionResult> MapInvoiceDataToBasAccount([FromBody] InvoiceMapDTO invoiceMapData)
         {

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models.DTOs.Finance;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ProjectLedg.Server.Controllers
@@ -14,17 +16,32 @@ namespace ProjectLedg.Server.Controllers
     {
         private readonly IPDFService _pdfService;
         private readonly IFormRecognizerService _formService;
+        private readonly IUserService _userService;
 
-        public PDFController(IPDFService pdfService, IFormRecognizerService formService)
+        public PDFController(IPDFService pdfService, IFormRecognizerService formService, IUserService userService)
         {
             _pdfService = pdfService;
             _formService = formService;
+            _userService = userService;
         }
 
         //GET request to generate a simple annual report PDF and return the file for download
+        [Authorize]
         [HttpPost("generate-annual-report")]
         public async Task<IActionResult> GenerateAnnualReportPdf([FromBody] AnnualReportGenerateToPdfDTO request)
         {
+            // Get claims from JWT and user id from that
+            ClaimsPrincipal userClaims = User;
+            string userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized("No user id in claims.");
+
+            // Verify that the company we want data for/from belongs to this user
+            var companyBelongsToUser = await _userService.VerifyCompanyBelongsToUser(userId, request.AnualReportRequest.CompanyId);
+            if (!companyBelongsToUser.Success)
+                return BadRequest(companyBelongsToUser.Message);
+
+
             //generate the PDF bytes using the service
             var pdf = await _pdfService.GenerateAnnualReportPdf(request);
             var currentYear = System.DateTime.Now.Year;
@@ -61,6 +78,7 @@ namespace ProjectLedg.Server.Controllers
         //    return Ok(new { pdfUrl });
         //}
 
+        [Authorize]
         [HttpPost("analyze")]
         public async Task<IActionResult> AnalyzeForm(IFormFile file)
         {
@@ -83,10 +101,21 @@ namespace ProjectLedg.Server.Controllers
             return Ok(extractedData);
         }
 
+        [Authorize]
         [HttpPost("generate-invoice-pdf")]
         public async Task<IActionResult> GenerateInvoicePdf([FromBody] OutgoingInvoiceGenerationDTO request)
         {
-            
+            // Get claims from JWT and user id from that
+            ClaimsPrincipal userClaims = User;
+            string userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized("No user id in claims.");
+
+            // Verify that the company we want data for/from belongs to this user
+            var companyBelongsToUser = await _userService.VerifyCompanyBelongsToUser(userId, request.CompanyId);
+            if (!companyBelongsToUser.Success)
+                return BadRequest(companyBelongsToUser.Message);
+
 
             try
             {

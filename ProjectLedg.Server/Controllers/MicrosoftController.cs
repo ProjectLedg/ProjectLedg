@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectLedg.Server.Controllers
 {
@@ -26,6 +27,7 @@ namespace ProjectLedg.Server.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous] // NOT AUTHORIZED - need to be unlocked to be able to login
         [HttpGet("/login-microsoft")]
         public IActionResult MicrosoftLogin()
         {
@@ -38,6 +40,7 @@ namespace ProjectLedg.Server.Controllers
             return Challenge(properties, MicrosoftAccountDefaults.AuthenticationScheme);
         }
 
+        [AllowAnonymous] // NOT AUTHORIZED - need to be unlocked to be able to login
         [HttpGet("/signinoidc")]
         public async Task<IActionResult> Signinoidc()
         {

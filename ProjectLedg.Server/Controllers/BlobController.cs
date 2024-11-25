@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Services.IServices;
 
@@ -15,6 +16,7 @@ namespace ProjectLedg.Server.Controllers
             _blobStorageService = blobStorageService;
         }
 
+        [Authorize]
         [HttpPost("UploadBlob")]
         public async Task<IActionResult> UploadBlob(IFormFile file)
         {
