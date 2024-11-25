@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.IdentityModel.Tokens;
 using ProjectLedg.Server.Data.Models.DTOs.Email;
@@ -21,7 +22,7 @@ namespace ProjectLedg.Server.Controllers
             _emailService = emailService;
         }
 
-
+        [AllowAnonymous]
         [HttpPost("create-help-message")]
         public async Task<IActionResult> CreateHelpMessage([FromBody] EmailDTO dto)
         {
@@ -42,7 +43,7 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
-
+        // AUTH ???
         [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailDTO emailDto)
         {
@@ -63,6 +64,7 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")] // ???
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteEmail(int id)
         {
@@ -77,6 +79,7 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")] // ???
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllEmails()
         {
@@ -84,6 +87,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(emails);
         }
 
+        [Authorize(Roles = "Admin")] // ???
         [HttpPost("SendMassEmail")]
         public async Task<IActionResult> SendMassEmail([FromBody] MassEmailDTO massEmailDto)
         {
@@ -103,6 +107,8 @@ namespace ProjectLedg.Server.Controllers
                 return StatusCode(500, "Error occured while sending e-mailmessages");
             }
         }
+
+        [AllowAnonymous] //NOT AUTHORIZED - open for all to sign up to email list
         [HttpPost("AddEmail")]
         public async Task<IActionResult> AddEmail([FromBody] SubscriptionEmailDTO subscriptionEmailDto)
         {
@@ -122,6 +128,8 @@ namespace ProjectLedg.Server.Controllers
                 return StatusCode(500, "An Error occured while trying to add email to list");
             }
         }
+
+        [AllowAnonymous]// NOT AUTHORIZED - open for all to unsubscribe from link sent in email
         [HttpGet("Unsubscribe")]
         public async Task<IActionResult> Unsubscribe([FromQuery] string token)
         {

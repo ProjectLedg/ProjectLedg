@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
@@ -22,6 +23,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Enable 2FA for the current user
+        [Authorize]
         [HttpPost("enable-2fa")]
         public async Task<IActionResult> EnableTwoFactorAuthentication([FromBody] TwoFactorAuthDTO code)
         {
@@ -69,6 +71,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Generate QR code for 2FA setup
+        [Authorize]
         [HttpGet("generate-qr-code")]
         public async Task<IActionResult> GenerateQrCode()
         {
@@ -99,6 +102,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Verify 2FA token
+        [Authorize]
         [HttpPost("verify-2fa")]
         public async Task<IActionResult> VerifyTwoFactorCode([FromBody] TwoFactorAuthDTO code)
         {
@@ -126,6 +130,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Disable 2FA
+        [Authorize]
         [HttpPost("disable-2fa")]
         public async Task<IActionResult> DisableTwoFactorAuthentication()
         {

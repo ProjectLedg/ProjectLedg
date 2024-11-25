@@ -16,6 +16,9 @@ namespace ProjectLedg.Server.Services.IServices
         Task<IdentityResult> DeleteUserAsync(string password, ClaimsPrincipal currentUser);
         Task<LoginResult> LoginAsync(string email, string password);
         Task<IdentityResult> SendEmailVerificationAsync(string userId, string code);
+        Task<ResultObject> VerifyCompanyBelongsToUser(string userId, int companyId);
+        Task<ResultObject> VerifyInvoiceBelongsToUserAsync(string userId, int invoiceId);
+
 
 
         //statistics

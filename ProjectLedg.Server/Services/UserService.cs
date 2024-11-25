@@ -238,5 +238,31 @@ namespace ProjectLedg.Server.Services
             var startOfYear = new DateTime(DateTime.UtcNow.Year, 1, 1);
             return await _userRepository.CountLoginsSinceAsync(startOfYear);
         }
+
+        public async Task<ResultObject> VerifyCompanyBelongsToUser(string userId, int companyId)
+        {
+            var user = await _userRepository.GetUserAndCompaniesAsync(userId);
+            if (user == null)
+                return new ResultObject { Message = "Invalid user.", Success = false };
+
+            if(user.Companies.Any(c => c.Id == companyId))
+                return new ResultObject { Message = "Specified company belongs to user.", Success = true };
+
+            return new ResultObject { Message = "User does not belong to the specified company.", Success = false };
+
+        }
+
+        public async Task<ResultObject> VerifyInvoiceBelongsToUserAsync(string userId, int invoiceId)
+        {
+            var user = await _userRepository.GetUserAndInvoicesAsync(userId);
+            if (user == null)
+                return new ResultObject { Message = "Invalid user.", Success = false };
+
+            if (user.Companies.Any(c => c.IngoingInvoices.Any(i => i.Id == invoiceId)))
+                return new ResultObject { Message = "Specified invoice belongs to user.", Success = true };
+
+            return new ResultObject { Message = "User does not belong to the specified invoice.", Success = false };
+
+        }
     }
 }

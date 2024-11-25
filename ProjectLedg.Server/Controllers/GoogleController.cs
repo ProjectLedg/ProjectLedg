@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace ProjectLedg.Server.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous] // NOT AUTHORIZED - need to be unlocked to be able to login
         [HttpGet("/login-google")]
         public IActionResult GoogleLogin()
         {
@@ -38,6 +40,7 @@ namespace ProjectLedg.Server.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
+        [AllowAnonymous] // NOT AUTHORIZED - need to be unlocked to be able to login
         [HttpGet("/googleresponse")]
         public async Task<IActionResult> GoogleResponse()
         {
@@ -113,6 +116,7 @@ namespace ProjectLedg.Server.Controllers
             //return Ok(new { token }); 
             return Redirect("https://localhost:5173/company-select");
         }
+
         private string GenerateJwtToken(IEnumerable<Claim> claims)
         {
             //var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));

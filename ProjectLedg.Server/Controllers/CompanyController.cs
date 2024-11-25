@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Company;
+using ProjectLedg.Server.Services;
 using ProjectLedg.Server.Services.IServices;
 using System.Security.Claims;
 
@@ -14,10 +15,12 @@ namespace ProjectLedg.Server.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;
+        private readonly IUserService _userService;
 
-        public CompanyController(ICompanyService companyService)
+        public CompanyController(ICompanyService companyService, IUserService userService)
         {
             _companyService = companyService;
+            _userService = userService;
         }
 
         [Authorize]
@@ -43,10 +46,21 @@ namespace ProjectLedg.Server.Controllers
             return CreatedAtAction(nameof(GetCompanyById), new { id = createdCompany.Id }, createdCompany);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCompanyById(int id)
-        {
-            var company = await _companyService.GetCompanyByIdAsync(id);
+        [Authorize]
+        [HttpGet("GetCompanyById/{companyId}")]
+        public async Task<IActionResult> GetCompanyById(int companyId)
+        { 
+            // Get claims from JWT and user id from that
+            ClaimsPrincipal claimsUser = User;
+            string userId = claimsUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized("No user id in claims.");
+
+            var companyBelongsToUser = await _userService.VerifyCompanyBelongsToUser(userId, companyId);
+            if (!companyBelongsToUser.Success)
+                return BadRequest(companyBelongsToUser.Message);
+
+            var company = await _companyService.GetCompanyByIdAsync(companyId);
             if (company == null)
             {
                 return NotFound();

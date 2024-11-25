@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Services.IServices;
 
@@ -28,6 +29,7 @@ namespace ProjectLedg.Server.Controllers
             _pdfService = pdfService;
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("users/total")]
         public async Task<IActionResult> GetTotalUsers()
         {
@@ -35,6 +37,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(count);
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("users/logins/today")]
         public async Task<IActionResult> GetLoginsToday()
         {
@@ -42,6 +45,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(count);
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("users/logins/week")]
         public async Task<IActionResult> GetLoginsThisWeek()
         {
@@ -49,6 +53,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(count);
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("users/logins/year")]
         public async Task<IActionResult> GetLoginsThisYear()
         {
@@ -56,6 +61,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(count);
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("invoices/ingoing/today")]
         public async Task<IActionResult> GetIngoingInvoicesToday()
         {
@@ -63,6 +69,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(count);
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("invoices/outgoing/today")]
         public async Task<IActionResult> GetOutgoingInvoicesToday()
         {
@@ -70,6 +77,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(count);
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("bas-account/most-popular")]
         public async Task<IActionResult> GetMostPopularBasAccount()
         {

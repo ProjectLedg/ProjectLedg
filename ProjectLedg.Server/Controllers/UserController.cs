@@ -28,6 +28,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // GET: api/User/all
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -36,7 +37,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // GET: api/User/{id}
-        [Authorize]
+        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("getUser")]
         public async Task<IActionResult> GetUserByIdAsync()
         {
@@ -61,6 +62,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // POST: api/User/create
+        [AllowAnonymous] // NOT AUTHORIZED - Users need to be able to crate account
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser([FromBody] CreateAccountRequestDTO request)
         {
@@ -80,12 +82,13 @@ namespace ProjectLedg.Server.Controllers
             return BadRequest(new { Message = result.Errors });
         }
 
-
-
         // PUT: api/User/edit
+        [Authorize]
         [HttpPut("edit")]
         public async Task<IActionResult> EditUser([FromBody] User user)
         {
+            // Verify that the user we're trying to edit is the one logged in with JWT (use claims)
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -101,6 +104,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // DELETE: api/User/delete/{id}
+        [Authorize]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteUser(int id, [FromBody] DeleteUserRequestModel model)
         {
@@ -114,6 +118,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // POST: api/User/login
+        [AllowAnonymous]// NOT AUTHORIZED - user need to be able to login
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromForm] string email, [FromForm] string password)
         {
@@ -150,6 +155,7 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
+        [AllowAnonymous]// NOT AUTHORIZED - user need to confirm email
         [HttpPost("confirm-email")]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequestDTO model)
         {
@@ -162,6 +168,7 @@ namespace ProjectLedg.Server.Controllers
             return BadRequest(new { Message = "Email verification failed" });
         }
 
+        [Authorize]
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordDTO model)
         {
@@ -180,6 +187,7 @@ namespace ProjectLedg.Server.Controllers
             return BadRequest("Password change failed.");
         }
 
+        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("send-notice")]
         public async Task<IActionResult> SendNotice([FromBody] NoticeRequest request)
         {
@@ -187,6 +195,7 @@ namespace ProjectLedg.Server.Controllers
             return Ok(new { Message = "Notice sent successfully" });
         }
 
+        [Authorize]
         [HttpGet("notices")]
         public async Task<IActionResult> GetUserNotices()
         {
