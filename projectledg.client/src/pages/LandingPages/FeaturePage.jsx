@@ -3,7 +3,8 @@ import Navbar from "./LandingPageComp/Navbar";
 import FeatureContentTitle from "./FeaturePageComp/FeatureContentTitle";
 import FeatureContentBody from "./FeaturePageComp/FeatureContentBody";
 import FeatureContentImage from "./FeaturePageComp/FeatureContentImage";
-import Footer from "./LandingPageComp/FooterSection";
+import { Navigate } from "react-router-dom";
+import FooterSection from "./LandingPageComp/FooterSection"
 
 export default function FeaturePage() {
     const [showNavbar, setShowNavbar] = useState(true);
@@ -28,6 +29,16 @@ export default function FeaturePage() {
         };
     }, [lastScrollY]);
 
+
+
+export default function FeaturePage() {
+
+    const isMobile = window.innerWidth <= 768;
+
+    if(isMobile){
+        return <Navigate to="/"/>;
+    }
+    
     return (
         <>
             <div
@@ -43,7 +54,9 @@ export default function FeaturePage() {
             <div className="bg-gradient-to-b from-blue-700/30 mb-1 transition-colors duration-1000 ease-in-out">
                 <FeatureContentBody />
             </div>
-            <Footer />
+            <div className="mt-24">
+      <FooterSection />
+      </div>
         </>
     );
 }

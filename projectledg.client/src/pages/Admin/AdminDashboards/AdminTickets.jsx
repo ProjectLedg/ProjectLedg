@@ -11,7 +11,7 @@ const AdminTickets = () => {
 
     const fetchTickets = async () => {
         try {
-            const response = await axios.get('https://localhost:7223/api/SupportTickets');
+            const response = await axios.get('https://projectledgserver.azurewebsites.net/api/SupportTickets');
             setTickets(response.data);
         } catch (error) {
             console.error('Error fetching tickets:', error);
@@ -20,7 +20,7 @@ const AdminTickets = () => {
 
     const updateTicketStatus = async (ticketId, status) => {
         try {
-            await axios.patch(`https://localhost:7223/api/SupportTickets/${ticketId}/status`, { status });
+            await axios.patch(`https://projectledgserver.azurewebsites.net/api/SupportTickets/${ticketId}/status`, { status });
             setMessage(`Ticket status updated to ${status}`);
             fetchTickets();
         } catch (error) {

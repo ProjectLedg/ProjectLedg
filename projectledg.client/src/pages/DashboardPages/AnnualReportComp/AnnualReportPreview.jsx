@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { TooltipProvider, TooltipShad, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function AnnualReportPreview() {
@@ -25,8 +25,16 @@ export function AnnualReportPreview() {
     signature: '',
     signatureRole: '',
     profitPercentageToKeep: 0,
-    
   });
+  const [activeTab, setActiveTab] = useState('company');
+
+  const tabs = [
+    { value: 'company', label: 'Företag' },
+    { value: 'resultDisposition', label: 'Resultatdisposition' },
+    { value: 'financials', label: 'Balansrapport & Resultaträkning' },
+    { value: 'equityAndLiabilities', label: 'Eget kapital & Skulder' },
+  ];
+
   const customTitles = {
     "company.name": "Företagsnamn",
     "company.address": "Företagsadress",
@@ -35,40 +43,32 @@ export function AnnualReportPreview() {
     "financials.incomeStatement.expenses": "Kostnader",
     "financials.balanceSheet.assets": "Tillgångar",
     "financials.balanceSheet.liabilities": "Skulder",
-    "company.organizationNumber" : "Org nummer",
+    "company.organizationNumber" : "Organisationsnummer",
     "company.fiscalYear":"Finansiella året",
     "company.annualMeetingDate" : "Årsstämma Datum",
-    "company.companyDescription": "Verksamhets Beskrivning",
+    "company.companyDescription": "Verksamhetsbeskrivning",
     "company.amountOfEmployees" : "Antal anställda",
-    "financials.incomeStatement.netRevenue" : "Netto intäkter",
+    "financials.incomeStatement.netRevenue" : "Nettointäkter",
     "financials.incomeStatement.externalExpenses": " Externa kostnader",
     "financials.incomeStatement.staffExpenses" : "Personal kostnader",
     "financials.incomeStatement.financialItems" : "Finansiella poster",
     "financials.incomeStatement.resultAfterFinancialItems" : "Resultat efter Finansiella poster",
     "financials.incomeStatement.taxOnResult" : "Skatt på årets resultat",
     "financials.incomeStatement.annualResult" : "Årets resultat",
-    "financials.balanceSheet.intangibleAssets" : "Immanteriella tillgångar",
+    "financials.balanceSheet.intangibleAssets" : "Immateriella tillgångar",
     "financials.balanceSheet.tangibeAssets" : "Materiella tillgångar",
     "financials.balanceSheet.financialAssets" : "Finansiella tillgångar",
     "financials.balanceSheet.totalFixedAssets": "Summa anläggningstillgånar",
-    "equityAndLiabilities.equity.stockCapital": "Aktie kapital",
-    "equityAndLiabilities.equity.balancedResult": "Balanserat Resultat",
+    "equityAndLiabilities.equity.stockCapital": "Aktiekapital",
+    "equityAndLiabilities.equity.balancedResult": "Balanserat resultat",
     "equityAndLiabilities.equity.yearResult": "Årets resultat",
-    "equityAndLiabilities.equity.totalEquity": "Summa Kapital",
+    "equityAndLiabilities.equity.totalEquity": "Summa kapital",
     "equityAndLiabilities.liabilities.totalLongTermLiabilities": "Summa långfristiga skulder",
     "equityAndLiabilities.liabilities.totalShortTermLiabilities": "Summa kortfristiga skulder",
     "equityAndLiabilities.liabilities.shortTermLoans": "Kortfristiga lån",
     "equityAndLiabilities.liabilities.taxesAndFees": "Moms och avgifter",
-    "equityAndLiabilities.liabilities.accountsPayable": "Leveranstörs skulder",
-    
-    
-
-    
-
-    
-
-    
-    
+    "equityAndLiabilities.liabilities.accountsPayable": "Leveranstörsskulder",
+  
   };
   
 
@@ -107,7 +107,19 @@ export function AnnualReportPreview() {
     setIsModalOpen(true);
   };
 
-  
+  const handlePrevTab = () => {
+    const currentIndex = tabs.findIndex(tab => tab.value === activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1].value);
+    }
+  };
+
+  const handleNextTab = () => {
+    const currentIndex = tabs.findIndex(tab => tab.value === activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1].value);
+    }
+  };
   
   
   
@@ -230,64 +242,84 @@ export function AnnualReportPreview() {
   return (
     <>
     <ToastProvider swipeDirection="right">
-      <TabsContent value="annualReports">
-        <Card className="rounded-none shadow-none border-none">
-          <CardHeader>
-            <CardTitle>Generera Årsredovisning</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[600px] pr-4">
-              <Tabs defaultValue="company" className="w-full">
-                <TabsList className="mb-4 dark:bg-darkBackground">
-                  <TabsTrigger value="company">Företag</TabsTrigger>
-                  <TabsTrigger value="resultDisposition">Resultatdisposition</TabsTrigger>
-                  <TabsTrigger value="financials">Balansrapport & Resultaträkning</TabsTrigger>
-                  <TabsTrigger value="equityAndLiabilities">Eget kapital & Skulder</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="company">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {renderSection(reportData.company, 'company')}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="resultDisposition">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {renderSection(reportData.resultDisposition, 'resultDisposition')}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="financials">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Resultat räkning</h3>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        {renderSection(reportData.financials.incomeStatement, 'financials.incomeStatement')}
+        <TabsContent value="annualReports">
+          <Card className="rounded-none shadow-none border-none">
+            <CardHeader>
+              <CardTitle>Generera Årsredovisning</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="mb-4 dark:bg-darkBackground truncate hidden lg:flex lg:justify-around">
+                    {tabs.map(tab => (
+                      <TabsTrigger key={tab.value} value={tab.value}>
+                        {tab.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+
+                  {/* Content for each tab */}
+                  <TabsContent value="company">
+                    <h3 className="text-lg font-semibold mb-2">Företagsinformation</h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {renderSection(reportData.company, 'company')}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="resultDisposition">
+                    <h3 className="text-lg font-semibold mb-2">Resultatsdisposition</h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {renderSection(reportData.resultDisposition, 'resultDisposition')}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="financials">
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Resultaträkning</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {renderSection(reportData.financials.incomeStatement, 'financials.incomeStatement')}
+                        </div>
+                      </div>
+                      <Separator />
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Balansrapport</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {renderSection(reportData.financials.balanceSheet, 'financials.balanceSheet')}
+                        </div>
                       </div>
                     </div>
-                    <Separator />
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Balans rapport</h3>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        {renderSection(reportData.financials.balanceSheet, 'financials.balanceSheet')}
-                      </div>
+
+                  </TabsContent>
+
+                  <TabsContent value="equityAndLiabilities">
+                    
+                    <div className="space-y-6 ">
+                    
+                      {renderSection(reportData.equityAndLiabilities, 'equityAndLiabilities')}
                     </div>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="equityAndLiabilities">
-                  <div className="space-y-6">
-                    {renderSection(reportData.equityAndLiabilities, 'equityAndLiabilities')}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </ScrollArea>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={handleConfirmAndContinue} className="bg-green-500 ml-auto">Bekräfta och fortsätt</Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
+                  </TabsContent>
+                </Tabs>
+              </ScrollArea>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4 justify-between">
+              <div className="lg:hidden flex space-x-2">
+                <Button onClick={handlePrevTab} disabled={activeTab === tabs[0].value} className="w-36">
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Tillbaka
+                </Button>
+                <Button onClick={handleNextTab} disabled={activeTab === tabs[tabs.length - 1].value} className="w-36">
+                  Nästa
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+              <Button onClick={handleConfirmAndContinue} className="bg-green-500 w-full ">
+                Bekräfta och fortsätt
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">

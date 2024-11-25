@@ -35,6 +35,7 @@ const navItems = [
   { icon: Activity, label: "Hantera Användare", path: "/user-management", position: "top", tooltipText: "Hantera Användare" },
   { icon: BookCheck, label: "Två Faktor Autentisering", path: "/2fa", position: "top", tooltipText: "Två Faktor Autentisering" },
   { icon: FileText, label: "Tickets", path: "/tickets", position: "top", tooltipText: "Tickets" },
+  { icon: FileText, label: "Notifications", path: "/notification", position: "top", tooltipText: "Notifications" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom", tooltipText: "Inställningar" },
   { icon: HelpCircle, label: "Hjälp", path: "/help", position: "bottom", tooltipText: "Hjälp" },
   { icon: LogOut, label: "Logga ut", path: "/", position: "bottom", tooltipText: "Logga ut" },

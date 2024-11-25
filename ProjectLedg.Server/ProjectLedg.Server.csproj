@@ -15,6 +15,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\AssistantBasAccMapDirectives.txt" />
+    <None Remove="Assets\assistantDirectives.env" />
+    <None Remove="Assets\BASAccContext.txt" />
+    <None Remove="Assets\BasKontoPlan.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\AssistantBasAccMapDirectives.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\assistantDirectives.env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\BASAccContext.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\BasKontoPlan.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.AI.FormRecognizer" Version="4.1.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
@@ -45,6 +67,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenAI-DotNet" Version="8.3.0" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
   </ItemGroup>
@@ -53,13 +76,22 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
-	<ItemGroup>
-		<None Update="Assets\assistantDirectives.env">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\BasKontoPlan.csv">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <None Update="GhostScript\Dink2PDF\32bit\libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="GhostScript\Dink2PDF\64bit\libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="GhostScript\gsdll64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="GhostScript\gsdll64.lib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="GhostScript\gswin64c.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

@@ -27,6 +27,7 @@ import AdminTickets from './pages/Admin/AdminDashboards/AdminTickets'
 import AdminSettingsPage from './pages/Admin/AdminDashboards/AdminSettingsPage'
 import UserManagementPage from './pages/Admin/AdminDashboards/Admin Manager/UserManagementPage'
 import TwoFactorAuth from './pages/Admin/AdminDashboards/TwoFactorAuth'
+import NotificationSender from './pages/Admin/AdminDashboards/NotificationSender';
 import { ThemeProvider } from './components/ThemeProvider';
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
                         <Route path="tickets" element={<AdminTickets />} />
                         <Route path="user-management" element={<UserManagementPage />} />
                         <Route path="2fa" element={<TwoFactorAuth />} />
+                        <Route path="notification" element={<NotificationSender />} />
                         </Route>
                 </Routes>
             </Router>

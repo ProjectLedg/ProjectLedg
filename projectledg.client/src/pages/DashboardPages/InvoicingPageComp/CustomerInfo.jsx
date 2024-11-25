@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useParams } from "react-router-dom";
 
+
 export function CustomerInfo({ invoice, handleInputChange }) {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,8 +55,8 @@ export function CustomerInfo({ invoice, handleInputChange }) {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between items-center">
-        <CardTitle>Kundinformation</CardTitle>
+      <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+        <CardTitle className="mb-2 sm:mb-0">Kundinformation</CardTitle>
         <div className="w-48 ">
           <Select onValueChange={handleCustomerSelect} disabled={loading} >
             <SelectTrigger>
@@ -72,12 +73,7 @@ export function CustomerInfo({ invoice, handleInputChange }) {
         </div>
       </CardHeader>
       <CardContent>
-        {loading && (
-          <div className="flex items-center justify-center p-4">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <span className="ml-2">Laddar kunder...</span>
-          </div>
-        )}
+        
 
         {error && (
           <Alert variant="destructive" className="mb-6">
@@ -89,10 +85,10 @@ export function CustomerInfo({ invoice, handleInputChange }) {
 
         
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div>
             <Label htmlFor="customerName">Kundnamn</Label>
-            <Input 
+            <Input
               id="customerName" 
               name="customerName"
               value={invoice.customerName}

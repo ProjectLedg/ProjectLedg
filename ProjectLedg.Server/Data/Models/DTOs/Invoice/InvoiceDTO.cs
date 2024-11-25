@@ -15,10 +15,10 @@
         public string InvoiceFilePath { get; set; }
 
         //Customer Information
-        public string CustomerId { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerAddress { get; set; }
-        public string CustomerAddressRecipient { get; set; }
+        public string? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerAddress { get; set; }
+        public string? CustomerAddressRecipient { get; set; }
 
         //Vendor Information
         public string VendorName { get; set; }

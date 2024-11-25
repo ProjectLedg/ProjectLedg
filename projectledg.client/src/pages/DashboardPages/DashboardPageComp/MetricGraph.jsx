@@ -55,9 +55,9 @@ const MetricGraph = ({ metricFilter, setMetricFilter, title, metricsData, metric
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={currentMetricData}>
               <defs>
-                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1.3">
+                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1.2">
                   <stop offset="0%" stopColor={isDarkMode ? '#33CBE2' : '#66D466'} stopOpacity={1} />
-                  <stop offset="100%" stopColor={isDarkMode ? 'transparent' : 'white'} stopOpacity={0.3} />
+                  <stop offset="100%" stopColor={isDarkMode ? 'transparent' : 'white'} stopOpacity={0.7} />
                 </linearGradient>
               </defs>
               <XAxis

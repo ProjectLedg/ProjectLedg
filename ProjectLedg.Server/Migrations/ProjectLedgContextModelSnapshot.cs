@@ -463,19 +463,15 @@ namespace ProjectLedg.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerAddressRecipient")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DueDate")
@@ -1066,7 +1062,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "32108b8c-7c3b-45ab-ae73-c64b0d352d84",
+                            ConcurrencyStamp = "210c0839-6c1b-4576-875b-e0901aa4ac56",
                             Email = "testuser@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1074,9 +1070,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJ4rz/JB0HIs6tmL1UIzbBaSFQ03AUbFmnxM8fn2mluFphVfcQObchJmxRjxAf3zmA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEC4JwU3noFKne4CJCBrNR0lMzBO28w29Fke5l9GZU3G6JhznLOhPkjiF+sb1FoNwPw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2987e1bb-43aa-42b5-83c1-278547619d3b",
+                            SecurityStamp = "a2e15a18-9a8d-468a-810c-f1df76ae9967",
                             TwoFactorEnabled = false,
                             UserName = "testuser@example.com"
                         },
@@ -1085,7 +1081,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "2",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "42b700d5-2cf0-46bd-88d5-6121af308bc2",
+                            ConcurrencyStamp = "3f9e3a67-ef67-4647-aad2-00dda4aa8564",
                             Email = "testuser2@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1093,9 +1089,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER2@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER2@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDomCaB4x9ndeVEWB1Wn1mnyhIx31SxzYzB6HfREIyRkQrkk8n9JanXX2DUdbDsjaQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEO8qCT6ycq+xM/DB5HbPC3Kuc5x+tgXH0xmn9AKYxVhX1xQUMMGHpAIjalQ1Djj0FQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3ad1ca4f-f181-42ff-898a-ff6ecd1416b2",
+                            SecurityStamp = "6dbae412-173d-4728-8afb-2e5e6b90aaaa",
                             TwoFactorEnabled = false,
                             UserName = "testuser2@example.com"
                         },
@@ -1104,7 +1100,7 @@ namespace ProjectLedg.Server.Migrations
                             Id = "3",
                             AccessFailedCount = 0,
                             AuthenticatorKey = "XYZ12345",
-                            ConcurrencyStamp = "b85f581e-db39-4844-9e2f-e420d802d1fb",
+                            ConcurrencyStamp = "ee9be7fd-94c9-4558-9385-ca86314f2087",
                             Email = "testuser3@example.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -1112,9 +1108,9 @@ namespace ProjectLedg.Server.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTUSER3@EXAMPLE.COM",
                             NormalizedUserName = "TESTUSER3@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI3o8EdRthgNXVFERLwrO3OFmEZG0M0Tan9slx+BIQR/jvqhIdx8g8U3y3P+HtlOiA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOa4m7q8k/8ufc45QERYRAqwjwbqu6OsdngBei3ED5iLwc6iWC1Y0Nfh+tSfhVav+w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "241e7fd1-c217-4ab0-a1d0-0a47b6f4b3a2",
+                            SecurityStamp = "c10276f3-7ba1-42b0-84f8-3917ae9834bc",
                             TwoFactorEnabled = false,
                             UserName = "testuser3@example.com"
                         });

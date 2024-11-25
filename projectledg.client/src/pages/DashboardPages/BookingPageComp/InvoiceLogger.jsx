@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Separator } from '@/components/ui/separator'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { axiosConfig } from '/axiosconfig'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Switch from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Check, X, FileText, Car, Download } from "lucide-react"
-import invoiceLogger from './invoiceLogger.json'
-import invoiceLoggerOutgoing from './invoiceLoggerOutgoing.json'
+import { Check, X, FileText, Download } from "lucide-react"
+// import invoiceLogger from './invoiceLogger.json'
+// import invoiceLoggerOutgoing from './invoiceLoggerOutgoing.json'
 import LoggerTable from './LoggerTable'
 import LoggerPagination from "./LoggerPagination"
-import { RotateCcw } from "lucide-react"
-import { Spinner } from "@/components/ui/spinner"
+import { Input } from "@/components/ui/input"
+import ReloadButton from "@/components/ReloadButton"
 
 
 export default function InvoiceLogger() {
@@ -44,8 +41,11 @@ export default function InvoiceLogger() {
   const totalInvoices = invoices.length;
   const totalPages = Math.ceil(invoices.length / pagination);
 
+  // Search filter for logger table
+  const [searchQuery, setSearchQuery] = useState("")
+
   // Button toggle
-  const [isOn, setIsOn] = useState(false)
+  // const [isOn, setIsOn] = useState(false)
 
 
   useEffect(() => {
@@ -54,14 +54,7 @@ export default function InvoiceLogger() {
     getIngInvoices();
     getOutInvoices();
 
-    // console.log("Is ingoing selected: ", isIngoingSelected)
-    // console.log("Status ingoings: ", statusIngoing)
-    // console.log("Status outgoings: ", statusOutgoing)
-
     setIsLoading(false);
-
-    // setIngoingInvoices(invoiceLogger.mockTestData)
-    // setOutgoingInvoices(invoiceLoggerOutgoing.mockTestData)
   }, [])
 
 
@@ -148,27 +141,19 @@ export default function InvoiceLogger() {
     setIsModalOpen(true)
   }
 
-  const handleStatusChange = (field) => {
-    if (field === 'isPaid') {
-      setSelectedInvoice(prev => ({ ...prev, [field]: !prev[field] }))
-    }
-  }
+  // const handleStatusChange = (field) => {
+  //   if (field === 'isPaid') {
+  //     setSelectedInvoice(prev => ({ ...prev, [field]: !prev[field] }))
+  //   }
+  // }
 
-  const handleAdditionalInfoChange = (e) => {
-    setSelectedInvoice(prev => ({ ...prev, additionalInfo: e.target.value }))
-  }
+  // const handleAdditionalInfoChange = (e) => {
+  //   setSelectedInvoice(prev => ({ ...prev, additionalInfo: e.target.value }))
+  // }
 
-  const handleSaveChanges = () => {
-    // Save changes to invoice (iterate through and save new array of invoices)
-    // Then post changes to api
-
-    // setInvoices(prevInvoices => 
-    //   prevInvoices.map(invoice => 
-    //     invoice.id === selectedInvoice.id ? selectedInvoice : invoice
-    //   )
-    // )
-    setIsModalOpen(false)
-  }
+  // const handleSaveChanges = () => {
+  //   setIsModalOpen(false)
+  // }
 
   const handleIsPaidStatusChange = (newIsPaid) => {
     setSelectedInvoice((prev) => ({
@@ -181,7 +166,7 @@ export default function InvoiceLogger() {
     if (statusIngoing === "empty") {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
-          <p className="text-xl text-center text-gray-400 dark:text-darkSecondary">Skapa en utgående faktura på faktureringssidan för att se den här!</p>
+          <p className="text-xl text-center text-gray-400 dark:text-darkSecondary">Ladda upp en Ingående faktura för att se den här!</p>
         </CardContent>
       )
     }
@@ -189,12 +174,7 @@ export default function InvoiceLogger() {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
           <p>Något gick fel</p>
-          <Button
-            className="bg-green-500 hover:bg-green-600 space-x-1"
-            onClick={getIngInvoices} //Attempt to re-fetch ingoing invoices
-          >
-            {isFetchLoading ? <Spinner size={"xsmall"} className="text-white"  /> : <RotateCcw size={16} />} <span>{isFetchLoading ? "Laddar..." : "Ladda om"}</span>
-          </Button>
+          <ReloadButton onClick={getIngInvoices} isFetchLoading={isFetchLoading}/>
         </CardContent>
       )
     }
@@ -212,12 +192,7 @@ export default function InvoiceLogger() {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
           <p>Något gick fel</p>
-          <Button
-            className="bg-green-500 hover:bg-green-600 space-x-1"
-            onClick={getOutInvoices} //Attempt to re-fetch ougoing invoices
-          >
-            {isFetchLoading ? <Spinner /> : <RotateCcw size={16} />} <span>Ladda om</span>
-          </Button>
+          <ReloadButton onClick={getOutInvoices} isFetchLoading={isFetchLoading} />
         </CardContent>
       )
     }
@@ -225,7 +200,7 @@ export default function InvoiceLogger() {
 
   const handleConfirmAndSave = () => {
     try {
-      const response = axiosConfig.post(`/IngoingInvoice/update/${selectedInvoice.id}`, selectedInvoice);
+      const response = axiosConfig.put(`/IngoingInvoice/update/${selectedInvoice.id}`, selectedInvoice);
 
       // console.log(response)
 
@@ -235,6 +210,12 @@ export default function InvoiceLogger() {
       console.log(error)
     }
   }
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+  };
+
 
   // Loading skeleton animation
   if (isLoading) {
@@ -266,16 +247,25 @@ export default function InvoiceLogger() {
   return (
     <Card className="w-full h-[90vh] md:h-[40rem]  flex flex-col shadow-lg">
       <Tabs defaultValue="ingoing" className="flex flex-col h-full overflow-hidden">
-        <CardHeader className="flex flex-row justify-between border-b-2 dark:border-darkBorde">
+        <CardHeader className="flex flex-row justify-between  dark:border-darkBorder ">
           <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
             <FileText className="mr-2 text-green-500" />
             Fakturor
           </CardTitle>
 
-          <TabsList className="flex flex-col md:flex-row px-2 py-10 w-auto rounded-md md:py-6 md:px-2 dark:bg-darkBackground">
-            <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing}>Ingående</TabsTrigger>
-            <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing}>Utgående</TabsTrigger>
-          </TabsList>
+          <div className="flex gap-x-4 items-center ">
+            <Input
+              type="text"
+              placeholder="Sök här..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="bg-gray-100 hidden lg:block h-[90%] rounded-md "
+            />
+            <TabsList className="flex flex-col md:flex-row px-2 py-10 w-auto rounded-md md:py-6 md:px-2 dark:bg-darkBackground">
+              <TabsTrigger value="ingoing" onClick={handleSetInvoicesIngoing} className="dark:data-[state=active]:bg-green-500 dark:data-[state=active]:text-white">Ingående</TabsTrigger>
+              <TabsTrigger value="outgoing" onClick={handleSetInvoicesOutgoing} className="dark:data-[state=active]:bg-green-500 dark:data-[state=active]:text-white">Utgående</TabsTrigger>
+            </TabsList>
+          </div>
         </CardHeader>
 
         {/* Render errors if any depending on if ingoing or outgoing is selected */}
@@ -286,11 +276,11 @@ export default function InvoiceLogger() {
           <CardContent className="flex-grow overflow-hidden p-0 ">
             <ScrollArea className="h-full bg-gray-200 md:bg-white dark:bg-darkBackground">
               {isLoading ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full ">
                   <p>Hämtar fakturor...</p>
                 </div>
               ) : error ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full ">
                   <p className="text-red-500">{error}</p>
                 </div>
               ) : (
@@ -299,6 +289,8 @@ export default function InvoiceLogger() {
                   handleInvoiceClick={handleInvoiceClick}
                   startItem={startItem}
                   endItem={endItem}
+                  searchQuery={searchQuery}
+                  handleSearch={handleSearch}
                 />
               )}
             </ScrollArea>
@@ -354,7 +346,7 @@ export default function InvoiceLogger() {
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{selectedInvoice.invoiceNumber}</h2>
                   <p className="text-sm text-gray-500 dark:text-darkSecondary">{selectedInvoice.vendorName}</p>
                 </div>
-                <Badge variant={selectedInvoice.isBooked ? "success" : "destructive"}>
+                <Badge variant={selectedInvoice.isBooked ? "success" : "destructive"} className="dark:text-white">
                   {selectedInvoice.isBooked ? <Check className="h-4 w-4 mr-1" /> : <X className="h-4 w-4 mr-1" />}
                   {selectedInvoice.isBooked ? "Bokförd" : "Ej Bokförd"}
                 </Badge>

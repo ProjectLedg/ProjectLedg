@@ -12,6 +12,7 @@ export default function LandingPage() {
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         setTheme(theme === "light")
     }, [])
 
@@ -27,14 +28,16 @@ export default function LandingPage() {
                 <CardShow />
             </div>
             <div className="flex flex-col items-center">
-                <section id="why" className="scroll-mt-32">
+                <section id="why" className="scroll-mt-2">
                     <CallToAction />
                 </section>
             </div>
             <div className="flex flex-col items-center pb-14 sm:pb-36 ">
                 <NewsletterSignup />
             </div>
-            <FooterSection />
+            <div className="mt-24">
+      <FooterSection />
+      </div>
         </div>
 
     );

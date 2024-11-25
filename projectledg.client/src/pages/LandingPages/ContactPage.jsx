@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import axios from "axios"
 import Navbar from "./LandingPageComp/Navbar"
 import FooterSection from "./LandingPageComp/FooterSection"
@@ -9,6 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Mail, Phone, MapPin, Loader2, Sparkles } from "lucide-react"
 
 export default function ContactPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -37,7 +41,7 @@ export default function ContactPage() {
     setSubmitStatus(null)
 
     try {
-      const response = await axios.post("https://projectledg.azurewebsites.net/api/Email/SendEmail", formData)
+      const response = await axios.post("https://projectledgserver.azurewebsites.net/api/Email/SendEmail", formData)
       if (response.status === 200) {
         setSubmitStatus("success")
         setFormData({ name: "", email: "", message: "" })
@@ -61,11 +65,11 @@ export default function ContactPage() {
             Vänligen fyll i formuläret nedan eller använd vår kontaktinformation.
           </p>
           <div className="grid md:grid-cols-2 gap-8 justify-center">
-            <Card className="bg-white shadow-lg border-green-500 border-2">
+            <Card className="bg-white shadow-lg border-gray-800 border-2">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-between">
                   Skicka ett meddelande till oss
-                  <Sparkles className="h-5 w-5 text-green-500" />
+                  
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -128,11 +132,11 @@ export default function ContactPage() {
                 </form>
               </CardContent>
             </Card>
-            <Card className="bg-white shadow-lg border-green-500 border-2">
+            <Card className="bg-white shadow-lg border-gray-800 border-2">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-between">
                   Kontaktinformation
-                  <Sparkles className="h-5 w-5 text-green-500" />
+                  
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -149,7 +153,9 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
-      <FooterSection />
+        <div className="mt-32">
+        <FooterSection />
+        </div>
     </div>
   )
 }
