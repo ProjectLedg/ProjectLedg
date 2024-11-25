@@ -38,11 +38,11 @@ const MetricCard = ({ title, value, change, changeType, toolDescription }) => (
     </CardHeader>
     <CardContent>
       <div className="text-lg sm:text-2xl font-bold">{value}</div>
-      <p className={`text-xs ${changeType === 'positive' ? 'text-green-500' :
-        changeType === 'negative' ? 'text-red-500' :
+      <p className={`text-xs ${changeType === 'positiv' ? 'text-green-500' :
+        changeType === 'negativ' ? 'text-red-500' :
           'text-gray-500'
         }`}>
-        {change}
+        {changeType === "ingen" ? "" : change}
       </p>
     </CardContent>
   </Card>
@@ -83,6 +83,8 @@ export default function FinancialReportsPage() {
         companyId: parseInt(companyId),
         year: currentYear
       })
+      console.log(response.data);
+
       setFinancialData(response.data)
     } catch (error) {
       setError('Failed to fetch financial data. Please try again later.')
