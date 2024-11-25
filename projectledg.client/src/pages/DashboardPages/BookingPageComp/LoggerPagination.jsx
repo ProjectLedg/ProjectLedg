@@ -61,7 +61,7 @@ export default function LoggerPagination({ totalPages, totalInvoices, pagination
             <PaginationContent >
                 {/* Previous button */}
                 <PaginationItem className="cursor-pointer"  disabled={pageNumber === 1}>
-                    <PaginationPrevious onClick={handlePreviousPageClick} />
+                    <PaginationPrevious onClick={handlePreviousPageClick} className="dark:hover:bg-darkBackground"  />
                 </PaginationItem>
 
                 {/* Map all pages */}
@@ -70,7 +70,7 @@ export default function LoggerPagination({ totalPages, totalInvoices, pagination
                     return (
                         <PaginationItem className="cursor-pointer" key={page} active={pageNumber === page}>
                             <PaginationLink 
-                                className={pageNumber === page ? "text-primary-foreground bg-green-500 hover:text-primary-foreground hover:bg-green-500/80" : ""} 
+                                className={pageNumber === page ? "text-white bg-green-500 hover:bg-green-500/80" : ""} 
                                 onClick={() => handleNumberPageClick(page)}>
                                 {page}
                             </PaginationLink>
@@ -79,7 +79,7 @@ export default function LoggerPagination({ totalPages, totalInvoices, pagination
                 })}
                 {/* Next button */}
                 <PaginationItem className="cursor-pointer" disabled={pageNumber === totalPages}>
-                    <PaginationNext onClick={handleNextPageClick} />
+                    <PaginationNext onClick={handleNextPageClick} className="dark:hover:bg-darkBackground"/>
                 </PaginationItem>
             </PaginationContent>
         </Pagination>
