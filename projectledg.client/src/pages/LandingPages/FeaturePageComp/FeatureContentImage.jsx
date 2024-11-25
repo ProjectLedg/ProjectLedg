@@ -40,7 +40,7 @@ export default function FeatureImage() {
     const li2Opacity = useTransform(scrollYProgress, [0.4, 0.5], [0, 1]);
     const li3Opacity = useTransform(scrollYProgress, [0.5, 0.6], [0, 1]);
 
-    // Add opacity for the h1 element
+
     const h1Opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
 
     return (
