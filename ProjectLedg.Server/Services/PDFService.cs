@@ -7,6 +7,7 @@ using System;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Data.Models.DTOs.Finance;
+using System.Runtime.InteropServices;
 
 namespace ProjectLedg.Server.Services
 {
@@ -24,6 +25,8 @@ namespace ProjectLedg.Server.Services
             _companyRepository = companyRepository;
             _customerRepository = customerRepository;
             _financeRepository = financeRepository;
+
+            LoadWkhtmltoxLibrary(); 
         }
 
         public async Task<byte[]> GenerateAnnualReportPdf(AnnualReportGenerateToPdfDTO dto)
@@ -340,6 +343,35 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
-        
+        private void LoadWkhtmltoxLibrary()
+        {
+            //Determine architecture (32-bit or 64-bit)
+            var architecture = Environment.Is64BitProcess ? "64bit" : "32bit";
+
+            //Build the full path to the DLL
+            var libraryPath = Path.Combine(AppContext.BaseDirectory, "GhostScript", "Dink2PDF", architecture, "libwkhtmltox.dll");
+
+            //Log the path for debugging
+            Console.WriteLine($"Attempting to load DLL from: {libraryPath}");
+
+            // Ensure the DLL file exists
+            if (!File.Exists(libraryPath))
+            {
+                throw new FileNotFoundException($"The library file {libraryPath} was not found.");
+            }
+
+            //Load the library using CustomAssemblyLoadContext
+            try
+            {
+                var context = new CustomAssemblyLoadContext();
+                context.LoadUnmanagedLibrary(libraryPath);
+                Console.WriteLine("DLL loaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to load DLL: {ex.Message}");
+                throw;
+            }
+        }
     }
 }
