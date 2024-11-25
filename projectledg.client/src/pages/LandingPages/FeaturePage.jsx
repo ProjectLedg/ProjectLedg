@@ -3,8 +3,9 @@ import Navbar from "./LandingPageComp/Navbar";
 import FeatureContentTitle from "./FeaturePageComp/FeatureContentTitle";
 import FeatureContentBody from "./FeaturePageComp/FeatureContentBody";
 import FeatureContentImage from "./FeaturePageComp/FeatureContentImage";
-import Footer from "./LandingPageComp/FooterSection"
 import { Navigate } from "react-router-dom";
+import FooterSection from "./LandingPageComp/FooterSection"
+
 
 export default function FeaturePage() {
 
@@ -23,7 +24,9 @@ export default function FeaturePage() {
                 <FeatureContentImage />
                 <FeatureContentBody />
             </div>
-            <Footer />
+            <div className="mt-24">
+      <FooterSection />
+      </div>
         </>
     )
 }

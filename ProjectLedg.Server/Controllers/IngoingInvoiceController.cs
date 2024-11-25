@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Invoice;
+using ProjectLedg.Server.Helpers.File_Compressor;
 using ProjectLedg.Server.Services.IServices;
 
 namespace ProjectLedg.Server.Controllers
@@ -29,21 +30,68 @@ namespace ProjectLedg.Server.Controllers
         {
             if (file == null || file.Length == 0)
             {
-                return BadRequest("No file uploaded");
+                return BadRequest("No file uploaded.");
             }
 
-            var tempFilePath = Path.GetTempFileName(); // Generate a temporary file path
-            using (var stream = System.IO.File.Create(tempFilePath))
+            //Get the original file extension
+            var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (fileExtension != ".pdf" && fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
             {
-                await file.CopyToAsync(stream);
+                return BadRequest($"Unsupported file type: {fileExtension}. Only PDFs and images (.jpg, .jpeg, .png) are supported.");
             }
 
-            HttpContext.Session.SetString("TempFilePath", tempFilePath);
+            //Generate a temporary file path with the correct extension
+            var tempFileName = $"{Path.GetRandomFileName()}{fileExtension}";
+            var tempFilePath = Path.Combine(Path.GetTempPath(), tempFileName);
+            string processedFilePath = tempFilePath;
 
-            var extractedData = await _formService.AnalyzeInvoice(tempFilePath);
+            try
+            {
+                // Save the uploaded file with the correct extension
+                using (var stream = System.IO.File.Create(tempFilePath))
+                {
+                    await file.CopyToAsync(stream);
+                }
 
-            return Ok(extractedData);
+                Console.WriteLine($"Temp file created at: {tempFilePath}");
+
+                if (fileExtension == ".pdf")
+                {
+                    //Compress the PDF using Ghostscript
+                    processedFilePath = FileCompressor.CompressPdfWithGhostscript(tempFilePath);
+                    Console.WriteLine($"Compressed PDF created at: {processedFilePath}");
+                }
+                else if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
+                {
+                    //Compress large image files
+                    processedFilePath = ImageCompressor.CompressImage(tempFilePath);
+                    Console.WriteLine($"Compressed image created at: {processedFilePath}");
+                }
+
+                //Analyze the processed file
+                var extractedData = await _formService.AnalyzeInvoice(processedFilePath);
+
+                return Ok(extractedData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                //Clean up temporary files
+                if (System.IO.File.Exists(tempFilePath)) System.IO.File.Delete(tempFilePath);
+                if (processedFilePath != tempFilePath && System.IO.File.Exists(processedFilePath))
+                {
+                    System.IO.File.Delete(processedFilePath);
+                }
+            }
         }
+
+
+
+
         [Authorize]
         [HttpPost("save")]
         public async Task<IActionResult> SaveIngoingInvoice([FromBody] InvoiceDTO invoiceDto)
