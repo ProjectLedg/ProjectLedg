@@ -119,6 +119,8 @@ export default function InvoiceLogger() {
     setInvoices(outgoingInvoices)
     setIsIngoingSelected(false)
 
+    // console.log(invoices)
+
     // Reset pagination to start values (if on page x it goes back to 1) - and sets pagination number to 1
     setStartItem(0)
     setEndItem(pagination)
@@ -129,6 +131,8 @@ export default function InvoiceLogger() {
     // Set invoices to outgoing
     setInvoices(ingoingInvoices)
     setIsIngoingSelected(true)
+
+    // console.log(invoices)
 
     // Reset pagination to start values (if on page x it goes back to 1) - and sets pagination number to 1
     setStartItem(0)
@@ -174,7 +178,7 @@ export default function InvoiceLogger() {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
           <p>Något gick fel</p>
-          <ReloadButton onClick={getIngInvoices} isFetchLoading={isFetchLoading}/>
+          <ReloadButton onClick={getIngInvoices} isLoading={isFetchLoading}/>
         </CardContent>
       )
     }
@@ -192,7 +196,7 @@ export default function InvoiceLogger() {
       return (
         <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2 ">
           <p>Något gick fel</p>
-          <ReloadButton onClick={getOutInvoices} isFetchLoading={isFetchLoading} />
+          <ReloadButton onClick={getOutInvoices} isLoading={isFetchLoading} />
         </CardContent>
       )
     }
