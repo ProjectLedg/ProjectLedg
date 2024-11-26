@@ -244,6 +244,7 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                                     {invoice.isBooked ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                                     <span className="ml-1 dark:text-white">{invoice.isBooked ? "Bokförd" : "Ej Bokförd"}</span>
                                 </Badge>
+                                <p className="mt-1 col-span-2 text-center text-sm text-gray-400 dark:text-gray-500">Tryck för att se detaljer</p>
                             </CardContent>
                         </Card>
                     ))}
