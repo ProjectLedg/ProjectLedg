@@ -55,7 +55,7 @@ const MetricCard = ({ title, value, change, changeType, toolDescription }) => (
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 border border-gray-200 rounded shadow-md  dark:bg-darkBackground dark:border-darkBorder">
+      <div className="bg-white p-3 border border-gray-200 rounded shadow-md dark:bg-darkBackground dark:border-darkBorder">
         <p className="text-sm font-semibold mb-2 dark:text-darkSecondary">{label}</p>
         {payload.map((entry, index) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -179,7 +179,7 @@ export default function FinancialReportsPage() {
                       cursor={{ stroke: isDarkMode ? 'white' : 'grey', strokeDasharray: '3 3' }}
                     />
                     <Line type="monotone" dataKey="assets" stroke={isDarkMode ? '#00B8D9' : '#4CAF50'} name="Tillgångar" strokeWidth={2} />
-                    <Line type="monotone" dataKey="liabilities" stroke={isDarkMode ? '#FF6F00' : '#F44336'} name="Skulder" strokeWidth={2} />
+                    <Line type="monotone" dataKey="liabilities" stroke={isDarkMode ? '#FF6F00' : '#4d5696'} name="Skulder" strokeWidth={2} />
 
                   </LineChart>
                 </ResponsiveContainer>
@@ -211,9 +211,10 @@ export default function FinancialReportsPage() {
                   <BarChart data={financialData.resultData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <XAxis dataKey="monthName" tick={{ fontSize: 10 }} />
                     <YAxis tick={{ fontSize: 10 }} tickFormatter={(value) => `${value / 1000}k`} />
-                    <ChartTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }} />
+                    <ChartTooltip content={<CustomTooltip />}
+                      cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }} />
                     <Bar dataKey="revenue" fill={isDarkMode ? '#00B8D9' : '#4CAF50'} name="Intäkter" />
-                    <Bar dataKey="expenses" fill={isDarkMode ? '#FF6F00' : '#F44336'} name="Kostnader" />
+                    <Bar dataKey="expenses" fill={isDarkMode ? '#FF6F00' : '#4d5696'} name="Kostnader" />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
