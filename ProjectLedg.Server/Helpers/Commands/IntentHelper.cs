@@ -38,30 +38,25 @@
 
     private string[] ExtractParameters(string intent, string userInput)
     {
-        _logger.LogInformation("Attempting to extract parameters for intent: {Intent} from input: {UserInput}", intent, userInput);
+        _logger.LogInformation("Extracting parameters for intent: '{Intent}' from input: '{UserInput}'", intent, userInput);
 
-        var normalizedIntent = intent.Trim().ToLowerInvariant();
-        var normalizedInput = userInput.Trim().ToLowerInvariant();
+        var normalizedIntent = intent.ToLowerInvariant().Trim();
+        var normalizedInput = userInput.ToLowerInvariant().Trim();
 
-        // Check if userInput contains the intent string
-        if (normalizedInput.Contains(normalizedIntent))
+        if (normalizedInput.StartsWith(normalizedIntent))
         {
-            _logger.LogInformation("Intent '{Intent}' matched the input.", intent);
-
-            // Extract remaining input after the intent phrase
-            var remainingInput = normalizedInput.Replace(normalizedIntent, "").Trim();
+            var remainingInput = normalizedInput.Substring(normalizedIntent.Length).Trim();
 
             if (remainingInput.StartsWith("för", StringComparison.OrdinalIgnoreCase))
             {
-                remainingInput = remainingInput.Substring(3).Trim(); // Remove "för"
+                remainingInput = remainingInput.Substring(3).Trim();
             }
 
-            var parameters = remainingInput.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            _logger.LogInformation("Extracted parameters: {Parameters}", parameters);
-            return parameters.Length > 0 ? parameters : null;
+            _logger.LogInformation("Extracted parameters: {RemainingInput}", remainingInput);
+            return string.IsNullOrWhiteSpace(remainingInput) ? null : new[] { remainingInput };
         }
 
-        _logger.LogWarning("Intent '{Intent}' did not match the input.", intent);
+        _logger.LogWarning("No parameters extracted. Intent '{Intent}' did not match input.", intent);
         return null;
     }
 }
