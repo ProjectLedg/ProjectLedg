@@ -21,7 +21,7 @@ export default function LandingPage() {
     return (
         <div className="">
             <Navbar />
-            <div className="w-[100vw] flex flex-col items-center justify-center">
+            <div className="w-[100vw] h-[100vh] md:h-auto flex flex-col items-center justify-center">
                 <Content />
             </div>
             <div className="w-[100vw] overflow-auto">
