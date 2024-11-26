@@ -23,7 +23,7 @@ namespace ProjectLedg.Server.Services.AssistantFunctions
 
         public async Task<List<IngoingInvoiceFunctionDTO>> GetUnpaidInvoicesForCompanyAsync(int companyId)
         {
-            _logger.LogInformation("Fetching unpaid incoming invoices for company ID: {CompanyId}", companyId);
+            _logger.LogInformation("Fetching unpaid invoices for company ID: {CompanyId}", companyId);
 
             var invoices = await _context.IngoingInvoices
                 .Where(i => i.CompanyId == companyId && !i.IsPaid)
@@ -37,16 +37,15 @@ namespace ProjectLedg.Server.Services.AssistantFunctions
                 })
                 .ToListAsync();
 
-            if (!invoices.Any())
+            if (invoices == null || !invoices.Any())
             {
-                _logger.LogWarning("No unpaid incoming invoices found for company ID: {CompanyId}", companyId);
-                return null; // Caller can handle empty case
+                _logger.LogWarning("No unpaid invoices found for company ID: {CompanyId}", companyId);
+                return new List<IngoingInvoiceFunctionDTO>(); // Return an empty list instead of null
             }
 
-            _logger.LogInformation("Found {InvoiceCount} unpaid invoices for company ID: {CompanyId}", invoices.Count, companyId);
+            _logger.LogInformation("Found {Count} unpaid invoices for company ID: {CompanyId}", invoices.Count, companyId);
             return invoices;
         }
-
 
         public async Task<string> GetInvoices(string companyName, int? year = null, int? month = null)
         {
