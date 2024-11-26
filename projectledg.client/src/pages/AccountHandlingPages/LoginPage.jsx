@@ -54,7 +54,7 @@ export default function LoginPage() {
     const handleGoogleSignIn = () => {
         try {
             //Redirect to backend endpoint for Google sign-in
-            window.location.href = "https://projectledgserver.azurewebsites.net/api/login-google";
+            window.location.href = "https://projectledgserver.azurewebsites.net/login-google";
         }
         catch (error) {
             console.error("Error during sign-in redirect:", error);
