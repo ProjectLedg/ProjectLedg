@@ -32,7 +32,7 @@ export default function LandingPage() {
                     <CallToAction />
                 </section>
             </div>
-            <div className="flex flex-col items-center pb-14 sm:pb-36 ">
+            <div className="flex flex-col items-center px-4 md:px-6 m-auto  pb-14 sm:pb-36 ">
                 <NewsletterSignup />
             </div>
             <div className="mt-24">
