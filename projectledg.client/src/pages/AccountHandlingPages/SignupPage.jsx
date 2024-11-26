@@ -76,7 +76,7 @@ const SignUpPage = () => {
   const handleGoogleSignIn = () => {
     try {
       //Redirect to backend endpoint for Google sign-in
-      window.location.href = "https://projectledgserver.azurewebsites.net/api/login-google";
+      window.location.href = "https://projectledgserver.azurewebsites.net/login-google";
     }
     catch (error) {
       console.error("Error during sign-in redirect:", error);
@@ -85,16 +85,16 @@ const SignUpPage = () => {
     }
   };
 
-  const handleMicrosoftSignIn = () => {
-    try {
-      window.location.href = "https://projectledgserver.azurewebsites.net/api/login-microsoft"
-    }
-    catch (error) {
-      console.error("Error during sign-in redirect:", error);
-      // alert("An error occured while redirecting to Google login. Please try again.")
-      alert("An error occured while redirecting to Microsoft login. Please try again.")
-    }
-  }
+  // const handleMicrosoftSignIn = () => {
+  //   try {
+  //     window.location.href = "https://localhost:7223/login-microsoft"
+  //   }
+  //   catch (error) {
+  //     console.error("Error during sign-in redirect:", error);
+  //     // alert("An error occured while redirecting to Google login. Please try again.")
+  //     alert("An error occured while redirecting to Microsoft login. Please try again.")
+  //   }
+  // }
 
   const features = [
     'Lägg upp obegränsat med fakturor',
@@ -181,20 +181,7 @@ const SignUpPage = () => {
                   </svg>
                   Fortsätt med Google
                 </Button>
-                <Button
-                  onClick={handleMicrosoftSignIn}
-                  className="w-full bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center justify-center"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23" className="w-5 h-5 mr-2">
-                    <title>Logga in med Microsoft</title>
-                    <desc>Microsoft Logo</desc>
-                    <path fill="#f35325" d="M1 1h10v10H1z" />
-                    <path fill="#81bc06" d="M12 1h10v10H12z" />
-                    <path fill="#05a6f0" d="M1 12h10v10H1z" />
-                    <path fill="#ffba08" d="M12 12h10v10H12z" />
-                  </svg>
-                  Fortsätt via Microsoft
-                </Button>
+
               </div>
             </div>
 
@@ -309,7 +296,7 @@ const SignUpPage = () => {
           <DialogHeader>
             <DialogTitle>Epost verifikation skickad</DialogTitle>
             <DialogDescription>
-            En e-postverifiering har skickats till din e-post. Kontrollera din inkorg och följ instruktionerna för att slutföra din registrering.  
+              En e-postverifiering har skickats till din e-post. Kontrollera din inkorg och följ instruktionerna för att slutföra din registrering.
             </DialogDescription>
           </DialogHeader>
           <Link to="/login" className="inline-block">
