@@ -34,7 +34,7 @@ const handleLogout = (path) => (e) => {
   window.location.href = path;
 
   if (typeof window !== "undefined") {
-    localStorage.setItem("vite-ui-theme", "light"); 
+    localStorage.setItem("vite-ui-theme", "light");
     document.documentElement.classList.remove("dark");
   }
 };
@@ -64,7 +64,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
 
   const handleClick = (e) => {
     if (onClick) onClick(e);
-    else setTimeout(() => {}, 300); // Delay for other nav actions
+    else setTimeout(() => { }, 300); // Delay for other nav actions
   };
 
   const barStyle = {
@@ -84,7 +84,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
     exit: { opacity: 0, height: 0 },
   };
 
-  
+
 
   return (
     <Link
@@ -113,7 +113,7 @@ const NavItem = ({ icon: Icon, label, path, onClick }) => {
 
 
 
-const NavItemSmall = ({ icon: Icon, path, tooltipText, onClick}) => {
+const NavItemSmall = ({ icon: Icon, path, tooltipText, onClick }) => {
   const { companyId } = useParams();
   const location = useLocation();
   const fullPath = `/dashboard/${companyId}${path}`;
@@ -195,7 +195,7 @@ const Sidebar = ({ isChatOpen }) => (
         <div className={`h-full ${isChatOpen ? 'flex flex-col h-[30vh]' : ''}`}>
 
           <UserDropdown
-            
+
             isChatOpen={isChatOpen}
             isNavOpen={true}
           />
@@ -330,7 +330,7 @@ export default function DashboardLayout() {
       {/* Main Content */}
       <div className="MAIN CONTENT flex flex-col flex-1 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div className="flex-1 overflow-auto h-screen bg-gradient-to-bl from-blue-700/40 to-gray-200 dark:bg-dark-gradient ">
-          <div className="CONTAINER ALL flex flex-col max-h-screen sm:pl-6 md:pl-8  ">
+          <div className="CONTAINER ALL flex flex-col max-h-screen sm:px-6 md:pl-8 md:pr-0  ">
 
             {/* Navbar */}
             <header className={`NAVBAR fixed top-0 z-20 w-full left-0 md:left-60 right-0 md:w-[calc(100%-15rem)]  ${isChatOpen && isMobile ? 'hidden' : ''}`}>
@@ -365,7 +365,7 @@ export default function DashboardLayout() {
                     initial={{ width: '100%' }}
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   >
-                      <Outlet context={{ isChatOpen }} />
+                    <Outlet context={{ isChatOpen }} />
                   </motion.div>
 
                   <AnimatePresence>
