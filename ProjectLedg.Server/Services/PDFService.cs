@@ -27,7 +27,7 @@ namespace ProjectLedg.Server.Services
             _customerRepository = customerRepository;
             _financeRepository = financeRepository;
 
-            LoadWkhtmltoxLibrary(); 
+            LoadWkhtmltoxLibrary();
         }
 
         public async Task<byte[]> GenerateAnnualReportPdf(AnnualReportGenerateToPdfDTO dto)
@@ -106,7 +106,7 @@ namespace ProjectLedg.Server.Services
             sb.Append("<p>Väsentliga händelser under räkenskapsåret presenteras i noterna.</p>");
             sb.Append("</div>");
 
-            
+
 
             // Page 4: Result Disposition
             sb.Append("<div style='page-break-before: always;'>");
@@ -115,8 +115,8 @@ namespace ProjectLedg.Server.Services
             sb.Append("<ul>");
             sb.Append($"<li>Årets resultat:{profit} kr</li>");
             sb.Append("</ul>");
-            sb.Append($"<p>Summa disponeras så att i ny räkning överföres: {Math.Round(profit * ((100 - dto.AnualReportRequest.profitPercentageToKeep)/100),2)} kr</p>");
-            sb.Append($"<p>Summa disponeras till aktieägare: {Math.Round(profit * ((dto.AnualReportRequest.profitPercentageToKeep) / 100),2)} kr</p>");
+            sb.Append($"<p>Summa disponeras så att i ny räkning överföres: {Math.Round(profit * ((100 - dto.AnualReportRequest.profitPercentageToKeep) / 100), 2)} kr</p>");
+            sb.Append($"<p>Summa disponeras till aktieägare: {Math.Round(profit * ((dto.AnualReportRequest.profitPercentageToKeep) / 100), 2)} kr</p>");
             sb.Append("<p>Företagets resultat och ställning i övrigt framgår av efterföljande resultat- och balansräkning med noter.</p>");
             sb.Append("</div>");
 
@@ -129,7 +129,7 @@ namespace ProjectLedg.Server.Services
             sb.Append($"<p>Rörelseresultat: {profit} kr</p>");
             sb.Append($"<p>Finansiella poster: {financialPost} kr</p>");
             sb.Append($"<p>Resultat efter finansiella poster: {dto.Financials.IncomeStatement.ResultAfterFinancialItems} kr</p>");
-            sb.Append($"<p>Skatt på årets resultat: {Math.Round((profit * companyTaxRate),2)} kr</p>");
+            sb.Append($"<p>Skatt på årets resultat: {Math.Round((profit * companyTaxRate), 2)} kr</p>");
             sb.Append($"<p>Årets resultat: {dto.Financials.IncomeStatement.AnnualResult} kr</p>");
             sb.Append("</div>");
 
@@ -138,7 +138,7 @@ namespace ProjectLedg.Server.Services
             sb.Append("<h2>Balansräkning - Tillgångar</h2>");
             sb.Append("<h3>Anläggningstillgångar:</h3>");
             sb.Append($"<ul><li>Immanteriella tillgångar: {intangibleAssets} kr</li><li>Materiella tillgångar: {tangibleAssets} kr</li><li>Finansiella tillgångar: {financialAssets} kr</li></ul>");
-            sb.Append($"<p>Summa anläggningstillgånar: {(intangibleAssets + tangibleAssets + financialAssets)} kr</p>");            
+            sb.Append($"<p>Summa anläggningstillgånar: {(intangibleAssets + tangibleAssets + financialAssets)} kr</p>");
             sb.Append("<h3>Omsättningstillgångar:</h3>");
             sb.Append($"<ul><li>Lager: {currentAssets.Stock} kr</li><li>Kundfordringar: {currentAssets.AccountsReceivable} kr</li><li>Kassa och Bank: {currentAssets.BankKassa} kr</li><li>Kortfristiga fordringar: {currentAssets.ShortTermReceivables} kr</li></ul>");
             sb.Append($"<p>Summa omsättningstillgångar: {(currentAssets.Stock + currentAssets.AccountsReceivable + currentAssets.BankKassa + currentAssets.ShortTermReceivables)} kr</p>");
@@ -166,7 +166,7 @@ namespace ProjectLedg.Server.Services
 
             sb.Append("</div>");
 
-            
+
 
 
             // Page 8: Notes
@@ -225,15 +225,15 @@ namespace ProjectLedg.Server.Services
             return _converter.Convert(doc);
         }
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
         public async Task<byte[]> GenerateInvoicePdf(OutgoingInvoiceGenerationDTO dto)
         {
 
@@ -355,28 +355,33 @@ namespace ProjectLedg.Server.Services
 
         private void LoadWkhtmltoxLibrary()
         {
-            var architecture = "64bit"; // Force 64-bit DLL
+            //Determine architecture (32-bit or 64-bit)
+            var architecture = Environment.Is64BitProcess ? "64bit" : "32bit";
+
+            //Build the full path to the DLL
             var libraryPath = Path.Combine(AppContext.BaseDirectory, "GhostScript", "Dink2PDF", architecture, "libwkhtmltox.dll");
 
+            //Log the path for debugging
+            Console.WriteLine($"Attempting to load DLL from: {libraryPath}");
+
+            // Ensure the DLL file exists
+            if (!File.Exists(libraryPath))
+            {
+                throw new FileNotFoundException($"The library file {libraryPath} was not found.");
+            }
+
+            //Load the library using CustomAssemblyLoadContext
             try
             {
-                Console.WriteLine($"Loading DLL from path: {libraryPath}");
-                if (!File.Exists(libraryPath))
-                {
-                    Console.WriteLine($"DLL not found at path: {libraryPath}");
-                    throw new FileNotFoundException($"DLL not found: {libraryPath}");
-                }
-
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(libraryPath);
                 Console.WriteLine("DLL loaded successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"DLL loading failed: {ex.Message}");
+                Console.WriteLine($"Failed to load DLL: {ex.Message}");
                 throw;
             }
         }
-
     }
 }
