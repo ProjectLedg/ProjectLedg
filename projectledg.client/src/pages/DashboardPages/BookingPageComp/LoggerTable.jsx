@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -13,9 +13,23 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
     const [showUnbooked, setShowUnbooked] = useState(false)
     const [sortBy, setSortBy] = useState("id") // Default sorting by invoice id
     const [sortOrder, setSortOrder] = useState("asc") // Default sort order ascending
+    const [safeSearchQuery, setSafeSearchQuery] = useState()
+    console.log("inv", invoices)
+
+    useEffect(() => {
+
+
+        const convertedString = searchQuery?.toString().toLowerCase() || ""
+
+        console.log("Converted string: ", convertedString)
+
+        setSafeSearchQuery(convertedString)
+
+    }, [searchQuery])
 
     // Sets the sort order for the selected column
     const handleSort = (key) => {
+
         if (sortBy === key) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc")
         } else {
@@ -81,8 +95,8 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                         .filter((item) =>
                             // Filter based on search query
                             Object.values(item)
-                                .filter((value) => typeof value === "string")
-                                .some((value) => value.toString().toLowerCase().includes(searchQuery))
+                                .filter((value) => typeof value === "string" || typeof value === "number")
+                                .some((value) => value?.toString().toLowerCase().includes(safeSearchQuery))
                         )
                         .slice(startItem, endItem) // pagination - start at startItem and end at endItem = 1 page   
                         .map((invoice) => (
@@ -92,19 +106,19 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                                 onClick={() => handleInvoiceClick(invoice)}
                             >
                                 <TableCell className="font-medium p-4">
-                                    {invoice.invoiceNumber}
+                                    {invoice.invoiceNumber || "N/A"}
                                 </TableCell>
                                 <TableCell className="font-medium p-4">
-                                    {invoice.vendorName}
+                                    {invoice.vendorName || "N/A"}
                                 </TableCell>
                                 <TableCell className="p-4" >
-                                    {new Date(invoice.invoiceDate).toLocaleDateString()}
+                                    {new Date(invoice.invoiceDate).toLocaleDateString() || "N/A"}
                                 </TableCell>
                                 <TableCell className="p-4">
-                                    {new Date(invoice.dueDate).toLocaleDateString()}
+                                    {new Date(invoice.dueDate).toLocaleDateString() || "N/A"}
                                 </TableCell>
                                 <TableCell className="font-medium p-4">
-                                    {invoice.invoiceTotal}kr
+                                    {invoice.invoiceTotal || 0}kr
                                 </TableCell>
                                 <TableCell className="p-4">
                                     <div className="flex md:flex-col space-x-2 md:space-x-0 md:space-y-2">
@@ -201,8 +215,8 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                     .filter((item) =>
                         // Filter based on search query
                         Object.values(item)
-                            .filter((value) => typeof value === "string")
-                            .some((value) => value.toString().toLowerCase().includes(searchQuery))
+                            .filter((value) => typeof value === "string" || typeof value === "number")
+                            .some((value) => value?.toString().includes(safeSearchQuery))
                     )
                     .slice(startItem, endItem) // pagination - start at startItem and end at endItem = 1 page   
                     .map((invoice) => (
@@ -213,13 +227,13 @@ export default function LoggerTable({ invoices, handleInvoiceClick, startItem, e
                                 onClick={() => handleInvoiceClick(invoice)}
                             >
                                 <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">Fakturanr: </p>
-                                <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">{invoice.invoiceNumber}</p>
+                                <p className="font-semibold text-lg text-gray-700 dark:text-white mb-1 px-2">{invoice.invoiceNumber || "N/A"}</p>
                                 <p className="font-semibold text-gray-600 dark:text-white px-2">Kund: </p>
-                                <p className="font-semibold text-gray-600 dark:text-white px-2">{invoice.vendorName}</p>
+                                <p className="font-semibold text-gray-600 dark:text-white px-2">{invoice.vendorName || "N/A"}</p>
                                 <p className="text-gray-600 dark:text-white px-2">Fakturadatum: </p>
-                                <p className="text-gray-600 dark:text-white px-2">{new Date(invoice.invoiceDate).toLocaleDateString()}</p>
+                                <p className="text-gray-600 dark:text-white px-2">{new Date(invoice.invoiceDate).toLocaleDateString() || "N/A"}</p>
                                 <p className="text-gray-600 dark:text-white px-2">Förfallodatum: </p>
-                                <p className="text-gray-600 dark:text-white px-2">{new Date(invoice.dueDate).toLocaleDateString()}</p>
+                                <p className="text-gray-600 dark:text-white px-2">{new Date(invoice.dueDate).toLocaleDateString() || "N/A"}</p>
                                 <p className="font-medium text-gray-600 dark:text-white px-2">Belopp: </p>
                                 <p className="font-semibold text-green-500 px-2">{invoice.invoiceTotal}kr</p>
                                 <Badge className="max-w-28 mx-2 mt-2 max-h-5 dark:text-white" variant={invoice.isPaid ? "success" : "destructive"}>
