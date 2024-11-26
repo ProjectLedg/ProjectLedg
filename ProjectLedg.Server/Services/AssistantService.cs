@@ -16,7 +16,7 @@ using ProjectLedg.Server.Data.Models;
 public class AssistantService : IAssistantService
 {
     private readonly OpenAIClient _openAiClient;
-    private readonly ProjectLedgContext _dbContext;
+    private readonly ProjectLedgContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AssistantService> _logger;
     private readonly EncryptionHelper _encryptionHelper;
@@ -44,7 +44,7 @@ public class AssistantService : IAssistantService
      ITransactionFunctions transactionFunctions)
     {
         _openAiClient = openAiClient;
-        _dbContext = dbContext;
+        _context = dbContext;
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
         _encryptionHelper = encryptionHelper;
@@ -68,29 +68,29 @@ public class AssistantService : IAssistantService
                 return result;
             }
 
-            // Step 2: If no intent matched, fall back to OpenAI chat
+            //Step 2: If no intent matched, fall back to OpenAI chat
             var session = _httpContextAccessor.HttpContext.Session;
 
-            // Retrieve chat history from session
+            //Retrieve chat history from session
             var chatHistory = GetChatHistory();
 
-            // Add user's message to chat history
+            //Add user's message to chat history
             chatHistory.Add(new Message(Role.User, message));
 
-            // Ensure system context is included
+            //Ensure system context is included
             if (!chatHistory.Any(m => m.Role == Role.System))
             {
                 var systemMessage = CreateSystemMessage();
                 chatHistory.Insert(0, systemMessage);
             }
 
-            // Send chat request and get the assistant's response
+            //Send chat request and get the assistant's response
             var assistantResponse = await SendChatRequestAsync(chatHistory);
 
-            // Add assistant's response to chat history
+            //Add assistant's response to chat history
             chatHistory.Add(new Message(Role.Assistant, assistantResponse));
 
-            // Save updated chat history
+            //Save updated chat history
             SaveChatHistory(chatHistory);
 
             return assistantResponse;
@@ -236,23 +236,23 @@ public class AssistantService : IAssistantService
         // Ingoing Invoices
         _intentHelper.RegisterCommand("obetalda fakturor", async args =>
         {
+            _logger.LogInformation("Executing intent: 'obetalda fakturor' with arguments: {Args}", args);
+
             if (args.Length == 0)
             {
                 return "Vänligen ange ett företagsnamn eller ID för att visa obetalda fakturor.";
             }
 
-            // Check if the first argument is a numeric Company ID
             if (int.TryParse(args[0], out var companyId))
             {
                 var invoices = await _ingoingInvoiceFunctions.GetUnpaidInvoicesForCompanyAsync(companyId);
-                return invoices == null
+                return invoices == null || !invoices.Any()
                     ? "Inga obetalda fakturor hittades för det angivna företaget."
                     : FormatInvoices("Obetalda inkommande fakturor", invoices);
             }
 
-            // Otherwise, assume it is a company name
             var companyName = string.Join(" ", args);
-            var company = await _dbContext.Companies
+            var company = await _context.Companies
                 .FirstOrDefaultAsync(c => c.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
 
             if (company == null)
@@ -261,11 +261,10 @@ public class AssistantService : IAssistantService
             }
 
             var invoicesByName = await _ingoingInvoiceFunctions.GetUnpaidInvoicesForCompanyAsync(company.Id);
-            return invoicesByName == null
+            return invoicesByName == null || !invoicesByName.Any()
                 ? $"Inga obetalda fakturor hittades för företaget '{companyName}'."
                 : FormatInvoices($"Obetalda inkommande fakturor för {companyName}", invoicesByName);
         });
-
 
 
         // Outgoing Invoices
