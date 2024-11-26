@@ -27,7 +27,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
     const [userData, setuserData] = useState(null);
     const [companyData, setcompanyData] = useState([]);
     const [currentCompany, setCurrentCompany] = useState(null);
-    const [currentCompanyId , setCurrentCompanyId] = useState(null);
+    
 
     useEffect(() => {
         let isMounted = true;

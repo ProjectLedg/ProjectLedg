@@ -220,48 +220,66 @@ const Sidebar = ({ isChatOpen }) => (
 
 const MobileNav = ({ navItems }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const handleClose = () => {
-    setIsOpen(false);
-  };
+  const handleClose = () => setIsOpen(false);
 
   return (
-
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="md:hidden bg-transparent border-0 ">
+        <Button
+          variant="outline"
+          size="icon"
+          className="md:hidden bg-transparent border-0"
+        >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-60 p-0">
         <div className="flex flex-col h-full py-4 dark:bg-darkBackground">
-          <div className="flex-grow ">
+          <div className="flex-grow">
+            {/* User Dropdown */}
+            <UserDropdown isNavOpen={isOpen} />
 
-            <UserDropdown
-              
-              isNavOpen={isOpen}
-            />
-
-            <div >
-              <div>
-                {navItems.filter(item => item.position === "top").map((item, index) => (
-                  <NavItem key={index} {...item} onClick={handleClose} />
+            {/* Top Nav Items */}
+            <div>
+              {navItems
+                .filter((item) => item.position === "top")
+                .map((item, index) => (
+                  <NavItem
+                    key={index}
+                    {...item}
+                    onClick={(e) => {
+                      if (item.onClick) item.onClick(e); // Call logout or other click handlers
+                      handleClose(); // Close the mobile menu
+                    }}
+                  />
                 ))}
-              </div>
             </div>
           </div>
-          <div className="mt-auto  border-t dark:border-darkBorder">
+
+          {/* Bottom Nav Items */}
+          <div className="mt-auto border-t dark:border-darkBorder">
             <div>
-              {navItems.filter(item => item.position === "bottom").map((item, index) => (
-                <NavItem key={index} {...item} onClick={handleClose} />
-              ))}
+              {navItems
+                .filter((item) => item.position === "bottom")
+                .map((item, index) => (
+                  <NavItem
+                    key={index}
+                    {...item}
+                    onClick={(e) => {
+                      if (item.onClick) item.onClick(e); // Trigger logout here
+                      handleClose(); // Close the mobile menu
+                    }}
+                  />
+                ))}
             </div>
           </div>
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 };
+
 
 
 export default function DashboardLayout() {
