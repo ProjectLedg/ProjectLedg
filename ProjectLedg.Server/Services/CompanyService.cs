@@ -92,7 +92,7 @@ namespace ProjectLedg.Server.Services
         }
 
         [Authorize]
-        public async Task<IEnumerable<UsersCompaniesDTO>> GetCompaniesForUserAsync(ClaimsPrincipal claims)
+        public async Task<List<UsersCompaniesDTO>> GetCompaniesForUserAsync(ClaimsPrincipal claims)
         {
             string? userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
