@@ -24,16 +24,20 @@ const tooltipInfo = {
 
 const MetricCard = ({ title, value, change, changeType, toolDescription, chart, icon: Icon }) => (
   <Card className="overflow-hidden max-h-64 dark:bg-darkSurface dark:border-0 ">
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center">
-        {Icon && <Icon className="mr-2 h-4 w-4 dark:text-darkSecondary" />}
-        {title}
-      </CardTitle>
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2 pt-7 px-4">
+      <div className=" titleContainer flex flex-row gap-1 items-center">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
+          {title}
+        </CardTitle>
+        {Icon && <Icon className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground dark:text-darkSecondary" />}
+      </div>
       <TooltipProvider>
         <TooltipShad>
           {/* Hide on mobile as it doesn't work */}
           <TooltipTrigger className="hidden lg:block">
-            <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground dark:text-darkSecondary" />
+            <HelpCircle className="ml-2 h-4 w-4 text-muted-foreground dark:text-darkSecondary" />
+          <TooltipTrigger>
+            <HelpCircle className="ml-2 h-4 w-4 text-muted-foreground dark:text-darkSecondary" />
           </TooltipTrigger>
           <TooltipContent className="dark:bg-darkBackground dark:border-darkBorder  ">
             <p dangerouslySetInnerHTML={{ __html: toolDescription }} ></p>
@@ -41,7 +45,7 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
         </TooltipShad>
       </TooltipProvider>
     </CardHeader>
-    <CardContent>
+    <CardContent className="sm:pt-2">
       <div className="text-lg sm:text-2xl font-bold ">{value}</div>
       <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${changeType === 'positive' ? 'bg-green-100 text-green-800 dark:bg-darkPositive dark:text-white' : 'bg-red-100 text-red-800 dark:bg-darkNegative dark:text-white'
         }`}>
@@ -178,7 +182,7 @@ const DashboardHomePage = () => {
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight ">Översikt</h2>
       </div>
       <div className={`GRIDCONTAINER flex ${isChatOpen ? 'flex-col' : 'flex-row'}`}>
-        <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] pb-4' : 'w-[50%] pr-2'}`}>
+        <div className={`md:grid gap-4 space-y-4 md:space-y-0 sm:grid-cols-2 lg:grid-cols-4  w-full `}>
 
           <MetricCard
             title={
@@ -250,9 +254,6 @@ const DashboardHomePage = () => {
               </BarChart>
             }
           />
-        </div>
-
-        <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 ${isChatOpen ? 'w-[100%] ' : 'w-[50%] pl-2 '}`}>
           <MetricCard
             title={
               <span style={{ color: isDarkMode ? '#b0b0b0' : '#64748b' }}>
