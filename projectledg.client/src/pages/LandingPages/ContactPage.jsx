@@ -65,7 +65,7 @@ export default function ContactPage() {
             Vänligen fyll i formuläret nedan eller använd vår kontaktinformation.
           </p>
           <div className="grid md:grid-cols-2 gap-8 justify-center">
-            <Card className="bg-white shadow-lg border-gray-800 border-2">
+            <Card className="bg-white shadow-lg ">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-between">
                   Skicka ett meddelande till oss
@@ -132,7 +132,7 @@ export default function ContactPage() {
                 </form>
               </CardContent>
             </Card>
-            <Card className="bg-white shadow-lg border-gray-800 border-2">
+            <Card className="bg-white shadow-lg">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-between">
                   Kontaktinformation
