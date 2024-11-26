@@ -285,7 +285,7 @@ const HelpPage = () => {
                   id="image"
                   type="file"
                   onChange={handleFileChange}
-                  className="text-sm sm:text-base"
+                  className="text-sm sm:text-base  cursor-pointer"
                 />
               </div>
               <Button

@@ -1,18 +1,13 @@
 import ChatWindow from "@/pages/DashboardPages/DashboardPageComp/ChatWindow";
 import ChatWindowMobile from "@/pages/DashboardPages/DashboardPageComp/ChatWindowMobile";
-import axios from 'axios';
+import { axiosConfig } from '/axiosconfig'
 
 export default function ChatService({ onClose, mobile }) {
     async function sendMessage(input) {
         try {
-            const response = await axios.post(
+            const response = await axiosConfig.post(
                 'https://projectledgserver.azurewebsites.net/api/Assistant/chat',
-                JSON.stringify(input),
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
+                JSON.stringify(input)
             );
             return response.data; // Return the response data
         } catch (error) {
