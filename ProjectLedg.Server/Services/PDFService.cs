@@ -346,31 +346,26 @@ namespace ProjectLedg.Server.Services
 
         private void LoadWkhtmltoxLibrary()
         {
-            //Determine architecture (32-bit or 64-bit)
-            var architecture = Environment.Is64BitProcess ? "64bit" : "32bit";
+            // Force loading the 32-bit version
+            var libraryPath = Path.Combine(AppContext.BaseDirectory, "GhostScript", "Dink2PDF", "32bit", "libwkhtmltox.dll");
 
-            //Build the full path to the DLL
-            var libraryPath = Path.Combine(AppContext.BaseDirectory, "GhostScript", "Dink2PDF", architecture, "libwkhtmltox.dll");
+            // Log the path for debugging
+            Console.WriteLine($"Attempting to load 32-bit DLL from: {libraryPath}");
 
-            //Log the path for debugging
-            Console.WriteLine($"Attempting to load DLL from: {libraryPath}");
-
-            // Ensure the DLL file exists
             if (!File.Exists(libraryPath))
             {
                 throw new FileNotFoundException($"The library file {libraryPath} was not found.");
             }
 
-            //Load the library using CustomAssemblyLoadContext
             try
             {
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(libraryPath);
-                Console.WriteLine("DLL loaded successfully.");
+                Console.WriteLine("32-bit DLL loaded successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to load DLL: {ex.Message}");
+                Console.WriteLine($"Failed to load 32-bit DLL: {ex.Message}");
                 throw;
             }
         }
