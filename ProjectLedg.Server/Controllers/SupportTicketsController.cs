@@ -28,7 +28,6 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Authroized to only allow logged in users
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateTicket([FromForm] SupportTicketCreationDTO ticketDto)
         {
