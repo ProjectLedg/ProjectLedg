@@ -221,7 +221,7 @@ export default function InvoiceLogger() {
   if (isLoading) {
     return (
       <Card className="w-full h-[600px] flex flex-col shadow-lg">
-        <CardHeader className="flex flex-row justify-between border-b">
+        <CardHeader className="flex flex-row justify-between border-b dark:border-darkBorder">
           <CardTitle className="text-2xl font-bold text-gray-800 flex items-center dark:text-white">
             <FileText className="mr-2 text-green-500" />
             Fakturor
