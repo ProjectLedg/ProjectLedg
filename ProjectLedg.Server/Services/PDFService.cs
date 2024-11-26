@@ -393,7 +393,7 @@ namespace ProjectLedg.Server.Services
         private void LoadWkhtmltoxLibrary()
         {
             //Determine architecture (32-bit or 64-bit)
-            var architecture = "32bit";
+            var architecture = "64bit";
 
             //Build the full path to the DLL
             var libraryPath = Path.Combine(AppContext.BaseDirectory, "GhostScript", "Dink2PDF", architecture, "libwkhtmltox.dll");
