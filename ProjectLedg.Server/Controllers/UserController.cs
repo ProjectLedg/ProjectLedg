@@ -28,7 +28,6 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // GET: api/User/all
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -187,7 +186,6 @@ namespace ProjectLedg.Server.Controllers
             return BadRequest("Password change failed.");
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("send-notice")]
         public async Task<IActionResult> SendNotice([FromBody] NoticeRequest request)
         {
@@ -195,7 +193,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(new { Message = "Notice sent successfully" });
         }
 
-        [Authorize]
         [HttpGet("notices")]
         public async Task<IActionResult> GetUserNotices()
         {
