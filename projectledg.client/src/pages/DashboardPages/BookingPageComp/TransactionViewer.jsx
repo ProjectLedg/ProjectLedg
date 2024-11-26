@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
+import ReloadButton from "@/components/ReloadButton"
 import { FileText } from 'lucide-react'
 import { axiosConfig } from '/axiosconfig'
 import LoggerPagination from "./LoggerPagination"
@@ -93,14 +94,19 @@ const TransactionViewer = () => {
             Verifikationer
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-full">
-          <p className="text-red-500">{error}</p>
-          <Button
+        <CardContent className="h-full w-full flex flex-col justify-center items-center space-y-2">
+          <p className="text-black">{error}</p>
+
+
+          {/* <Button
             className="bg-green-500 hover:bg-green-600 dark:text-white ml-4"
             onClick={fetchTransactions}
           >
             Ladda om
-          </Button>
+          </Button> */}
+
+          <ReloadButton onClick={fetchTransactions} isLoading={isLoading} />
+
         </CardContent>
       </Card>
     )
@@ -213,14 +219,14 @@ const TransactionViewer = () => {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="w-full md:w-[85vw] max-w-3xl rounded-lg dark:border-darkBorder dark:bg-darkBackground">
+        <DialogContent className="px-4 py-4 w-[95%] md:w-[85vw] max-h-[80vh] max-w-3xl rounded-lg dark:border-darkBorder dark:bg-darkBackground">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-green-600">Verifikation</DialogTitle>
+            <DialogTitle className=" text-2xl font-bold text-green-600">Verifikation</DialogTitle>
           </DialogHeader>
           {selectedTransaction && (
             <div className="mt-4 space-y-6">
               {/* Grid for details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4 px-2">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-white">Datum</p>
                   <p className="text-sm text-gray-900 dark:text-darkSecondary">
@@ -248,7 +254,7 @@ const TransactionViewer = () => {
               </div>
 
               {/* Table for bas accounts */}
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto col-span-2">
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-100 dark:bg-darkBorder dark:border-darkBorder">

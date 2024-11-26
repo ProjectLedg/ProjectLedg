@@ -43,7 +43,45 @@ namespace ProjectLedg.Server.Controllers
                 {
                     return NotFound("No outgoing invoices found");
                 }
-                return Ok(invoices);
+
+                List<InvoiceDTO> invoiceListDto = new List<InvoiceDTO>();
+                foreach (var invoice in invoices)
+                {
+
+                    InvoiceDTO invoiceDto = new InvoiceDTO
+                    {
+                        InvoiceNumber = invoice.InvoiceNumber,
+                        InvoiceDate = invoice.InvoiceDate,
+                        DueDate = invoice.DueDate,
+                        InvoiceTotal = invoice.InvoiceTotal,
+                        InvoiceFilePath = (invoice.InvoiceFilePath != null ? invoice.InvoiceFilePath : ""),
+                        CustomerAddress = invoice.Customer.Address,
+                        CustomerAddressRecipient = invoice.Customer.Name,
+                        VendorAddress = invoice.Company.Address,
+                        VendorAddressRecipient = invoice.Company.CompanyName,
+                        CompanyId = invoice.Company.Id,
+                        CustomerId = invoice.CustomerId.ToString(),
+                        CustomerName = invoice.Customer.Name,
+                        IsBooked = invoice.IsBooked,
+                        IsOutgoing = invoice.IsBooked,
+                        IsPaid = invoice.IsPaid,
+                        PaymentDetails = (invoice.PaymentDetails != null ? invoice.PaymentDetails : ""),
+                        TotalTax = invoice.TotalTax,
+                        VendorName = invoice.Company.CompanyName,
+                        VendorTaxId = invoice.Company.TaxId,
+                        Items = invoice.Items.Select(i => new InvoiceItemDTO
+                        {
+                            Amount = i.Amount,
+                            Description = i.Description,
+                            Quantity = i.Quantity,
+                            UnitPrice = i.UnitPrice,
+                        }).ToList()
+
+                    };
+                    invoiceListDto.Add(invoiceDto);
+                }
+
+                return Ok(invoiceListDto);
             }
             catch (Exception ex)
             {
