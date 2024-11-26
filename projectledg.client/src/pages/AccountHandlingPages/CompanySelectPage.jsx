@@ -188,7 +188,15 @@ export default function CompanySelectPage() {
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     const scrollAmount = direction === "left" ? -200 : 200;
-    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    // container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    
+    const newScrollLeft = container.scrollLeft + scrollAmount;
+
+    // Clamp the scroll position
+    container.scrollTo({
+      left: Math.max(0, Math.min(newScrollLeft, container.scrollWidth - container.clientWidth)),
+      behavior: 'smooth'
+    });
   }
 
   const handleMouseDown = (e) => {
@@ -204,9 +212,13 @@ export default function CompanySelectPage() {
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     e.preventDefault();
+
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
     const walk = (x - startX) * 2;
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    
+    // Clamp the scroll position
+    container.scrollLeft = Math.max(0, Math.min(newScrollLeft, container.scrollWidth - container.clientWidth));
   }
 
   const handleCompanySelect = (company) => {
@@ -259,7 +271,7 @@ export default function CompanySelectPage() {
 
           <div
             ref={scrollContainerRef}
-            className={`flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing  ${containerClass}`}
+            className={`overflow-x-auto overscroll-contain touch-pan-x scrollbar-hide flex space-x-4 p-4 cursor-grab active:cursor-grabbing  ${containerClass}`}
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
