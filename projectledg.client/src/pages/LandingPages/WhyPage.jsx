@@ -41,9 +41,9 @@ export default function VarforPage() {
           <p className="text-xl text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
             Vår lösning sticker ut från konkurrensen och erbjuder enastående värde och innovation för att möta dina behov.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-6 max-w-4xl mx-auto">
             {reasons.map((reason, index) => (
-              <Card key={index} className="border-l-4 border-green-500">
+              <Card key={index} className="shadow-md border-none ">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
