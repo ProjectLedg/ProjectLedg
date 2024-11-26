@@ -31,7 +31,10 @@ namespace ProjectLedg.Server.Controllers
         [HttpGet("/login-microsoft")]
         public IActionResult MicrosoftLogin()
         {
-            var redirectUri = Url.Action("signinoidc");
+            var redirectUri = Url.Action("signinoicd", null, null, Request.Scheme);
+
+            _logger.LogInformation("Redirect URI: {RedirectUri}", redirectUri);
+
             var properties = new AuthenticationProperties
             {
                 RedirectUri = redirectUri
@@ -41,10 +44,17 @@ namespace ProjectLedg.Server.Controllers
         }
 
         [AllowAnonymous] // NOT AUTHORIZED - need to be unlocked to be able to login
-        [HttpGet("/signinoidc")]
+        [HttpGet("/signinoicd")]
         public async Task<IActionResult> Signinoidc()
         {
             var result = await HttpContext.AuthenticateAsync(MicrosoftAccountDefaults.AuthenticationScheme);
+
+            if (!result.Succeeded)
+            {
+                _logger.LogError("Authentication failed");
+                return BadRequest("Authentication failed");
+            }
+
             var claimsPrincipal = result.Principal;
 
             if (claimsPrincipal == null)
