@@ -13,10 +13,10 @@ const NotificationSender = () => {
 
     const url =
       endpoint === "newsletter"
-        ? "https://localhost:7223/api/admin/newsletter"
+        ? "https://projectledgserver.azurewebsites.net/api/admin/newsletter"
         : endpoint === "targeted-email"
-        ? "https://localhost:7223/api/admin/targeted-email"
-        : "https://localhost:7223/api/admin/email-notification";
+        ? "https://projectledgserver.azurewebsites.net/api/admin/targeted-email"
+        : "https://projectledgserver.azurewebsites.net/api/admin/email-notification";
 
     try {
       const response = await axios.post(url, { subject, content });
