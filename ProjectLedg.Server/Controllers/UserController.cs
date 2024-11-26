@@ -37,7 +37,7 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // GET: api/User/{id}
-        [Authorize(Roles = "Manager, Admin")]
+        [Authorize]
         [HttpGet("getUser")]
         public async Task<IActionResult> GetUserByIdAsync()
         {
