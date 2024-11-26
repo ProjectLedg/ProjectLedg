@@ -264,6 +264,15 @@ namespace ProjectLedg.Server.Services
 
             var sb = new StringBuilder();
 
+            // Embed Google Fonts
+            sb.Append("<style>");
+            sb.Append("@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');");
+            sb.Append("body { font-family: 'Roboto', Arial, sans-serif; color: #333; }");
+            sb.Append("h1, h2, h3 { color: #444; }");
+            sb.Append("table { border-collapse: collapse; width: 100%; }");
+            sb.Append("th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }");
+            sb.Append("</style>");
+
             // Header: Invoice Information
             sb.Append("<div style='text-align: center; font-family: Arial, sans-serif; margin-bottom: 40px; color: #333;'>");
             sb.Append("<h1 style='color: #444; font-size: 32px; letter-spacing: 1px;'>FAKTURA</h1>");
