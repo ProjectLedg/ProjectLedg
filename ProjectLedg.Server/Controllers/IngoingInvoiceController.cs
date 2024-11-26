@@ -192,7 +192,6 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Only accessible for Admins and not users - there already exists methods and endpoints to get all and specific invoices for companies
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllInvoices()
         {
