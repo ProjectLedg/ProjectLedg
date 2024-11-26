@@ -260,7 +260,7 @@ export default function CompanySelectPage() {
 
           <div
             ref={scrollContainerRef}
-            className={`overflow-x-auto space-x-4 p-4 cursor-grab active:cursor-grabbing  ${containerClass}`}
+            className={`flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing  ${containerClass}`}
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
