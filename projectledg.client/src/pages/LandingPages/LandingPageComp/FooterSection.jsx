@@ -15,7 +15,7 @@ export default function Component() {
      
 
       
-      <footer className="bg-white bg-opacity-20 backdrop-blur-lg w-full py-8 md:px-10 border-t border-gray-200">
+      <footer className="px-5 bg-white bg-opacity-20 backdrop-blur-lg w-full py-8 md:px-10 border-t border-gray-200">
         <div className="w-full ">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Logo and description */}
