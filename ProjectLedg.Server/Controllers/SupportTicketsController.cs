@@ -91,7 +91,6 @@ namespace ProjectLedg.Server.Controllers
 
 
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllTickets()
         {
@@ -99,7 +98,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(tickets);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateTicketStatus(int id, [FromBody] string status)
         {
@@ -114,7 +112,6 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTicket(int id)
         {
@@ -130,7 +127,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(ticket);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("statistics/open")]
         public async Task<IActionResult> GetOpenTicketsCount()
         {
@@ -169,7 +165,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(categories);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("statistics/priority")]
         public async Task<IActionResult> GetTicketsCountByPriority([FromQuery] string status)
         {
@@ -177,7 +172,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(priorityCounts);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("random")]
         public async Task<IActionResult> GetRandomTicket()
         {
@@ -187,7 +181,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(ticket);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("{id}/respond")]
         public async Task<IActionResult> RespondToTicket(int id, [FromBody] string message)
         {
@@ -202,7 +195,6 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("{id}/close")]
         public async Task<IActionResult> CloseTicket(int id)
         {
