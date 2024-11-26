@@ -222,14 +222,6 @@ namespace ProjectLedg.Server.Services
         }
 
         
-        
-        
-        
-        
-        
-        
-        
-        
         public async Task<byte[]> GenerateInvoicePdf(OutgoingInvoiceGenerationDTO dto)
         {
 
