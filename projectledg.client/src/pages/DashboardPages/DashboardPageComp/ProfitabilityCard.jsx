@@ -32,7 +32,7 @@ const ProfitabilityCard = ({ runway }) => {
         </div>
         <TooltipProvider>
           <TooltipShad>
-            <TooltipTrigger>
+            <TooltipTrigger className="hidden lg:block">
               <HelpCircle className="ml-2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground dark:text-darkSecondary" />
             </TooltipTrigger>
             <TooltipContent className="dark:bg-darkBackground dark:border-darkBorder">

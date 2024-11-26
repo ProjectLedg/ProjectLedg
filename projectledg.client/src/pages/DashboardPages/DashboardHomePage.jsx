@@ -33,7 +33,8 @@ const MetricCard = ({ title, value, change, changeType, toolDescription, chart, 
       </div>
       <TooltipProvider>
         <TooltipShad>
-          <TooltipTrigger>
+          {/* Hide on mobile as it doesn't work */}
+          <TooltipTrigger className="hidden lg:block">
             <HelpCircle className="ml-2 h-4 w-4 text-muted-foreground dark:text-darkSecondary" />
           </TooltipTrigger>
           <TooltipContent className="dark:bg-darkBackground dark:border-darkBorder  ">
