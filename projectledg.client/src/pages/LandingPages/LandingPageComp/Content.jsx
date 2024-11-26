@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import DashboardImage from "@/assets/LoadingPageDashboardPlaceholder.jpg";
+import DashboardImage from "@/assets/LoadingPageDashboard.png";
+
 
 export default function Content() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Content() {
   
 
   return (
-    <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-24  ">
+    <div className="flex flex-col w-[80vw] h-full justify-center items-center mt-44 md:mt-24 ">
       <h1 className="py-10 scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl text-center ">
         Data till insikter på <span className="text-green-500">minuter</span>
       </h1>
@@ -40,8 +41,12 @@ export default function Content() {
         </button>
       </div>
 
-      <div className="my-24">
-        <img className="border-2 rounded-md shadow-even" src={DashboardImage} />
+      <div className="mt-10 mb-24 hidden sm:block">
+        <img className="border-2 h-[80vh] rounded-xl shadow-lg" src={DashboardImage} />
+      </div>
+
+      <div className="mt-10 mb-24 block sm:hidden">
+        
       </div>
     </div>
   );
