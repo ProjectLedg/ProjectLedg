@@ -68,6 +68,12 @@ export function AnnualReportPreview() {
     "equityAndLiabilities.liabilities.shortTermLoans": "Kortfristiga lån",
     "equityAndLiabilities.liabilities.taxesAndFees": "Moms och avgifter",
     "equityAndLiabilities.liabilities.accountsPayable": "Leveranstörsskulder",
+    "financials.balanceSheet.currentAssets.stock": "Lager",
+    "financials.balanceSheet.currentAssets.accountsReceivable": "Kundfordringar",
+    "financials.balanceSheet.currentAssets.bankKassa": "Bank och kassa",
+   "financials.balanceSheet.currentAssets.shortTermReceivables": "Kortfristiga fordringar",
+   "financials.balanceSheet.totalCurrentAssets": "Summa omsättningstillgångar",
+
   
   };
   
@@ -136,7 +142,7 @@ export function AnnualReportPreview() {
           profitPercentageToKeep: parseFloat(additionalInfo.profitPercentageToKeep)
         }
       };
-      
+      console.log("Final data for submit: ",finalData)
       const response = await axiosConfig.post("/PDF/generate-annual-report", finalData, {
         responseType: 'blob' // Important: tells axios to expect binary data
       });
@@ -159,7 +165,7 @@ export function AnnualReportPreview() {
   };
 
   if (error) {
-    return <div className="p-4 text-red-500">Error: {error}</div>;
+    return <div className="p-4 text-red-500">Fel: {error}</div>;
   }
 
   if (!reportData) {
@@ -201,9 +207,14 @@ export function AnnualReportPreview() {
   }
 
   const renderInputField = (path, value, label) => {
+    
     const isNumeric = typeof value === 'number';
-    const customLabel = customTitles[path] || path.split('.').pop().replace(/([A-Z])/g, ' $1').trim();
-  
+    
+    // Always check customTitles for the label
+    const customLabel = customTitles[path] || 
+                        label || 
+                        path.split('.').pop().replace(/([A-Z])/g, ' $1').trim();
+    
     return (
       <div key={path} className="space-y-2">
         <Label htmlFor={path} className="text-sm font-medium">
@@ -220,24 +231,29 @@ export function AnnualReportPreview() {
       </div>
     );
   };
+  
 
   const renderSection = (data, basePath = '') => {
+    
     return Object.entries(data).map(([key, value]) => {
       const path = basePath ? `${basePath}.${key}` : key;
       if (typeof value === 'object' && value !== null) {
         return (
           <div key={path} className="space-y-4">
-            <h3 className="text-lg font-semibold mt-4">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+            <h3 className="text-lg font-semibold mt-4">
+              {customTitles[path] || key.replace(/([A-Z])/g, ' $1').trim()}
+            </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               {renderSection(value, path)}
             </div>
           </div>
         );
       } else {
-        return renderInputField(path, value);
+        return renderInputField(path, value, customTitles[path]);
       }
     });
   };
+  
 
   return (
     <>
@@ -293,11 +309,22 @@ export function AnnualReportPreview() {
                   </TabsContent>
 
                   <TabsContent value="equityAndLiabilities">
-                    
-                    <div className="space-y-6 ">
-                    
-                      {renderSection(reportData.equityAndLiabilities, 'equityAndLiabilities')}
+                  <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Kapital</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                        {renderSection(reportData.equityAndLiabilities.equity, 'equityAndLiabilities.equity')}
+                        </div>
+                      </div>
+                      <Separator />
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Skulder</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                        {renderSection(reportData.equityAndLiabilities.liabilities, 'equityAndLiabilities.liabilities')}
+                        </div>
+                      </div>
                     </div>
+                    
                   </TabsContent>
                 </Tabs>
               </ScrollArea>
