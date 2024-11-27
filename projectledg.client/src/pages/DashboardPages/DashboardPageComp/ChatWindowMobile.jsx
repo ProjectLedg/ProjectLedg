@@ -6,7 +6,10 @@ import ReactMarkdown from 'react-markdown';
 
 
 
-export default function ChatWindowMobile({ onClose, onSendMessage }) {
+
+export default function ChatWindowMobile({ onClose, onSendMessage, userName }) {
+
+
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {
         const savedMessages = localStorage.getItem('chatMessages');
@@ -108,7 +111,7 @@ export default function ChatWindowMobile({ onClose, onSendMessage }) {
                     <div className="p-6 space-y-4 flex flex-col justify-around h-[80%]">
                         <div className="space-y-2 flex flex-col items-center text-center">
                             <h2 className="text-3xl font-normal text-gray-400 dark:text-white">
-                                Hej <span className="text-green-500">John!</span>
+                                Hej <span className="text-green-500">{userName}</span>
                             </h2>
                             <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Kan jag hjälpa dig med något?</h3>
                             <p className="text-md text-gray-600 dark:text-darkSecondary">
