@@ -219,7 +219,7 @@ const TransactionViewer = () => {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="px-4 py-4 w-[95%] md:w-[85vw] max-h-[80vh] max-w-3xl rounded-lg dark:border-darkBorder dark:bg-darkBackground">
+        <DialogContent className="px-4 w-[95%] md:w-[85vw] max-h-[95vh] max-w-3xl rounded-lg dark:border-darkBorder dark:bg-darkBackground">
           <DialogHeader>
             <DialogTitle className=" text-2xl font-bold text-green-600">Verifikation</DialogTitle>
           </DialogHeader>
