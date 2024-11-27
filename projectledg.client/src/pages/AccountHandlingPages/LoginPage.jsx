@@ -67,16 +67,16 @@ export default function LoginPage() {
         navigate('/signup')
     }
 
-    const handleMicrosoftSignIn = () => {
-        try {
-            window.location.href = "https://projectledgserver.azurewebsites.net/api/login-microsoft"
-        }
-        catch (error) {
-            console.error("Error during sign-in redirect:", error);
-            // alert("An error occured while redirecting to Google login. Please try again.")
-            alert("An error occured while redirecting to Microsoft login. Please try again.")
-        }
-    }
+    // const handleMicrosoftSignIn = () => {
+    //     try {
+    //         window.location.href = "https://projectledgserver.azurewebsites.net/login-microsoft"
+    //     }
+    //     catch (error) {
+    //         console.error("Error during sign-in redirect:", error);
+    //         // alert("An error occured while redirecting to Google login. Please try again.")
+    //         alert("An error occured while redirecting to Microsoft login. Please try again.")
+    //     }
+    // }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-300 backdrop-blur-md px-4 sm:px-6 lg:px-8">
@@ -127,20 +127,7 @@ export default function LoginPage() {
                             </svg>
                             Fortsätt via Google
                         </Button>
-                        <Button
-                            onClick={handleMicrosoftSignIn}
-                            className="w-full bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center justify-center"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23" className="w-5 h-5 mr-2">
-                                <title>Logga in med Microsoft</title>
-                                <desc>Microsoft Logo</desc>
-                                <path fill="#f35325" d="M1 1h10v10H1z" />
-                                <path fill="#81bc06" d="M12 1h10v10H12z" />
-                                <path fill="#05a6f0" d="M1 12h10v10H1z" />
-                                <path fill="#ffba08" d="M12 12h10v10H12z" />
-                            </svg>
-                            Fortsätt via Microsoft
-                        </Button>
+
                     </div>
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">

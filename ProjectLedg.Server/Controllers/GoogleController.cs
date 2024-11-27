@@ -114,7 +114,7 @@ namespace ProjectLedg.Server.Controllers
                 Expires = DateTime.UtcNow.AddHours(1) // Token expiry matches cookie expiry
             });
             //return Ok(new { token }); 
-            return Redirect("https://localhost:5173/company-select");
+            return Redirect("https://ledg.se/company-select");
         }
 
         private string GenerateJwtToken(IEnumerable<Claim> claims)

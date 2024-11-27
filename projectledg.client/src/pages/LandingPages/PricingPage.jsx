@@ -103,7 +103,7 @@ const PricingPage = () => {
           </div>
         </div>
       </main>
-      <div className="mt-24">
+      <div className="mt-48">
       <FooterSection />
       </div>
     </div>

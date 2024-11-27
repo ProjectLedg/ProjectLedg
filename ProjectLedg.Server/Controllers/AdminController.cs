@@ -24,7 +24,6 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Only managers can create admins
-        [Authorize(Roles = "Manager")]
         [HttpPost("createAdmin")]
         public async Task<IActionResult> CreateAdmin(CreateAccountRequestDTO request)
         {
@@ -37,7 +36,6 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // Accessible by Admins and Managers
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("getAllAdmins")]
         public async Task<IActionResult> GetAllAdmins()
         {
@@ -45,7 +43,6 @@ namespace ProjectLedg.Server.Controllers
             return Ok(admins);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpGet("getAdminById/{id}")]
         public async Task<IActionResult> GetAdminById(string id)
         {
@@ -53,7 +50,6 @@ namespace ProjectLedg.Server.Controllers
             return admin != null ? Ok(admin) : NotFound();
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPut("updateAdmin")]
         public async Task<IActionResult> UpdateAdmin(User admin)
         {
@@ -62,7 +58,6 @@ namespace ProjectLedg.Server.Controllers
             return result.Succeeded ? Ok() : BadRequest();
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpDelete("deleteAdmin/{id}")]
         public async Task<IActionResult> DeleteAdmin(string id)
         {
@@ -95,7 +90,6 @@ namespace ProjectLedg.Server.Controllers
             return Unauthorized(result.ErrorMessage);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("newsletter")]
         public async Task<IActionResult> SendNewsletter([FromBody] NewsletterRequest request)
         {
@@ -110,7 +104,6 @@ namespace ProjectLedg.Server.Controllers
         }
 
         // POST: api/admin/targeted-email
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("targeted-email")]
         public async Task<IActionResult> SendTargetedEmail([FromBody] TargetedEmailRequest request)
         {
@@ -124,7 +117,6 @@ namespace ProjectLedg.Server.Controllers
             return BadRequest(new { Message = result.ErrorMessage });
         }
 
-        [Authorize(Roles = "Manager, Admin")]
         [HttpPost("email-notification")]
         public async Task<IActionResult> SendEmailNotification([FromBody] EmailNotificationRequest request)
         {

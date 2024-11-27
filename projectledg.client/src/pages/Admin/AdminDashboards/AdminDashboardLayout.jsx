@@ -33,7 +33,7 @@ const navItems = [
 
   { icon: Home, label: "Hem", path: "", position: "top", tooltipText: "Hem" },
   { icon: Activity, label: "Hantera Användare", path: "/user-management", position: "top", tooltipText: "Hantera Användare" },
-  { icon: BookCheck, label: "Två Faktor Autentisering", path: "/2fa", position: "top", tooltipText: "Två Faktor Autentisering" },
+  { icon: BookCheck, label: "2FA", path: "/2fa", position: "top", tooltipText: "2FA" },
   { icon: FileText, label: "Tickets", path: "/tickets", position: "top", tooltipText: "Tickets" },
   { icon: FileText, label: "Notifications", path: "/notification", position: "top", tooltipText: "Notifications" },
   { icon: Settings, label: "Inställningar", path: "/settings", position: "bottom", tooltipText: "Inställningar" },
@@ -367,7 +367,7 @@ export default function AdminDashboardLayout() {
                     <div className="md:hidden">
                       <MobileNav navItems={navItems} />
                     </div>
-                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">{companyData ? companyData.companyName : 'Hej {user.name}'}</h1>
+                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">{companyData ? companyData.companyName : 'Hej John!'}</h1>
                   </div>
                   <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4 ">
                     <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />

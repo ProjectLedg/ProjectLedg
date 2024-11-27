@@ -117,9 +117,20 @@ namespace ProjectLedg.Server.Services
             return companyDtoList;
         }
 
-        public async Task<Company> GetCompanyByIdAsync(int id)
+        public async Task<CompanyDTO> GetCompanyByIdAsync(int id)
         {
-            return await _companyRepository.GetCompanyByIdAsync(id);
+            var company = await _companyRepository.GetCompanyByIdAsync(id);
+
+            return new CompanyDTO
+            {
+                CompanyName = company.CompanyName,
+                Address = company.Address,
+                AmountOfEmployees = company.AmountOfEmployees,
+                CompanyDescription = company.CompanyDescription,
+                Id = company.Id,
+                OrgNumber = company.OrgNumber,
+                TaxId = company.TaxId
+            };
         }
     }
 }

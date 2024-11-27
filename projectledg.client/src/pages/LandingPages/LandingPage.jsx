@@ -21,7 +21,7 @@ export default function LandingPage() {
     return (
         <div className="">
             <Navbar />
-            <div className="w-[100vw] flex flex-col items-center justify-center">
+            <div className="w-[100vw] h-[100vh] md:h-auto flex flex-col items-center justify-center">
                 <Content />
             </div>
             <div className="w-[100vw] overflow-auto">
@@ -32,7 +32,7 @@ export default function LandingPage() {
                     <CallToAction />
                 </section>
             </div>
-            <div className="flex flex-col items-center pb-14 sm:pb-36 ">
+            <div className="flex flex-col items-center px-4 md:px-6 m-auto  pb-14 sm:pb-36 ">
                 <NewsletterSignup />
             </div>
             <div className="mt-24">

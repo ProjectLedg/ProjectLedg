@@ -45,13 +45,13 @@ namespace ProjectLedg.Server.Services
             
 
             // Built unsubscribe-link 
-            string unsubscribeLink = "https://localhost:7223/api/email/unsubscribe?token=" + tokenString;
+            string unsubscribeLink = "https://projectledgserver.azurewebsites.net/api/email/unsubscribe?token=" + tokenString;
 
             // Built email message with HTML tags 
             string emailBody = "<h2>Tack för att du prenumererar!</h2>" +
                       "<p>Vi uppskattar att du har registrerat dig för att få de senaste nyheterna och uppdateringarna från oss.</p>" +
                       "<p>Håll utkik i din inkorg för framtida meddelanden!</p>" +
-                      "<p>Med vänliga hälsningar,<br>Team ProjectLedg</p>" +
+                      "<p>Med vänliga hälsningar,<br>Team Ledge</p>" +
                       "<br><br><br>" +
                       "<p style='font-size: 12px;'>Om du vill avregistrera dig, <a href='" + unsubscribeLink + "'>klicka här</a>.</p>";
 
@@ -74,7 +74,7 @@ namespace ProjectLedg.Server.Services
                      $"<h2>Tack för att du hört av dig!</h2>" +
                     $"<p>Hej {dto.Name}<br> Vi uppskattar att du kontaktat oss. Vi kommer att återkomma till dig så snart som möjligt.<br>" +
                     $"Vänliga hälsningar,<br>" +
-                    $"Team ProjectLedg</p>"
+                    $"Team Ledge</p>"
                     );
                 return true;
             }
