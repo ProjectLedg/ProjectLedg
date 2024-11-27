@@ -48,9 +48,9 @@ namespace ProjectLedg.Server.Repositories
             string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             string callbackUrl = $"{_baseUrl}/confirm-email?userId={user.Id}&code={Uri.EscapeDataString(emailConfirmationToken)}";
 
-            string emailSubject = "ProjectLedg - Bekräfta ditt konto!";
+            string emailSubject = "Ledge - Bekräfta ditt konto!";
             string emailBody =
-                $"<h2>Välkommen till ProjectLedg!</h2>" +
+                $"<h2>Välkommen till Ledge!</h2>" +
                 $"<p>Tack för att du har valt att använda ProjectLedg. Nu är det bara ett sista steg kvar för att komma igång.<br>" +
                 $"Klicka på länken nedan för att bekräfta din e-postadress:<br>" +
                 $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Verifiera din e-postadress</a>.<br><br>" +
@@ -58,7 +58,7 @@ namespace ProjectLedg.Server.Repositories
                 $"{callbackUrl}<br><br>" +
                 $"Har du frågor eller funderingar? Du är alltid välkommen att svara på detta mejl.<br><br>" +
                 $"Vänliga hälsningar,<br>" +
-                $"Team ProjectLedg</p>";
+                $"Team Ledge</p>";
 
             var sendEmailResult = await _emailSender.SendEmailAsync(user.Email, emailSubject, emailBody);
             if (!sendEmailResult.Success)
