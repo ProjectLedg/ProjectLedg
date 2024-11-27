@@ -105,7 +105,7 @@ export default function UserDropdown({isChatOpen, isNavOpen }) {
                     transition={{ duration: 0.3 }}
                 >
                     <h2 className="text-md font-semibold">{userData}</h2>
-                    <p className="text-xs text-muted-foreground dark:text-darkSecondary">{currentCompany?.name || "No Company"}</p>
+                    <p className="text-xs text-muted-foreground dark:text-darkSecondary">{currentCompany?.name || "Inget företag valt"}</p>
                 </motion.div>
             </div>
             <DropdownMenu>
