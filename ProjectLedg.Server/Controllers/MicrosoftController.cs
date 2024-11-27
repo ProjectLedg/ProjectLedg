@@ -124,7 +124,7 @@ namespace ProjectLedg.Server.Controllers
                 Expires = DateTime.UtcNow.AddHours(3)
             });
 
-            return Redirect("https://localhost:5173/company-select");
+            return Redirect("https://ledg.se/company-select");
         }
 
         private string GenerateJwtToken(IEnumerable<Claim> claims)

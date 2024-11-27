@@ -13,7 +13,7 @@ namespace ProjectLedg.Server.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly string _baseUrl = "https://localhost:7294";
+        private readonly string _baseUrl = "https://projectledgserver.azurewebsites.net";
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;

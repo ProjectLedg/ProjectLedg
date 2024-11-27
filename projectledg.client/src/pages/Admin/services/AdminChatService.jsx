@@ -109,7 +109,7 @@ export default function AdminChatService({ onClose, mobile }) {
             }
         } catch (error) {
             console.error("Failed to process command:", error);
-            return "Ett fel uppstod vid bearbetning av ditt kommando.";
+            return "Det finns inga öppna supportärenden just nu.";
         }
     }
 

@@ -122,7 +122,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                     <div className="p-6 space-y-4 flex flex-col justify-around h-[80%] dark:bg-darkSurface ">
                         <div className="space-y-2 flex flex-col items-center text-center">
                             <h2 className="text-3xl font-normal text-gray-400 dark:text-white">
-                                Hej <span className="text-green-500">Placeholder</span>
+                                Hej <span className="text-green-500">John!</span>
                             </h2>
 
                             <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Kan jag hjälpa dig med något?</h3>

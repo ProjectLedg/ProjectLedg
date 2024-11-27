@@ -47,21 +47,16 @@ export default function CompanySelectPage() {
   //     "companyName": "Test Company",
   //     "orgNumber": "1234567890"
   //   },
-  //   {
-  //     "id": 1,
-  //     "companyName": "Test Company",
-  //     "orgNumber": "1234567890"
-  //   },
-  //   {
-  //     "id": 1,
-  //     "companyName": "Test Company",
-  //     "orgNumber": "1234567890"
-  //   },
-  //   {
-  //     "id": 1,
-  //     "companyName": "Test Company",
-  //     "orgNumber": "1234567890"
-  //   }
+  //   // {
+  //   //   "id": 1,
+  //   //   "companyName": "Test Company",
+  //   //   "orgNumber": "1234567890"
+  //   // },
+  //   // {
+  //   //   "id": 1,
+  //   //   "companyName": "Test Company",
+  //   //   "orgNumber": "1234567890"
+  //   // }
 
   // ]
 
@@ -143,7 +138,7 @@ export default function CompanySelectPage() {
         await new Promise(resolve => setTimeout(resolve, 500));
         setProgress(20);
 
-        
+
         const response = await axiosConfig.get("/Company/getUserCompanies");
         // console.log(response.data)
         setProgress(60);
@@ -158,7 +153,7 @@ export default function CompanySelectPage() {
         // If user has no companies route them to company create as they need to create one
         if (companiesData.length === 0) {
           navigate(`/company-create`)
-        // If user has exactly 1 company route them to the dashboard directly as there's no selections to choose anyway
+          // If user has exactly 1 company route them to the dashboard directly as there's no selections to choose anyway
         } else if (companiesData.length === 1) {
           navigate(`/dashboard/${companiesData[0].id}`)
         }
@@ -188,15 +183,7 @@ export default function CompanySelectPage() {
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     const scrollAmount = direction === "left" ? -200 : 200;
-    // container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    
-    const newScrollLeft = container.scrollLeft + scrollAmount;
-
-    // Clamp the scroll position
-    container.scrollTo({
-      left: Math.max(0, Math.min(newScrollLeft, container.scrollWidth - container.clientWidth)),
-      behavior: 'smooth'
-    });
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
 
   const handleMouseDown = (e) => {
@@ -216,9 +203,6 @@ export default function CompanySelectPage() {
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
     const walk = (x - startX) * 2;
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-    
-    // Clamp the scroll position
-    container.scrollLeft = Math.max(0, Math.min(newScrollLeft, container.scrollWidth - container.clientWidth));
   }
 
   const handleCompanySelect = (company) => {
@@ -269,35 +253,72 @@ export default function CompanySelectPage() {
             </Button>
           )}
 
-          <div
-            ref={scrollContainerRef}
-            className={`overflow-x-auto overscroll-contain touch-pan-x scrollbar-hide flex space-x-4 p-4 cursor-grab active:cursor-grabbing  ${containerClass}`}
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              WebkitOverflowScrolling: "touch",
-              userSelect: 'none',
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onMouseMove={handleMouseMove}
-          >
-            {companies.map((company, i) => (
-              <CompanyCard
-                key={company.id}
-                companyId={company.id}
-                companyName={company.companyName}
-                orgNumber={company.orgNumber}
-                // imageUrl={companyIcons[i % companyIcons.length]}
-                handleCompanySelect={handleCompanySelect}
-              />
-            ))}
-            <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 h-48 bg-green-50 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-green-100 transition-colors duration-300 border-2 border-dashed border-green-300'>
-              <PlusCircle size={48} className='text-green-500 mb-2' />
-              <span className="text-green-700 font-medium">Lägg till nytt företag</span>
-            </button>
+          {/* Mobile view */}
+          <div className='sm:hidden'>
+            <div
+              className={`flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing`}
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                WebkitOverflowScrolling: "touch",
+                userSelect: 'none',
+              }}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onMouseMove={handleMouseMove}
+            >
+              {companies.map((company, i) => (
+                <CompanyCard
+                  key={company.id}
+                  companyId={company.id}
+                  companyName={company.companyName}
+                  orgNumber={company.orgNumber}
+                  // imageUrl={companyIcons[i % companyIcons.length]}
+                  handleCompanySelect={handleCompanySelect}
+                />
+              ))}
+              <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 h-48 bg-green-50 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-green-100 transition-colors duration-300 border-2 border-dashed border-green-300'>
+                <PlusCircle size={48} className='text-green-500 mb-2' />
+                <span className="text-green-700 font-medium">Lägg till nytt företag</span>
+              </button>
+            </div>
+
           </div>
+
+          {/* Desktop view */}
+          <div className='hidden sm:block'>
+            <div
+              ref={scrollContainerRef}
+              className={`flex overflow-x-auto space-x-4 p-4 scrollbar-hide cursor-grab active:cursor-grabbing  ${containerClass}`} // Container class makes sure cards are centerd if to few cards - only needed on desktop
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                WebkitOverflowScrolling: "touch",
+                userSelect: 'none',
+              }}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onMouseMove={handleMouseMove}
+            >
+              {companies.map((company, i) => (
+                <CompanyCard
+                  key={company.id}
+                  companyId={company.id}
+                  companyName={company.companyName}
+                  orgNumber={company.orgNumber}
+                  // imageUrl={companyIcons[i % companyIcons.length]}
+                  handleCompanySelect={handleCompanySelect}
+                />
+              ))}
+              <button onClick={handleCompanyAdd} className='flex-shrink-0 w-48 h-48 bg-green-50 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-green-100 transition-colors duration-300 border-2 border-dashed border-green-300'>
+                <PlusCircle size={48} className='text-green-500 mb-2' />
+                <span className="text-green-700 font-medium">Lägg till nytt företag</span>
+              </button>
+            </div>
+          </div>
+
           {/* Fade in the left and right side */}
           {showLeftArrow && (
             <div className="absolute left-0 top-0 w-16 h-full bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>

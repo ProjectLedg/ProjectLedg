@@ -25,7 +25,7 @@ const HelpPage = () => {
   // Mappning för kategorier till deras respektive index
   const categoryMapping = {
     Tekniskt: 0,
-    Betalninf: 1,
+    Betalning: 1,
     Konto: 2,
     Generellt: 3,
     Produktärende: 4,
