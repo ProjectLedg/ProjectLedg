@@ -87,11 +87,11 @@ export default function CompanyCreatePage() {
 
     try {
       const response = await axiosConfig.post('/Company/create', postData)
-      console.log('Form submitted successfully:', response.data)
+      // console.log('Form submitted successfully:', response.data)
       navigate('/company-select')
     } catch (err) {
       console.error('Error submitting form:', err)
-      setError('An error occurred while submitting the form. Please try again.')
+      setError('Ett oväntat fel uppstod. Vänligen försök igen.')
     } finally {
       setIsLoading(false)
     }
