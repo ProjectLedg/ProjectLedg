@@ -3,7 +3,6 @@ import ChatLoader from '@/ChatLoader';
 import Typewriter from '@/Typewriter';
 import ReactMarkdown from 'react-markdown';
 import { X, Send, FilePlus, Undo2, FileChartColumn, SquarePen, Paperclip, Bot } from 'lucide-react'
-
 import {
     TooltipShad,
     TooltipContent,
@@ -11,7 +10,8 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export default function ChatWindow({ onClose, onSendMessage }) {
+export default function ChatWindow({ onClose, onSendMessage, userName }) {
+
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {
         const savedMessages = localStorage.getItem('chatMessages');
@@ -97,6 +97,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
         </div>
     ));
 
+
     return (
         <div className="chatWindow flex flex-col  right-0 p-2 w-[30vw] h-[80vh] bg-white/60 dark:bg-darkBackground bg-opacity-80 shadow-lg rounded-l-2xl max-w-[720px]">
             <div className="bg-gray-100 dark:bg-darkSurface rounded-xl overflow-hidden h-[100%]">
@@ -122,7 +123,7 @@ export default function ChatWindow({ onClose, onSendMessage }) {
                     <div className="p-6 space-y-4 flex flex-col justify-around h-[80%] dark:bg-darkSurface ">
                         <div className="space-y-2 flex flex-col items-center text-center">
                             <h2 className="text-3xl font-normal text-gray-400 dark:text-white">
-                                Hej <span className="text-green-500">Placeholder</span>
+                                Hej <span className="text-green-500">{userName}</span>
                             </h2>
 
                             <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Kan jag hjälpa dig med något?</h3>
