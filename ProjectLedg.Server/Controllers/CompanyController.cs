@@ -78,5 +78,27 @@ namespace ProjectLedg.Server.Controllers
 
             return Ok(companies);
         }
+
+        [Authorize(Roles = "Manager, Admin")]
+        [HttpDelete("DeleteCompany/{companyId}")]
+        public async Task<IActionResult> DeleteCompanyAsync(int companyId)
+        {
+            // Get claims from JWT and user id from that
+            ClaimsPrincipal claimsUser = User;
+            string userId = claimsUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized("No user id in claims.");
+
+            var companyBelongsToUser = await _userService.VerifyCompanyBelongsToUser(userId, companyId);
+            if (!companyBelongsToUser.Success)
+                return BadRequest(companyBelongsToUser.Message);
+
+            var company = await _companyService.DeleteCompanyAsync(companyId);
+            if (company == null)
+            {
+                return NotFound();
+            }
+            return Ok(company);
+        }
     }
 }

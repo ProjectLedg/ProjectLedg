@@ -1,4 +1,5 @@
 ﻿using ProjectLedg.Server.Data.Models;
+using ProjectLedg.Server.Options;
 
 namespace ProjectLedg.Server.Repositories.IRepositories
 {
@@ -8,5 +9,7 @@ namespace ProjectLedg.Server.Repositories.IRepositories
         Task<IEnumerable<Company>> GetAllCompaniesAsync();
         Task<Company> GetCompanyByIdAsync(int id);
         Task<IEnumerable<Company>> GetCompaniesForUserAsync(string userId);
+
+        Task DeleteCompanyAsync(Company company);
     }
 }

@@ -73,14 +73,14 @@ export default function InvoiceUploader({ setInvoice, isUploadLoading, setIsUplo
     return {
       ...invoiceData,
       InvoiceNumber: invoiceData.InvoiceId,
-      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal.replace(',', '.').replace('kr', '').replace('SEK', '').trim()),
-      TotalTax: parseFloat(invoiceData.TotalTax.replace('kr', '').replace('SEK', '').trim()),
+      InvoiceTotal: parseFloat(invoiceData.InvoiceTotal),
+      TotalTax: parseFloat(invoiceData.TotalTax),
       PaymentDetails: invoiceData.PaymentDetails ? invoiceData.PaymentDetails : [],
       InvoiceFilePath: azureFileUrl,
       Items: invoiceData.Items.map(item => ({
         ...item,
-        Amount: parseFloat(item.Amount.replace('kr', '').replace('SEK', '').trim()),
-        UnitPrice: parseFloat(item.UnitPrice.replace('kr', '').replace('SEK', '').trim()),
+        Amount: parseFloat(item.Amount),
+        UnitPrice: parseFloat(item.UnitPrice),
       }))
     };
   }
