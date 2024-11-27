@@ -9,7 +9,7 @@ namespace ProjectLedg.Server.Services.IServices
     public interface ICompanyService
     {
         Task<IEnumerable<Company>> GetAllCompaniesAsync();
-        Task<Company> GetCompanyByIdAsync(int id);
+        Task<CompanyDTO> GetCompanyByIdAsync(int id);
         Task<CompanyDTO> CreateCompanyAsync(CreateCompanyDTO request, ClaimsPrincipal userClaims);
         Task<List<UsersCompaniesDTO>> GetCompaniesForUserAsync(ClaimsPrincipal claims);
 
