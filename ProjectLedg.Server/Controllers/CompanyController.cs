@@ -43,7 +43,7 @@ namespace ProjectLedg.Server.Controllers
             }
 
             // Assuming the returned object has the auto-generated Id after saving
-            return CreatedAtAction(nameof(GetCompanyById), new { id = createdCompany.Id }, createdCompany);
+            return Ok("Succesfully created company.");
         }
 
         [Authorize]
