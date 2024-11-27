@@ -154,7 +154,7 @@ namespace ProjectLedg.Server.Controllers
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ClockSkew = TimeSpan.FromMinutes(5),
+                    ClockSkew = TimeSpan.FromDays(5),
                 }, out SecurityToken validatedToken);
 
                 //Extract the email from the token claims
