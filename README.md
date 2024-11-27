@@ -55,9 +55,9 @@ Ledge is a streamlined solution designed to help users organize and manage their
 <h3>Installing the Project</h3>
 <ol>
   <li>Clone the Repository:</li>
-  <pre><code>git clone https://github.com/YourOrganization/Ledge.git</code></pre>
+  <pre><code>git clone https://github.com/projectledg/projectledg.git</code></pre>
   <li>Navigate to the Project Directory:</li>
-  <pre><code>cd Ledge</code></pre>
+  <pre><code>cd Projectledg</code></pre>
   <li>Build the Project:</li>
   <pre><code>dotnet build</code></pre>
   <li>Run Migrations and Update Database:</li>
