@@ -289,10 +289,27 @@ export default function DashboardLayout() {
   const [companyData, setCompanyData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [userName, setUserName] = useState(null);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        console.log("Fetching user's first name...");
+        const response = await axiosConfig.get('/User/getUser');
+        setUserName(response.data.firstName);
+        console.log(response.data.firstName);
+      } catch (error) {
+        console.error("Error fetching user's first name:", error);
+      }
+    };
+
+    fetchUserName();
+  }, []);
+
   const fetchCompanyData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosConfig.get(`/Company/${companyId}`);
+      const response = await axiosConfig.get(`/company/${companyId}`);
       setCompanyData(response.data);
     } catch (error) {
       console.error("Failed to fetch company data", error);
@@ -321,8 +338,10 @@ export default function DashboardLayout() {
   // if (isLoading) {
   //   return <div>Loading...</div>; // Or a more sophisticated loading component
   // }
+  console.log("Parent Component userName!!!!!!!!:", userName);
 
   return (
+
     <div className="flex h-screen overflow-hidden shadow-lg">
       {/* Sidebar */}
       {!isMobile && <Sidebar isChatOpen={isChatOpen} />}
@@ -354,7 +373,7 @@ export default function DashboardLayout() {
             <div className="flex flex-row m-0 lg:mr-8 md:mr-8 sm:mr-0 overflow-y-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} >
               {isMobile && isChatOpen ? (
                 // Render ChatWindowMobile on mobile view only
-                <ChatService onClose={toggleChat} mobile />
+                <ChatService onClose={toggleChat} userName={userName} mobile />
               ) : (
                 <div className="mt-24 max-h-screen items-start flex flex-row justify-between w-full dark:from-gray-700 dark:to-gray-900">
                   <motion.div
@@ -377,7 +396,7 @@ export default function DashboardLayout() {
                         transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0 }}
                         className="inherit w-[30vw] fixed right-0"
                       >
-                        <ChatService onClose={toggleChat} />
+                          <ChatService onClose={toggleChat} userName={userName} />
                       </motion.div>
                     )}
                   </AnimatePresence>
