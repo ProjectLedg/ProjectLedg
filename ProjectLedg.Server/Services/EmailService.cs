@@ -45,7 +45,7 @@ namespace ProjectLedg.Server.Services
             
 
             // Built unsubscribe-link 
-            string unsubscribeLink = "https://localhost:7223/api/email/unsubscribe?token=" + tokenString;
+            string unsubscribeLink = "https://projectledgserver.azurewebsites.net/api/email/unsubscribe?token=" + tokenString;
 
             // Built email message with HTML tags 
             string emailBody = "<h2>Tack för att du prenumererar!</h2>" +

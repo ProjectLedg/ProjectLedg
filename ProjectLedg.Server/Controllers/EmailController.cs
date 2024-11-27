@@ -79,7 +79,7 @@ namespace ProjectLedg.Server.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")] // ???
+        //[Authorize(Roles = "Admin")] // ???
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllEmails()
         {
