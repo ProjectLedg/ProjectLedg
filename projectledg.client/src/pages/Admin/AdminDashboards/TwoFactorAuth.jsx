@@ -31,7 +31,7 @@ const TwoFactorAuth = () => {
     setIsLoading(true);
     try {
       const response = await axiosConfig.post('/TwoFactorAuth/enable-2fa', { code: authCode });
-      setMessage('Två faktor autentisering är aktiverad!');
+      setMessage('2FA är aktiverad!');
     } catch (error) {
       console.error('Failed to activate 2FA', error);
       setMessage('Aktivering misslyckades. Kontrollera din kod och försök igen.');
@@ -47,7 +47,7 @@ const TwoFactorAuth = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>Två Faktor Autentisering</h1>
+      <h1 style={styles.header}>2FA</h1>
       {isLoading ? (
         <p style={styles.message}>Laddar...</p>
       ) : qrCodeUrl ? (
@@ -66,7 +66,7 @@ const TwoFactorAuth = () => {
               required
             />
             <button type="submit" style={styles.button}>
-              Aktivera Två Faktor Autentisering
+              Aktivera 2FA
             </button>
           </form>
           {message && <p style={styles.message}>{message}</p>}
