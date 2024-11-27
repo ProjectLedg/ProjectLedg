@@ -47,5 +47,12 @@ namespace ProjectLedg.Server.Repositories
         {
             return await _context.Companies.Include(c => c.BasAccounts).FirstOrDefaultAsync(c => c.Id == id);
         }
+
+        public async Task DeleteCompanyAsync(Company company)
+        {
+            _context.Companies.Remove(company);
+            await _context.SaveChangesAsync();
+
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace ProjectLedg.Server.Services.IServices
         Task<CompanyDTO> GetCompanyByIdAsync(int id);
         Task<CompanyDTO> CreateCompanyAsync(CreateCompanyDTO request, ClaimsPrincipal userClaims);
         Task<List<UsersCompaniesDTO>> GetCompaniesForUserAsync(ClaimsPrincipal claims);
+        Task<ResultObject> DeleteCompanyAsync(int companyId);
+
 
         //Task<> UpdateCompanyAsync(Company company);
         //Task<> DeleteCompanyAsync(string password, ClaimsPrincipal currentUser);

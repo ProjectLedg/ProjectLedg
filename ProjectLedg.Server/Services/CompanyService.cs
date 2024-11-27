@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using ProjectLedg.Server.Data.Models;
 using ProjectLedg.Server.Data.Models.DTOs.Company;
+using ProjectLedg.Server.Options;
 using ProjectLedg.Server.Repositories;
 using ProjectLedg.Server.Repositories.IRepositories;
 using ProjectLedg.Server.Services.IServices;
@@ -131,6 +132,22 @@ namespace ProjectLedg.Server.Services
                 OrgNumber = company.OrgNumber,
                 TaxId = company.TaxId
             };
+        }
+
+        public async Task<ResultObject> DeleteCompanyAsync(int companyId)
+        {
+            try
+            {
+                var company = await _companyRepository.GetCompanyByIdAsync(companyId);
+                await _companyRepository.DeleteCompanyAsync(company);
+
+                return new ResultObject { Message = "Successfully deleted company.", Success = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResultObject { Message = $"Error: {ex}", Success = false };
+            }
+
         }
     }
 }
