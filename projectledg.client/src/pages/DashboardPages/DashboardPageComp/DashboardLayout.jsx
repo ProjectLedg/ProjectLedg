@@ -292,7 +292,7 @@ export default function DashboardLayout() {
   const fetchCompanyData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosConfig.get(`/Company/${companyId}`);
+      const response = await axiosConfig.get(`/Company/GetCompanyById/${companyId}`);
       setCompanyData(response.data);
     } catch (error) {
       console.error("Failed to fetch company data", error);
