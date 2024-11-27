@@ -2,7 +2,7 @@ import ChatWindow from "@/pages/DashboardPages/DashboardPageComp/ChatWindow";
 import ChatWindowMobile from "@/pages/DashboardPages/DashboardPageComp/ChatWindowMobile";
 import { axiosConfig } from '/axiosconfig'
 
-export default function ChatService({ onClose, mobile }) {
+export default function ChatService({ onClose, mobile, userName }) {
     async function sendMessage(input) {
         try {
             const response = await axiosConfig.post(
@@ -16,11 +16,12 @@ export default function ChatService({ onClose, mobile }) {
             return response;
         }
     }
-    
+
+ 
 
     return mobile ? (
-        <ChatWindowMobile onClose={onClose} onSendMessage={sendMessage} />
+        <ChatWindowMobile onClose={onClose} onSendMessage={sendMessage} userName={userName} />
     ) : (
-        <ChatWindow onClose={onClose} onSendMessage={sendMessage} />
+        <ChatWindow onClose={onClose} onSendMessage={sendMessage} userName={userName} />
     );
 }
