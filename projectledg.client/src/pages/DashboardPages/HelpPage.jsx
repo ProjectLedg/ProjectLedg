@@ -183,7 +183,7 @@ const HelpPage = () => {
 
       {/* Tabs outside the Card */}
       <div className="w-full space-y-4 ">
-        <h1 className="text-3xl mb-8 font-bold">Hjälp</h1>
+        <h1 className="text-3xl mb-7 font-bold">Hjälp</h1>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full ">
           <ScrollArea className="whitespace-nowrap rounded-md ">
             <TabsList className="inline-flex justify-between w-full p-1 h-auto dark:bg-darkBackground ">

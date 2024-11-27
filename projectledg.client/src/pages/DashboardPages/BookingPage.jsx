@@ -16,11 +16,11 @@ export default function BookingPage() {
             <div className="space-y-4 p-4">
                 <Tabs defaultValue="details">
                     <div className="grid grid-cols-1 ">
-                        <h2 className="text-3xl font-bold mb-2">Bokför</h2>
+                        <h2 className="text-3xl font-bold mb-7">Bokför</h2>
 
-                        <TabsList className="max-w-[250px] h-11 mb-1 dark:bg-darkSurface">
-                            <TabsTrigger value="details" className="dark:data-[state=active]:bg-green-500 dark:data-[state=active]:text-white">Bokföring</TabsTrigger>
-                            <TabsTrigger value="customer" className="dark:data-[state=active]:bg-green-500 dark:data-[state=active]:text-white" >Verifikationer</TabsTrigger>
+                        <TabsList className="max-w-fit mb-1 block dark:bg-darkBackground">
+                            <TabsTrigger value="details" className="dark:bg-darkBackground dark:data-[state=active]:bg-darkSurface dark:data-[state=active]:text-white">Bokföring</TabsTrigger>
+                            <TabsTrigger value="customer" className="dark:bg-darkBackground dark:data-[state=active]:bg-darkSurface dark:data-[state=active]:text-white" >Verifikationer</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="details">

@@ -255,7 +255,7 @@ export default function InvoicingPage() {
     <div className="space-y-4 p-4">
 
       <div className="flex justify-between items-center ">
-        <h1 className="text-3xl font-bold">Fakturering</h1>
+        <h1 className="text-3xl font-bold mb-3">Fakturering</h1>
         <Button variant="outline" onClick={resetForm} className="dark:bg-darkSurface dark:border-darkBorder">
           <RefreshCw className="mr-2 h-4 w-4" />
           Återställ 
@@ -278,8 +278,8 @@ export default function InvoicingPage() {
 
 
 
-      <Tabs defaultValue="details" className="mb-6 ">
-        <TabsList className="dark:bg-darkBackground">
+      <Tabs defaultValue="details" >
+        <TabsList className="dark:bg-darkBackground mb-1">
           <TabsTrigger value="details">Innehåll</TabsTrigger>
           <TabsTrigger value="customer">Kundinformation</TabsTrigger>
         </TabsList>
