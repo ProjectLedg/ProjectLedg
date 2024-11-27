@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavbarButtons from "./NavbarButtons";
 import ChatService from "@/services/ChatService";
+import { Skeleton } from "@/components/ui/skeleton"
 import { axiosConfig } from '/axiosconfig'
 import UserDropdown from "./UserDropdown";
 import { motion, AnimatePresence } from "framer-motion"
@@ -360,7 +361,7 @@ export default function DashboardLayout() {
                     <div className="md:hidden">
                       <MobileNav navItems={navItems} />
                     </div>
-                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">{companyData ? companyData.companyName : 'Company Name'}</h1>
+                    <h1 className="text-lg pl-4 sm:pl-6 pr-6 font-bold hidden sm:block">{companyData  ? companyData.companyName : <Skeleton className="h-8 w-[200px] bg-slate-100 dark:bg-darkBorder"></Skeleton>}</h1>
                   </div>
                   <div className="flex items-center md:mr-[3rem] sm:mr-[2rem] space-x-2 sm:space-x-4 ">
                     <NavbarButtons isChatOpen={isChatOpen} toggleChat={toggleChat} />
