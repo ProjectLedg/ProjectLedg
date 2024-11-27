@@ -124,11 +124,11 @@ Ledge is a streamlined solution designed to help users organize and manage their
 
 <h2 id="meet-the-team">Meet the Team</h2>
 <ul>
-  <li><a href="https://github.com/adrozs">Adrian Rozsahegyi</a> - Backend Specialist</li>
-  <li><a href="https://github.com/chasalex">Alexander Lundquist</a> - Frontend Developer</li>
-  <li><a href="https://github.com/hjalmarstranninge">Hjalmar Stranninge</a> - Data Analyst & QA</li>
-  <li><a href="https://github.com/jonzy81">Jonny Touma</a> - DevOps Engineer</li>
-  <li><a href="https://github.com/manhattaa">Fady Hatta</a> - DevOps Engineer</li>
+  <li>Adrian Rozsahegyi - <a href="https://github.com/adrozs">adrozs</a></li>
+  <li>Alexander Lundquist - <a href="https://github.com/chasalex">chasalex</a></li>
+  <li>Hjalmar Stranninge - <a href="https://github.com/hjalmarstranninge">hjalmarstranninge</a></li>
+  <li>Jonny Touma - <a href="https://github.com/jonzy81">jonzy81</a></li>
+  <li>Fady Hatta - <a href="https://github.com/manhattaa">manhattaa</a></li>
 </ul>
 
 <p align="center"><i>Welcome to Ledge — Your trusted partner in financial management!</i></p>
